@@ -1,0 +1,13 @@
+id,0
+jobId,0
+appointmentNumber,string
+start,string
+end,string
+arrivalWindowStart,string
+arrivalWindowEnd,string
+status,null
+specialInstructions,string
+createdOn,string
+modifiedOn,string
+customerId,0
+active,true
