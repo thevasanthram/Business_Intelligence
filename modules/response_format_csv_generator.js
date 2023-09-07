@@ -1,13 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 
-async function response_format_csv_generator(
-  data,
-  csv_folder_path,
-  csv_file_name
-) {
+async function response_format_csv_generator(data, csv_file_name) {
   // Process and write data in batches
   let csvContent = "";
+  const csv_folder_path = "./csv_response_formats";
+
+  csv_file_name = csv_file_name.replace(/-/g, "_").replace("/", "_");
 
   // Create the folder if it doesn't exist
   if (!fs.existsSync(csv_folder_path)) {

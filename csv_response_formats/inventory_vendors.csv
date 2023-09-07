@@ -1,0 +1,24 @@
+id,80331224
+name,Great Lakes Burn Camp
+active,true
+isTruckReplenishment,false
+isMobileCreationRestricted,false
+memo,
+deliveryOption,MarkAsSent
+defaultTaxRate,0
+contactInfo,null
+contactInfofirstName,
+contactInfolastName,
+contactInfophone,null
+contactInfoemail,
+contactInfofax,null
+address,null
+addressstreet,P.O. BOX 6189
+addressunit,
+addresscity,Jackson
+addressstate,MI
+addresszip,49204
+addresscountry,USA
+createdOn,2023-08-03T18:11:35.9019687Z
+modifiedOn,2023-08-03T18:11:35.9621624Z
+externalData,null

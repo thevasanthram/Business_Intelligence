@@ -1,0 +1,37 @@
+id,null
+employeeId,6406714
+employeeType,Technician
+businessUnitName,60EXP-Comm Service
+payrollId,30459926
+employeePayrollId,ROBIA
+date,2022-07-07T00:00:00Z
+activity,Invoice Specific Bonus
+activityCodeId,null
+activityCode,null
+amount,0
+amountAdjustment,null
+payoutBusinessUnitName,60EXP-Comm Service
+grossPayItemType,InvoiceRelatedBonus
+startedOn,null
+endedOn,null
+paidDurationHours,null
+paidTimeType,null
+jobId,32665670
+jobNumber,0086802
+jobTypeName,Imported JobType
+projectNumber,null
+projectId,null
+invoiceId,33803517
+invoiceNumber,W52961
+invoiceItemId,null
+customerId,32176487
+customerName,BRUCE CAMPBELL HONDA
+locationId,32272662
+locationName,GENTHE HONDA
+locationAddress,15100 EUREKA, SOUTHGATE MI,  48195 
+locationZip,48195
+zoneName,null
+taxZoneName,No Tax
+laborTypeId,null
+laborTypeCode,null
+isPrevailingWageJob,false

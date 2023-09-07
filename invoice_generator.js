@@ -61,7 +61,7 @@ async function getAPIData() {
 
       //   stream.write(JSON.stringify(...api_data["data"]) + ",\n");
 
-      console.log("data_pool: ", data_pool.length);
+      // console.log("data_pool: ", data_pool.length);
 
       if (continueFromList.includes(api_data["continueFrom"])) {
         console.log("Continue from value repeated");

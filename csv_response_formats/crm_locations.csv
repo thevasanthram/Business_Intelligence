@@ -1,0 +1,22 @@
+taxZoneId,1910890
+id,80245104
+customerId,80245101
+active,true
+name,SYED TAJUDDIN
+address,null
+addressstreet,5321 Betheny Circle
+addressunit,null
+addresscity,Superior Charter Township
+addressstate,MI
+addresszip,48198
+addresscountry,USA
+addresslatitude,42.3037785
+addresslongitude,-83.648039
+customFields,null
+createdOn,2023-08-01T15:13:04.7842978Z
+createdById,1929706
+modifiedOn,2023-08-01T15:13:04.8746063Z
+mergedToId,null
+zoneId,72321033
+tagTypeIds,null
+externalData,null

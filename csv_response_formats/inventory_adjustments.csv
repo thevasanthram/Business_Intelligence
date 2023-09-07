@@ -1,0 +1,47 @@
+id,81099037
+active,true
+number,1930
+referenceNumber,null
+type,Inventory Quantity Adjustment
+inventoryLocationId,110
+businessUnitId,1951850
+createdById,13492699
+memo,OTC EXPERT BRANDON ORSIRIO INVOICE #81096599
+date,2023-08-29T00:00:00Z
+createdOn,2023-08-29T14:55:08.1161974Z
+modifiedOn,2023-09-05T13:14:36.5186681Z
+batchId,81220057
+syncStatus,Exported
+externalData,null
+items,null
+itemsitems0id,81099038
+itemsitems0skuId,77337491
+itemsitems0name,24SPA648W003K
+itemsitems0code,24SPA648W003K
+itemsitems0description,4 TON 16 SEER SINGLE PHASE CONDENSER
+itemsitems0quantity,-1
+itemsitems1id,81099040
+itemsitems1skuId,78422339
+itemsitems1name,CVPVA4821XMC
+itemsitems1code,CVPVA4821XMC
+itemsitems1description,4 TON 24" WIDE COIL
+itemsitems1quantity,-1
+itemsitems2id,81099042
+itemsitems2skuId,15123597
+itemsitems2name,59TP6B100V21--20K
+itemsitems2code,59TP6B100V21--20K
+itemsitems2description,96% 2-SPD100K FURNACE
+itemsitems2quantity,-1
+itemsitems3id,81099044
+itemsitems3skuId,15123783
+itemsitems3name,HUMCRLBP2417
+itemsitems3code,HUMCRLBP2417
+itemsitems3description,COR HUMIDIFR LRG BYPASS
+itemsitems3quantity,-1
+itemsitems4id,81099046
+itemsitems4skuId,15123713
+itemsitems4name,EB-STATE3LTP-02
+itemsitems4code,EB-STATE3LTP-02
+itemsitems4description,ECOBEE 3 LITE PRO SMART
+itemsitems4quantity,-1
+customFields,null

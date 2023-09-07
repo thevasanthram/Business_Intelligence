@@ -1,0 +1,32 @@
+id,81264926
+purchaseOrderId,80568583
+syncStatus,Pending
+referenceNumber,5250-B1
+vendorNumber,6858609
+summary,null
+billDate,2023-08-10T00:00:00Z
+billAmount,18.83
+taxAmount,1.07
+shippingAmount,0.00
+createdBy,Christopher Cain
+createdOn,2023-09-05T19:36:15.4327296Z
+termName,Net 30
+dueDate,2023-09-09T00:00:00Z
+shipToDescription,TAYLOR WAREHOUSE
+batch,null
+businessUnit,null
+businessUnitid,1034878
+businessUnitname,30EXP-Comm AOR
+vendor,null
+vendorid,13474066
+vendorname,MAC GR - The Macomb Group, Inc.
+shipTo,null
+shipTostreet,24400 NORTHLINE RD
+shipTounit,null
+shipTocity,TAYLOR
+shipTostate,Michigan
+shipTozip,48180
+shipTocountry,United States
+customFields,null
+jobId,null
+jobNumber,null
