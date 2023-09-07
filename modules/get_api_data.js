@@ -8,6 +8,9 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
     let count = 0;
     let shouldIterate = false;
 
+    const formatted_api_group = api_group.replace(/-/g, "_").replace("/", "_");
+    const formatted_api_name = api_name.replace(/-/g, "_").replace("/", "_");
+
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/1011756844/${api_name}`;
 
     console.log("Getting API data, wait untill a response appears");
@@ -53,7 +56,7 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
               delete record["end"];
             }
 
-            // delete record["items"];
+            delete record["items"];
             return record;
           });
 
@@ -117,7 +120,7 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
             delete record["end"];
           }
 
-          // delete record["items"];
+          delete record["items"];
           return record;
         });
 
@@ -134,12 +137,6 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
         }
       } catch {
         // if theres a exceptional response in some api
-        const formatted_api_group = api_group
-          .replace(/-/g, "_")
-          .replace("/", "_");
-        const formatted_api_name = api_name
-          .replace(/-/g, "_")
-          .replace("/", "_");
 
         // Create the folder if it doesn't exist
         const folderPath = "./json_responses";
@@ -189,6 +186,10 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
         sampleObj = current_flattened_object;
       }
     });
+
+    console.log(
+      formatted_api_group + "_" + formatted_api_name + " table headers prepared"
+    );
 
     flattenedSampleObj = sampleObj;
 

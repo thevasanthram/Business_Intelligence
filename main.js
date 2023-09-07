@@ -38,11 +38,19 @@ const api_collection = [
   },
   {
     api_group: "crm",
-    api_name: "leads",
+    api_name: "locations",
   },
   {
-    api_group: "crm",
-    api_name: "locations",
+    api_group: "dispatch",
+    api_name: "appointment-assignments",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "zones",
+  },
+  {
+    api_group: "equipmentsystems",
+    api_name: "installed-equipment",
   },
   {
     api_group: "inventory",
@@ -89,10 +97,6 @@ const api_collection = [
     api_name: "campaigns",
   },
   {
-    api_group: "marketing",
-    api_name: "costs",
-  },
-  {
     api_group: "memberships",
     api_name: "memberships",
   },
@@ -123,13 +127,13 @@ const api_collection = [
 ];
 
 const params_header = {
-  createdOnOrAfter: "2022-09-01", // 2022-09-01T00:00:00.00Z
+  createdOnOrAfter: "2023-08-01T00:00:00.00Z", // 2022-09-01T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
 };
 
-const api_group = "accounting";
-const api_name = "invoices";
+const api_group = "inventory";
+const api_name = "transfers";
 const inserting_batch_limit = 300;
 
 async function flow_handler() {
@@ -139,20 +143,20 @@ async function flow_handler() {
   const access_token = await getAccessToken();
 
   // continuously fetching whole api data
-  // const { data_pool, flattenedSampleObj } = await getAPIData(
-  //   access_token,
-  //   api_group,
-  //   api_name,
-  //   params_header
-  // );
-
-  // continuously fetching whole api data for to crete item
-  const { data_pool, flattenedSampleObj } = await getAPIDataItem(
+  const { data_pool, flattenedSampleObj } = await getAPIData(
     access_token,
     api_group,
     api_name,
     params_header
   );
+
+  // continuously fetching whole api data for to crete item
+  // const { data_pool, flattenedSampleObj } = await getAPIDataItem(
+  //   access_token,
+  //   api_group,
+  //   api_name,
+  //   params_header
+  // );
 
   // generating csv
   csv_generator(data_pool, flattenedSampleObj, api_group + "_" + api_name);

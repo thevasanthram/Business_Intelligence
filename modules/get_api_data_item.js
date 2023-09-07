@@ -210,6 +210,8 @@ async function getAPIDataItem(
 
     data_pool = items_pool;
 
+    // console.log("items_pool: ", items_pool);
+
     return { data_pool, flattenedSampleObj };
   } catch (error) {
     console.error(

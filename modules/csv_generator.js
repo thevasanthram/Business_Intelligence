@@ -8,7 +8,6 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
   // Process and write data in batches
   const batchSize = 1000; // Set the batch size as needed
   let index = 0;
-  let csvContent = Object.keys(flattenedSampleObj).join(",");
 
   const csv_folder_path = "./flat_tables";
 
@@ -22,6 +21,15 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
   // Create the file path
   const filePath = path.join(csv_folder_path, csv_file_name + ".csv");
 
+  // Create a writable stream to write data to the file
+  const writeStream = fs.createWriteStream(filePath, { flags: "a" });
+
+  // Write the CSV header once
+  if (index === 0) {
+    const csvHeader = Object.keys(flattenedSampleObj).join(",");
+    writeStream.write(csvHeader + "\n");
+  }
+
   // Function to write the next batch of data
   function writeNextBatch() {
     const batch = data_pool.slice(index, index + batchSize);
@@ -34,19 +42,19 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
           flattenedObj
         );
 
-        // Convert the array of arrays to CSV format
+        // Convert the array of values to CSV format
         const csvData = Object.values(filteredObj)
           .map((value) => {
             if (value) {
-              return String(value).replace(",", ";");
+              return String(value).replace(/,/g, "_").replace(/\n/g, "_");
             } else {
               return "null";
             }
           })
           .join(",");
 
-        // Join the CSV rows with newline characters
-        csvContent = csvContent + csvData + "\n";
+        // Write the CSV data to the file
+        writeStream.write(csvData + "\n");
       }
 
       // End the batch
@@ -55,9 +63,10 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
       // Process the next batch in the next event loop iteration
       setImmediate(writeNextBatch);
     } else {
-      // No more data to process, end the streams
-      fs.writeFileSync(`${filePath}`, csvContent);
-      console.log("Data appended to CSV file.");
+      // No more data to process, end the stream
+      writeStream.end(() => {
+        console.log("Data appended to CSV file.");
+      });
     }
   }
 

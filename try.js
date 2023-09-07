@@ -1,12 +1,3 @@
-// Sample object
-const person = {
-  firstName: "John",
-  lastName: "Doe",
-  age: 30,
-};
+const text = '\nasdf\n'
 
-// Rename the "firstName" property to "first_name" without changing property order
-person.first_name = person.firstName;
-delete person.firstName;
-
-console.log(person);
+console.log(text.replace(/\n/g, ''))
