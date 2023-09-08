@@ -4,6 +4,8 @@ const path = require("path");
 
 async function getAPIDataItem(
   access_token,
+  app_key,
+  tenant_id,
   api_group,
   api_name,
   params_header
@@ -13,7 +15,7 @@ async function getAPIDataItem(
     let count = 0;
     let shouldIterate = false;
 
-    const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/1011756844/${api_name}`;
+    const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
     console.log("Getting API data, wait untill a response appears");
 
@@ -41,7 +43,7 @@ async function getAPIDataItem(
         headers: {
           // 'Content-type': 'application/x-www-form-urlencoded',
           Authorization: access_token, // Include "Bearer" before access token
-          "ST-App-Key": "ak1.ztsdww9rvuk0sjortd94dmxwx",
+          "ST-App-Key": app_key,
         },
       });
 
@@ -126,7 +128,11 @@ async function getAPIDataItem(
 
           if (record["items"]) {
             record["items"].map((item) => {
-              items_pool.push(item);
+              const temp_obj = {
+                parent_id: record["id"],
+                ...item,
+              };
+              items_pool.push(temp_obj);
             });
           }
 

@@ -1,4 +1,4 @@
-async function getAccessToken() {
+async function getAccessToken(client_id, client_secret) {
   try {
     const auth_url = "https://auth.servicetitan.io/connect/token";
     const auth_response = await fetch(auth_url, {
@@ -8,8 +8,8 @@ async function getAccessToken() {
       },
       body: new URLSearchParams({
         grant_type: "client_credentials",
-        client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-        client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+        client_id: client_id,
+        client_secret: client_secret,
       }),
     });
 

@@ -93,6 +93,10 @@ const api_collection = [
     api_name: "jobs",
   },
   {
+    api_group: "jpm",
+    api_name: "projects",
+  },
+  {
     api_group: "marketing",
     api_name: "campaigns",
   },
@@ -113,8 +117,24 @@ const api_collection = [
     api_name: "recurring-service-types",
   },
   {
+    api_group: "memberships",
+    api_name: "membership-types",
+  },
+  {
+    api_group: "payroll",
+    api_name: "payrolls",
+  },
+  {
+    api_group: "payroll",
+    api_name: "payroll-adjustments",
+  },
+  {
     api_group: "payroll",
     api_name: "gross-pay-items",
+  },
+  {
+    api_group: "payroll",
+    api_name: "jobs/splits",
   },
   {
     api_group: "payroll",
@@ -124,27 +144,79 @@ const api_collection = [
     api_group: "payroll",
     api_name: "timesheet-codes",
   },
+  {
+    api_group: "pricebook",
+    api_name: "categories",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "equipment",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "materials",
+  },
+  {
+    api_group: "sales",
+    api_name: "estimates",
+  },
+  {
+    api_group: "sales",
+    api_name: "estimates/export",
+  },
+  {
+    api_group: "settings",
+    api_name: "business-units",
+  },
+  {
+    api_group: "settings",
+    api_name: "employees",
+  },
+  {
+    api_group: "settings",
+    api_name: "technicians",
+  },
 ];
 
+// const instance_name = 'Expert Heating and Cooling Co LLC'
+// const tenant_id = 1011756844;
+// const app_key = 'ak1.ztsdww9rvuk0sjortd94dmxwx'
+// const client_id = 'cid.jk53hfwwcq6a1zgtbh96byil4'
+// const client_secret = "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda";
+
+// const instance_name = "PARKER-ARNTZ PLUMBING AND HEATING, INC.";
+// const tenant_id = 1475606437;
+// const app_key = "ak1.w9fgjo8psqbyi84vocpvzxp8y";
+// const client_id = "cid.r82bhd4u7htjv56h7sqjk0jya";
+// const client_secret = "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7";
+
+const instance_name = "Family Heating & Cooling Co LLC";
+const tenant_id = 1056112968;
+const app_key = "ak1.h0wqje4yshdqvn1fso4we8cnu";
+const client_id = "cid.qlr4t6egndd4mbvq3vu5tef11";
+const client_secret = "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay";
+
 const params_header = {
-  createdOnOrAfter: "2023-08-01T00:00:00.00Z", // 2022-09-01T00:00:00.00Z
+  createdOnOrAfter: "2023-08-01T00:00:00.00Z", // 2023-08-01T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
 };
 
-const api_group = "inventory";
-const api_name = "transfers";
+const api_group = "settings";
+const api_name = "business-units";
 const inserting_batch_limit = 300;
 
 async function flow_handler() {
   // const sql_client = await create_sql_connection();
 
   // signing a new access token in Service Titan's API
-  const access_token = await getAccessToken();
+  const access_token = await getAccessToken(client_id, client_secret);
 
   // continuously fetching whole api data
   const { data_pool, flattenedSampleObj } = await getAPIData(
     access_token,
+    app_key,
+    tenant_id,
     api_group,
     api_name,
     params_header
@@ -153,6 +225,8 @@ async function flow_handler() {
   // continuously fetching whole api data for to crete item
   // const { data_pool, flattenedSampleObj } = await getAPIDataItem(
   //   access_token,
+  //   app_key,
+  //   tenant_id,
   //   api_group,
   //   api_name,
   //   params_header
@@ -162,10 +236,7 @@ async function flow_handler() {
   csv_generator(data_pool, flattenedSampleObj, api_group + "_" + api_name);
 
   // json_to_text_convertor
-  // json_to_text_convertor(data_pool, api_group, api_name);
-
-  // api response sample csv generator
-  // response_format_csv_generator(flattenedSampleObj, api_group + "_" + api_name);
+  json_to_text_convertor(data_pool, api_group, api_name);
 
   // create flat tables
   // await create_flat_tables(sql_client, flattenedSampleObj, api_group, api_name);

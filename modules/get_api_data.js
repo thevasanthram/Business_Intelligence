@@ -2,7 +2,14 @@ const flattenObject = require("./../modules/new_flatten_object");
 const fs = require("fs");
 const path = require("path");
 
-async function getAPIData(access_token, api_group, api_name, params_header) {
+async function getAPIData(
+  access_token,
+  app_key,
+  tenant_id,
+  api_group,
+  api_name,
+  params_header
+) {
   try {
     // automatic api fetch data code
     let count = 0;
@@ -11,7 +18,7 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
     const formatted_api_group = api_group.replace(/-/g, "_").replace("/", "_");
     const formatted_api_name = api_name.replace(/-/g, "_").replace("/", "_");
 
-    const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/1011756844/${api_name}`;
+    const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
     console.log("Getting API data, wait untill a response appears");
 
@@ -38,13 +45,13 @@ async function getAPIData(access_token, api_group, api_name, params_header) {
         headers: {
           // 'Content-type': 'application/x-www-form-urlencoded',
           Authorization: access_token, // Include "Bearer" before access token
-          "ST-App-Key": "ak1.ztsdww9rvuk0sjortd94dmxwx",
+          "ST-App-Key": app_key,
         },
       });
 
       const api_data = await api_response.json();
 
-      // console.log("api_data: ", api_data);
+      console.log("api_data: ", api_data);
 
       // code for api's having different format of response
       if (!api_data["data"]) {
