@@ -1,10 +1,15 @@
-const flattenObject = require("./flatten_object");
-const extractMatchingValues = require("./extract_matching_values");
 const fs = require("fs");
 const path = require("path");
+const flattenObject = require("./flatten_object");
+const extractMatchingValues = require("./extract_matching_values");
 
 // Function to process and write data in batches
-async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
+async function csv_generator(
+  data_pool,
+  flattenedSampleObj,
+  csv_file_name,
+  instance
+) {
   // Process and write data in batches
   const batchSize = 1000; // Set the batch size as needed
   let index = 0;
@@ -21,17 +26,16 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
   // Create the file path
   const filePath = path.join(csv_folder_path, csv_file_name + ".csv");
 
-  // Create a writable stream to write data to the file
-  const writeStream = fs.createWriteStream(filePath, { flags: "a" });
-
-  // Write the CSV header once
-  if (index === 0) {
+  // write the header
+  async function write_header() {
     const csvHeader = Object.keys(flattenedSampleObj).join(",");
-    writeStream.write(csvHeader + "\n");
+
+    // Create a new CSV file and write the header
+    fs.writeFileSync(filePath, csvHeader + "\n");
   }
 
   // Function to write the next batch of data
-  function writeNextBatch() {
+  async function writeNextBatch() {
     const batch = data_pool.slice(index, index + batchSize);
 
     if (batch.length > 0) {
@@ -45,8 +49,8 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
         // Convert the array of values to CSV format
         const csvData = Object.values(filteredObj)
           .map((value) => {
-            if (value) {
-              return String(value).replace(/,/g, "_").replace(/\n/g, "_");
+            if (value && value != "") {
+              return String(value).replace(/,/g, "").replace(/\n/g, "");
             } else {
               return "null";
             }
@@ -54,7 +58,7 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
           .join(",");
 
         // Write the CSV data to the file
-        writeStream.write(csvData + "\n");
+        fs.appendFileSync(filePath, csvData + "\n");
       }
 
       // End the batch
@@ -63,15 +67,14 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
       // Process the next batch in the next event loop iteration
       setImmediate(writeNextBatch);
     } else {
-      // No more data to process, end the stream
-      writeStream.end(() => {
-        console.log("Data appended to CSV file.");
-      });
+      // No more data to process
+      console.log("Data appended to CSV file.");
     }
   }
 
-  // Start processing by writing the first batch
-  writeNextBatch();
+  // Start processing by writing the header and all batch
+  await write_header();
+  await writeNextBatch();
 }
 
 module.exports = csv_generator;

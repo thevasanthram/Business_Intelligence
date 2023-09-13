@@ -5,6 +5,7 @@ const path = require("path");
 async function getAPIData(
   access_token,
   app_key,
+  instance_name,
   tenant_id,
   api_group,
   api_name,
@@ -51,7 +52,7 @@ async function getAPIData(
 
       const api_data = await api_response.json();
 
-      console.log("api_data: ", api_data);
+      // console.log("api_data: ", api_data);
 
       // code for api's having different format of response
       if (!api_data["data"]) {
@@ -64,7 +65,13 @@ async function getAPIData(
             }
 
             delete record["items"];
-            return record;
+
+            const temp = {
+              instance_name: instance_name,
+              ...record,
+            };
+
+            return temp;
           });
 
           if (pushing_item.length > 0) {
@@ -128,7 +135,13 @@ async function getAPIData(
           }
 
           delete record["items"];
-          return record;
+
+          const temp = {
+            instance_name: instance_name,
+            ...record,
+          };
+
+          return temp;
         });
 
         // pushing api_data_objects into data
@@ -177,30 +190,7 @@ async function getAPIData(
 
     console.log("Data fetching completed successfully");
 
-    // Iterate all the elements in data_pool and fetch the object having maximum property
-    let sampleObj = {};
-
-    if (data_pool.length > 0) {
-      sampleObj = flattenObject(data_pool[0]); // Take a sample object to infer the table structure
-    }
-
-    data_pool.map((response_data, index) => {
-      const current_flattened_object = flattenObject(response_data);
-      if (
-        Object.keys(current_flattened_object).length >
-        Object.keys(sampleObj).length
-      ) {
-        sampleObj = current_flattened_object;
-      }
-    });
-
-    console.log(
-      formatted_api_group + "_" + formatted_api_name + " table headers prepared"
-    );
-
-    flattenedSampleObj = sampleObj;
-
-    return { data_pool, flattenedSampleObj };
+    return data_pool;
   } catch (error) {
     console.error(
       `Data fetching failed for ${api_group} - ${api_name}. Try Again!:`,

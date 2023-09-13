@@ -1,13 +1,56 @@
-const arr = Array(300000);
+const flattenObject = require("./modules/flatten_object");
 
-console.log("arr: ", arr);
-const startTime = new Date().getTime(); // Get the current time in milliseconds
-
-arr.map((index, n) => {
-  console.log(n);
-});
-
-const endTime = new Date().getTime(); // Get the current time after the for loop
-const elapsedTime = endTime - startTime; // Calculate the elapsed time in milliseconds
-
-console.log(`Time taken by the for loop: ${elapsedTime} milliseconds`);
+console.log(
+  flattenObject({
+    instance_name: "Family Heating & Cooling Co LLC",
+    id: 28303666,
+    syncStatus: "Exported",
+    summary:
+      "Tested unit is dirty outside and low on charge. Cleaned the condenser . Brought charge up to factory specifications. Saw no damage from electrician, unit is operating properly at this time.",
+    referenceNumber: "28303663",
+    invoiceDate: "2023-06-09T00:00:00Z",
+    dueDate: "2023-06-09T00:00:00Z",
+    subTotal: "251.67",
+    salesTax: "0.00",
+    salesTaxCode: null,
+    total: "251.67",
+    balance: "251.67",
+    invoiceType: null,
+    customer: { id: 22934660, name: "KNL - Meilke, David" },
+    customerAddress: {
+      street: "703 E. Mitchell St.",
+      unit: "",
+      city: "Petoskey",
+      state: "MI",
+      zip: "49770",
+      country: "",
+    },
+    location: { id: 22937406, name: "KNL - Meilke, David" },
+    locationAddress: {
+      street: "703 E. Mitchell St.",
+      unit: "",
+      city: "Petoskey",
+      state: "MI",
+      zip: "49770",
+      country: "",
+    },
+    businessUnit: { id: 16118478, name: "KNL HVAC SRV RES" },
+    termName: "",
+    createdBy: "ScottBennett",
+    batch: { id: 55147653, number: "133", name: "KNL AR inv 6/9/23 dm" },
+    depositedOn: "2023-07-16T01:10:02.253459Z",
+    createdOn: "2023-06-09T12:00:36.5472956Z",
+    modifiedOn: "2023-07-16T01:10:20.8356387Z",
+    adjustmentToId: null,
+    job: { id: 28303663, number: "28303663", type: "No Cool     RES/KNL" },
+    projectId: null,
+    royalty: { status: "Pending", date: null, sentOn: null, memo: null },
+    employeeInfo: {
+      id: 11138231,
+      name: "ScottBennett",
+      modifiedOn: "2023-08-15T20:50:45.1232863Z",
+    },
+    commissionEligibilityDate: null,
+    customFields: null,
+  })
+);
