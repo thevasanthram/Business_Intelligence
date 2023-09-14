@@ -375,13 +375,13 @@ async function find_max_and_write_csv(data_lake) {
         await csv_generator(
           current_data_pool,
           data_lake[key]["header_data"],
-          api_group + "_" + api_name,
+          api_group + "_" + api_name
         );
       } else {
         await csv_generator(
           current_data_pool,
           data_lake[key]["header_data"],
-          api_group + "_" + api_name + "_" + api_mode,
+          api_group + "_" + api_name + "_" + api_mode
         );
       }
     })
