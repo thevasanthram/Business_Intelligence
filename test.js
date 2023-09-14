@@ -1,8 +1,3 @@
-const obj1 = ["used ", "and ", "extract "];
-const obj2 = ["create ", "three", "extract ", "displays "];
+const str = 'hiii__hello$$welcome'
 
-const mergedKeys = [...new Set([...Object.keys(obj1), ...Object.keys(obj2)])];
-
-console.log(mergedKeys);
-
-["used ", "and ", "create ", "three", "extract ", "displays "];
+console.log(str.split('__').split('$$'))

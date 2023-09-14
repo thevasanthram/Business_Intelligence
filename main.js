@@ -19,6 +19,21 @@ const api_collection = [
   {
     api_group: "accounting",
     api_name: "invoices",
+    mode: "items",
+  },
+  {
+    api_group: "inventory",
+    api_name: "adjustments",
+    mode: "items",
+  },
+  {
+    api_group: "inventory",
+    api_name: "transfers",
+    mode: "items",
+  },
+  {
+    api_group: "accounting",
+    api_name: "invoices",
   },
   {
     api_group: "accounting",
@@ -182,21 +197,6 @@ const api_collection = [
   },
 ];
 
-const api_collection_for_items = [
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-  },
-  {
-    api_group: "inventory",
-    api_name: "transfers",
-  },
-];
-
 const instance_details = [
   {
     instance_name: "Expert Heating and Cooling Co LLC",
@@ -227,8 +227,6 @@ const params_header = {
   pageSize: 2000,
 };
 
-const api_group = "settings";
-const api_name = "business-units";
 const inserting_batch_limit = 300;
 
 async function flow_handler(
@@ -242,20 +240,6 @@ async function flow_handler(
 ) {
   // const sql_client = await create_sql_connection();
 
-  // signing a new access token in Service Titan's API
-  const access_token = await getAccessToken(client_id, client_secret);
-
-  // continuously fetching whole api data
-  const data_pool = await getAPIData(
-    access_token,
-    app_key,
-    instance_name,
-    tenant_id,
-    api_group,
-    api_name,
-    params_header
-  );
-
   // continuously fetching whole api data for to crete item
   // const data_pool = await getAPIDataItem(
   //   access_token,
@@ -265,14 +249,6 @@ async function flow_handler(
   //   api_group,
   //   api_name,
   //   params_header
-  // );
-
-  // generating csv
-  // await csv_generator(
-  //   data_pool,
-  //   flattenedSampleObj,
-  //   api_group + "_" + api_name,
-  //   instance
   // );
 
   // json_to_text_convertor
@@ -296,10 +272,7 @@ async function flow_handler(
   return data_pool;
 }
 
-// for automatic mass ETL
-async function start_pipeline() {
-  const data_lake = {};
-
+async function fetch_all_data(data_lake, instance_details, api_collection) {
   // collect all data from all the instance
   await Promise.all(
     instance_details.map(async (instance_data) => {
@@ -314,53 +287,114 @@ async function start_pipeline() {
           const api_group_temp = api_data["api_group"];
           const api_name_temp = api_data["api_name"];
 
-          if (!data_lake[api_group_temp + "__" + api_name_temp]) {
-            data_lake[api_group_temp + "__" + api_name_temp] = {
-              instance_name: instance_name,
-              data_pool: [],
-              header_data: [],
-            };
+          // signing a new access token in Service Titan's API
+          const access_token = await getAccessToken(client_id, client_secret);
+
+          if (!api_data["mode"]) {
+            // for normal
+            if (
+              !data_lake[
+                api_group_temp + "__" + api_name_temp + "&&" + "normal"
+              ]
+            ) {
+              data_lake[
+                api_group_temp + "__" + api_name_temp + "&&" + "normal"
+              ] = {
+                instance_name: instance_name,
+                data_pool: [],
+                header_data: [],
+              };
+            }
+
+            // continuously fetching whole api data
+            const data_pool = await getAPIData(
+              access_token,
+              app_key,
+              instance_name,
+              tenant_id,
+              api_group_temp,
+              api_name_temp,
+              params_header
+            );
+
+            data_lake[api_group_temp + "__" + api_name_temp + "&&" + "normal"][
+              "data_pool"
+            ].push(...data_pool);
+          } else {
+            // for items
+            if (
+              !data_lake[api_group_temp + "__" + api_name_temp + "&&" + "items"]
+            ) {
+              data_lake[
+                api_group_temp + "__" + api_name_temp + "&&" + "items"
+              ] = {
+                instance_name: instance_name,
+                data_pool: [],
+                header_data: [],
+              };
+            }
+
+            // continuously fetching whole api data for to crete item
+            const data_pool = await getAPIDataItem(
+              access_token,
+              app_key,
+              instance_name,
+              tenant_id,
+              api_group_temp,
+              api_name_temp,
+              params_header
+            );
+
+            data_lake[api_group_temp + "__" + api_name_temp + "&&" + "items"][
+              "data_pool"
+            ].push(...data_pool);
           }
-
-          const data_pool = await flow_handler(
-            api_group_temp,
-            api_name_temp,
-            instance_name,
-            tenant_id,
-            app_key,
-            client_id,
-            client_secret
-          );
-
-          data_lake[api_group_temp + "__" + api_name_temp]["data_pool"].push(
-            ...data_pool
-          );
         })
       );
     })
   );
+}
 
+async function find_max_and_write_csv(data_lake) {
   // find max and write into csv
   await Promise.all(
     Object.keys(data_lake).map(async (key) => {
       const current_data_pool = data_lake[key]["data_pool"];
       const current_instance_name = data_lake[key]["instance_name"];
 
-      const [api_group, api_name] = key.split("__");
+      const [api_group, api_name_and_mode] = key.split("__");
+
+      const [api_name, api_mode] = api_name_and_mode.split("&&");
 
       // find lengthiest data
       data_lake[key]["header_data"] = await find_lenghthiest_header(
         current_data_pool
       );
 
-      await csv_generator(
-        current_data_pool,
-        data_lake[key]["header_data"],
-        api_group + "_" + api_name,
-        current_instance_name
-      );
+      if (api_mode == "normal") {
+        await csv_generator(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name,
+        );
+      } else {
+        await csv_generator(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name + "_" + api_mode,
+        );
+      }
     })
   );
+}
+
+// for automatic mass ETL
+async function start_pipeline() {
+  const data_lake = {};
+
+  await fetch_all_data(data_lake, instance_details, api_collection);
+
+  await find_max_and_write_csv(data_lake);
 }
 
 start_pipeline();

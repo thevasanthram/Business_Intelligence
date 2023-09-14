@@ -4,12 +4,7 @@ const flattenObject = require("./flatten_object");
 const extractMatchingValues = require("./extract_matching_values");
 
 // Function to process and write data in batches
-async function csv_generator(
-  data_pool,
-  flattenedSampleObj,
-  csv_file_name,
-  instance
-) {
+async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
   // Process and write data in batches
   const batchSize = 1000; // Set the batch size as needed
   let index = 0;
@@ -68,7 +63,7 @@ async function csv_generator(
       setImmediate(writeNextBatch);
     } else {
       // No more data to process
-      console.log("Data appended to CSV file.");
+      console.log(csv_file_name + " file has been created");
     }
   }
 
