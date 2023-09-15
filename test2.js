@@ -1,4 +1,4 @@
-const flattenObject = require("./modules/flatten_object");
+const flattenObject = require("./modules/new_flatten_object");
 
 console.log(
   flattenObject({

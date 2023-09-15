@@ -6,16 +6,19 @@ async function create_sql_connection() {
     user: "deevia",
     password: "kiran@123",
     server: "deevia-trial.database.windows.net",
-    database: "crop_db",
+    database: "hvac_db",
     options: {
       encrypt: true, // Use this option for SSL encryption
+      requestTimeout: 48 * 60 * 60 * 1000, // 60 seconds (adjust as needed)
     },
   };
 
-  await sql.connect(config); // Connect to the database
+  await sql.connect(config);
+
+  // Create a request object
   const request = new sql.Request();
 
-  return request;
+  return request; // Return both the pool and request objects
 }
 
 module.exports = create_sql_connection;

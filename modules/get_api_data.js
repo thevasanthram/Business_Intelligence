@@ -1,4 +1,3 @@
-const flattenObject = require("./../modules/new_flatten_object");
 const fs = require("fs");
 const path = require("path");
 
@@ -21,7 +20,7 @@ async function getAPIData(
 
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
-    console.log("Getting API data, wait untill a response appears");
+    // console.log("Getting API data, wait untill a response appears");
 
     const data_pool = [];
 
@@ -65,6 +64,14 @@ async function getAPIData(
             }
 
             delete record["items"];
+
+            if (record["assests"]) {
+              delete record["assets"];
+            }
+
+            if (record["otherVendors"]) {
+              delete record["otherVendors"];
+            }
 
             const temp = {
               instance_name: instance_name,
@@ -136,6 +143,14 @@ async function getAPIData(
 
           delete record["items"];
 
+          if (record["assests"]) {
+            delete record["assets"];
+          }
+
+          if (record["otherVendors"]) {
+            delete record["otherVendors"];
+          }
+
           const temp = {
             instance_name: instance_name,
             ...record,
@@ -152,7 +167,7 @@ async function getAPIData(
             data_pool.length,
             "/",
             api_data["totalCount"],
-            "records fetched successfully"
+            " records  fetched  successfully"
           );
         }
       } catch {
@@ -188,7 +203,7 @@ async function getAPIData(
       count = count + 1;
     } while (shouldIterate);
 
-    console.log("Data fetching completed successfully");
+    // console.log("Data fetching completed successfully");
 
     return data_pool;
   } catch (error) {

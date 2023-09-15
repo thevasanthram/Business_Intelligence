@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const sql = require("mssql");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
@@ -8,6 +9,7 @@ const getAPIData = require("./modules/get_api_data");
 const getAPIDataItem = require("./modules/get_api_data_item");
 const create_flat_tables = require("./modules/create_flat_tables");
 const flat_data_insertion = require("./modules/flat_data_insertion");
+const flat_data_bulk_insertion = require("./modules/flat_data_bulk_insertion");
 const create_star_tables = require("./modules/create_star_tables");
 const star_schema_data_insertion = require("./modules/star_schema_data_insertion");
 const json_to_text_convertor = require("./modules/json_to_text_convertor");
@@ -16,185 +18,185 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 
 // Service Titan's API parameters
 const api_collection = [
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-    mode: "items",
-  },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-    mode: "items",
-  },
-  {
-    api_group: "inventory",
-    api_name: "transfers",
-    mode: "items",
-  },
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
-  {
-    api_group: "accounting",
-    api_name: "inventory-bills",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payments",
-  },
-  {
-    api_group: "crm",
-    api_name: "customers",
-  },
-  {
-    api_group: "crm",
-    api_name: "bookings",
-  },
-  {
-    api_group: "crm",
-    api_name: "locations",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "appointment-assignments",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "zones",
-  },
-  {
-    api_group: "equipmentsystems",
-    api_name: "installed-equipment",
-  },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-  },
-  {
-    api_group: "inventory",
-    api_name: "transfers",
-  },
-  {
-    api_group: "inventory",
-    api_name: "purchase-orders",
-  },
-  {
-    api_group: "inventory",
-    api_name: "receipts",
-  },
-  {
-    api_group: "inventory",
-    api_name: "returns",
-  },
-  {
-    api_group: "inventory",
-    api_name: "trucks",
-  },
-  {
-    api_group: "inventory",
-    api_name: "vendors",
-  },
-  {
-    api_group: "inventory",
-    api_name: "warehouses",
-  },
-  {
-    api_group: "jpm",
-    api_name: "appointments", // end keyword is used in this api response
-  },
-  {
-    api_group: "jpm",
-    api_name: "job-types",
-  },
-  {
-    api_group: "jpm",
-    api_name: "jobs",
-  },
-  {
-    api_group: "jpm",
-    api_name: "projects",
-  },
-  {
-    api_group: "marketing",
-    api_name: "campaigns",
-  },
-  {
-    api_group: "memberships",
-    api_name: "memberships",
-  },
-  {
-    api_group: "memberships",
-    api_name: "recurring-services",
-  },
-  {
-    api_group: "memberships",
-    api_name: "recurring-service-events",
-  },
-  {
-    api_group: "memberships",
-    api_name: "recurring-service-types",
-  },
-  {
-    api_group: "memberships",
-    api_name: "membership-types",
-  },
-  {
-    api_group: "payroll",
-    api_name: "payrolls",
-  },
-  {
-    api_group: "payroll",
-    api_name: "payroll-adjustments",
-  },
-  {
-    api_group: "payroll",
-    api_name: "gross-pay-items",
-  },
-  {
-    api_group: "payroll",
-    api_name: "jobs/splits",
-  },
-  {
-    api_group: "payroll",
-    api_name: "jobs/timesheets",
-  },
-  {
-    api_group: "payroll",
-    api_name: "timesheet-codes",
-  },
-  {
-    api_group: "pricebook",
-    api_name: "categories",
-  },
-  {
-    api_group: "pricebook",
-    api_name: "equipment",
-  },
-  {
-    api_group: "pricebook",
-    api_name: "materials",
-  },
-  {
-    api_group: "sales",
-    api_name: "estimates",
-  },
-  {
-    api_group: "sales",
-    api_name: "estimates/export",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  //   mode: "items",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  //   mode: "items",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "transfers",
+  //   mode: "items",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "inventory-bills",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payments",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "customers",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "bookings",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "locations",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "appointment-assignments",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "zones",
+  // },
+  // {
+  //   api_group: "equipmentsystems",
+  //   api_name: "installed-equipment",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "transfers",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "purchase-orders",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "receipts",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "returns",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "trucks",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "vendors",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "warehouses",
+  // },
+  // {
+  //   api_group: "jpm",
+  //   api_name: "appointments", // end keyword is used in this api response
+  // },
+  // {
+  //   api_group: "jpm",
+  //   api_name: "job-types",
+  // },
+  // {
+  //   api_group: "jpm",
+  //   api_name: "jobs",
+  // },
+  // {
+  //   api_group: "jpm",
+  //   api_name: "projects",
+  // },
+  // {
+  //   api_group: "marketing",
+  //   api_name: "campaigns",
+  // },
+  // {
+  //   api_group: "memberships",
+  //   api_name: "memberships",
+  // },
+  // {
+  //   api_group: "memberships",
+  //   api_name: "recurring-services",
+  // },
+  // {
+  //   api_group: "memberships",
+  //   api_name: "recurring-service-events",
+  // },
+  // {
+  //   api_group: "memberships",
+  //   api_name: "recurring-service-types",
+  // },
+  // {
+  //   api_group: "memberships",
+  //   api_name: "membership-types",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "payrolls",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "payroll-adjustments",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "gross-pay-items",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "jobs/splits",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "jobs/timesheets",
+  // },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "timesheet-codes",
+  // },
+  // {
+  //   api_group: "pricebook",
+  //   api_name: "categories",
+  // },
+  // {
+  //   api_group: "pricebook",
+  //   api_name: "equipment",
+  // },
+  // {
+  //   api_group: "pricebook",
+  //   api_name: "materials",
+  // },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates",
+  // },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates/export",
+  // },
   {
     api_group: "settings",
     api_name: "business-units",
   },
-  {
-    api_group: "settings",
-    api_name: "employees",
-  },
-  {
-    api_group: "settings",
-    api_name: "technicians",
-  },
+  // {
+  //   api_group: "settings",
+  //   api_name: "employees",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "technicians",
+  // },
 ];
 
 const instance_details = [
@@ -238,25 +240,6 @@ async function flow_handler(
   client_id,
   client_secret
 ) {
-  // const sql_client = await create_sql_connection();
-
-  // continuously fetching whole api data for to crete item
-  // const data_pool = await getAPIDataItem(
-  //   access_token,
-  //   app_key,
-  //   instance_name,
-  //   tenant_id,
-  //   api_group,
-  //   api_name,
-  //   params_header
-  // );
-
-  // json_to_text_convertor
-  // json_to_text_convertor(data_pool, api_group, api_name);
-
-  // create flat tables
-  // await create_flat_tables(sql_client, flattenedSampleObj, api_group, api_name);
-
   // create star schema tables
   // await create_star_tables(sql_client, flattenedSampleObj, api_name);
 
@@ -272,6 +255,47 @@ async function flow_handler(
   return data_pool;
 }
 
+function startStopwatch(task_name) {
+  let startTime = Date.now();
+  let running = true;
+
+  let elapsed_time_cache = "";
+
+  const updateStopwatch = () => {
+    if (!running) return;
+
+    const elapsedTime = Date.now() - startTime;
+    const seconds = Math.floor(elapsedTime / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+
+    let formattedTime =
+      String(hours).padStart(2, "0") +
+      ":" +
+      String(minutes % 60).padStart(2, "0") +
+      ":" +
+      String(seconds % 60).padStart(2, "0") +
+      "." +
+      String(elapsedTime % 1000).padStart(3, "0");
+
+    process.stdout.write(`Time elapsed for ${task_name}: ${formattedTime}\r`);
+
+    elapsed_time_cache = formattedTime;
+
+    setTimeout(updateStopwatch, 10); // Update every 10 milliseconds
+  };
+
+  updateStopwatch();
+
+  // Function to stop the stopwatch
+  function stop() {
+    running = false;
+    return elapsed_time_cache;
+  }
+
+  return stop;
+}
+
 async function fetch_all_data(data_lake, instance_details, api_collection) {
   // collect all data from all the instance
   await Promise.all(
@@ -282,13 +306,13 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
       const client_id = instance_data["client_id"];
       const client_secret = instance_data["client_secret"];
 
+      // signing a new access token in Service Titan's API
+      const access_token = await getAccessToken(client_id, client_secret);
+
       await Promise.all(
         api_collection.map(async (api_data) => {
           const api_group_temp = api_data["api_group"];
           const api_name_temp = api_data["api_name"];
-
-          // signing a new access token in Service Titan's API
-          const access_token = await getAccessToken(client_id, client_secret);
 
           if (!api_data["mode"]) {
             // for normal
@@ -300,7 +324,6 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
               data_lake[
                 api_group_temp + "__" + api_name_temp + "&&" + "normal"
               ] = {
-                instance_name: instance_name,
                 data_pool: [],
                 header_data: [],
               };
@@ -328,7 +351,6 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
               data_lake[
                 api_group_temp + "__" + api_name_temp + "&&" + "items"
               ] = {
-                instance_name: instance_name,
                 data_pool: [],
                 header_data: [],
               };
@@ -377,8 +399,115 @@ async function find_max_and_write_csv(data_lake) {
           data_lake[key]["header_data"],
           api_group + "_" + api_name
         );
+
+        // json_to_text_convertor
+        // json_to_text_convertor(data_pool, api_group, api_name);
       } else {
         await csv_generator(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name + "_" + api_mode
+        );
+
+        // json_to_text_convertor
+        // json_to_text_convertor(data_pool, api_group, api_name);
+      }
+    })
+  );
+}
+
+async function find_max_and_populate_db(data_lake) {
+  // find max and populate the db
+  await Promise.all(
+    Object.keys(data_lake).map(async (key) => {
+      const current_data_pool = data_lake[key]["data_pool"];
+
+      const [api_group, api_name_and_mode] = key.split("__");
+
+      const [api_name, api_mode] = api_name_and_mode.split("&&");
+
+      // find lengthiest data
+      data_lake[key]["header_data"] = await find_lenghthiest_header(
+        current_data_pool
+      );
+
+      if (api_mode == "normal") {
+        await azure_db_operations(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name
+        );
+      } else {
+        await azure_db_operations(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name + "_" + api_mode
+        );
+      }
+    })
+  );
+}
+
+async function find_total_records(data_lake) {
+  let total_records = 0;
+
+  // console.log("data_lake: ", data_lake);
+
+  Object.keys(data_lake).map((api_name) => {
+    total_records = total_records + data_lake[api_name]["data_pool"].length;
+  });
+
+  console.log("total_records: ", total_records);
+}
+
+async function azure_db_operations(data_pool, header_data, table_name) {
+  // creating a client for azure sql database operations
+  const sql_request = await create_sql_connection();
+
+  // create flat tables in azure sql database
+  await create_flat_tables(sql_request, header_data, table_name);
+
+  // insert data into flat_tables
+
+  // await flat_data_insertion(
+  //   sql_client,
+  //   data_pool,
+  //   header_data,
+  //   table_name,
+  //   inserting_batch_limit
+  // );
+
+  await flat_data_bulk_insertion(
+    sql_request,
+    data_pool,
+    header_data,
+    table_name
+  );
+}
+
+async function find_max_and_bulk_insert(data_lake) {
+  // find max and populate the db
+  await Promise.all(
+    Object.keys(data_lake).map(async (key) => {
+      const current_data_pool = data_lake[key]["data_pool"];
+
+      const [api_group, api_name_and_mode] = key.split("__");
+
+      const [api_name, api_mode] = api_name_and_mode.split("&&");
+
+      // find lengthiest data
+      data_lake[key]["header_data"] = await find_lenghthiest_header(
+        current_data_pool
+      );
+
+      if (api_mode == "normal") {
+        await azure_db_operations(
+          current_data_pool,
+          data_lake[key]["header_data"],
+          api_group + "_" + api_name
+        );
+      } else {
+        await azure_db_operations(
           current_data_pool,
           data_lake[key]["header_data"],
           api_group + "_" + api_name + "_" + api_mode
@@ -392,9 +521,38 @@ async function find_max_and_write_csv(data_lake) {
 async function start_pipeline() {
   const data_lake = {};
 
-  await fetch_all_data(data_lake, instance_details, api_collection);
+  {
+    // fetching all data from Service Titan's API
+    const stop = startStopwatch("data fetching");
 
-  await find_max_and_write_csv(data_lake);
+    await fetch_all_data(data_lake, instance_details, api_collection); // taking 3 mins to fetch all data
+
+    console.log("Time taken for fetching data: ", stop());
+  }
+
+  // await find_total_length(data_lake);
+
+  {
+    // Creating CSVs
+    // await find_max_and_write_csv(data_lake);
+  }
+
+  // {
+  //   // Storing Data into Azure SQL Database
+  //   const stop = startStopwatch("inserting data");
+  //   await find_max_and_populate_db(data_lake);
+  //   console.log("Time taken for inserting data: ", stop());
+  // }
+
+  {
+    // Storing Data into Azure SQL Database using bulk insert
+    const stop = startStopwatch("inserting data");
+    await find_max_and_bulk_insert(data_lake);
+    console.log("Time taken for inserting data: ", stop());
+  }
+
+  // terminate the client
+  await sql.close();
 }
 
 start_pipeline();

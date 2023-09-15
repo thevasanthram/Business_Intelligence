@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const flattenObject = require("./flatten_object");
+const flattenObject = require("./new_flatten_object");
 const extractMatchingValues = require("./extract_matching_values");
 
 // Function to process and write data in batches

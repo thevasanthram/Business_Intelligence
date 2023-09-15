@@ -1,51 +1,34 @@
-async function create_flat_tables(
-  sql_client,
-  flattenedObj,
-  api_group,
-  api_name
-) {
-  const formatted_api_group = api_group.replace(/-/g, "_");
-  const formatted_api_name = api_name.replace(/-/g, "_");
+async function create_flat_tables(sql_request, flattenedObj, table_name) {
+  const fomatted_table_name =
+    table_name.replace(/-/g, "_").replace(/\//g, "_") + "_table";
 
-  const isTableExistsQuery = `SELECT * FROM sys.tables WHERE name = '${
-    formatted_api_group + "_" + formatted_api_name + "_flat_table"
-  }'`;
+  const isTableExistsQuery = `SELECT * FROM sys.tables WHERE name = '${fomatted_table_name}'`;
 
-  const isTableExists = await sql_client.query(isTableExistsQuery);
+  const isTableExists = await sql_request.query(isTableExistsQuery);
 
   if (isTableExists.recordset.length == 0) {
+    let query = "";
     try {
-      const createTableSQL = `CREATE TABLE ${
-        formatted_api_group + "_" + formatted_api_name + "_flat_table"
-      } (${Object.keys(flattenedObj).map(
-        (key) => `${key} NVARCHAR(255)`
-      )} ) WITH
+      const createTableSQL = `CREATE TABLE ${fomatted_table_name} (${Object.keys(
+        flattenedObj
+      ).map((key) => `[${key}] NVARCHAR(max)`)} ) WITH
       (
           DATA_COMPRESSION = PAGE
       );`;
 
       // console.log("createTableSQL: ", createTableSQL);
 
-      const createTable = await sql_client.query(createTableSQL);
+      query = createTableSQL;
+      const createTable = await sql_request.query(createTableSQL);
 
-      console.log(
-        formatted_api_group +
-          "_" +
-          formatted_api_name +
-          "_flat_table " +
-          "created"
-      );
+      // console.log(fomatted_table_name + " created");
+      console.log(fomatted_table_name, "created ");
     } catch (error) {
-      console.log("Flat table creation failed. Try Again!", error);
+      console.log(fomatted_table_name, "creation failed. Trying Again!", error);
+      create_flat_tables(sql_request, flattenedObj, table_name);
     }
   } else {
-    console.log(
-      formatted_api_group +
-        "_" +
-        formatted_api_name +
-        "_flat_table " +
-        "already exists"
-    );
+    console.log(fomatted_table_name + " already exists");
   }
 }
 

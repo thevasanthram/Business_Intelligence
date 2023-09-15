@@ -18,7 +18,7 @@ async function getAPIDataItem(
 
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
-    console.log("Getting API data, wait untill a response appears");
+    // console.log("Getting API data, wait untill a response appears");
 
     let data_pool = [];
     const items_pool = [];
@@ -179,7 +179,7 @@ async function getAPIDataItem(
       count = count + 1;
     } while (shouldIterate);
 
-    console.log("Data fetching completed successfully");
+    // console.log("Data fetching completed successfully");
 
     data_pool = items_pool;
 
