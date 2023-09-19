@@ -737,7 +737,7 @@ async function find_max_and_write_csv(data_lake) {
         // );
 
         // json_to_text_convertor
-        json_to_text_convertor(data_pool, api_group, api_name);
+        json_to_text_convertor(current_data_pool, api_group, api_name);
       } else {
         // await csv_generator(
         //   current_data_pool,
@@ -746,7 +746,7 @@ async function find_max_and_write_csv(data_lake) {
         // );
 
         // json_to_text_convertor
-        json_to_text_convertor(data_pool, api_group, api_name);
+        json_to_text_convertor(current_data_pool, api_group, api_name);
       }
     })
   );
