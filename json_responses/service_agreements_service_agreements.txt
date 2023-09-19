@@ -1,1 +1,0 @@
-{"type":"https://tools.ietf.org/html/rfc7231#section-6.5","status":403,"title":"Scope validation failed. Access token does not have permission to access 'GET /tenant/{tenant}/service-agreements' operation.","traceId":"37988b61-8ed7-49f6-bdd4-64cd041f19fd"}
