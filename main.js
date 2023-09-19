@@ -17,196 +17,532 @@ const csv_generator = require("./modules/csv_generator");
 const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 
 // Service Titan's API parameters
+// const api_collection = [
+//   // {
+//   //   api_group: "accounting",
+//   //   api_name: "invoices",
+//   //   mode: "items",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "adjustments",
+//   //   mode: "items",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "transfers",
+//   //   mode: "items",
+//   // },
+//   // {
+//   //   api_group: "accounting",
+//   //   api_name: "invoices",
+//   // },
+//   // {
+//   //   api_group: "accounting",
+//   //   api_name: "inventory-bills",
+//   // },
+//   // {
+//   //   api_group: "accounting",
+//   //   api_name: "payments",
+//   // },
+//   // {
+//   //   api_group: "crm",
+//   //   api_name: "customers",
+//   // },
+//   // {
+//   //   api_group: "crm",
+//   //   api_name: "bookings",
+//   // },
+//   // {
+//   //   api_group: "crm",
+//   //   api_name: "locations",
+//   // },
+//   // {
+//   //   api_group: "dispatch",
+//   //   api_name: "appointment-assignments",
+//   // },
+//   // {
+//   //   api_group: "dispatch",
+//   //   api_name: "zones",
+//   // },
+//   // {
+//   //   api_group: "equipmentsystems",
+//   //   api_name: "installed-equipment",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "adjustments",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "transfers",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "purchase-orders",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "receipts",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "returns",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "trucks",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "vendors",
+//   // },
+//   // {
+//   //   api_group: "inventory",
+//   //   api_name: "warehouses",
+//   // },
+//   // {
+//   //   api_group: "jpm",
+//   //   api_name: "appointments", // end keyword is used in this api response
+//   // },
+//   // {
+//   //   api_group: "jpm",
+//   //   api_name: "job-types",
+//   // },
+//   // {
+//   //   api_group: "jpm",
+//   //   api_name: "jobs",
+//   // },
+//   // {
+//   //   api_group: "jpm",
+//   //   api_name: "projects",
+//   // },
+//   // {
+//   //   api_group: "marketing",
+//   //   api_name: "campaigns",
+//   // },
+//   // {
+//   //   api_group: "memberships",
+//   //   api_name: "memberships",
+//   // },
+//   // {
+//   //   api_group: "memberships",
+//   //   api_name: "recurring-services",
+//   // },
+//   // {
+//   //   api_group: "memberships",
+//   //   api_name: "recurring-service-events",
+//   // },
+//   // {
+//   //   api_group: "memberships",
+//   //   api_name: "recurring-service-types",
+//   // },
+//   // {
+//   //   api_group: "memberships",
+//   //   api_name: "membership-types",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "payrolls",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "payroll-adjustments",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "gross-pay-items",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "jobs/splits",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "jobs/timesheets",
+//   // },
+//   // {
+//   //   api_group: "payroll",
+//   //   api_name: "timesheet-codes",
+//   // },
+//   // {
+//   //   api_group: "pricebook",
+//   //   api_name: "categories",
+//   // },
+//   // {
+//   //   api_group: "pricebook",
+//   //   api_name: "equipment",
+//   // },
+//   // {
+//   //   api_group: "pricebook",
+//   //   api_name: "materials",
+//   // },
+//   // {
+//   //   api_group: "sales",
+//   //   api_name: "estimates",
+//   // },
+//   // {
+//   //   api_group: "sales",
+//   //   api_name: "estimates/export",
+//   // },
+//   // {
+//   //   api_group: "settings",
+//   //   api_name: "business-units",
+//   // },
+//   // {
+//   //   api_group: "settings",
+//   //   api_name: "employees",
+//   // },
+//   // {
+//   //   api_group: "settings",
+//   //   api_name: "technicians",
+//   // },
+// ];
+
+
+
 const api_collection = [
-  // {
-  //   api_group: "accounting",
-  //   api_name: "invoices",
-  //   mode: "items",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "adjustments",
-  //   mode: "items",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "transfers",
-  //   mode: "items",
-  // },
-  // {
-  //   api_group: "accounting",
-  //   api_name: "invoices",
-  // },
-  // {
-  //   api_group: "accounting",
-  //   api_name: "inventory-bills",
-  // },
-  // {
-  //   api_group: "accounting",
-  //   api_name: "payments",
-  // },
-  // {
-  //   api_group: "crm",
-  //   api_name: "customers",
-  // },
-  // {
-  //   api_group: "crm",
-  //   api_name: "bookings",
-  // },
-  // {
-  //   api_group: "crm",
-  //   api_name: "locations",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "appointment-assignments",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "zones",
-  // },
-  // {
-  //   api_group: "equipmentsystems",
-  //   api_name: "installed-equipment",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "adjustments",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "transfers",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-orders",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "receipts",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "returns",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "trucks",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "vendors",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "warehouses",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "appointments", // end keyword is used in this api response
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "job-types",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "jobs",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "projects",
-  // },
-  // {
-  //   api_group: "marketing",
-  //   api_name: "campaigns",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "memberships",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-services",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-service-events",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-service-types",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "membership-types",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "payrolls",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "payroll-adjustments",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "gross-pay-items",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "jobs/splits",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "jobs/timesheets",
-  // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "timesheet-codes",
-  // },
-  // {
-  //   api_group: "pricebook",
-  //   api_name: "categories",
-  // },
-  // {
-  //   api_group: "pricebook",
-  //   api_name: "equipment",
-  // },
-  // {
-  //   api_group: "pricebook",
-  //   api_name: "materials",
-  // },
-  // {
-  //   api_group: "sales",
-  //   api_name: "estimates",
-  // },
-  // {
-  //   api_group: "sales",
-  //   api_name: "estimates/export",
-  // },
+  {
+    api_group: "accounting",
+    api_name: "invoices",
+    mode: "items",
+  },
+  {
+    api_group: "inventory",
+    api_name: "adjustments",
+    mode: "items",
+  },
+  {
+    api_group: "inventory",
+    api_name: "transfers",
+    mode: "items",
+  },
+  {
+    api_group: "accounting",
+    api_name: "invoices",
+  },
+  {
+    api_group: "accounting",
+    api_name: "inventory-bills",
+  },
+  {
+    api_group: "accounting",
+    api_name: "payments",
+  },
+  {
+    api_group: "accounting",
+    api_name: "ap-payments",
+  },
+  {
+    api_group: "accounting",
+    api_name: "journal-entries",
+  },
+  {
+    api_group: "accounting",
+    api_name: "payment-terms",
+  },
+  {
+    api_group: "accounting",
+    api_name: "payment-types",
+  },
+  {
+    api_group: "accounting",
+    api_name: "tax-zones",
+  },
+  {
+    api_group: "crm",
+    api_name: "customers",
+  },
+  {
+    api_group: "crm",
+    api_name: "bookings",
+  },
+  {
+    api_group: "crm",
+    api_name: "locations",
+  },
+  {
+    api_group: "crm",
+    api_name: "booking-provider-tags",
+  },
+  {
+    api_group: "crm",
+    api_name: "leads",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "appointment-assignments",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "zones",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "non-job-appointments",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "teams",
+  },
+  {
+    api_group: "dispatch",
+    api_name: "technician-shifts",
+  },
+  {
+    api_group: "equipmentsystems",
+    api_name: "installed-equipment",
+  },
+  {
+    api_group: "inventory",
+    api_name: "adjustments",
+  },
+  {
+    api_group: "inventory",
+    api_name: "transfers",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-orders",
+  },
+  {
+    api_group: "inventory",
+    api_name: "receipts",
+  },
+  {
+    api_group: "inventory",
+    api_name: "returns",
+  },
+  {
+    api_group: "inventory",
+    api_name: "trucks",
+  },
+  {
+    api_group: "inventory",
+    api_name: "vendors",
+  },
+  {
+    api_group: "inventory",
+    api_name: "warehouses",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-order-markups",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-order-types",
+  },
+  {
+    api_group: "jbce",
+    api_name: "call-reasons",
+  },
+  {
+    api_group: "jpm",
+    api_name: "appointments", // end keyword is used in this api response
+  },
+  {
+    api_group: "jpm",
+    api_name: "job-types",
+  },
+  {
+    api_group: "jpm",
+    api_name: "jobs",
+  },
+  {
+    api_group: "jpm",
+    api_name: "projects",
+  },
+  {
+    api_group: "jpm",
+    api_name: "job-cancel-reasons",
+  },
+  {
+    api_group: "jpm",
+    api_name: "job-hold-reasons",
+  },
+  {
+    api_group: "jpm",
+    api_name: "project-statuses",
+  },
+  {
+    api_group: "jpm",
+    api_name: "project-substatuses",
+  },
+  {
+    api_group: "marketing",
+    api_name: "campaigns",
+  },
+  {
+    api_group: "marketing",
+    api_name: "categories",
+  },
+  {
+    api_group: "marketing",
+    api_name: "suppressions",
+  },
+  {
+    api_group: "marketing",
+    api_name: "costs",
+  },
+  {
+    api_group: "marketingreputation",
+    api_name: "reviews",
+  },
+  {
+    api_group: "memberships",
+    api_name: "memberships",
+  },
+  {
+    api_group: "memberships",
+    api_name: "recurring-services",
+  },
+  {
+    api_group: "memberships",
+    api_name: "recurring-service-events",
+  },
+  {
+    api_group: "memberships",
+    api_name: "recurring-service-types",
+  },
+  {
+    api_group: "memberships",
+    api_name: "membership-types",
+  },
+  {
+    api_group: "payroll",
+    api_name: "payrolls",
+  },
+  {
+    api_group: "payroll",
+    api_name: "payroll-adjustments",
+  },
+  {
+    api_group: "payroll",
+    api_name: "gross-pay-items",
+  },
+  {
+    api_group: "payroll",
+    api_name: "jobs/splits",
+  },
+  {
+    api_group: "payroll",
+    api_name: "jobs/timesheets",
+  },
+  {
+    api_group: "payroll",
+    api_name: "timesheet-codes",
+  },
+  {
+    api_group: "payroll",
+    api_name: "activity-codes",
+  },
+  {
+    api_group: "payroll",
+    api_name: "locations/rates",
+  },
+  {
+    api_group: "payroll",
+    api_name: "non-job-timesheets",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "categories",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "equipment",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "materials",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "discounts-and-fees",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "images",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "services",
+  },
+  {
+    api_group: "pricebook",
+    api_name: "materialsmarkup",
+  },
+  {
+    api_group: "reporting",
+    api_name: "report-categories",
+  },
+  {
+    api_group: "sales",
+    api_name: "estimates",
+  },
+  {
+    api_group: "sales",
+    api_name: "estimates/export",
+  },
+  {
+    api_group: "sales",
+    api_name: "estimates/items",
+  },
+  {
+    api_group: "service-agreements",
+    api_name: "service-agreements",
+  },
   {
     api_group: "settings",
     api_name: "business-units",
   },
-  // {
-  //   api_group: "settings",
-  //   api_name: "employees",
-  // },
-  // {
-  //   api_group: "settings",
-  //   api_name: "technicians",
-  // },
+  {
+    api_group: "settings",
+    api_name: "employees",
+  },
+  {
+    api_group: "settings",
+    api_name: "technicians",
+  },
+  {
+    api_group: "settings",
+    api_name: "tag-types",
+  },
+  {
+    api_group: "settings",
+    api_name: "user-roles",
+  },
+  {
+    api_group: "taskmanagement",
+    api_name: "data",
+  },
+  {
+    api_group: "telecom",
+    api_name: "export/calls",
+  },
+  {
+    api_group: "telecom",
+    api_name: "calls",
+  },
+  {
+    api_group: "forms",
+    api_name: "forms",
+  },
+  {
+    api_group: "forms",
+    api_name: "submissions",
+  },
 ];
 
 const instance_details = [
-  {
-    instance_name: "Expert Heating and Cooling Co LLC",
-    tenant_id: 1011756844,
-    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  },
+  // {
+  //   instance_name: "Expert Heating and Cooling Co LLC",
+  //   tenant_id: 1011756844,
+  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  // },
   {
     instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     tenant_id: 1475606437,
@@ -214,13 +550,13 @@ const instance_details = [
     client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
     client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
   },
-  {
-    instance_name: "Family Heating & Cooling Co LLC",
-    tenant_id: 1056112968,
-    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  },
+  // {
+  //   instance_name: "Family Heating & Cooling Co LLC",
+  //   tenant_id: 1056112968,
+  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  // },
 ];
 
 const params_header = {
@@ -394,23 +730,23 @@ async function find_max_and_write_csv(data_lake) {
       );
 
       if (api_mode == "normal") {
-        await csv_generator(
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name
-        );
+        // await csv_generator(
+        //   current_data_pool,
+        //   data_lake[key]["header_data"],
+        //   api_group + "_" + api_name
+        // );
 
         // json_to_text_convertor
-        // json_to_text_convertor(data_pool, api_group, api_name);
+        json_to_text_convertor(data_pool, api_group, api_name);
       } else {
-        await csv_generator(
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name + "_" + api_mode
-        );
+        // await csv_generator(
+        //   current_data_pool,
+        //   data_lake[key]["header_data"],
+        //   api_group + "_" + api_name + "_" + api_mode
+        // );
 
         // json_to_text_convertor
-        // json_to_text_convertor(data_pool, api_group, api_name);
+        json_to_text_convertor(data_pool, api_group, api_name);
       }
     })
   );
@@ -534,7 +870,7 @@ async function start_pipeline() {
 
   {
     // Creating CSVs
-    // await find_max_and_write_csv(data_lake);
+    await find_max_and_write_csv(data_lake);
   }
 
   // {
@@ -546,13 +882,13 @@ async function start_pipeline() {
 
   {
     // Storing Data into Azure SQL Database using bulk insert
-    const stop = startStopwatch("inserting data");
-    await find_max_and_bulk_insert(data_lake);
-    console.log("Time taken for inserting data: ", stop());
+    // const stop = startStopwatch("inserting data");
+    // await find_max_and_bulk_insert(data_lake);
+    // console.log("Time taken for inserting data: ", stop());
   }
 
   // terminate the client
-  await sql.close();
+  // await sql.close();
 }
 
 start_pipeline();
