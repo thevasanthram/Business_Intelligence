@@ -13,10 +13,17 @@ async function create_sql_connection() {
     },
   };
 
-  await sql.connect(config);
+  let request;
 
-  // Create a request object
-  const request = new sql.Request();
+  try {
+    await sql.connect(config);
+
+    // Create a request object
+    request = new sql.Request();
+  } catch (err) {
+    console.log("Error while creating request object, Trying Again!", err);
+    request = create_sql_connection();
+  }
 
   return request; // Return both the pool and request objects
 }

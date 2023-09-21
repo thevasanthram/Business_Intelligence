@@ -1,5 +1,3 @@
-const fs = require("fs");
-const path = require("path");
 const sql = require("mssql");
 
 // modules
@@ -710,18 +708,16 @@ async function find_max_and_write_csv(data_lake) {
         //   data_lake[key]["header_data"],
         //   api_group + "_" + api_name
         // );
-
         // json_to_text_convertor
-        json_to_text_convertor(current_data_pool, api_group, api_name);
+        // json_to_text_convertor(current_data_pool, api_group, api_name);
       } else {
         // await csv_generator(
         //   current_data_pool,
         //   data_lake[key]["header_data"],
         //   api_group + "_" + api_name + "_" + api_mode
         // );
-
         // json_to_text_convertor
-        json_to_text_convertor(current_data_pool, api_group, api_name);
+        // json_to_text_convertor(current_data_pool, api_group, api_name);
       }
     })
   );
@@ -771,14 +767,17 @@ async function find_total_records(data_lake) {
   console.log("total_records: ", total_records);
 }
 
-async function azure_db_operations(data_pool, header_data, table_name) {
-  // creating a client for azure sql database operations
-  const sql_request = await create_sql_connection();
-
-  const sql_pool = await create_sql_pool();
-
+async function azure_db_operations(
+  sql_request,
+  sql_pool,
+  data_pool,
+  header_data,
+  table_name
+) {
   // create flat tables in azure sql database
-  // await create_flat_tables(sql_request, header_data, table_name);
+  await create_flat_tables(sql_request, header_data, table_name);
+
+  await flat_data_bulk_insertion(sql_pool, data_pool, header_data, table_name);
 
   // create star schema tables
   // await create_star_tables(sql_client, flattenedSampleObj, api_name);
@@ -792,11 +791,14 @@ async function azure_db_operations(data_pool, header_data, table_name) {
   //   table_name,
   //   inserting_batch_limit
   // );
-
-  await flat_data_bulk_insertion(sql_pool, data_pool, header_data, table_name);
 }
 
 async function find_max_and_bulk_insert(data_lake) {
+  // creating a client for azure sql database operations
+  const sql_request = await create_sql_connection();
+
+  const sql_pool = await create_sql_pool();
+
   // find max and populate the db
   await Promise.all(
     Object.keys(data_lake).map(async (key) => {
@@ -813,12 +815,16 @@ async function find_max_and_bulk_insert(data_lake) {
 
       if (api_mode == "normal") {
         await azure_db_operations(
+          sql_request,
+          sql_pool,
           current_data_pool,
           data_lake[key]["header_data"],
           api_group + "_" + api_name
         );
       } else {
         await azure_db_operations(
+          sql_request,
+          sql_pool,
           current_data_pool,
           data_lake[key]["header_data"],
           api_group + "_" + api_name + "_" + api_mode
@@ -826,6 +832,9 @@ async function find_max_and_bulk_insert(data_lake) {
       }
     })
   );
+
+  // Close the connection pool
+  await sql.close();
 }
 
 // for automatic mass ETL
@@ -835,25 +844,9 @@ async function start_pipeline() {
   {
     // fetching all data from Service Titan's API
     const stop = startStopwatch("data fetching");
-
     await fetch_all_data(data_lake, instance_details, api_collection); // taking 3 mins to fetch all data
-
     console.log("Time taken for fetching data: ", stop());
   }
-
-  // await find_total_length(data_lake);
-
-  {
-    // Creating CSVs
-    // await find_max_and_write_csv(data_lake);
-  }
-
-  // {
-  //   // Storing Data into Azure SQL Database
-  //   const stop = startStopwatch("inserting data");
-  //   await find_max_and_populate_db(data_lake);
-  //   console.log("Time taken for inserting data: ", stop());
-  // }
 
   {
     // Storing Data into Azure SQL Database using bulk insert
@@ -862,8 +855,19 @@ async function start_pipeline() {
     console.log("Time taken for inserting data: ", stop());
   }
 
-  // terminate the client
-  // await sql.close();
+  // await find_total_length(data_lake);
+
+  // {
+  // Creating CSVs
+  // await find_max_and_write_csv(data_lake);
+  // }
+
+  // {
+  //   // Storing Data into Azure SQL Database
+  //   const stop = startStopwatch("inserting data");
+  //   await find_max_and_populate_db(data_lake);
+  //   console.log("Time taken for inserting data: ", stop());
+  // }
 }
 
 start_pipeline();
