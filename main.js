@@ -799,6 +799,8 @@ async function find_max_and_bulk_insert(data_lake) {
 
   const sql_pool = await create_sql_pool();
 
+  // console.log("connection & sql pool", sql_request, sql_pool);
+
   // find max and populate the db
   await Promise.all(
     Object.keys(data_lake).map(async (key) => {

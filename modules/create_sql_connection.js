@@ -33,7 +33,7 @@ async function create_sql_connection() {
     request = new sql.Request();
   } catch (err) {
     console.log("Error while creating request object, Trying Again!", err);
-    request = create_sql_connection();
+    request = await create_sql_connection();
   }
 
   return request; // Return both the pool and request objects

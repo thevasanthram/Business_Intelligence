@@ -10,6 +10,7 @@ async function getAPIData(
   api_name,
   params_header
 ) {
+  let data_pool = [];
   try {
     // automatic api fetch data code
     let count = 0;
@@ -21,8 +22,6 @@ async function getAPIData(
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
     // console.log("Getting API data, wait untill a response appears");
-
-    const data_pool = [];
 
     const params_condition =
       "?" +
@@ -204,14 +203,24 @@ async function getAPIData(
     } while (shouldIterate);
 
     // console.log("Data fetching completed successfully");
-
-    return data_pool;
   } catch (error) {
     console.error(
-      `Data fetching failed for ${api_group} - ${api_name}. Try Again!:`,
+      `Data fetching failed for ${api_group} - ${api_name}. Trying Again!:`,
       error
     );
+
+    data_pool = await getAPIData(
+      access_token,
+      app_key,
+      instance_name,
+      tenant_id,
+      api_group,
+      api_name,
+      params_header
+    );
   }
+
+  return data_pool;
 }
 
 module.exports = getAPIData;

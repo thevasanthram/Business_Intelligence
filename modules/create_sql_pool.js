@@ -18,7 +18,14 @@ async function create_sql_connection_pool() {
     requestTimeout: 60000 * 60 * 24, // Set the request timeout to 60 seconds (adjust as needed)
   }).connect();
 
-  const request = new mssql.Request(pool);
+  let request;
+
+  try {
+    request = new mssql.Request(pool);
+  } catch (err) {
+    console.log("Error while creating sql pool connection. Trying Again!", err);
+    request = await create_sql_connection_pool();
+  }
 
   return request; // Return both the pool and request objects
 }
