@@ -273,83 +273,94 @@ function startStopwatch(task_name) {
 
 async function fetch_all_data(data_lake, instance_details, api_collection) {
   // collect all data from all the instance
-  await Promise.all(
-    instance_details.map(async (instance_data) => {
-      const instance_name = instance_data["instance_name"];
-      const tenant_id = instance_data["tenant_id"];
-      const app_key = instance_data["app_key"];
-      const client_id = instance_data["client_id"];
-      const client_secret = instance_data["client_secret"];
+  const api_batch_limit = 10;
+  for (
+    let api_count = 0;
+    api_count < instance_details.length;
+    api_count = api_count + api_batch_limit
+  ) {
+    await Promise.all(
+      instance_details
+        .slice(api_count, api_count + api_batch_limit)
+        .map(async (instance_data) => {
+          const instance_name = instance_data["instance_name"];
+          const tenant_id = instance_data["tenant_id"];
+          const app_key = instance_data["app_key"];
+          const client_id = instance_data["client_id"];
+          const client_secret = instance_data["client_secret"];
 
-      // signing a new access token in Service Titan's API
-      const access_token = await getAccessToken(client_id, client_secret);
+          // signing a new access token in Service Titan's API
+          const access_token = await getAccessToken(client_id, client_secret);
 
-      await Promise.all(
-        api_collection.map(async (api_data) => {
-          const api_group_temp = api_data["api_group"];
-          const api_name_temp = api_data["api_name"];
+          await Promise.all(
+            api_collection.map(async (api_data) => {
+              const api_group_temp = api_data["api_group"];
+              const api_name_temp = api_data["api_name"];
 
-          if (!api_data["mode"]) {
-            // for normal
-            if (
-              !data_lake[
-                api_group_temp + "__" + api_name_temp + "&&" + "normal"
-              ]
-            ) {
-              data_lake[
-                api_group_temp + "__" + api_name_temp + "&&" + "normal"
-              ] = {
-                data_pool: [],
-                header_data: [],
-              };
-            }
+              if (!api_data["mode"]) {
+                // for normal
+                if (
+                  !data_lake[
+                    api_group_temp + "__" + api_name_temp + "&&" + "normal"
+                  ]
+                ) {
+                  data_lake[
+                    api_group_temp + "__" + api_name_temp + "&&" + "normal"
+                  ] = {
+                    data_pool: [],
+                    header_data: [],
+                  };
+                }
 
-            // continuously fetching whole api data
-            const data_pool = await getAPIData(
-              access_token,
-              app_key,
-              instance_name,
-              tenant_id,
-              api_group_temp,
-              api_name_temp,
-              params_header
-            );
+                // continuously fetching whole api data
+                const data_pool = await getAPIData(
+                  access_token,
+                  app_key,
+                  instance_name,
+                  tenant_id,
+                  api_group_temp,
+                  api_name_temp,
+                  params_header
+                );
 
-            data_lake[api_group_temp + "__" + api_name_temp + "&&" + "normal"][
-              "data_pool"
-            ].push(...data_pool);
-          } else {
-            // for items
-            if (
-              !data_lake[api_group_temp + "__" + api_name_temp + "&&" + "items"]
-            ) {
-              data_lake[
-                api_group_temp + "__" + api_name_temp + "&&" + "items"
-              ] = {
-                data_pool: [],
-                header_data: [],
-              };
-            }
+                data_lake[
+                  api_group_temp + "__" + api_name_temp + "&&" + "normal"
+                ]["data_pool"].push(...data_pool);
+              } else {
+                // for items
+                if (
+                  !data_lake[
+                    api_group_temp + "__" + api_name_temp + "&&" + "items"
+                  ]
+                ) {
+                  data_lake[
+                    api_group_temp + "__" + api_name_temp + "&&" + "items"
+                  ] = {
+                    data_pool: [],
+                    header_data: [],
+                  };
+                }
 
-            // continuously fetching whole api data for to crete item
-            const data_pool = await getAPIDataItem(
-              access_token,
-              app_key,
-              instance_name,
-              tenant_id,
-              api_group_temp,
-              api_name_temp,
-              params_header
-            );
+                // continuously fetching whole api data for to crete item
+                const data_pool = await getAPIDataItem(
+                  access_token,
+                  app_key,
+                  instance_name,
+                  tenant_id,
+                  api_group_temp,
+                  api_name_temp,
+                  params_header
+                );
 
-            data_lake[api_group_temp + "__" + api_name_temp + "&&" + "items"][
-              "data_pool"
-            ].push(...data_pool);
-          }
+                data_lake[
+                  api_group_temp + "__" + api_name_temp + "&&" + "items"
+                ]["data_pool"].push(...data_pool);
+              }
+            })
+          );
         })
-      );
-    })
-  );
+    );
+  }
 }
 
 async function find_max_and_write_csv(data_lake) {
