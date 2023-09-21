@@ -198,340 +198,6 @@ const api_collection = [
   },
 ];
 
-// const api_collection = [
-//   {
-//     api_group: "accounting",
-//     api_name: "invoices",
-//     mode: "items",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "adjustments",
-//     mode: "items",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "transfers",
-//     mode: "items",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "invoices",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "inventory-bills",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "payments",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "ap-payments",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "journal-entries",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "payment-terms",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "payment-types",
-//   },
-//   {
-//     api_group: "accounting",
-//     api_name: "tax-zones",
-//   },
-//   {
-//     api_group: "crm",
-//     api_name: "customers",
-//   },
-//   {
-//     api_group: "crm",
-//     api_name: "bookings",
-//   },
-//   {
-//     api_group: "crm",
-//     api_name: "locations",
-//   },
-//   {
-//     api_group: "crm",
-//     api_name: "booking-provider-tags",
-//   },
-//   {
-//     api_group: "crm",
-//     api_name: "leads",
-//   },
-//   {
-//     api_group: "dispatch",
-//     api_name: "appointment-assignments",
-//   },
-//   {
-//     api_group: "dispatch",
-//     api_name: "zones",
-//   },
-//   {
-//     api_group: "dispatch",
-//     api_name: "non-job-appointments",
-//   },
-//   {
-//     api_group: "dispatch",
-//     api_name: "teams",
-//   },
-//   {
-//     api_group: "dispatch",
-//     api_name: "technician-shifts",
-//   },
-//   {
-//     api_group: "equipmentsystems",
-//     api_name: "installed-equipment",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "adjustments",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "transfers",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "purchase-orders",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "receipts",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "returns",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "trucks",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "vendors",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "warehouses",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "purchase-order-markups",
-//   },
-//   {
-//     api_group: "inventory",
-//     api_name: "purchase-order-types",
-//   },
-//   {
-//     api_group: "jbce",
-//     api_name: "call-reasons",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "appointments", // end keyword is used in this api response
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "job-types",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "jobs",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "projects",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "job-cancel-reasons",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "job-hold-reasons",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "project-statuses",
-//   },
-//   {
-//     api_group: "jpm",
-//     api_name: "project-substatuses",
-//   },
-//   {
-//     api_group: "marketing",
-//     api_name: "campaigns",
-//   },
-//   {
-//     api_group: "marketing",
-//     api_name: "categories",
-//   },
-//   {
-//     api_group: "marketing",
-//     api_name: "suppressions",
-//   },
-//   {
-//     api_group: "marketing",
-//     api_name: "costs",
-//   },
-//   {
-//     api_group: "marketingreputation",
-//     api_name: "reviews",
-//   },
-//   {
-//     api_group: "memberships",
-//     api_name: "memberships",
-//   },
-//   {
-//     api_group: "memberships",
-//     api_name: "recurring-services",
-//   },
-//   {
-//     api_group: "memberships",
-//     api_name: "recurring-service-events",
-//   },
-//   {
-//     api_group: "memberships",
-//     api_name: "recurring-service-types",
-//   },
-//   {
-//     api_group: "memberships",
-//     api_name: "membership-types",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "payrolls",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "payroll-adjustments",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "gross-pay-items",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "jobs/splits",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "jobs/timesheets",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "timesheet-codes",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "activity-codes",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "locations/rates",
-//   },
-//   {
-//     api_group: "payroll",
-//     api_name: "non-job-timesheets",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "categories",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "equipment",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "materials",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "discounts-and-fees",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "images",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "services",
-//   },
-//   {
-//     api_group: "pricebook",
-//     api_name: "materialsmarkup",
-//   },
-//   {
-//     api_group: "reporting",
-//     api_name: "report-categories",
-//   },
-//   {
-//     api_group: "sales",
-//     api_name: "estimates",
-//   },
-//   {
-//     api_group: "sales",
-//     api_name: "estimates/export",
-//   },
-//   {
-//     api_group: "sales",
-//     api_name: "estimates/items",
-//   },
-//   {
-//     api_group: "service-agreements",
-//     api_name: "service-agreements",
-//   },
-//   {
-//     api_group: "settings",
-//     api_name: "business-units",
-//   },
-//   {
-//     api_group: "settings",
-//     api_name: "employees",
-//   },
-//   {
-//     api_group: "settings",
-//     api_name: "technicians",
-//   },
-//   {
-//     api_group: "settings",
-//     api_name: "tag-types",
-//   },
-//   {
-//     api_group: "settings",
-//     api_name: "user-roles",
-//   },
-//   {
-//     api_group: "taskmanagement",
-//     api_name: "data",
-//   },
-//   {
-//     api_group: "telecom",
-//     api_name: "export/calls",
-//   },
-//   {
-//     api_group: "telecom",
-//     api_name: "calls",
-//   },
-//   {
-//     api_group: "forms",
-//     api_name: "forms",
-//   },
-//   {
-//     api_group: "forms",
-//     api_name: "submissions",
-//   },
-// ];
-
 const instance_details = [
   {
     instance_name: "Expert Heating and Cooling Co LLC",
@@ -688,39 +354,48 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
 
 async function find_max_and_write_csv(data_lake) {
   // find max and write into csv
-  await Promise.all(
-    Object.keys(data_lake).map(async (key) => {
-      const current_data_pool = data_lake[key]["data_pool"];
-      const current_instance_name = data_lake[key]["instance_name"];
+  const api_batch_limit = 10;
+  for (
+    let api_count = 0;
+    api_count < Object.keys(data_lake).length;
+    api_count = api_count + api_batch_limit
+  ) {
+    await Promise.all(
+      Object.keys(data_lake)
+        .slice(api_count, api_count + api_batch_limit)
+        .map(async (key) => {
+          const current_data_pool = data_lake[key]["data_pool"];
+          const current_instance_name = data_lake[key]["instance_name"];
 
-      const [api_group, api_name_and_mode] = key.split("__");
+          const [api_group, api_name_and_mode] = key.split("__");
 
-      const [api_name, api_mode] = api_name_and_mode.split("&&");
+          const [api_name, api_mode] = api_name_and_mode.split("&&");
 
-      // find lengthiest data
-      data_lake[key]["header_data"] = await find_lenghthiest_header(
-        current_data_pool
-      );
+          // find lengthiest data
+          data_lake[key]["header_data"] = await find_lenghthiest_header(
+            current_data_pool
+          );
 
-      if (api_mode == "normal") {
-        // await csv_generator(
-        //   current_data_pool,
-        //   data_lake[key]["header_data"],
-        //   api_group + "_" + api_name
-        // );
-        // json_to_text_convertor
-        // json_to_text_convertor(current_data_pool, api_group, api_name);
-      } else {
-        // await csv_generator(
-        //   current_data_pool,
-        //   data_lake[key]["header_data"],
-        //   api_group + "_" + api_name + "_" + api_mode
-        // );
-        // json_to_text_convertor
-        // json_to_text_convertor(current_data_pool, api_group, api_name);
-      }
-    })
-  );
+          if (api_mode == "normal") {
+            // await csv_generator(
+            //   current_data_pool,
+            //   data_lake[key]["header_data"],
+            //   api_group + "_" + api_name
+            // );
+            // json_to_text_convertor
+            // json_to_text_convertor(current_data_pool, api_group, api_name);
+          } else {
+            // await csv_generator(
+            //   current_data_pool,
+            //   data_lake[key]["header_data"],
+            //   api_group + "_" + api_name + "_" + api_mode
+            // );
+            // json_to_text_convertor
+            // json_to_text_convertor(current_data_pool, api_group, api_name);
+          }
+        })
+    );
+  }
 }
 
 async function find_max_and_populate_db(data_lake) {
@@ -767,6 +442,60 @@ async function find_total_records(data_lake) {
   console.log("total_records: ", total_records);
 }
 
+async function find_max_and_bulk_insert(data_lake) {
+  // creating a client for azure sql database operations
+  const sql_request = await create_sql_connection();
+
+  const sql_pool = await create_sql_pool();
+
+  // console.log("connection & sql pool", sql_request, sql_pool);
+
+  // find max and populate the db
+  const api_batch_limit = 10;
+  for (
+    let api_count = 0;
+    api_count < Object.keys(data_lake).length;
+    api_count = api_count + api_batch_limit
+  ) {
+    await Promise.all(
+      Object.keys(data_lake)
+        .slice(api_count, api_count + api_batch_limit)
+        .map(async (key) => {
+          const current_data_pool = data_lake[key]["data_pool"];
+
+          const [api_group, api_name_and_mode] = key.split("__");
+
+          const [api_name, api_mode] = api_name_and_mode.split("&&");
+
+          // find lengthiest data
+          data_lake[key]["header_data"] = await find_lenghthiest_header(
+            current_data_pool
+          );
+
+          if (api_mode == "normal") {
+            await azure_db_operations(
+              sql_request,
+              sql_pool,
+              current_data_pool,
+              data_lake[key]["header_data"],
+              api_group + "_" + api_name
+            );
+          } else {
+            await azure_db_operations(
+              sql_request,
+              sql_pool,
+              current_data_pool,
+              data_lake[key]["header_data"],
+              api_group + "_" + api_name + "_" + api_mode
+            );
+          }
+        })
+    );
+  }
+  // Close the connection pool
+  await sql.close();
+}
+
 async function azure_db_operations(
   sql_request,
   sql_pool,
@@ -791,52 +520,6 @@ async function azure_db_operations(
   //   table_name,
   //   inserting_batch_limit
   // );
-}
-
-async function find_max_and_bulk_insert(data_lake) {
-  // creating a client for azure sql database operations
-  const sql_request = await create_sql_connection();
-
-  const sql_pool = await create_sql_pool();
-
-  // console.log("connection & sql pool", sql_request, sql_pool);
-
-  // find max and populate the db
-  await Promise.all(
-    Object.keys(data_lake).map(async (key) => {
-      const current_data_pool = data_lake[key]["data_pool"];
-
-      const [api_group, api_name_and_mode] = key.split("__");
-
-      const [api_name, api_mode] = api_name_and_mode.split("&&");
-
-      // find lengthiest data
-      data_lake[key]["header_data"] = await find_lenghthiest_header(
-        current_data_pool
-      );
-
-      if (api_mode == "normal") {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name
-        );
-      } else {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name + "_" + api_mode
-        );
-      }
-    })
-  );
-
-  // Close the connection pool
-  await sql.close();
 }
 
 // for automatic mass ETL
