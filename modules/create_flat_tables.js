@@ -16,7 +16,7 @@ async function create_flat_tables(sql_request, flattenedObj, table_name) {
           DATA_COMPRESSION = PAGE
       );`;
 
-      // console.log("createTableSQL: ", createTableSQL);
+      console.log("createTableSQL: ", createTableSQL);
 
       query = createTableSQL;
       const createTable = await sql_request.query(createTableSQL);

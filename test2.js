@@ -1,56 +1,36 @@
-const flattenObject = require("./modules/new_flatten_object");
+const mssql = require("mssql");
 
-console.log(
-  flattenObject({
-    instance_name: "Family Heating & Cooling Co LLC",
-    id: 28303666,
-    syncStatus: "Exported",
-    summary:
-      "Tested unit is dirty outside and low on charge. Cleaned the condenser . Brought charge up to factory specifications. Saw no damage from electrician, unit is operating properly at this time.",
-    referenceNumber: "28303663",
-    invoiceDate: "2023-06-09T00:00:00Z",
-    dueDate: "2023-06-09T00:00:00Z",
-    subTotal: "251.67",
-    salesTax: "0.00",
-    salesTaxCode: null,
-    total: "251.67",
-    balance: "251.67",
-    invoiceType: null,
-    customer: { id: 22934660, name: "KNL - Meilke, David" },
-    customerAddress: {
-      street: "703 E. Mitchell St.",
-      unit: "",
-      city: "Petoskey",
-      state: "MI",
-      zip: "49770",
-      country: "",
-    },
-    location: { id: 22937406, name: "KNL - Meilke, David" },
-    locationAddress: {
-      street: "703 E. Mitchell St.",
-      unit: "",
-      city: "Petoskey",
-      state: "MI",
-      zip: "49770",
-      country: "",
-    },
-    businessUnit: { id: 16118478, name: "KNL HVAC SRV RES" },
-    termName: "",
-    createdBy: "ScottBennett",
-    batch: { id: 55147653, number: "133", name: "KNL AR inv 6/9/23 dm" },
-    depositedOn: "2023-07-16T01:10:02.253459Z",
-    createdOn: "2023-06-09T12:00:36.5472956Z",
-    modifiedOn: "2023-07-16T01:10:20.8356387Z",
-    adjustmentToId: null,
-    job: { id: 28303663, number: "28303663", type: "No Cool     RES/KNL" },
-    projectId: null,
-    royalty: { status: "Pending", date: null, sentOn: null, memo: null },
-    employeeInfo: {
-      id: 11138231,
-      name: "ScottBennett",
-      modifiedOn: "2023-08-15T20:50:45.1232863Z",
-    },
-    commissionEligibilityDate: null,
-    customFields: null,
-  })
-);
+async function insertData() {
+  try {
+    const pool = await new mssql.ConnectionPool({
+      user: "pinnacleadmin",
+      password: "PiTestBi01",
+      server: "pinnaclemep.database.windows.net",
+      database: "hvac_db",
+      requestTimeout: 60000 * 60 * 24, // Set the request timeout to 60 seconds (adjust as needed)
+    }).connect();
+
+    const table = new mssql.Table("legal_entity");
+    table.create = true; // Do not create the table if it doesn't exist
+
+    // Define the columns
+    table.columns.add("id", mssql.Int ,{}); // Specify this column as the primary key
+    table.columns.add("legal_name", mssql.NVarChar(mssql.MAX));
+
+    // Add data rows
+    table.rows.add(1, "Expert Heating and Cooling");
+    table.rows.add(2, "Parket-Arntz Plumbing and Heating");
+    table.rows.add(3, "Family Heating and Cooling");
+
+    console.log("table: ", table.columns);
+
+    const request = new mssql.Request(pool);
+
+    const result = await request.bulk(table);
+    console.log(`Bulk insert completed. Rows affected: ${result.rowsAffected}`);
+  } catch (err) {
+    console.error("Error:", err);
+  }
+}
+
+insertData();

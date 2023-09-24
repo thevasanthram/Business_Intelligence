@@ -10,7 +10,7 @@ async function getAPIData(
   api_name,
   params_header
 ) {
-  let data_pool = [];
+  let data_pool;
   try {
     // automatic api fetch data code
     let count = 0;
@@ -22,6 +22,8 @@ async function getAPIData(
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
     // console.log("Getting API data, wait untill a response appears");
+
+    data_pool = [];
 
     const params_condition =
       "?" +
@@ -64,8 +66,16 @@ async function getAPIData(
 
             delete record["items"];
 
-            if (record["assests"]) {
+            if (record["assets"]) {
               delete record["assets"];
+            }
+
+            if (record["appliedTo"]) {
+              delete record["appliedTo"];
+            }
+
+            if (record["subcategories"]) {
+              delete record["subcategories"];
             }
 
             if (record["otherVendors"]) {
@@ -130,8 +140,6 @@ async function getAPIData(
 
       shouldIterate = api_data["hasMore"];
 
-      api_data["data"];
-
       try {
         const pusing_item = api_data["data"].map((record, index) => {
           if (record["end"]) {
@@ -142,8 +150,16 @@ async function getAPIData(
 
           delete record["items"];
 
-          if (record["assests"]) {
+          if (record["assets"]) {
             delete record["assets"];
+          }
+
+          if (record["appliedTo"]) {
+            delete record["appliedTo"];
+          }
+
+          if (record["subcategories"]) {
+            delete record["subcategories"];
           }
 
           if (record["otherVendors"]) {
@@ -205,11 +221,11 @@ async function getAPIData(
     // console.log("Data fetching completed successfully");
   } catch (error) {
     console.error(
-      `Data fetching failed for ${api_group} - ${api_name}. Trying Again!:`,
+      `Data fetching failed for ${api_group} - ${api_name}. Try Again!:`,
       error
     );
 
-    data_pool = await getAPIData(
+    data_pool = getAPIData(
       access_token,
       app_key,
       instance_name,

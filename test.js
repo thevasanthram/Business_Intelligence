@@ -1,27 +1,33 @@
-const sql = require("mssql");
+const fs = require("fs");
 
-// Create a table object with create option set to false
-const table = new sql.Table("YourTableName");
-table.create = false; // You don't need to define columns
+// Read the SQL file
+const sqlFileContent = fs.readFileSync(
+  "./error_responses/location.txt",
+  "utf8"
+);
 
-// Sample data as an array of arrays
-const data = [
-  ["Value1", 123],
-  ["Value2", 456],
-  // Add more rows as needed
-];
+// Regular expression pattern to match "VALUES (number,"
+const pattern = /VALUES \((\d+),/g;
 
-// Loop through the data and add rows to the table
-data.forEach((row) => {
-  table.rows.add(...row); // Spread the elements of the row array as arguments
-});
+// Array to store extracted IDs
+const ids = [];
 
-// Perform the bulk insert
-const request = new sql.Request();
-request.bulk(table, (err, result) => {
-  if (err) {
-    console.error("Bulk insert error:", err);
-  } else {
-    console.log("Bulk insert completed:", result);
+// Iterate through each line and find all matches
+let match;
+while ((match = pattern.exec(sqlFileContent)) !== null) {
+  const id = parseInt(match[1], 10);
+  ids.push(id);
+}
+
+fs.writeFile(
+  "./error_responses/new.txt",
+  JSON.stringify(ids),
+  { flag: "a" },
+  (err) => {
+    if (err) {
+      console.error("Error writing to file:", err);
+    }
   }
-});
+);
+
+console.log(ids);

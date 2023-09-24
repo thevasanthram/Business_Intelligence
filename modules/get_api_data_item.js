@@ -11,6 +11,7 @@ async function getAPIDataItem(
   api_name,
   params_header
 ) {
+  let data_pool = [];
   try {
     // automatic api fetch data code
     let count = 0;
@@ -20,7 +21,6 @@ async function getAPIDataItem(
 
     // console.log("Getting API data, wait untill a response appears");
 
-    let data_pool = [];
     const items_pool = [];
 
     const params_condition =
@@ -182,14 +182,24 @@ async function getAPIDataItem(
     // console.log("Data fetching completed successfully");
 
     data_pool = items_pool;
-
-    return data_pool;
   } catch (error) {
     console.error(
       `Data fetching failed for ${api_group} - ${api_name}. Try Again!:`,
       error
     );
+
+    data_pool = await getAPIDataItem(
+      access_token,
+      app_key,
+      instance_name,
+      tenant_id,
+      api_group,
+      api_name,
+      params_header
+    );
   }
+
+  return data_pool;
 }
 
 module.exports = getAPIDataItem;

@@ -6,7 +6,7 @@ async function create_tables(data_pool, flattenedObj) {
   console.log("Connected to Azure SQL Database");
 
   const isTableExistsQuery =
-    "SELECT * FROM sys.tables WHERE name = 'invoice_details'";
+    "SELECT * FROM sys.tables WHERE name = 'invoice_details' ";
 
   const isTableExists = await sql.query(isTableExistsQuery);
 
