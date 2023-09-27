@@ -30,7 +30,7 @@ CREATE TABLE customer_details (
   name NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   type NVARCHAR(MAX) NULL,
-  creation_date DATETIME2 NULL,
+  creation_date DATETIME22 NULL,
   address_street NVARCHAR(MAX) NULL,
   address_unit NVARCHAR(MAX) NULL,
   address_city NVARCHAR(MAX) NULL,
@@ -63,9 +63,9 @@ CREATE TABLE job_details (
   job_type_name NVARCHAR(MAX) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
-  job_start_time DATETIME NULL,
+  job_start_time DATETIME2 NULL,
   project_id INT NULL,
-  job_completion_time DATETIME NULL,
+  job_completion_time DATETIME2 NULL,
   business_unit_id INT NOT NULL,
   location_id INT NOT NULL,
   customer_details_id INT NOT NULL,
@@ -108,8 +108,11 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_equipment')
 BEGIN
 CREATE TABLE cogs_equipment (
   id INT PRIMARY KEY,
-  quantity INT NULL,
-  total_cost DECIMAL(10, 0) NULL,
+  quantity DECIMAL(18, 10) NULL,
+  cost DECIMAL(18, 10) NULL,
+  total_cost DECIMAL(10, 2) NULL,
+  price DECIMAL(18, 10) NULL,
+  sku_total DECIMAL(18, 10) NULL,
   job_details_id INT NOT NULL,
   sku_details_id INT NOT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
@@ -132,7 +135,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_labor')
 BEGIN
 CREATE TABLE cogs_labor (
-  id INT PRIMARY KEY,
+  id INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrementing primary key
   paid_duration DECIMAL(10, 0) NULL,
   burden_rate DECIMAL NULL,
   labor_cost DECIMAL(10, 0) NULL,
@@ -149,15 +152,41 @@ END;
 -- cogs_material
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_material')
 BEGIN
-CREATE TABLE cogs_material (
-  id INT PRIMARY KEY,
-  quantity INT NULL,
-  total_cost DECIMAL(10, 0) NULL,
-  job_details_id INT NOT NULL,
-  sku_details_id INT NOT NULL,
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
-);
+  CREATE TABLE cogs_material (
+    id INT PRIMARY KEY,
+    quantity DECIMAL(18, 10) NULL,
+    cost DECIMAL(18, 10) NULL,
+    total_cost DECIMAL(10, 2) NULL,
+    price DECIMAL(18, 10) NULL,
+    sku_total DECIMAL(18, 10) NULL,
+    job_details_id INT NOT NULL,
+    sku_details_id INT NOT NULL,
+    FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
+  );
+END;
+
+-- purchase_order
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
+BEGIN
+  CREATE TABLE purchase_order (
+    id INT PRIMARY KEY,
+    status NVARCHAR(MAX) NULL,
+    total DECIMAL(10, 0) NULL,
+    tax DECIMAL(10, 0) NULL,
+    date DATETIME2 NULL,
+    requiredOn DATETIME2 NULL,
+    sentOn DATETIME2 NULL,
+    receivedOn DATETIME2 NULL,
+    createdOn DATETIME2 NULL,
+    modifiedOn DATETIME2 NULL,
+    job_details_id INT NOT NULL,
+    invoice_id INT NOT NULL,
+    vendor_id INT NOT NULL,
+    FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+    FOREIGN KEY (vendor_id) REFERENCES vendor (id),
+  );
 END;
 
 -- invoice
@@ -165,8 +194,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'invoice')
 BEGIN
 CREATE TABLE invoice (
   id INT PRIMARY KEY,
-  is_trialdata TINYINT NULL,
-  date DATETIME NULL,
+  date DATETIME2 NULL,
   subtotal DECIMAL(10, 0) NULL,
   tax DECIMAL(10, 0) NULL,
   total DECIMAL(10, 0) NULL,
@@ -181,7 +209,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
-  id INT PRIMARY KEY,
+  id INT IDENTITY(1,1) PRIMARY KEY,
   revenue DECIMAL(10, 0) NULL,
   po_cost DECIMAL(10, 0) NULL,
   equipment_cost DECIMAL(10, 0) NULL,

@@ -1,0 +1,6 @@
+
+INSERT INTO cogs_equipment ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (64244083, '1.0000000000000000000', '1708.3100000000', '1708.31', '0.00', '0.00', 64244072, 6, 11089545);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_equi__job_d__77DFC722\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+

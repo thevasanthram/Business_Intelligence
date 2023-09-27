@@ -10,7 +10,9 @@ async function getAPIWholeData(
   api_name,
   params_header
 ) {
-  let data_pool;
+  let data_pool_object = {};
+  let data_pool = [];
+
   try {
     // automatic api fetch data code
     let count = 0;
@@ -28,8 +30,6 @@ async function getAPIWholeData(
     const api_url = `https://api.servicetitan.io/${api_group}/v2/tenant/${tenant_id}/${api_name}`;
 
     // console.log("Getting API data, wait untill a response appears");
-
-    data_pool = [];
 
     const params_condition =
       "?" +
@@ -58,19 +58,18 @@ async function getAPIWholeData(
 
       const api_data = await api_response.json();
 
-      // console.log("api_data: ", api_data);
-
       shouldIterate = api_data["hasMore"];
 
       try {
         const pusing_item = api_data["data"];
 
-        pusing_item.map((record) => {
-          record["instance_id"] = instance_list.indexOf(instance_name) + 1;
-        });
-
         // pushing api_data_objects into data
         if (pusing_item.length > 0) {
+          pusing_item.map((record) => {
+            record["instance_id"] = instance_list.indexOf(instance_name) + 1;
+            data_pool_object[record["id"]] = record;
+          });
+
           data_pool.push(...pusing_item);
 
           console.log(
@@ -121,7 +120,7 @@ async function getAPIWholeData(
       error
     );
 
-    data_pool = getAPIWholeData(
+    data_pool_object = getAPIWholeData(
       access_token,
       app_key,
       instance_name,
@@ -132,7 +131,11 @@ async function getAPIWholeData(
     );
   }
 
-  return data_pool;
+  if (api_name == "gross-pay-items") {
+    return data_pool;
+  } else {
+    return data_pool_object;
+  }
 }
 
 module.exports = getAPIWholeData;

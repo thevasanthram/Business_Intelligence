@@ -1,0 +1,36 @@
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (64244087, '1.0000000000000000000', '95.8000000000', '95.80', '0.00', '0.00', 64244072, 3, 63707004);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (64244090, '1.0000000000000000000', '0.7597200000', '0.76', '0.00', '0.00', 64244072, 3, 56372853);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (81687503, '2.5000000000000000000', '22.8200000000', '57.05', '0.00', '0.00', 81685297, 1, 15117889);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (81686081, '0.0600000000000000000', '196.1800000000', '11.77', '0.00', '0.00', 81689641, 1, 15116206);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (81690294, '0.2500000000000000000', '22.8200000000', '5.71', '0.00', '0.00', 81689641, 1, 15117889);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+
+
+INSERT INTO cogs_material ([id], [quantity], [cost], [total_cost], [price], [sku_total], [job_details_id], [sku_details_id], [actual_sku_details_id]) VALUES (81693973, '0.1300000000000000000', '196.1800000000', '25.50', '0.00', '0.00', 81685297, 1, 15116206);
+
+{"code":"EREQUEST","originalError":{"info":{"name":"ERROR","handlerName":"onErrorMessage","number":547,"state":0,"class":16,"message":"The INSERT statement conflicted with the FOREIGN KEY constraint \"FK__cogs_mate__job_d__740F363E\". The conflict occurred in database \"hvac_db\", table \"dbo.job_details\", column 'id'.","serverName":"pinnaclemep","procName":"","lineNumber":1}},"name":"RequestError","number":547,"lineNumber":1,"class":16,"serverName":"pinnaclemep","procName":"","precedingErrors":[]}
+
+

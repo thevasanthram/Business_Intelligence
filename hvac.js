@@ -1,4 +1,5 @@
 const sql = require("mssql");
+const fs = require("fs");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
@@ -13,13 +14,13 @@ const kpi_data = require("./modules/business_units_details");
 
 // Service Titan's API parameters
 const instance_details = [
-  {
-    instance_name: "Expert Heating and Cooling Co LLC",
-    tenant_id: 1011756844,
-    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  },
+  // {
+  //   instance_name: "Expert Heating and Cooling Co LLC",
+  //   tenant_id: 1011756844,
+  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  // },
   {
     instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     tenant_id: 1475606437,
@@ -27,13 +28,13 @@ const instance_details = [
     client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
     client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
   },
-  {
-    instance_name: "Family Heating & Cooling Co LLC",
-    tenant_id: 1056112968,
-    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  },
+  // {
+  //   instance_name: "Family Heating & Cooling Co LLC",
+  //   tenant_id: 1056112968,
+  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  // },
 ];
 
 const hvac_tables = {
@@ -127,8 +128,11 @@ const hvac_tables = {
       "project_id",
       "job_completion_time",
       "business_unit_id",
+      "actual_business_unit_id",
       "location_id",
+      "actual_location_id",
       "customer_details_id",
+      "actual_customer_id",
       "campaign_id",
       "created_by_id",
       "lead_call_id",
@@ -184,10 +188,37 @@ const hvac_tables = {
     columns: [
       "id",
       "quantity",
+      "cost",
       "total_cost",
+      "price",
+      "sku_total",
       "job_details_id",
       "sku_details_id",
+      "actual_sku_details_id",
     ],
+    local_table: {
+      id: "",
+      quantity: "",
+      total_cost: "",
+    },
+    foreign_table: {
+      job_details__id: "",
+      sku_details__id: "",
+    },
+  },
+  cogs_material: {
+    columns: [
+      "id",
+      "quantity",
+      "cost",
+      "total_cost",
+      "price",
+      "sku_total",
+      "job_details_id",
+      "sku_details_id",
+      "actual_sku_details_id",
+    ],
+    // invoice api-- items
     local_table: {
       id: "",
       quantity: "",
@@ -210,7 +241,6 @@ const hvac_tables = {
   },
   cogs_labor: {
     columns: [
-      "id",
       "paid_duration",
       "burden_rate",
       "labor_cost",
@@ -219,6 +249,7 @@ const hvac_tables = {
       "paid_time_type",
       "job_details_id",
       "technician_id",
+      "actual_job_details_id",
     ],
     // payroll - gross pay items, payrolls
     local_table: {
@@ -235,29 +266,29 @@ const hvac_tables = {
       technician__id: "",
     },
   },
-  cogs_material: {
+  purchase_order: {
     columns: [
       "id",
-      "quantity",
-      "total_cost",
+      "status",
+      "total",
+      "tax",
+      "date",
+      "requiredOn",
+      "sentOn",
+      "receivedOn",
+      "createdOn",
+      "modifiedOn",
       "job_details_id",
-      "sku_details_id",
+      "invoice_id",
+      "vendor_id",
+      "actual_job_details_id",
+      "actual_invoice_id",
+      "actual_vendor_id",
     ],
-    // invoice api-- items
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
-    },
   },
   invoice: {
     columns: [
       "id",
-      "is_trial",
       "date",
       "subtotal",
       "tax",
@@ -283,7 +314,6 @@ const hvac_tables = {
   },
   gross_profit: {
     columns: [
-      "id",
       "revenue",
       "po_cost",
       "equipment_cost",
@@ -295,6 +325,7 @@ const hvac_tables = {
       "units",
       "labor_hours",
       "invoice_id",
+      "actual_invoice_id",
     ],
     local_table: {
       burden: "",
@@ -342,18 +373,18 @@ const main_api_list = {
   //     table_name: "location",
   //   },
   // ],
-  // job_details: [
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "jobs",
-  //     table_name: "job_details",
-  //   },
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "job-types",
-  //     table_name: "job_details",
-  //   },
-  // ],
+  job_details: [
+    {
+      api_group: "jpm",
+      api_name: "jobs",
+      table_name: "job_details",
+    },
+    {
+      api_group: "jpm",
+      api_name: "job-types",
+      table_name: "job_details",
+    },
+  ],
   // vendor: [
   //   {
   //     api_group: "inventory",
@@ -380,25 +411,32 @@ const main_api_list = {
   //     table_name: "technician",
   //   },
   // ],
-  // invoices: [
-  //   {
-  //     api_group: "accounting",
-  //     api_name: "invoices",
-  //     table_name: ["business_unit", "cogs_equipment", "cogs_material"],
-  //   },
-  // ],
-  // cogs_labor: [
-  //   {
-  //     api_group: "payroll",
-  //     api_name: "gross-pay-items",
-  //     table_name: "cogs_labor",
-  //   },
-  //   {
-  //     api_group: "payroll",
-  //     api_name: "payrolls",
-  //     table_name: "cogs_labor",
-  //   },
-  // ],
+  invoice: [
+    {
+      api_group: "accounting",
+      api_name: "invoices",
+      table_name: ["business_unit", "cogs_equipment", "cogs_material"],
+    },
+  ],
+  purchase_order: [
+    {
+      api_group: "inventory",
+      api_name: "purchase-orders",
+      table_name: ["purchase_order"],
+    },
+  ],
+  cogs_labor: [
+    {
+      api_group: "payroll",
+      api_name: "gross-pay-items",
+      table_name: "cogs_labor",
+    },
+    {
+      api_group: "payroll",
+      api_name: "payrolls",
+      table_name: "cogs_labor",
+    },
+  ],
 };
 
 const params_header = {
@@ -482,16 +520,16 @@ async function fetch_main_data(
       await Promise.all(
         Object.keys(main_api_list).map(async (api_key) => {
           if (!data_lake[api_key]) {
-            data_lake[api_key] = [];
+            data_lake[api_key] = {};
           }
 
           if (api_key == "legal_entity") {
             data_lake[api_key] = {
-              data_pool: [
-                { id: 1, legal_name: "Expert Heating and Cooling" },
-                { id: 2, legal_name: "Parket-Arntz Plumbing and Heating" },
-                { id: 3, legal_name: "Family Heating and Cooling" },
-              ],
+              data_pool: {
+                1: { id: 1, legal_name: "Expert Heating and Cooling" },
+                2: { id: 2, legal_name: "Parket-Arntz Plumbing and Heating" },
+                3: { id: 3, legal_name: "Family Heating and Cooling" },
+              },
             };
           } else {
             const api_list = main_api_list[api_key];
@@ -504,9 +542,17 @@ async function fetch_main_data(
                 if (
                   !data_lake[api_key][api_group_temp + "__" + api_name_temp]
                 ) {
-                  data_lake[api_key][api_group_temp + "__" + api_name_temp] = {
-                    data_pool: [],
-                  };
+                  if (api_name_temp == "gross-pay-items") {
+                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                      {
+                        data_pool: [],
+                      };
+                  } else {
+                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                      {
+                        data_pool: {},
+                      };
+                  }
                 }
 
                 // continuously fetching whole api data
@@ -520,9 +566,25 @@ async function fetch_main_data(
                   params_header
                 );
 
-                data_lake[api_key][api_group_temp + "__" + api_name_temp][
-                  "data_pool"
-                ].push(...data_pool);
+                if (api_name_temp == "gross-pay-items") {
+                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                    "data_pool"
+                  ] = [
+                    ...data_lake[api_key][
+                      api_group_temp + "__" + api_name_temp
+                    ]["data_pool"],
+                    ...data_pool,
+                  ];
+                } else {
+                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                    "data_pool"
+                  ] = {
+                    ...data_lake[api_key][
+                      api_group_temp + "__" + api_name_temp
+                    ]["data_pool"],
+                    ...data_pool,
+                  }; //;
+                }
               })
             );
           }
@@ -548,7 +610,7 @@ async function azure_sql_operations(data_lake) {
 async function data_processor(data_lake, sql_pool, sql_request) {
   // for (let api_count = 1; api_count < 2; api_count++) {
   // Object.keys(data_lake).length
-  const api_name = Object.keys(data_lake)[0];
+  const api_name = Object.keys(data_lake)[2];
   const api_data = data_lake[api_name];
 
   // const stop2 = startStopwatch("inserting data");
@@ -565,7 +627,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
       await hvac_flat_data_insertion(
         sql_request,
-        data_pool,
+        Object.values(data_pool),
         header_data,
         table_name
       );
@@ -591,7 +653,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
       let final_data_pool = [];
 
-      data_pool.map((record) => {
+      Object.keys(data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         final_data_pool.push({
           id: record["id"],
           business_unit_name: record["name"] ? record["name"] : "",
@@ -628,7 +691,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
       let final_data_pool = [];
 
-      data_pool.map((record) => {
+      Object.keys(data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         final_data_pool.push({
           id: record["id"],
           name: record["name"] ? record["name"] : "",
@@ -671,7 +735,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       // console.log("data_pool: ", data_pool);
       // console.log("header_data: ", header_data);
 
-      data_pool.map((record) => {
+      Object.keys(data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         final_data_pool.push({
           id: record["id"],
           street: record["address"]["street"]
@@ -704,6 +769,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       const jobs_data_pool = data_lake[api_name]["jpm__jobs"]["data_pool"];
       const job_types_data_pool =
         data_lake[api_name]["jpm__job-types"]["data_pool"];
+      const business_unit_data_pool =
+        data_lake["business_unit"]["settings__business-units"]["data_pool"];
+      const customer_data_pool =
+        data_lake["customer_details"]["crm__customers"]["data_pool"];
+      const location_data_pool =
+        data_lake["location"]["crm__locations"]["data_pool"];
 
       const header_data = hvac_tables[table_name]["columns"];
 
@@ -712,13 +783,29 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       // console.log("jobs_data_pool: ", jobs_data_pool);
       // console.log("header_data: ", header_data);
 
-      jobs_data_pool.map((record) => {
+      Object.keys(jobs_data_pool).map((record_id) => {
+        const record = jobs_data_pool[record_id];
+        let business_unit_id = record["instance_id"];
+        let customer_details_id = record["instance_id"];
+        let location_id = record["instance_id"];
         let job_type_name = "";
-        job_types_data_pool.map((job_types_record) => {
-          if (record["jobTypeId"] == job_types_record["id"]) {
-            job_type_name = job_types_record["name"];
-          }
-        });
+
+        if (business_unit_data_pool[record["businessUnitId"]]) {
+          business_unit_id = record["businessUnitId"];
+        }
+
+        if (customer_data_pool[record["customerId"]]) {
+          customer_details_id = record["customerId"];
+        }
+
+        if (location_data_pool[record["locationId"]]) {
+          location_id = record["locationId"];
+        }
+
+        if (job_types_data_pool[record["jobTypeId"]]) {
+          job_type_name = job_types_data_pool[record["jobTypeId"]]["name"];
+        }
+
         final_data_pool.push({
           id: record["id"],
           job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
@@ -730,11 +817,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_completion_time: record["completedOn"]
             ? record["completedOn"]
             : "",
-          business_unit_id: record["businessUnitId"]
-            ? record["businessUnitId"]
-            : 0,
-          location_id: record["locationId"] ? record["locationId"] : 0,
-          customer_details_id: record["customerId"] ? record["customerId"] : 0,
+          business_unit_id: business_unit_id,
+          actual_business_unit_id: record["businessUnitId"],
+          location_id: location_id,
+          actual_location_id: record["locationId"],
+          customer_details_id: customer_details_id,
+          actual_customer_id: record["customerId"],
           campaign_id: record["campaignId"] ? record["campaignId"] : 0,
           created_by_id: record["createdById"] ? record["createdById"] : 0,
           leadCallId: record["leadCallId"] ? record["leadCallId"] : 0,
@@ -766,7 +854,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       // console.log("data_pool: ", data_pool);
       // console.log("header_data: ", header_data);
 
-      data_pool.map((record) => {
+      Object.keys(data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         final_data_pool.push({
           id: record["id"],
           name: record["name"] ? record["name"] : "",
@@ -798,7 +887,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       // console.log("data_pool: ", data_pool);
       // console.log("header_data: ", header_data);
 
-      data_pool.map((record) => {
+      Object.keys(data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         final_data_pool.push({
           id: record["id"],
           name: record["name"] ? record["name"] : "",
@@ -835,7 +925,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       // console.log("data_pool: ", equipment_data_pool);
       // console.log("header_data: ", header_data);
 
-      materials_data_pool.map((record) => {
+      Object.keys(materials_data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         let vendor_id = record["instance_id"];
         if (record["primaryVendor"]) {
           vendor_id = record["primaryVendor"]["vendorId"]
@@ -851,7 +942,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         });
       });
 
-      equipment_data_pool.map((record) => {
+      Object.keys(equipment_data_pool).map((record_id) => {
+        const record = data_pool[record_id];
         let vendor_id = record["instance_id"];
         if (record["primaryVendor"]) {
           vendor_id = record["primaryVendor"]["vendorId"]
@@ -876,6 +968,417 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         header_data,
         table_name
       );
+
+      break;
+    }
+
+    case "invoice": {
+      const table_name = main_api_list[api_name][0]["table_name"];
+      const invoice_data_pool =
+        data_lake[api_name]["accounting__invoices"]["data_pool"];
+      const jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+      const gross_pay_items_data_pool = JSON.parse(
+        JSON.stringify(
+          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"]
+        )
+      );
+      const payrolls_data_pool =
+        data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+      const purchase_order_data_pool = JSON.parse(
+        JSON.stringify(
+          data_lake["purchase_order"]["inventory__purchase-orders"]["data_pool"]
+        )
+      );
+
+      const invoice_header_data = hvac_tables["invoice"]["columns"];
+      const cogs_material_header_data = hvac_tables["cogs_material"]["columns"];
+      const cogs_equipment_header_data =
+        hvac_tables["cogs_equipment"]["columns"];
+      const gross_profit_header_data = hvac_tables["cogs_equipment"]["columns"];
+
+      let invoice_final_data_pool = [];
+      let cogs_material_final_data_pool = [];
+      let cogs_equipment_final_data_pool = [];
+      let gross_profit_final_data_pool = [];
+
+      // console.log("header_data: ", header_data);
+
+      const po_and_gpi_data = {};
+
+      // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
+      Object.keys(purchase_order_data_pool).map((po_record_id) => {
+        const po_record = purchase_order_data_pool[po_record_id];
+        if (po_record["jobId"] != null) {
+          if (!po_and_gpi_data[po_record["jobId"]]) {
+            po_and_gpi_data[po_record["jobId"]] = {
+              po_total: 0,
+              labor_cost: 0,
+              labor_hours: 0,
+              burden: 0,
+            };
+          }
+
+          po_and_gpi_data[po_record["jobId"]]["po_total"] += po_record["total"];
+        }
+      });
+
+      console.log("po_and_gpi_data: ", po_and_gpi_data.length);
+
+      Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
+        const gpi_record = gross_pay_items_data_pool[gpi_record_id];
+        if (!po_and_gpi_data[gpi_record["jobId"]]) {
+          po_and_gpi_data[gpi_record["jobId"]] = {
+            po_total: 0,
+            labor_cost: 0,
+            labor_hours: 0,
+            burden: 0,
+          };
+        }
+
+        po_and_gpi_data[gpi_record["jobId"]]["labor_cost"] += gpi_record[
+          "total"
+        ]
+          ? gpi_record["total"]
+          : 0;
+
+        po_and_gpi_data[gpi_record["jobId"]]["labor_hours"] += gpi_record[
+          "paidDurationHours"
+        ]
+          ? gpi_record["paidDurationHours"]
+          : 0;
+
+        po_and_gpi_data[gpi_record["jobId"]]["burden"] +=
+          (gpi_record["paidDurationHours"]
+            ? gpi_record["paidDurationHours"]
+            : 0) *
+          (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+            ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+            : 0);
+      });
+
+      Object.keys(invoice_data_pool).map((record_id) => {
+        const record = invoice_data_pool[record_id];
+
+        let job_details_id = record["instance_id"];
+        if (record["job"]) {
+          if (jobs_data_pool[record["job"]["id"]]) {
+            job_details_id = record["job"]["id"];
+          }
+        }
+
+        invoice_final_data_pool.push({
+          id: record["id"],
+          date: record["invoiceDate"] ? record["invoiceDate"] : "",
+          subtotal: record["subTotal"] ? record["subTotal"] : 0,
+          tax: record["salesTax"] ? record["salesTax"] : 0,
+          total: record["total"] ? record["total"] : 0,
+          invoice_type_id: record["invoiceTypeid"]
+            ? record["invoiceTypeid"]
+            : 0,
+          invoice_type_name: record["invoiceTypename"]
+            ? record["invoiceTypename"]
+            : "default_invoice",
+          job_details_id: job_details_id,
+        });
+
+        let po_cost = 0;
+        let labor_cost = 0;
+        let labor_hours = 0;
+        let burden = 0;
+
+        try {
+          po_cost = po_and_gpi_data[job_details_id]["po_total"];
+          labor_cost = po_and_gpi_data[job_details_id]["labor_cost"];
+          labor_hours = po_and_gpi_data[job_details_id]["labor_hours"];
+          burden = po_and_gpi_data[job_details_id]["burden"];
+        } catch (err) {
+          // console.log("job_details_id: ", job_details_id);
+        }
+
+        let material_cost = 0;
+        let equipment_cost = 0;
+
+        if (record["items"]) {
+          record["items"].map((items_record) => {
+            let sku_details_id = record["instance_id"];
+            if (items_record["type"] == "Material") {
+              material_cost =
+                material_cost + parseFloat(items_record["totalCost"]);
+
+              cogs_material_final_data_pool.push({
+                id: items_record["id"],
+                quantity: items_record["quantity"]
+                  ? items_record["quantity"]
+                  : 0,
+                cost: items_record["cost"] ? items_record["cost"] : 0,
+                total_cost: items_record["totalCost"]
+                  ? items_record["totalCost"]
+                  : 0,
+                price: items_record["price"] ? items_record["price"] : 0,
+                sku_total: items_record["total"] ? items_record["total"] : 0,
+                job_details_id: job_details_id,
+                sku_details_id: sku_details_id,
+                actual_sku_details_id: items_record["skuId"],
+              });
+            }
+
+            if (items_record["type"] == "Equipment") {
+              equipment_cost =
+                equipment_cost + parseFloat(items_record["totalCost"]);
+
+              sku_details_id = sku_details_id + 3;
+              cogs_equipment_final_data_pool.push({
+                id: items_record["id"],
+                quantity: items_record["quantity"]
+                  ? items_record["quantity"]
+                  : 0,
+                cost: items_record["cost"] ? items_record["cost"] : 0,
+                total_cost: items_record["totalCost"]
+                  ? items_record["totalCost"]
+                  : 0,
+                price: items_record["price"] ? items_record["price"] : 0,
+                sku_total: items_record["total"] ? items_record["total"] : 0,
+                job_details_id: job_details_id,
+                sku_details_id: sku_details_id,
+                actual_sku_details_id: items_record["skuId"],
+              });
+            }
+          });
+        }
+
+        let revenue = parseFloat(record["total"])
+          ? parseFloat(record["total"])
+          : 0;
+
+        let gross_profit =
+          revenue -
+          po_cost -
+          equipment_cost -
+          material_cost -
+          labor_cost -
+          burden;
+
+        let gross_margin = (gross_profit / revenue) * 100;
+
+        gross_margin = gross_margin ? gross_margin : 0;
+
+        gross_profit_final_data_pool.push({
+          revenue: revenue,
+          po_cost: po_cost, // purchase orders
+          equipment_cost: equipment_cost, //
+          material_cost: material_cost, //
+          labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+          burden: burden, // cogs_labor
+          gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+          gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+          units: 1, //  currently for 1
+          labor_hours: labor_hours, // cogs_labor paid duration
+          invoice_id: record["id"],
+          actual_invoice_id: record["id"], //
+        });
+      });
+
+      // console.log("invoice_final_data_pool: ", invoice_final_data_pool);
+      // console.log(
+      //   "cogs_material_final_data_pool: ",
+      //   cogs_material_final_data_pool
+      // );
+      // console.log(
+      //   "cogs_equipment_final_data_pool: ",
+      //   cogs_equipment_final_data_pool
+      // );
+      // console.log(
+      //   "gross_profit_final_data_pool: ",
+      //   gross_profit_final_data_pool
+      // );
+
+      // fs.writeFile(
+      //   "./error_responses/gross_profit.js",
+      //   JSON.stringify(gross_profit_final_data_pool),
+      //   { flag: "a" },
+      //   (err) => {
+      //     if (err) {
+      //       console.error("Error writing to file:", err);
+      //     }
+      //   }
+      // );
+      // console.log("header_data: ", header_data);
+
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   invoice_final_data_pool,
+      //   invoice_header_data,
+      //   "invoice"
+      // );
+
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   cogs_material_final_data_pool,
+      //   cogs_material_header_data,
+      //   "cogs_material"
+      // );
+
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   cogs_equipment_final_data_pool,
+      //   cogs_equipment_header_data,
+      //   "cogs_equipment"
+      // );
+
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   gross_profit_final_data_pool,
+      //   gross_profit_header_data,
+      //   "gross_profit"
+      // );
+
+      break;
+    }
+
+    case "purchase_order": {
+      const table_name = main_api_list[api_name][0]["table_name"];
+      const purchase_order_data_pool =
+        data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
+      const jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+      const vendors_data_pool =
+        data_lake["vendor"]["inventory__vendors"]["data_pool"];
+      const invoice_data_pool =
+        data_lake["invoice"]["accounting__invoices"]["data_pool"];
+      const header_data = hvac_tables[table_name]["columns"];
+
+      let final_data_pool = [];
+
+      console.log("purchase_order_data_pool: ", purchase_order_data_pool);
+      // console.log("header_data: ", header_data);
+
+      Object.keys(purchase_order_data_pool).map((record_id) => {
+        const record = purchase_order_data_pool[record_id];
+
+        let job_details_id = record["instance_id"];
+        let actual_job_details_id = 0;
+        if (record["jobId"]) {
+          actual_job_details_id = record["jobId"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+        }
+
+        let invoice_id = record["instance_id"];
+        let actual_invoice_id = 0;
+        if (record["invoiceId"]) {
+          actual_invoice_id = record["invoiceId"];
+          if (invoice_data_pool[record["invoiceId"]]) {
+            invoice_id = record["invoiceId"];
+          }
+        }
+
+        let vendor_id = record["instance_id"];
+        let actual_vendor_id = 0;
+        if (record["vendorId"]) {
+          actual_vendor_id = record["vendorId"];
+          if (invoice_data_pool[record["vendorId"]]) {
+            vendor_id = record["vendorId"];
+          }
+        }
+
+        final_data_pool.push({
+          id: record["id"],
+          status: record["status"] ? record["status"] : "",
+          total: record["total"] ? record["total"] : 0,
+          tax: record["tax"] ? record["tax"] : 0,
+          date: record["date"] ? record["date"] : "",
+          requiredOn: record["requiredOn"] ? record["requiredOn"] : "",
+          sentOn: record["sentOn"] ? record["sentOn"] : "",
+          receivedOn: record["receivedOn"] ? record["receivedOn"] : "",
+          createdOn: record["createdOn"] ? record["createdOn"] : "",
+          modifiedOn: record["modifiedOn"] ? record["modifiedOn"] : "",
+          job_details_id: job_details_id,
+          invoice_id: invoice_id,
+          vendor_id: vendor_id,
+          actual_job_details_id: actual_job_details_id,
+          actual_invoice_id: actual_invoice_id,
+          actual_vendor_id: actual_vendor_id,
+        });
+      });
+
+      console.log("final_data_pool: ", final_data_pool);
+      // console.log("header_data: ", header_data);
+
+      await hvac_flat_data_insertion(
+        sql_request,
+        final_data_pool,
+        header_data,
+        table_name
+      );
+
+      break;
+    }
+
+    case "cogs_labor": {
+      const table_name = main_api_list[api_name][0]["table_name"];
+      const gross_pay_items_data_pool =
+        data_lake[table_name]["payroll__gross-pay-items"]["data_pool"];
+      const payrolls_data_pool =
+        data_lake[table_name]["payroll__payrolls"]["data_pool"];
+      const jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+      const technician_data_pool =
+        data_lake["technician"]["settings__technicians"]["data_pool"];
+      const header_data = hvac_tables[table_name]["columns"];
+
+      let final_data_pool = [];
+
+      console.log("gross_pay_items_data_pool: ", gross_pay_items_data_pool);
+      // console.log("payrolls_data_pool: ", payrolls_data_pool);
+      // console.log("jobs_data_pool: ", jobs_data_pool);
+      // console.log("technician_data_pool: ", technician_data_pool);
+      // console.log("header_data: ", header_data);
+
+      gross_pay_items_data_pool.map((record) => {
+        let burden_rate = payrolls_data_pool[record["payrollId"]]["burdenRate"]
+          ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
+          : 0.0;
+
+        let burden_cost = record["paidDurationHours"]
+          ? record["paidDurationHours"]
+          : 0 * burden_rate;
+
+        let job_details_id = record["instance_id"];
+        let actual_job_details_id = 0;
+        if (record["jobId"]) {
+          actual_job_details_id = record["jobId"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+        }
+        let technician_id = record["instance_id"];
+        if (technician_data_pool[record["employeeId"]]) {
+          technician_id = record["employeeId"];
+        }
+
+        final_data_pool.push({
+          paid_duration: record["paidDurationHours"]
+            ? record["paidDurationHours"]
+            : 0,
+          burden_rate: burden_rate,
+          labor_cost: record["amount"] ? record["amount"] : 0,
+          burden_cost: burden_cost,
+          activity: record["activity"] ? record["activity"] : "",
+          paid_time_type: record["paidTimeType"] ? record["paidTimeType"] : "",
+          job_details_id: job_details_id,
+          technician_id: technician_id,
+          actual_job_details_id: actual_job_details_id,
+        });
+      });
+
+      // console.log("final_data_pool: ", final_data_pool);
+      // console.log("header_data: ", header_data);
+
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   final_data_pool,
+      //   header_data,
+      //   table_name
+      // );
 
       break;
     }
