@@ -8,6 +8,8 @@ async function create_hvac_schema(sql_request) {
 
     // console.log("isTableExistsQuery: ", isTableExistsQuery);
 
+    // console.log("sql_request: ", sql_request);
+
     const isTableExists = await sql_request.query(isTableExistsQuery);
 
     if (isTableExists.recordset.length == 0) {
@@ -20,7 +22,7 @@ async function create_hvac_schema(sql_request) {
   } catch (error) {
     console.error("Error while creating the hvac schema: ", error);
 
-    create_hvac_schema(sql_request);
+    await create_hvac_schema(sql_request);
   }
 }
 

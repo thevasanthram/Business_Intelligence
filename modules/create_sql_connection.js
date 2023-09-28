@@ -17,7 +17,7 @@ async function create_sql_connection() {
     user: "pinnacleadmin",
     password: "PiTestBi01",
     server: "pinnaclemep.database.windows.net",
-    database: "hvac_db",
+    database: "main_hvac_db",
     options: {
       encrypt: true, // Use this option for SSL encryption
       requestTimeout: 48 * 60 * 60 * 1000, // 60 seconds (adjust as needed)
@@ -39,6 +39,6 @@ async function create_sql_connection() {
   return request; // Return both the pool and request objects
 }
 
-create_sql_connection()
+create_sql_connection();
 
 module.exports = create_sql_connection;
