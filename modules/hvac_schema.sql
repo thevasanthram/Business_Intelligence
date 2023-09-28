@@ -216,14 +216,16 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'invoice')
 BEGIN
 CREATE TABLE invoice (
   id INT PRIMARY KEY,
+  syncStatus NVARCHAR(MAX) NULL,
   date DATETIME2 NULL,
   dueDate DATETIME2 NULL,
   subtotal DECIMAL(10, 0) NULL,
   tax DECIMAL(10, 0) NULL,
   total DECIMAL(10, 0) NULL,
   balance DECIMAL(10, 0) NULL,
+  depositedOn DATETIME2 NULL,
   createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL, -- syncStatus, dueDate, 
   invoice_type_id INT NULL,
   invoice_type_name NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,

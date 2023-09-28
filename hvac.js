@@ -640,12 +640,14 @@ const hvac_tables = {
   invoice: {
     columns: [
       "id",
+      "syncStatus",
       "date",
       "dueDate",
       "subtotal",
       "tax",
       "total",
       "balance",
+      "depositedOn",
       "createdOn",
       "modifiedOn",
       "invoice_type_id",
@@ -1744,6 +1746,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 1,
+          syncStatus: "",
           date: "",
           dueDate: "",
           subtotal: 0,
@@ -1760,6 +1763,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 2,
+          syncStatus: "",
           date: "",
           dueDate: "",
           subtotal: 0,
@@ -1776,6 +1780,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 3,
+          syncStatus: "",
           date: "",
           dueDate: "",
           subtotal: 0,
@@ -1804,12 +1809,14 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           invoice_final_data_pool.push({
             id: record["id"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
             date: record["invoiceDate"] ? record["invoiceDate"] : "",
             dueDate: record["dueDate"] ? record["dueDate"] : "",
             subtotal: record["subTotal"] ? record["subTotal"] : 0,
             tax: record["salesTax"] ? record["salesTax"] : 0,
             total: record["total"] ? record["total"] : 0,
             balance: record["balance"] ? record["balance"] : 0,
+            depositedOn: record["depositedOn"] ? record["depositedOn"] : "",
             createdOn: record["createdOn"] ? record["createdOn"] : "",
             modifiedOn: record["modifiedOn"] ? record["modifiedOn"] : "",
             invoice_type_id: record["invoiceTypeid"]
