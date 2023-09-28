@@ -14,13 +14,13 @@ const kpi_data = require("./modules/business_units_details");
 
 // Service Titan's API parameters
 const instance_details = [
-  // {
-  //   instance_name: "Expert Heating and Cooling Co LLC",
-  //   tenant_id: 1011756844,
-  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  // },
+  {
+    instance_name: "Expert Heating and Cooling Co LLC",
+    tenant_id: 1011756844,
+    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  },
   {
     instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     tenant_id: 1475606437,
@@ -28,13 +28,13 @@ const instance_details = [
     client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
     client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
   },
-  // {
-  //   instance_name: "Family Heating & Cooling Co LLC",
-  //   tenant_id: 1056112968,
-  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  // },
+  {
+    instance_name: "Family Heating & Cooling Co LLC",
+    tenant_id: 1056112968,
+    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  },
 ];
 
 const hvac_tables = {
@@ -325,7 +325,6 @@ const hvac_tables = {
       "units",
       "labor_hours",
       "invoice_id",
-      "actual_invoice_id",
     ],
     local_table: {
       burden: "",
@@ -994,7 +993,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       const cogs_material_header_data = hvac_tables["cogs_material"]["columns"];
       const cogs_equipment_header_data =
         hvac_tables["cogs_equipment"]["columns"];
-      const gross_profit_header_data = hvac_tables["cogs_equipment"]["columns"];
+      const gross_profit_header_data = hvac_tables["gross_profit"]["columns"];
 
       let invoice_final_data_pool = [];
       let cogs_material_final_data_pool = [];
@@ -1022,7 +1021,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         }
       });
 
-      console.log("po_and_gpi_data: ", po_and_gpi_data.length);
+      // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
 
       Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
         const gpi_record = gross_pay_items_data_pool[gpi_record_id];
@@ -1158,7 +1157,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           labor_cost -
           burden;
 
-        let gross_margin = (gross_profit / revenue) * 100;
+        let gross_margin =
+          gross_profit / revenue != Infinity ||
+          gross_profit / revenue != -Infinity
+            ? (gross_profit / revenue) * 100
+            : 0;
 
         gross_margin = gross_margin ? gross_margin : 0;
 
@@ -1174,7 +1177,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           units: 1, //  currently for 1
           labor_hours: labor_hours, // cogs_labor paid duration
           invoice_id: record["id"],
-          actual_invoice_id: record["id"], //
         });
       });
 
@@ -1187,10 +1189,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       //   "cogs_equipment_final_data_pool: ",
       //   cogs_equipment_final_data_pool
       // );
-      // console.log(
-      //   "gross_profit_final_data_pool: ",
-      //   gross_profit_final_data_pool
-      // );
+      console.log(
+        "gross_profit_final_data_pool: ",
+        gross_profit_final_data_pool
+      );
 
       // fs.writeFile(
       //   "./error_responses/gross_profit.js",
@@ -1225,12 +1227,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       //   "cogs_equipment"
       // );
 
-      // await hvac_flat_data_insertion(
-      //   sql_request,
-      //   gross_profit_final_data_pool,
-      //   gross_profit_header_data,
-      //   "gross_profit"
-      // );
+      await hvac_flat_data_insertion(
+        sql_request,
+        gross_profit_final_data_pool,
+        gross_profit_header_data,
+        "gross_profit"
+      );
 
       break;
     }

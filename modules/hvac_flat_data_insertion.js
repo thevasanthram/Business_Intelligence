@@ -38,6 +38,10 @@ async function flat_data_insertion(
             .join(", ")});`;
 
           try {
+            // console.log(
+            //   "flat_data_insertion_query: ",
+            //   flat_data_insertion_query
+            // );
             const flat_data_insertion = await sql_client.query(
               flat_data_insertion_query
             );
