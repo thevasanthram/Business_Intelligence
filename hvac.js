@@ -2268,9 +2268,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           }
 
           po_and_gpi_data[gpi_record["jobId"]]["labor_cost"] += gpi_record[
-            "total"
+            "amount"
           ]
-            ? gpi_record["total"]
+            ? gpi_record["amount"]
             : 0;
 
           po_and_gpi_data[gpi_record["jobId"]]["labor_hours"] += gpi_record[
