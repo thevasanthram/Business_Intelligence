@@ -484,38 +484,44 @@ async function find_max_and_bulk_insert(data_lake) {
 
   // find max and populate the db
 
-  await Promise.all(
-    Object.keys(data_lake).map(async (key) => {
-      const current_data_pool = data_lake[key]["data_pool"];
+  for (
+    let api_count = 0;
+    api_count <= Object.keys(data_lake).length;
+    api_count++
+  ) {
+    const key = Object.keys(data_lake)[api_count];
 
-      const [api_group, api_name_and_mode] = key.split("__");
+    const current_data_pool = data_lake[key]["data_pool"];
 
-      const [api_name, api_mode] = api_name_and_mode.split("&&");
+    const [api_group, api_name_and_mode] = key.split("__");
 
-      // find lengthiest data
-      data_lake[key]["header_data"] = await find_lenghthiest_header(
-        current_data_pool
+    const [api_name, api_mode] = api_name_and_mode.split("&&");
+
+    // find lengthiest data
+    data_lake[key]["header_data"] = await find_lenghthiest_header(
+      current_data_pool
+    );
+
+    if (api_mode == "normal") {
+      await azure_db_operations(
+        sql_request,
+        sql_pool,
+        current_data_pool,
+        data_lake[key]["header_data"],
+        api_group + "_" + api_name
       );
+    } else {
+      await azure_db_operations(
+        sql_request,
+        sql_pool,
+        current_data_pool,
+        data_lake[key]["header_data"],
+        api_group + "_" + api_name + "_" + api_mode
+      );
+    }
+  }
 
-      if (api_mode == "normal") {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name
-        );
-      } else {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name + "_" + api_mode
-        );
-      }
-    })
-  );
+  // await Promise.all(Object.keys(data_lake).map(async (key) => {}));
   // Close the connection pool
   await sql.close();
 }
