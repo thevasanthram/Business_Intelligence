@@ -1434,7 +1434,7 @@ async function azure_sql_operations(data_lake) {
 
   const pushing_time = startStopwatch("pushing data");
   await data_processor(data_lake, sql_pool, sql_request);
-  console.log("Time Taken for pushing all data: ", pushing_time);
+  console.log("Time Taken for pushing all data: ", pushing_time());
   // Close the connection pool
   await sql.close();
 }
