@@ -181,14 +181,14 @@ const api_collection = [
     api_group: "pricebook",
     api_name: "services",
   },
-  {
-    api_group: "sales",
-    api_name: "estimates",
-  },
-  {
-    api_group: "sales",
-    api_name: "estimates/export",
-  },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates",
+  // },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates/export",
+  // },
   {
     api_group: "settings",
     api_name: "business-units",
