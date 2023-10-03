@@ -26,20 +26,18 @@ async function flat_data_bulk_insertion(
 
     console.log("Total inserting records: ", data_pool.length);
     await Promise.all(
-      data_pool
-        .slice(batch, batch + batch_limit)
-        .map(async (currentObj, index) => {
-          const flattenedObj = flattenObject(currentObj);
-          const filteredObj = extractMatchingValues(header_data, flattenedObj);
+      data_pool.map(async (currentObj, index) => {
+        const flattenedObj = flattenObject(currentObj);
+        const filteredObj = extractMatchingValues(header_data, flattenedObj);
 
-          table.rows.add(
-            ...Object.values(filteredObj).map((value) => {
-              return String(value).includes(`'`)
-                ? `'${value.replace(/'/g, `''`)}'`
-                : `'${value}'`;
-            })
-          ); // Spread the elements of the row array as arguments
-        })
+        table.rows.add(
+          ...Object.values(filteredObj).map((value) => {
+            return String(value).includes(`'`)
+              ? `'${value.replace(/'/g, `''`)}'`
+              : `'${value}'`;
+          })
+        ); // Spread the elements of the row array as arguments
+      })
     );
 
     // console.log("schema: ", table.schema);
