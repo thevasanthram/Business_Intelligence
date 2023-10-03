@@ -1,4 +1,4 @@
 
-const a = '6.5'
+const a = 6
 
-console.log(parseFloat(a))
+console.log(typeof a)

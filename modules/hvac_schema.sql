@@ -67,11 +67,11 @@ CREATE TABLE job_details (
   project_id INT NULL,
   job_completion_time DATETIME2 NULL,
   business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
   location_id INT NOT NULL,
-  actual_location_id INT NOT NULL,
+  actual_location_id INT NULL,
   customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
   campaign_id INT NULL,
   created_by_id INT NULL,
   lead_call_id INT NULL,
@@ -93,6 +93,18 @@ CREATE TABLE vendor (
 );
 END;
 
+-- technician
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'technician')
+BEGIN
+CREATE TABLE technician (
+  id INT PRIMARY KEY,
+  name NVARCHAR(MAX) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)
+);
+END;
+
 -- sku_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sku_details')
 BEGIN
@@ -102,20 +114,8 @@ CREATE TABLE sku_details (
   sku_type NVARCHAR(MAX) NULL,
   sku_unit_price DECIMAL NULL,
   vendor_id INT NOT NULL,
-  actual_vendor_id INT NOT NULL,
+  actual_vendor_id INT NULL,
   FOREIGN KEY (vendor_id) REFERENCES vendor (id)
-);
-END;
-
--- technician
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'technician')
-BEGIN
-CREATE TABLE technician (
-  id INT PRIMARY KEY,
-  name NVARCHAR(MAX) NULL,
-  business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NOT NULL,
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)
 );
 END;
 
@@ -131,19 +131,20 @@ CREATE TABLE cogs_labor (
   activity NVARCHAR(MAX) NULL,
   paid_time_type NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
-  actual_job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
   technician_id INT NOT NULL,
-  actual_technician_id INT NOT NULL,
+  actual_technician_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (technician_id) REFERENCES technician (id)
 );
 END;
 
+
 -- cogs_material
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_material')
 BEGIN
   CREATE TABLE cogs_material (
-    id INT PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     quantity DECIMAL(18, 10) NULL,
     cost DECIMAL(18, 10) NULL,
     total_cost DECIMAL(10, 2) NULL,
@@ -155,9 +156,9 @@ BEGIN
     generalLedgerAccounttype NVARCHAR(MAX) NULL,
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
-    actual_job_details_id INT NOT NULL,
+    actual_job_details_id INT NULL,
     sku_details_id INT NOT NULL,
-    actual_sku_details_id INT NOT NULL,
+    actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
@@ -166,7 +167,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_service')
 BEGIN
   CREATE TABLE cogs_service (
-    id INT PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     quantity DECIMAL(18, 10) NULL,
     cost DECIMAL(18, 10) NULL,
     total_cost DECIMAL(10, 2) NULL,
@@ -178,9 +179,9 @@ BEGIN
     generalLedgerAccounttype NVARCHAR(MAX) NULL,
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
-    actual_job_details_id INT NOT NULL,
+    actual_job_details_id INT NULL,
     sku_details_id INT NOT NULL,
-    actual_sku_details_id INT NOT NULL,
+    actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
@@ -191,7 +192,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_equipment')
 BEGIN
 CREATE TABLE cogs_equipment (
-  id INT PRIMARY KEY,
+  id INT IDENTITY(1,1) PRIMARY KEY,
   quantity DECIMAL(18, 10) NULL,
   cost DECIMAL(18, 10) NULL,
   total_cost DECIMAL(10, 2) NULL,
@@ -203,9 +204,9 @@ CREATE TABLE cogs_equipment (
   generalLedgerAccounttype NVARCHAR(MAX) NULL,
   generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
-  actual_job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
   sku_details_id INT NOT NULL,
-  actual_sku_details_id INT NOT NULL,
+  actual_sku_details_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
 );
@@ -229,7 +230,7 @@ CREATE TABLE invoice (
   invoice_type_id INT NULL,
   invoice_type_name NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
-  actual_job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id)
 );
 END;
@@ -249,11 +250,11 @@ BEGIN
     createdOn DATETIME2 NULL,
     modifiedOn DATETIME2 NULL,
     job_details_id INT NOT NULL,
-    actual_job_details_id INT NOT NULL,
+    actual_job_details_id INT NULL,
     invoice_id INT NOT NULL,
-    actual_invoice_id INT NOT NULL,
+    actual_invoice_id INT NULL,
     vendor_id INT NOT NULL,
-    actual_vendor_id INT NOT NULL,
+    actual_vendor_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     FOREIGN KEY (vendor_id) REFERENCES vendor (id),

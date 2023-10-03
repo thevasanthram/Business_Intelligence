@@ -1,9 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const flattenObject = require("./new_flatten_object");
-const extractMatchingValues = require("./extract_matching_values");
 const mssql = require("mssql");
-const { type } = require("os");
 
 async function hvac_data_insertion(
   sql_pool,
@@ -13,19 +10,41 @@ async function hvac_data_insertion(
 ) {
   try {
     // Create a table object with create option set to false
-    console.log("table_name: ", table_name);
     const table = new mssql.Table(table_name);
     table.create = false; // Create the table if it doesn't exist
 
     // Define the columns based on the header_data
+    // console.log("table_name: ", table_name);
     console.log("header_data: ", header_data);
+
     Object.keys(header_data).map((column) => {
-      const data_type = header_data[column];
-      console.log("data_type: ", data_type);
+      const data_type = header_data[column]["data_type"];
+      const constraint = header_data[column]["constraint"];
+
       if (data_type === "NVARCHAR") {
-        table.columns.add(column, mssql.NVarChar(mssql.MAX));
+        table.columns.add(
+          column,
+          mssql.NVarChar(mssql.MAX),
+          constraint ? constraint : {}
+        );
       } else if (data_type === "INT") {
-        table.columns.add(column, mssql.Int);
+        table.columns.add(column, mssql.Int, constraint ? constraint : {});
+      } else if (data_type === "TINYINT") {
+        table.columns.add(column, mssql.TinyInt, constraint ? constraint : {});
+      } else if (data_type === "DATETIME2") {
+        table.columns.add(
+          column,
+          mssql.DateTime2,
+          constraint ? constraint : {}
+        );
+      } else if (data_type === "DECIMAL") {
+        table.columns.add(
+          column,
+          mssql.Decimal(18, 10),
+          constraint ? constraint : {}
+        );
+      } else if (data_type === "BIGINT") {
+        table.columns.add(column, mssql.BigInt, constraint ? constraint : {});
       }
     });
 
@@ -36,13 +55,9 @@ async function hvac_data_insertion(
         table.rows.add(
           ...Object.values(currentObj).map((value) => {
             if (typeof value == "string") {
-              console.log("value: ", value);
-              if (value.includes(`'`)) {
-                console.log("============");
-              }
               return value.includes(`'`)
-                ? `"${value.replace(/'/g, `''`)}"`
-                : `'${value}'`;
+                ? `${value.replace(/'/g, `''`)}`
+                : `${value}`;
             } else {
               return value;
             }
@@ -51,9 +66,11 @@ async function hvac_data_insertion(
       })
     );
 
+    // console.log("fullway: ");
+
     // console.log("schema: ", table.schema);
-    console.log("columns: ", table.columns);
-    console.log("rows: ", table.rows);
+    // console.log("columns: ", table.columns);
+    console.log("rows: ", table.rows[0]);
 
     // Bulk insert
     const bulkResult = await sql_pool.bulk(table);
@@ -66,7 +83,8 @@ async function hvac_data_insertion(
     );
   } catch (err) {
     console.error(table_name, "Bulk insert error: trying again..", err);
-    hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
+
+    // hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
   }
 }
 
