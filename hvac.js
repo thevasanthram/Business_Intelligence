@@ -2354,14 +2354,14 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           }
 
           const invoice_date = record["invoiceDate"]
-          ? record["invoiceDate"]
-          : "1900-01-01T00:00:00.00Z",
+            ? record["invoiceDate"]
+            : "1900-01-01T00:00:00.00Z";
 
-          const js_date = new Date(invoice_date)
+          const js_date = new Date(invoice_date);
 
-          const current_date = new Date()
+          const current_date = new Date();
 
-          if(js_date <= current_date){
+          if (js_date <= current_date) {
             invoice_final_data_pool.push({
               id: record["id"],
               syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
@@ -2394,8 +2394,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               actual_job_details_id: actual_job_details_id,
             });
           }
-
-          
 
           let po_cost = 0;
           let labor_cost = 0;
@@ -2536,7 +2534,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             gross_margin = 0;
           }
 
-          if(js_date <= current_date){
+          if (js_date <= current_date) {
             gross_profit_final_data_pool.push({
               revenue: revenue,
               po_cost: po_cost, // purchase orders
@@ -2549,9 +2547,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               units: 1, //  currently for 1
               labor_hours: labor_hours, // cogs_labor paid duration
               invoice_id: record["id"],
-            })
+            });
           }
-        })
+        });
 
         // console.log("invoice_final_data_pool: ", invoice_final_data_pool);
         // console.log(
