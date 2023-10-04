@@ -20,8 +20,13 @@ async function flat_data_bulk_insertion(
 
     // Define the columns based on the header_data
     Object.keys(header_data).map((column) => {
-      const columnName = `[${column}]`; // Enclose the column name in square brackets
-      table.columns.add(column, mssql.NVarChar(mssql.MAX)); // Adjust the data type as needed
+      let columnName = ""; // Enclose the column name in square brackets
+      if (column != "batchId") {
+        columnName = column;
+      } else {
+        columnName = "batch_Id";
+      }
+      table.columns.add(columnName, mssql.NVarChar(mssql.MAX)); // Adjust the data type as needed
     });
 
     const batch = 1000;

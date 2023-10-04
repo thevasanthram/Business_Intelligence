@@ -1,4 +1,5 @@
+setInterval(() => {
+  console.log("hiii");
+}, 5000);
 
-const a = 6
-
-console.log(typeof a)
+console.log("hiii");

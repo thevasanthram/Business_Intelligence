@@ -78,6 +78,14 @@ async function getAPIData(
               delete record["subcategories"];
             }
 
+            if (record["leadCall"]) {
+              if (record["leadCall"]["customer"]) {
+                if (record["leadCall"]["customer"]["memberships"]) {
+                  delete record["leadCall"]["customer"]["memberships"];
+                }
+              }
+            }
+
             if (record["otherVendors"]) {
               delete record["otherVendors"];
             }
@@ -164,6 +172,14 @@ async function getAPIData(
 
           if (record["otherVendors"]) {
             delete record["otherVendors"];
+          }
+
+          if (record["leadCall"]) {
+            if (record["leadCall"]["customer"]) {
+              if (record["leadCall"]["customer"]["memberships"]) {
+                delete record["leadCall"]["customer"]["memberships"];
+              }
+            }
           }
 
           const temp = {

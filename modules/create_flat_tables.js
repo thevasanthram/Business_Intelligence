@@ -11,7 +11,13 @@ async function create_flat_tables(sql_request, flattenedObj, table_name) {
     try {
       const createTableSQL = `CREATE TABLE ${fomatted_table_name} (${Object.keys(
         flattenedObj
-      ).map((key) => `[${key}] NVARCHAR(max)`)} ) WITH
+      ).map((key) => {
+        if (key != "batchId") {
+          return `[${key}] NVARCHAR(max)`;
+        } else {
+          return `[batch_Id] NVARCHAR(max)`;
+        }
+      })} ) WITH
       (
           DATA_COMPRESSION = PAGE
       );`;

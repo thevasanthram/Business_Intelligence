@@ -37,6 +37,15 @@ const instance_details = [
   },
 ];
 
+const params_header = {
+  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
+  createdBefore: "2023-10-01T00:00:00.00Z",
+  includeTotal: true,
+  pageSize: 2000,
+};
+
+let initial_execute = true;
+
 const hvac_tables1 = {
   legal_entity: {
     // manual entry
@@ -1269,13 +1278,6 @@ const main_api_list = {
   ],
 };
 
-const params_header = {
-  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-10-01T00:00:00.00Z",
-  includeTotal: true,
-  pageSize: 2000,
-};
-
 function startStopwatch(task_name) {
   let startTime = Date.now();
   let running = true;
@@ -1467,12 +1469,14 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
-        await hvac_data_insertion(
-          sql_request,
-          Object.values(data_pool),
-          header_data,
-          table_name
-        );
+        if (initial_execute) {
+          await hvac_data_insertion(
+            sql_request,
+            Object.values(data_pool),
+            header_data,
+            table_name
+          );
+        }
 
         break;
       }
@@ -1497,8 +1501,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          business_unit_name: "Expert Heating and Cooling",
-          business_unit_official_name: "Expert Heating and Cooling",
+          business_unit_name: "default_business_1",
+          business_unit_official_name: "default_business_1",
           trade_type: "",
           revenue_type: "",
           account_type: "",
@@ -1507,8 +1511,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 2,
-          business_unit_name: "Parket-Arntz Plumbing and Heating",
-          business_unit_official_name: "Parket-Arntz Plumbing and Heating",
+          business_unit_name: "default_business_2",
+          business_unit_official_name: "default_business_2",
           trade_type: "",
           revenue_type: "",
           account_type: "",
@@ -1517,15 +1521,16 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 3,
-          business_unit_name: "Family Heating and Cooling",
-          business_unit_official_name: "Family Heating and Cooling",
+          business_unit_name: "default_business_3",
+          business_unit_official_name: "default_business_3",
           trade_type: "",
           revenue_type: "",
           account_type: "",
           legal_entity_id: 3,
         });
 
-        data_pool.map((record) => {
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
             business_unit_name: record["name"] ? record["name"] : "",
@@ -1552,7 +1557,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
-        if (final_data_pool.length > 0) {
+        if (final_data_pool.length > 0 && initial_execute) {
           await hvac_data_insertion(
             sql_request,
             final_data_pool,
@@ -1573,7 +1578,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          name: "Expert Heating and Cooling",
+          name: "default_customer_1",
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
@@ -1586,7 +1591,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 2,
-          name: "Parket-Arntz Plumbing and Heating",
+          name: "default_customer_2",
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
@@ -1599,7 +1604,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 3,
-          name: "Family Heating and Cooling",
+          name: "default_customer_3",
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
@@ -1757,7 +1762,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         final_data_pool.push({
           id: 1,
           job_type_id: 1,
-          job_type_name: "default_job",
+          job_type_name: "default_job_1",
           job_number: "1",
           job_status: "",
           job_start_time: "1900-01-01T00:00:00.00Z",
@@ -1779,7 +1784,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         final_data_pool.push({
           id: 2,
           job_type_id: 2,
-          job_type_name: "default_job",
+          job_type_name: "default_job_2",
           job_number: "2",
           job_status: "",
           job_start_time: "1900-01-01T00:00:00.00Z",
@@ -1801,7 +1806,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         final_data_pool.push({
           id: 3,
           job_type_id: 3,
-          job_type_name: "default_job",
+          job_type_name: "default_job_3",
           job_number: "3",
           job_status: "",
           job_start_time: "1900-01-01T00:00:00.00Z",
@@ -1905,19 +1910,19 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          name: "Expert Heating and Cooling",
+          name: "default_vendor_1",
           is_active: 1,
         });
 
         final_data_pool.push({
           id: 2,
-          name: "Parket-Arntz Plumbing and Heating",
+          name: "default_vendor_2",
           is_active: 1,
         });
 
         final_data_pool.push({
           id: 3,
-          name: "Family Heating and Cooling",
+          name: "default_vendor_3",
           is_active: 1,
         });
 
@@ -1965,21 +1970,21 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          name: "Expert Heating and Cooling",
+          name: "default_technician_1",
           business_unit_id: 1,
           acutal_business_unit_id: 1,
         });
 
         final_data_pool.push({
           id: 2,
-          name: "Parket-Arntz Plumbing and Heating",
+          name: "default_technician_2",
           business_unit_id: 2,
           acutal_business_unit_id: 2,
         });
 
         final_data_pool.push({
           id: 3,
-          name: "Family Heating and Cooling",
+          name: "default_technician_3",
           business_unit_id: 3,
           acutal_business_unit_id: 3,
         });
@@ -2041,7 +2046,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          sku_name: "Expert Heating and Cooling",
+          sku_name: "default_material_1",
           sku_type: "Material",
           sku_unit_price: 0,
           vendor_id: 1,
@@ -2050,7 +2055,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 2,
-          sku_name: "Parket-Arntz Plumbing and Heating",
+          sku_name: "default_material_2",
           sku_type: "Material",
           sku_unit_price: 0,
           vendor_id: 2,
@@ -2059,7 +2064,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 3,
-          sku_name: "Family Heating and Cooling",
+          sku_name: "default_material_3",
           sku_type: "Material",
           sku_unit_price: 0,
           vendor_id: 3,
@@ -2068,7 +2073,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 4,
-          sku_name: "Expert Heating and Cooling",
+          sku_name: "default_equipment_1",
           sku_type: "Equipment",
           sku_unit_price: 0,
           vendor_id: 1,
@@ -2077,7 +2082,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 5,
-          sku_name: "Parket-Arntz Plumbing and Heating",
+          sku_name: "default_equipment_2",
           sku_type: "Equipment",
           sku_unit_price: 0,
           vendor_id: 2,
@@ -2086,7 +2091,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 6,
-          sku_name: "Family Heating and Cooling",
+          sku_name: "default_equipment_3",
           sku_type: "Equipment",
           sku_unit_price: 0,
           vendor_id: 3,
@@ -2095,7 +2100,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 7,
-          sku_name: "Expert Heating and Cooling",
+          sku_name: "default_service_1",
           sku_type: "Service",
           sku_unit_price: 0,
           vendor_id: 1,
@@ -2104,7 +2109,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 8,
-          sku_name: "Parket-Arntz Plumbing and Heating",
+          sku_name: "default_service_2",
           sku_type: "Service",
           sku_unit_price: 0,
           vendor_id: 2,
@@ -2113,7 +2118,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 9,
-          sku_name: "Family Heating and Cooling",
+          sku_name: "default_service_3",
           sku_type: "Service",
           sku_unit_price: 0,
           vendor_id: 3,
@@ -2837,6 +2842,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
       }
     }
   }
+
+  initial_execute = false;
 }
 
 // for automatic mass ETL
@@ -2862,3 +2869,20 @@ async function start_pipeline() {
 }
 
 start_pipeline();
+
+function auto_update() {
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+
+  // Check if it's midnight (00:00:00)
+  if (hours === 0 && minutes === 0 && seconds === 0) {
+    params_header["createdOnOrAfter"] = params_header["createdBefore"];
+    params_header["createdBefore"] = new Date();
+    start_pipeline(); // Call your function
+  }
+}
+
+// Check the time every second
+setInterval(auto_update, 1000);
