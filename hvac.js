@@ -1523,9 +1523,40 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           id: 3,
           business_unit_name: "default_business_3",
           business_unit_official_name: "default_business_3",
-          trade_type: "",
-          revenue_type: "",
-          account_type: "",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
+          legal_entity_id: 3,
+        });
+
+        // MANUAL ENTRY
+        final_data_pool.push({
+          id: 108709,
+          business_unit_name: "Imported Default Businessunit",
+          business_unit_official_name: "Expert Imported Default Business Unit",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
+          legal_entity_id: 1,
+        });
+
+        final_data_pool.push({
+          id: 1000004,
+          business_unit_name: "Imported Businessunit",
+          business_unit_official_name: "Expert Imported Default Business Unit",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
+          legal_entity_id: 1,
+        });
+
+        final_data_pool.push({
+          id: 166181,
+          business_unit_name: "Imported Default Businessunit",
+          business_unit_official_name: "Family Imported Default Business Unit",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
           legal_entity_id: 3,
         });
 
@@ -1533,10 +1564,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
-            business_unit_name: record["name"] ? record["name"] : "",
+            business_unit_name: record["name"]
+              ? record["name"]
+              : "default_business",
             business_unit_official_name: record["officialName"]
               ? record["officialName"]
-              : "",
+              : "default_business",
             account_type: kpi_data[record["id"]]["Account Type"]
               ? kpi_data[record["id"]]["Account Type"]
               : "",
@@ -1582,11 +1615,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
-          address_street: "",
-          address_unit: "",
-          address_city: "",
-          address_state: "",
-          address_zip: "",
+          address_street: "default",
+          address_unit: "default",
+          address_city: "default",
+          address_state: "default",
+          address_zip: "default",
         });
 
         final_data_pool.push({
@@ -1595,11 +1628,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
-          address_street: "",
-          address_unit: "",
-          address_city: "",
-          address_state: "",
-          address_zip: "",
+          address_street: "default",
+          address_unit: "default",
+          address_city: "default",
+          address_state: "default",
+          address_zip: "default",
         });
 
         final_data_pool.push({
@@ -1608,38 +1641,38 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           is_active: 1,
           type: "default_type",
           creation_date: "1900-01-01T00:00:00.00Z",
-          address_street: "",
-          address_unit: "",
-          address_city: "",
-          address_state: "",
-          address_zip: "",
+          address_street: "default",
+          address_unit: "default",
+          address_city: "default",
+          address_state: "default",
+          address_zip: "default",
         });
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
-            name: record["name"] ? record["name"] : "",
+            name: record["name"] ? record["name"] : "default",
             is_active: record["active"] ? 1 : 0,
-            type: record["type"] ? record["type"] : "",
+            type: record["type"] ? record["type"] : "default",
             creation_date: record["createdOn"]
               ? record["createdOn"]
               : "1900-01-01T00:00:00.00Z",
             address_street: record["address"]["street"]
               ? record["address"]["street"]
-              : "",
+              : "default",
             address_unit: record["address"]["unit"]
               ? record["address"]["unit"]
-              : "",
+              : "default",
             address_city: record["address"]["city"]
               ? record["address"]["city"]
-              : "",
+              : "default",
             address_state: record["address"]["state"]
               ? record["address"]["state"]
-              : "",
+              : "default",
             address_zip: record["address"]["zip"]
               ? record["address"]["zip"]
-              : "",
+              : "default",
           });
         });
 
@@ -1674,33 +1707,33 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         final_data_pool.push({
           id: 1,
-          street: "",
-          unit: "",
-          city: "",
-          state: "",
-          zip: "",
+          street: "default",
+          unit: "default",
+          city: "default",
+          state: "default",
+          zip: "default",
           taxzone: 0,
           zone_id: 0,
         });
 
         final_data_pool.push({
           id: 2,
-          street: "",
-          unit: "",
-          city: "",
-          state: "",
-          zip: "",
+          street: "default",
+          unit: "default",
+          city: "default",
+          state: "default",
+          zip: "default",
           taxzone: 0,
           zone_id: 0,
         });
 
         final_data_pool.push({
           id: 3,
-          street: "",
-          unit: "",
-          city: "",
-          state: "",
-          zip: "",
+          street: "default",
+          unit: "default",
+          city: "default",
+          state: "default",
+          zip: "default",
           taxzone: 0,
           zone_id: 0,
         });
@@ -1711,11 +1744,19 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             id: record["id"],
             street: record["address"]["street"]
               ? record["address"]["street"]
-              : "",
-            unit: record["address"]["unit"] ? record["address"]["unit"] : "",
-            city: record["address"]["city"] ? record["address"]["city"] : "",
-            state: record["address"]["state"] ? record["address"]["state"] : "",
-            zip: record["address"]["zip"] ? record["address"]["zip"] : "",
+              : "default",
+            unit: record["address"]["unit"]
+              ? record["address"]["unit"]
+              : "default",
+            city: record["address"]["city"]
+              ? record["address"]["city"]
+              : "default",
+            state: record["address"]["state"]
+              ? record["address"]["state"]
+              : "default",
+            zip: record["address"]["zip"]
+              ? record["address"]["zip"]
+              : "default",
             taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
             zone_id: record["zoneId"] ? record["zoneId"] : 0,
           });
@@ -1764,7 +1805,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_id: 1,
           job_type_name: "default_job_1",
           job_number: "1",
-          job_status: "",
+          job_status: "default",
           job_start_time: "1900-01-01T00:00:00.00Z",
           project_id: 0,
           job_completion_time: "1900-01-01T00:00:00.00Z",
@@ -1786,7 +1827,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_id: 2,
           job_type_name: "default_job_2",
           job_number: "2",
-          job_status: "",
+          job_status: "default",
           job_start_time: "1900-01-01T00:00:00.00Z",
           project_id: 0,
           job_completion_time: "1900-01-01T00:00:00.00Z",
@@ -1808,7 +1849,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_id: 3,
           job_type_name: "default_job_3",
           job_number: "3",
-          job_status: "",
+          job_status: "default",
           job_start_time: "1900-01-01T00:00:00.00Z",
           project_id: 0,
           job_completion_time: "1900-01-01T00:00:00.00Z",
@@ -1833,7 +1874,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           let business_unit_id = record["instance_id"];
           let customer_details_id = record["instance_id"];
           let location_id = record["instance_id"];
-          let job_type_name = "";
+          let job_type_name = "default";
 
           if (business_unit_data_pool[record["businessUnitId"]]) {
             business_unit_id = record["businessUnitId"];
@@ -1855,7 +1896,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             id: record["id"],
             job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
             job_type_name: job_type_name ? job_type_name : "default_job",
-            job_number: record["jobNumber"] ? record["jobNumber"] : "",
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
             job_start_time: record["createdOn"]
               ? record["createdOn"]
@@ -1933,7 +1974,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
-            name: record["name"] ? record["name"] : "",
+            name: record["name"] ? record["name"] : "default_vendor",
             is_active: record["active"] ? 1 : 0,
           });
         });
@@ -1996,13 +2037,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
-            name: record["name"] ? record["name"] : "",
+            name: record["name"] ? record["name"] : "default_technician",
             business_unit_id: record["businessUnitId"]
               ? record["businessUnitId"]
               : record["instance_id"],
-            acutal_business_unit_id: record["businessUnitId"]
-              ? record["businessUnitId"]
-              : record["instance_id"],
+            acutal_business_unit_id: record["businessUnitId"],
           });
         });
 
@@ -2128,7 +2167,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         Object.keys(materials_data_pool).map((record_id) => {
           const record = materials_data_pool[record_id];
           let vendor_id = record["instance_id"];
-          let actual_vendor_id = 0;
+          let actual_vendor_id = null;
           if (record["primaryVendor"]) {
             actual_vendor_id = record["primaryVendor"]["vendorId"];
             vendor_id = record["primaryVendor"]["vendorId"]
@@ -2148,7 +2187,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         Object.keys(equipment_data_pool).map((record_id) => {
           const record = equipment_data_pool[record_id];
           let vendor_id = record["instance_id"];
-          let actual_vendor_id = 0;
+          let actual_vendor_id = null;
           if (record["primaryVendor"]) {
             actual_vendor_id = record["primaryVendor"]["vendorId"];
             vendor_id = record["primaryVendor"]["vendorId"]
@@ -2157,7 +2196,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           }
           final_data_pool.push({
             id: record["id"],
-            sku_name: record["code"] ? record["code"] : "",
+            sku_name: record["code"] ? record["code"] : "default",
             sku_type: "Equipment",
             sku_unit_price: record["cost"] ? record["cost"] : 0,
             vendor_id: vendor_id,
@@ -2170,7 +2209,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           final_data_pool.push({
             id: record["id"],
-            sku_name: record["code"] ? record["code"] : "",
+            sku_name: record["code"] ? record["code"] : "default",
             sku_type: "Service",
             sku_unit_price: record["price"] ? record["price"] : 0,
             vendor_id: 0,
@@ -2294,7 +2333,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 1,
-          syncStatus: "",
+          syncStatus: "default",
           date: "1900-01-01T00:00:00.00Z",
           dueDate: "1900-01-01T00:00:00.00Z",
           subtotal: 0,
@@ -2312,7 +2351,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 2,
-          syncStatus: "",
+          syncStatus: "default",
           date: "1900-01-01T00:00:00.00Z",
           dueDate: "1900-01-01T00:00:00.00Z",
           subtotal: 0,
@@ -2330,7 +2369,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         invoice_final_data_pool.push({
           id: 3,
-          syncStatus: "",
+          syncStatus: "default",
           date: "1900-01-01T00:00:00.00Z",
           dueDate: "1900-01-01T00:00:00.00Z",
           subtotal: 0,
@@ -2350,7 +2389,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const record = invoice_data_pool[record_id];
 
           let job_details_id = record["instance_id"];
-          let actual_job_details_id = 0;
+          let actual_job_details_id = null;
           if (record["job"]) {
             actual_job_details_id = record["job"]["id"];
             if (jobs_data_pool[record["job"]["id"]]) {
@@ -2376,7 +2415,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
             invoice_final_data_pool.push({
               id: record["id"],
-              syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
+              syncStatus: record["syncStatus"]
+                ? record["syncStatus"]
+                : "default",
               date: record["invoiceDate"]
                 ? record["invoiceDate"]
                 : "1900-01-01T00:00:00.00Z",
@@ -2423,10 +2464,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           if (record["items"]) {
             record["items"].map((items_record) => {
               let generalLedgerAccountid = 0;
-              let generalLedgerAccountname = "";
+              let generalLedgerAccountname = "default";
               let generalLedgerAccountnumber = 0;
-              let generalLedgerAccounttype = "";
-              let generalLedgerAccountdetailType = "";
+              let generalLedgerAccounttype = "default";
+              let generalLedgerAccountdetailType = "default";
 
               if (items_record["generalLedgerAccount"]) {
                 let generalLedgerAccountid =
@@ -2700,7 +2741,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           final_data_pool.push({
             id: record["id"],
-            status: record["status"] ? record["status"] : "",
+            status: record["status"] ? record["status"] : "default",
             total: record["total"] ? record["total"] : 0,
             tax: record["tax"] ? record["tax"] : 0,
             date: record["date"] ? record["date"] : "1900-01-01T00:00:00.00Z",
@@ -2777,9 +2818,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
             : 0.0;
 
-          let burden_cost = record["paidDurationHours"]
-            ? record["paidDurationHours"]
-            : 0 * burden_rate;
+          let burden_cost =
+            (record["paidDurationHours"] ? record["paidDurationHours"] : 0) *
+            burden_rate;
 
           let job_details_id = record["instance_id"];
           let actual_job_details_id = 0;
@@ -2788,10 +2829,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             if (jobs_data_pool[record["jobId"]]) {
               job_details_id = record["jobId"];
             }
-          }
-
-          if (typeof job_details_id != "number") {
-            console.log("job_details_id: ", job_details_id);
           }
 
           let technician_id = record["instance_id"];
@@ -2807,10 +2844,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             burden_rate: burden_rate,
             labor_cost: record["amount"] ? record["amount"] : 0,
             burden_cost: burden_cost,
-            activity: record["activity"] ? record["activity"] : "",
+            activity: record["activity"] ? record["activity"] : "default",
             paid_time_type: record["paidTimeType"]
               ? record["paidTimeType"]
-              : "",
+              : "default",
             job_details_id: job_details_id,
             actual_job_details_id: actual_job_details_id,
             technician_id: technician_id,
