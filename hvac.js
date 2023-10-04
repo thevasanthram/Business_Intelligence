@@ -2350,37 +2350,49 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             }
           }
 
-          invoice_final_data_pool.push({
-            id: record["id"],
-            syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
-            date: record["invoiceDate"]
-              ? record["invoiceDate"]
-              : "1900-01-01T00:00:00.00Z",
-            dueDate: record["dueDate"]
-              ? record["dueDate"]
-              : "1900-01-01T00:00:00.00Z",
-            subtotal: record["subTotal"] ? record["subTotal"] : 0,
-            tax: record["salesTax"] ? record["salesTax"] : 0,
-            total: record["total"] ? record["total"] : 0,
-            balance: record["balance"] ? record["balance"] : 0,
-            depositedOn: record["depositedOn"]
-              ? record["depositedOn"]
-              : "1900-01-01T00:00:00.00Z",
-            createdOn: record["createdOn"]
-              ? record["createdOn"]
-              : "1900-01-01T00:00:00.00Z",
-            modifiedOn: record["modifiedOn"]
-              ? record["modifiedOn"]
-              : "1900-01-01T00:00:00.00Z",
-            invoice_type_id: record["invoiceTypeid"]
-              ? record["invoiceTypeid"]
-              : 0,
-            invoice_type_name: record["invoiceTypename"]
-              ? record["invoiceTypename"]
-              : "default_invoice",
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-          });
+          const invoice_date = record["invoiceDate"]
+          ? record["invoiceDate"]
+          : "1900-01-01T00:00:00.00Z",
+
+          const js_date = new Date(invoice_date)
+
+          const current_date = new Date()
+
+          if(js_date <= current_date){
+            invoice_final_data_pool.push({
+              id: record["id"],
+              syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
+              date: record["invoiceDate"]
+                ? record["invoiceDate"]
+                : "1900-01-01T00:00:00.00Z",
+              dueDate: record["dueDate"]
+                ? record["dueDate"]
+                : "1900-01-01T00:00:00.00Z",
+              subtotal: record["subTotal"] ? record["subTotal"] : 0,
+              tax: record["salesTax"] ? record["salesTax"] : 0,
+              total: record["total"] ? record["total"] : 0,
+              balance: record["balance"] ? record["balance"] : 0,
+              depositedOn: record["depositedOn"]
+                ? record["depositedOn"]
+                : "1900-01-01T00:00:00.00Z",
+              createdOn: record["createdOn"]
+                ? record["createdOn"]
+                : "1900-01-01T00:00:00.00Z",
+              modifiedOn: record["modifiedOn"]
+                ? record["modifiedOn"]
+                : "1900-01-01T00:00:00.00Z",
+              invoice_type_id: record["invoiceTypeid"]
+                ? record["invoiceTypeid"]
+                : 0,
+              invoice_type_name: record["invoiceTypename"]
+                ? record["invoiceTypename"]
+                : "default_invoice",
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+            });
+          }
+
+          
 
           let po_cost = 0;
           let labor_cost = 0;
@@ -2521,20 +2533,22 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             gross_margin = 0;
           }
 
-          gross_profit_final_data_pool.push({
-            revenue: revenue,
-            po_cost: po_cost, // purchase orders
-            equipment_cost: equipment_cost, //
-            material_cost: material_cost, //
-            labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-            burden: burden, // cogs_labor
-            gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: labor_hours, // cogs_labor paid duration
-            invoice_id: record["id"],
-          });
-        });
+          if(js_date <= current_date){
+            gross_profit_final_data_pool.push({
+              revenue: revenue,
+              po_cost: po_cost, // purchase orders
+              equipment_cost: equipment_cost, //
+              material_cost: material_cost, //
+              labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+              burden: burden, // cogs_labor
+              gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+              gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+              units: 1, //  currently for 1
+              labor_hours: labor_hours, // cogs_labor paid duration
+              invoice_id: record["id"],
+            })
+          }
+        })
 
         // console.log("invoice_final_data_pool: ", invoice_final_data_pool);
         // console.log(
