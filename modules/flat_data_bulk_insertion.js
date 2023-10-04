@@ -24,9 +24,11 @@ async function flat_data_bulk_insertion(
       table.columns.add(column, mssql.NVarChar(mssql.MAX)); // Adjust the data type as needed
     });
 
+    const batch = 1000;
+
     console.log("Total inserting records: ", data_pool.length);
-    await Promise.all(
-      data_pool.map(async (currentObj, index) => {
+    for (let i = 0; i < data_pool.length; i = i + batch) {
+      data_pool.slice(i, i + batch).map(async (currentObj, index) => {
         const flattenedObj = flattenObject(currentObj);
         const filteredObj = extractMatchingValues(header_data, flattenedObj);
 
@@ -37,8 +39,8 @@ async function flat_data_bulk_insertion(
               : `'${value}'`;
           })
         ); // Spread the elements of the row array as arguments
-      })
-    );
+      });
+    }
 
     // console.log("schema: ", table.schema);
     // console.log("columns: ", table.columns);
