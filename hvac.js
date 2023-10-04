@@ -1525,19 +1525,22 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           legal_entity_id: 3,
         });
 
-        Object.keys(kpi_data).map((bu_id) => {
-          const record = kpi_data[bu_id];
+        data_pool.map((record) => {
           final_data_pool.push({
-            id: bu_id,
-            business_unit_name: record["Business Units Name"]
-              ? record["Business Units Name"]
+            id: record["id"],
+            business_unit_name: record["name"] ? record["name"] : "",
+            business_unit_official_name: record["officialName"]
+              ? record["officialName"]
               : "",
-            business_unit_official_name: record["Official Name"]
-              ? record["Official Name"]
+            account_type: kpi_data[record["id"]]["Account Type"]
+              ? kpi_data[record["id"]]["Account Type"]
               : "",
-            trade_type: record["Trade Type"] ? record["Trade Type"] : "",
-            revenue_type: record["Revenue Type"] ? record["Revenue Type"] : "",
-            account_type: record["Account Type"] ? record["Account Type"] : "",
+            revenue_type: kpi_data[record["id"]]["Revenue Type"]
+              ? kpi_data[record["id"]]["Revenue Type"]
+              : "",
+            trade_type: kpi_data[record["id"]]["Trade Type"]
+              ? kpi_data[record["id"]]["Trade Type"]
+              : "",
             legal_entity_id: record["instance_id"],
           });
         });
