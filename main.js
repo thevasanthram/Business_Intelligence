@@ -19,11 +19,11 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 // Service Titan's API parameters
 
 const api_collection = [
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-    mode: "items",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  //   mode: "items",
+  // },
   //   {
   //     api_group: "inventory",
   //     api_name: "adjustments",
@@ -110,10 +110,10 @@ const api_collection = [
   //     api_group: "equipmentsystems",
   //     api_name: "installed-equipment",
   //   },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-  },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  // },
   //   {
   //     api_group: "inventory",
   //     api_name: "transfers",
@@ -310,10 +310,10 @@ const api_collection = [
   //     api_group: "service-agreements",
   //     api_name: "service-agreements",
   //   },
-  //   {
-  //     api_group: "settings",
-  //     api_name: "business-units",
-  //   },
+  {
+    api_group: "settings",
+    api_name: "business-units",
+  },
   //   {
   //     api_group: "settings",
   //     api_name: "employees",
@@ -394,7 +394,7 @@ const hvac_tables = [
 
 const params_header = {
   createdOnOrAfter: "",
-  createdBefore: "2023-10-04T00:00:00.00Z", // 2023-08-01T00:00:00.00Z
+  createdBefore: "", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
 };
@@ -549,19 +549,19 @@ async function find_max_and_write_csv(data_lake) {
           );
 
           if (api_mode == "normal") {
-            // await csv_generator(
-            //   current_data_pool,
-            //   data_lake[key]["header_data"],
-            //   api_group + "_" + api_name
-            // );
+            await csv_generator(
+              current_data_pool,
+              data_lake[key]["header_data"],
+              api_group + "_" + api_name
+            );
             // json_to_text_convertor
             // json_to_text_convertor(current_data_pool, api_group, api_name);
           } else {
-            // await csv_generator(
-            //   current_data_pool,
-            //   data_lake[key]["header_data"],
-            //   api_group + "_" + api_name + "_" + api_mode
-            // );
+            await csv_generator(
+              current_data_pool,
+              data_lake[key]["header_data"],
+              api_group + "_" + api_name + "_" + api_mode
+            );
             // json_to_text_convertor
             // json_to_text_convertor(current_data_pool, api_group, api_name);
           }
@@ -720,15 +720,15 @@ async function start_pipeline() {
   console.log("Time taken for fetching data: ", stop1());
 
   // Storing Data into Azure SQL Database using bulk insert
-  const stop2 = startStopwatch("inserting data");
-  await find_max_and_bulk_insert(data_lake);
-  console.log("Time taken for inserting data: ", stop2());
+  // const stop2 = startStopwatch("inserting data");
+  // await find_max_and_bulk_insert(data_lake);
+  // console.log("Time taken for inserting data: ", stop2());
 
   // await find_total_length(data_lake);
 
   // {
   // Creating CSVs
-  // await find_max_and_write_csv(data_lake);
+  await find_max_and_write_csv(data_lake);
   // }
 
   // {

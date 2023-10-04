@@ -1503,9 +1503,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           id: 1,
           business_unit_name: "default_business_1",
           business_unit_official_name: "default_business_1",
-          trade_type: "",
-          revenue_type: "",
-          account_type: "",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
           legal_entity_id: 1,
         });
 
@@ -1513,9 +1513,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           id: 2,
           business_unit_name: "default_business_2",
           business_unit_official_name: "default_business_2",
-          trade_type: "",
-          revenue_type: "",
-          account_type: "",
+          trade_type: "HIS",
+          revenue_type: "HIS",
+          account_type: "HIS",
           legal_entity_id: 2,
         });
 
@@ -2367,6 +2367,13 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const current_date = new Date();
 
           if (js_date <= current_date) {
+            let invoice_type_id = 0;
+            let invoice_type_name = "default_invoice";
+            if (record["invoiceType"]) {
+              invoice_type_id = record["invoiceType"]["id"];
+              invoice_type_name = record["invoiceType"]["name"];
+            }
+
             invoice_final_data_pool.push({
               id: record["id"],
               syncStatus: record["syncStatus"] ? record["syncStatus"] : "",
@@ -2389,12 +2396,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               modifiedOn: record["modifiedOn"]
                 ? record["modifiedOn"]
                 : "1900-01-01T00:00:00.00Z",
-              invoice_type_id: record["invoiceTypeid"]
-                ? record["invoiceTypeid"]
-                : 0,
-              invoice_type_name: record["invoiceTypename"]
-                ? record["invoiceTypename"]
-                : "default_invoice",
+              invoice_type_id: invoice_type_id,
+              invoice_type_name: invoice_type_name,
               job_details_id: job_details_id,
               actual_job_details_id: actual_job_details_id,
             });
@@ -2625,7 +2628,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           );
         }
 
-        if (cogs_service_header_data.length > 0) {
+        if (cogs_services_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
             cogs_services_final_data_pool,
