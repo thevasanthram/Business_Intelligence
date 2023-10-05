@@ -1648,18 +1648,22 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           address_zip: "default",
         });
 
-        let creation_date = "2000-01-01T00:00:00.00Z";
-
-        if (record["createdOn"]) {
-          if (
-            new Date(record["createdOn"]) > new Date("2000-01-01T00:00:00.00Z")
-          ) {
-            creation_date = record["createdOn"];
-          }
-        }
+        
 
         Object.keys(data_pool).mapcreation_date((record_id) => {
           const record = data_pool[record_id];
+
+          let creation_date = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              creation_date = record["createdOn"];
+            }
+          }
+
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default",
