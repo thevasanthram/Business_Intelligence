@@ -1884,7 +1884,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           let location_id = record["instance_id"];
           let job_type_name = "default";
 
-          if (business_unit_data_pool[record["businessUnitId"]]) {
+          if (
+            business_unit_data_pool[record["businessUnitId"]] ||
+            record["businessUnitId"] == 108709 ||
+            record["businessUnitId"] == 1000004 ||
+            record["businessUnitId"] == 166181
+          ) {
             business_unit_id = record["businessUnitId"];
           }
 
@@ -2285,6 +2290,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             ]
           )
         );
+        const sku_details_data_pool = {
+          ...data_lake[api_name]["pricebook__materials"]["data_pool"],
+          ...data_lake[api_name]["pricebook__equipment"]["data_pool"],
+          ...data_lake[api_name]["pricebook__services"]["data_pool"],
+        };
 
         const invoice_header_data = hvac_tables["invoice"]["columns"];
         const cogs_material_header_data =
@@ -2536,19 +2546,23 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               let generalLedgerAccountdetailType = "default";
 
               if (items_record["generalLedgerAccount"]) {
-                let generalLedgerAccountid =
+                generalLedgerAccountid =
                   items_record["generalLedgerAccount"]["id"];
-                let generalLedgerAccountname =
+                generalLedgerAccountname =
                   items_record["generalLedgerAccount"]["name"];
-                let generalLedgerAccountnumber =
+                generalLedgerAccountnumber =
                   items_record["generalLedgerAccount"]["number"];
-                let generalLedgerAccounttype =
+                generalLedgerAccounttype =
                   items_record["generalLedgerAccount"]["type"];
-                let generalLedgerAccountdetailType =
+                generalLedgerAccountdetailType =
                   items_record["generalLedgerAccount"]["detailType"];
               }
 
               let sku_details_id = record["instance_id"];
+              if (sku_details_data_pool[items_record["skuId"]]) {
+                sku_details_id = items_record["skuId"];
+              }
+
               if (items_record["type"] == "Material") {
                 material_cost =
                   material_cost + parseFloat(items_record["totalCost"]);
@@ -2643,7 +2657,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             labor_cost -
             burden;
 
-          let gross_margin = (gross_profit / revenue) * 100;
+          let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
 
           if (isNaN(gross_margin) || !isFinite(gross_margin)) {
             gross_margin = 0;
@@ -2779,28 +2793,25 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           const record = purchase_order_data_pool[record_id];
 
           let job_details_id = record["instance_id"];
-          let actual_job_details_id = 0;
+          let actual_job_details_id = record["jobId"];
           if (record["jobId"]) {
-            actual_job_details_id = record["jobId"];
             if (jobs_data_pool[record["jobId"]]) {
               job_details_id = record["jobId"];
             }
           }
 
           let invoice_id = record["instance_id"];
-          let actual_invoice_id = 0;
+          let actual_invoice_id = record["invoiceId"];
           if (record["invoiceId"]) {
-            actual_invoice_id = record["invoiceId"];
             if (invoice_data_pool[record["invoiceId"]]) {
               invoice_id = record["invoiceId"];
             }
           }
 
           let vendor_id = record["instance_id"];
-          let actual_vendor_id = 0;
+          let actual_vendor_id = record["vendorId"];
           if (record["vendorId"]) {
-            actual_vendor_id = record["vendorId"];
-            if (invoice_data_pool[record["vendorId"]]) {
+            if (vendors_data_pool[record["vendorId"]]) {
               vendor_id = record["vendorId"];
             }
           }
@@ -2809,8 +2820,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           if (record["date"]) {
             if (
-              new Date(record["date"]) >
-              new Date("2000-01-01T00:00:00.00Z")
+              new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
             ) {
               date = record["date"];
             }
@@ -2831,8 +2841,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           if (record["sentOn"]) {
             if (
-              new Date(record["sentOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
+              new Date(record["sentOn"]) > new Date("2000-01-01T00:00:00.00Z")
             ) {
               sentOn = record["sentOn"];
             }
@@ -2945,9 +2954,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             burden_rate;
 
           let job_details_id = record["instance_id"];
-          let actual_job_details_id = 0;
+          let actual_job_details_id = record["jobId"];
           if (record["jobId"]) {
-            actual_job_details_id = record["jobId"];
             if (jobs_data_pool[record["jobId"]]) {
               job_details_id = record["jobId"];
             }

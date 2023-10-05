@@ -11,32 +11,51 @@ const config = {
 };
 
 // Create an Excel workbook
-const workbook = new ExcelJS.Workbook();
 const filename = "all_tables.xlsx";
 
-// Function to export data from a table to Excel
-async function exportTableToExcel(connection, tableName, worksheet) {
+// Function to export data from a table to Excel in batches
+async function exportTableToExcel(connection, tableName, worksheet, batchSize) {
   try {
     const query = `SELECT * FROM ${tableName}`;
     console.log("Executing query:", query);
 
-    const result = await connection.request().query(query);
-    console.log(`Query returned ${result.recordset.length} rows`);
+    const request = connection.request();
+    request.stream = true; // Enable streaming
 
-    if (result.recordset.length > 0) {
-      // Add column headers to the worksheet (only for the first batch)
-      if (!worksheet.getRow(1).values.length) {
-        const columnHeaders = Object.keys(result.recordset[0]);
-        worksheet.addRow(columnHeaders);
-      }
+    // Define a promise to handle stream completion
+    const streamPromise = new Promise((resolve, reject) => {
+      let isFirstRow = true; // To add column headers only once
 
-      // Add data rows to the worksheet
-      for (const row of result.recordset) {
+      request.on("row", (row) => {
+        if (isFirstRow) {
+          // Add column headers to the worksheet (only for the first batch)
+          const columnHeaders = Object.keys(row);
+          worksheet.addRow(columnHeaders);
+          isFirstRow = false;
+        }
         worksheet.addRow(Object.values(row));
-      }
-    } else {
-      console.log(`Table ${tableName} is empty.`);
-    }
+
+        // If you've written batchSize rows, resolve the promise to process the next batch
+        if (worksheet.rowCount >= batchSize) {
+          resolve();
+        }
+      });
+
+      request.on("error", (error) => {
+        reject(error);
+      });
+
+      request.on("done", () => {
+        // Resolve the promise when the stream is done
+        resolve();
+      });
+    });
+
+    // Execute the query with streaming
+    await request.query(query);
+
+    // Wait for the promise to resolve to ensure the batch is complete
+    await streamPromise;
   } catch (error) {
     console.error(`Error exporting table ${tableName}:`, error);
   }
@@ -63,15 +82,20 @@ async function getAllTableNames() {
 
   const connection = await sql.connect(config);
 
+  // Batch size for writing rows
+  const batchSize = 1000; // You can adjust this value based on performance
+
+  const workbook = new ExcelJS.Workbook();
+
   for (const tableName of tableNames) {
     console.log("tableName: ", tableName);
     const worksheet = workbook.addWorksheet(tableName);
-    await exportTableToExcel(connection, tableName, worksheet);
+    await exportTableToExcel(connection, tableName, worksheet, batchSize);
   }
 
   await connection.close();
 
-  // Save the Excel file in chunks to avoid memory issues
+  // Save the Excel file
   const writer = fs.createWriteStream(filename);
   await workbook.xlsx.write(writer);
   writer.end();
