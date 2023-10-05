@@ -1584,7 +1584,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           });
         });
 
-        console.log('final data pool', final_data_pool);
+        console.log("final data pool", final_data_pool);
         // await hvac_flat_data_insertion(
         //   sql_request,
         //   final_data_pool,
@@ -1649,8 +1649,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           address_state: "default",
           address_zip: "default",
         });
-
-        
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
@@ -2297,9 +2295,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           )
         );
         const sku_details_data_pool = {
-          ...data_lake['sku_details']["pricebook__materials"]["data_pool"],
-          ...data_lake['sku_details']["pricebook__equipment"]["data_pool"],
-          ...data_lake['sku_details']["pricebook__services"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
         };
 
         const invoice_header_data = hvac_tables["invoice"]["columns"];
@@ -2564,14 +2562,14 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                   items_record["generalLedgerAccount"]["detailType"];
               }
 
-              let sku_details_id = record["instance_id"];
-              if (sku_details_data_pool[items_record["skuId"]]) {
-                sku_details_id = items_record["skuId"];
-              }
-
               if (items_record["type"] == "Material") {
                 material_cost =
                   material_cost + parseFloat(items_record["totalCost"]);
+
+                let sku_details_id = record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
 
                 cogs_material_final_data_pool.push({
                   quantity: items_record["quantity"]
@@ -2600,7 +2598,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                 equipment_cost =
                   equipment_cost + parseFloat(items_record["totalCost"]);
 
-                sku_details_id = sku_details_id + 3;
+                let sku_details_id = record["instance_id"] + 3;
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
                 cogs_equipment_final_data_pool.push({
                   quantity: items_record["quantity"]
                     ? items_record["quantity"]
@@ -2625,7 +2627,11 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               }
 
               if (items_record["type"] == "Service") {
-                sku_details_id = sku_details_id + 6;
+                let sku_details_id = record["instance_id"] + 6;
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
                 cogs_services_final_data_pool.push({
                   quantity: items_record["quantity"]
                     ? items_record["quantity"]
