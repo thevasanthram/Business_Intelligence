@@ -11,6 +11,7 @@ const hvac_flat_data_insertion = require("./modules/hvac_flat_data_insertion");
 const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
+const { log } = require("console");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -1583,6 +1584,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           });
         });
 
+        console.log('final data pool', final_data_pool);
         // await hvac_flat_data_insertion(
         //   sql_request,
         //   final_data_pool,
@@ -1650,7 +1652,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
         
 
-        Object.keys(data_pool).mapcreation_date((record_id) => {
+        Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
           let creation_date = "2000-01-01T00:00:00.00Z";
@@ -2295,9 +2297,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           )
         );
         const sku_details_data_pool = {
-          ...data_lake[api_name]["pricebook__materials"]["data_pool"],
-          ...data_lake[api_name]["pricebook__equipment"]["data_pool"],
-          ...data_lake[api_name]["pricebook__services"]["data_pool"],
+          ...data_lake['sku_details']["pricebook__materials"]["data_pool"],
+          ...data_lake['sku_details']["pricebook__equipment"]["data_pool"],
+          ...data_lake['sku_details']["pricebook__services"]["data_pool"],
         };
 
         const invoice_header_data = hvac_tables["invoice"]["columns"];
