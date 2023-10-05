@@ -1614,7 +1614,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           name: "default_customer_1",
           is_active: 1,
           type: "default_type",
-          creation_date: "1900-01-01T00:00:00.00Z",
+          creation_date: "2001-01-01T00:00:00.00Z",
           address_street: "default",
           address_unit: "default",
           address_city: "default",
@@ -1627,7 +1627,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           name: "default_customer_2",
           is_active: 1,
           type: "default_type",
-          creation_date: "1900-01-01T00:00:00.00Z",
+          creation_date: "2001-01-01T00:00:00.00Z",
           address_street: "default",
           address_unit: "default",
           address_city: "default",
@@ -1640,7 +1640,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           name: "default_customer_3",
           is_active: 1,
           type: "default_type",
-          creation_date: "1900-01-01T00:00:00.00Z",
+          creation_date: "2001-01-01T00:00:00.00Z",
           address_street: "default",
           address_unit: "default",
           address_city: "default",
@@ -1648,16 +1648,24 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           address_zip: "default",
         });
 
-        Object.keys(data_pool).map((record_id) => {
+        let creation_date = "2000-01-01T00:00:00.00Z";
+
+        if (record["createdOn"]) {
+          if (
+            new Date(record["createdOn"]) > new Date("2000-01-01T00:00:00.00Z")
+          ) {
+            creation_date = record["createdOn"];
+          }
+        }
+
+        Object.keys(data_pool).mapcreation_date((record_id) => {
           const record = data_pool[record_id];
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default",
             is_active: record["active"] ? 1 : 0,
             type: record["type"] ? record["type"] : "default",
-            creation_date: record["createdOn"]
-              ? record["createdOn"]
-              : "1900-01-01T00:00:00.00Z",
+            creation_date: creation_date,
             address_street: record["address"]["street"]
               ? record["address"]["street"]
               : "default",
@@ -1806,9 +1814,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_name: "default_job_1",
           job_number: "1",
           job_status: "default",
-          job_start_time: "1900-01-01T00:00:00.00Z",
+          job_start_time: "2001-01-01T00:00:00.00Z",
           project_id: 0,
-          job_completion_time: "1900-01-01T00:00:00.00Z",
+          job_completion_time: "2001-01-01T00:00:00.00Z",
           business_unit_id: 1,
           actual_business_unit_id: 1,
           location_id: 1,
@@ -1828,9 +1836,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_name: "default_job_2",
           job_number: "2",
           job_status: "default",
-          job_start_time: "1900-01-01T00:00:00.00Z",
+          job_start_time: "2001-01-01T00:00:00.00Z",
           project_id: 0,
-          job_completion_time: "1900-01-01T00:00:00.00Z",
+          job_completion_time: "2001-01-01T00:00:00.00Z",
           business_unit_id: 2,
           actual_business_unit_id: 2,
           location_id: 2,
@@ -1850,9 +1858,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           job_type_name: "default_job_3",
           job_number: "3",
           job_status: "default",
-          job_start_time: "1900-01-01T00:00:00.00Z",
+          job_start_time: "2001-01-01T00:00:00.00Z",
           project_id: 0,
-          job_completion_time: "1900-01-01T00:00:00.00Z",
+          job_completion_time: "2001-01-01T00:00:00.00Z",
           business_unit_id: 3,
           actual_business_unit_id: 3,
           location_id: 3,
@@ -1892,19 +1900,37 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             job_type_name = job_types_data_pool[record["jobTypeId"]]["name"];
           }
 
+          let job_start_time = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              job_start_time = record["createdOn"];
+            }
+          }
+
+          let job_completion_time = "2000-01-01T00:00:00.00Z";
+
+          if (record["completedOn"]) {
+            if (
+              new Date(record["completedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              job_completion_time = record["completedOn"];
+            }
+          }
+
           final_data_pool.push({
             id: record["id"],
             job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
             job_type_name: job_type_name ? job_type_name : "default_job",
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
-            job_start_time: record["createdOn"]
-              ? record["createdOn"]
-              : "1900-01-01T00:00:00.00Z",
+            job_start_time: job_start_time,
             project_id: record["projectId"] ? record["projectId"] : 0,
-            job_completion_time: record["completedOn"]
-              ? record["completedOn"]
-              : "1900-01-01T00:00:00.00Z",
+            job_completion_time: job_completion_time,
             business_unit_id: business_unit_id,
             actual_business_unit_id: record["businessUnitId"],
             location_id: location_id,
@@ -2334,15 +2360,15 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         invoice_final_data_pool.push({
           id: 1,
           syncStatus: "default",
-          date: "1900-01-01T00:00:00.00Z",
-          dueDate: "1900-01-01T00:00:00.00Z",
+          date: "2001-01-01T00:00:00.00Z",
+          dueDate: "2001-01-01T00:00:00.00Z",
           subtotal: 0,
           tax: 0,
           total: 0,
           balance: 0,
-          depositedOn: "1900-01-01T00:00:00.00Z",
-          createdOn: "1900-01-01T00:00:00.00Z",
-          modifiedOn: "1900-01-01T00:00:00.00Z",
+          depositedOn: "2001-01-01T00:00:00.00Z",
+          createdOn: "2001-01-01T00:00:00.00Z",
+          modifiedOn: "2001-01-01T00:00:00.00Z",
           invoice_type_id: 0,
           invoice_type_name: "default_invoice",
           job_details_id: 1,
@@ -2352,15 +2378,15 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         invoice_final_data_pool.push({
           id: 2,
           syncStatus: "default",
-          date: "1900-01-01T00:00:00.00Z",
-          dueDate: "1900-01-01T00:00:00.00Z",
+          date: "2001-01-01T00:00:00.00Z",
+          dueDate: "2001-01-01T00:00:00.00Z",
           subtotal: 0,
           tax: 0,
           total: 0,
           balance: 0,
-          depositedOn: "1900-01-01T00:00:00.00Z",
-          createdOn: "1900-01-01T00:00:00.00Z",
-          modifiedOn: "1900-01-01T00:00:00.00Z",
+          depositedOn: "2001-01-01T00:00:00.00Z",
+          createdOn: "2001-01-01T00:00:00.00Z",
+          modifiedOn: "2001-01-01T00:00:00.00Z",
           invoice_type_id: 0,
           invoice_type_name: "default_invoice",
           job_details_id: 2,
@@ -2370,15 +2396,15 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         invoice_final_data_pool.push({
           id: 3,
           syncStatus: "default",
-          date: "1900-01-01T00:00:00.00Z",
-          dueDate: "1900-01-01T00:00:00.00Z",
+          date: "2001-01-01T00:00:00.00Z",
+          dueDate: "2001-01-01T00:00:00.00Z",
           subtotal: 0,
           tax: 0,
           total: 0,
           balance: 0,
-          depositedOn: "1900-01-01T00:00:00.00Z",
-          createdOn: "1900-01-01T00:00:00.00Z",
-          modifiedOn: "1900-01-01T00:00:00.00Z",
+          depositedOn: "2001-01-01T00:00:00.00Z",
+          createdOn: "2001-01-01T00:00:00.00Z",
+          modifiedOn: "2001-01-01T00:00:00.00Z",
           invoice_type_id: 0,
           invoice_type_name: "default_invoice",
           job_details_id: 3,
@@ -2397,9 +2423,59 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             }
           }
 
-          const invoice_date = record["invoiceDate"]
-            ? record["invoiceDate"]
-            : "1900-01-01T00:00:00.00Z";
+          let invoice_date = "2000-01-01T00:00:00.00Z";
+
+          if (record["invoiceDate"]) {
+            if (
+              new Date(record["invoiceDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              invoice_date = record["invoiceDate"];
+            }
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          }
+
+          let depositedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["depositedOn"]) {
+            if (
+              new Date(record["depositedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              depositedOn = record["depositedOn"];
+            }
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          }
 
           const js_date = new Date(invoice_date);
 
@@ -2418,25 +2494,15 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               syncStatus: record["syncStatus"]
                 ? record["syncStatus"]
                 : "default",
-              date: record["invoiceDate"]
-                ? record["invoiceDate"]
-                : "1900-01-01T00:00:00.00Z",
-              dueDate: record["dueDate"]
-                ? record["dueDate"]
-                : "1900-01-01T00:00:00.00Z",
+              date: invoice_date,
+              dueDate: dueDate,
               subtotal: record["subTotal"] ? record["subTotal"] : 0,
               tax: record["salesTax"] ? record["salesTax"] : 0,
               total: record["total"] ? record["total"] : 0,
               balance: record["balance"] ? record["balance"] : 0,
-              depositedOn: record["depositedOn"]
-                ? record["depositedOn"]
-                : "1900-01-01T00:00:00.00Z",
-              createdOn: record["createdOn"]
-                ? record["createdOn"]
-                : "1900-01-01T00:00:00.00Z",
-              modifiedOn: record["modifiedOn"]
-                ? record["modifiedOn"]
-                : "1900-01-01T00:00:00.00Z",
+              depositedOn: depositedOn,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
               invoice_type_id: invoice_type_id,
               invoice_type_name: invoice_type_name,
               job_details_id: job_details_id,
@@ -2739,27 +2805,83 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             }
           }
 
+          let date = "2000-01-01T00:00:00.00Z";
+
+          if (record["date"]) {
+            if (
+              new Date(record["date"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              date = record["date"];
+            }
+          }
+
+          let requiredOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["requiredOn"]) {
+            if (
+              new Date(record["requiredOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              requiredOn = record["requiredOn"];
+            }
+          }
+
+          let sentOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["sentOn"]) {
+            if (
+              new Date(record["sentOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              sentOn = record["sentOn"];
+            }
+          }
+
+          let receivedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["receivedOn"]) {
+            if (
+              new Date(record["receivedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              receivedOn = record["receivedOn"];
+            }
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          }
+
           final_data_pool.push({
             id: record["id"],
             status: record["status"] ? record["status"] : "default",
             total: record["total"] ? record["total"] : 0,
             tax: record["tax"] ? record["tax"] : 0,
-            date: record["date"] ? record["date"] : "1900-01-01T00:00:00.00Z",
-            requiredOn: record["requiredOn"]
-              ? record["requiredOn"]
-              : "1900-01-01T00:00:00.00Z",
-            sentOn: record["sentOn"]
-              ? record["sentOn"]
-              : "1900-01-01T00:00:00.00Z",
-            receivedOn: record["receivedOn"]
-              ? record["receivedOn"]
-              : "1900-01-01T00:00:00.00Z",
-            createdOn: record["createdOn"]
-              ? record["createdOn"]
-              : "1900-01-01T00:00:00.00Z",
-            modifiedOn: record["modifiedOn"]
-              ? record["modifiedOn"]
-              : "1900-01-01T00:00:00.00Z",
+            date: date,
+            requiredOn: requiredOn,
+            sentOn: sentOn,
+            receivedOn: receivedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
             job_details_id: job_details_id,
             actual_job_details_id: actual_job_details_id,
             invoice_id: invoice_id,
