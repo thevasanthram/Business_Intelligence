@@ -3063,6 +3063,8 @@ async function start_pipeline() {
 
   console.log("Time taken for fetching data: ", stop1());
 
+  // console.log("data_lake: ", data_lake['customer_details']['crm__customers']['data_pool']);
+
   // await find_total_length(data_lake);
 
   await azure_sql_operations(data_lake);
@@ -3087,4 +3089,4 @@ function auto_update() {
 }
 
 // Check the time every second
-setInterval(auto_update, 1000);
+// setInterval(auto_update, 1000);
