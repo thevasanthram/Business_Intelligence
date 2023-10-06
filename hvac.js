@@ -3069,7 +3069,6 @@ async function start_pipeline() {
 }
 
 start_pipeline();
-auto_update();
 
 function auto_update() {
   const now = new Date();
@@ -3078,17 +3077,17 @@ function auto_update() {
   const seconds = now.getSeconds();
 
   // Check if it's midnight (00:00:00)
-  if (hours === 0 && minutes === 0 && seconds === 0) {
+  if (hours === 14 && minutes === 0 && seconds === 0) {
     params_header["createdOnOrAfter"] = params_header["createdBefore"];
-    params_header["createdBefore"] = new Date();
+    // params_header["createdBefore"] = new Date();
+    params_header["createdBefore"] = "2023-10-06T00:00:00.00Z";
+
     start_pipeline(); // Call your function
   }
 
-  params_header["createdOnOrAfter"] = params_header["createdBefore"];
-  params_header["createdBefore"] = "2023-10-06T00:00:00.00Z";
   console.log("params_header: ", params_header);
   start_pipeline();
 }
 
 // Check the time every second
-// setInterval(auto_update, 1000);
+setInterval(auto_update, 1000);
