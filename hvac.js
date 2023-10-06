@@ -3081,12 +3081,9 @@ function auto_update() {
     params_header["createdOnOrAfter"] = params_header["createdBefore"];
     // params_header["createdBefore"] = new Date();
     params_header["createdBefore"] = "2023-10-06T00:00:00.00Z";
-
+    console.log("params_header: ", params_header);
     start_pipeline(); // Call your function
   }
-
-  console.log("params_header: ", params_header);
-  start_pipeline();
 }
 
 // Check the time every second
