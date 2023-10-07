@@ -63,7 +63,6 @@ CREATE TABLE job_details (
   job_type_name NVARCHAR(MAX) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
-  job_start_time DATETIME2 NULL,
   project_id INT NULL,
   job_completion_time DATETIME2 NULL,
   business_unit_id INT NOT NULL,
@@ -73,6 +72,8 @@ CREATE TABLE job_details (
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
   campaign_id INT NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
   created_by_id INT NULL,
   lead_call_id INT NULL,
   booking_id INT NULL,
@@ -132,9 +133,12 @@ CREATE TABLE cogs_labor (
   paid_time_type NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
+  invoice_id INT NOT NULL,
+  actual_invoice_id INT NULL,
   technician_id INT NOT NULL,
   actual_technician_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (invoice_id) REFERENCES invoice (id),
   FOREIGN KEY (technician_id) REFERENCES technician (id)
 );
 END;
@@ -157,9 +161,11 @@ BEGIN
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
     actual_job_details_id INT NULL,
+    invoice_id INT NOT NULL,
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    FOREIGN KEY (invoice_id) REFERENCES invoice (id)
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
@@ -180,9 +186,11 @@ BEGIN
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
     actual_job_details_id INT NULL,
+    invoice_id INT NOT NULL,
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    FOREIGN KEY (invoice_id) REFERENCES invoice (id)
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
@@ -205,9 +213,11 @@ CREATE TABLE cogs_equipment (
   generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
+  invoice_id INT NOT NULL,
   sku_details_id INT NOT NULL,
   actual_sku_details_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (invoice_id) REFERENCES invoice (id)
   FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
 );
 END;
@@ -231,7 +241,23 @@ CREATE TABLE invoice (
   invoice_type_name NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  address_street NVARCHAR(MAX) NULL,
+  address_unit NVARCHAR(MAX) NULL,
+  address_city NVARCHAR(MAX) NULL,
+  address_state NVARCHAR(MAX) NULL,
+  address_country NVARCHAR(MAX) NULL,
+  address_zip NVARCHAR(MAX) NULL,
+  customer_id INT NOT NULL,
+  actual_customer_id INT NULL,
+  customer_name NVARCHAR(MAX) NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id)
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)
+  FOREIGN KEY (location_id) REFERENCES location (id)
+  FOREIGN KEY (customer_id) REFERENCES customer_details (id)
 );
 END;
 
@@ -266,14 +292,16 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
   id INT IDENTITY(1,1) PRIMARY KEY,
-  revenue DECIMAL(10, 0) NULL,
+  accounts_receivable DECIMAL(10, 0) NULL,
+  expense DECIMAL(10, 0) NULL,
+  income DECIMAL(10, 0) NULL,
+  current_liability DECIMAL(10, 0) NULL,
+  membership_liability DECIMAL(10, 0) NULL,
   po_cost DECIMAL(10, 0) NULL,
   equipment_cost DECIMAL(10, 0) NULL,
   material_cost DECIMAL(10, 0) NULL,
   labor_cost DECIMAL(10, 0) NULL,
   burden DECIMAL(10, 0) NULL,
-  gross_profit DECIMAL(10, 0) NULL,
-  gross_margin DECIMAL(10, 0) NULL,
   units INT NULL,
   labor_hours DECIMAL(10, 0) NULL,
   invoice_id INT NOT NULL,
