@@ -40,7 +40,7 @@ const instance_details = [
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-10-01T00:00:00.00Z",
+  createdBefore: "2023-10-07T00:00:00.00Z",
   includeTotal: true,
   pageSize: 2000,
 };
@@ -2652,10 +2652,12 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
           let customer_id = record["instance_id"];
           let actual_customer_id = record["instance_id"];
+          let customer_name = "default";
           if (record["customer"]) {
             if (customer_data_pool[record["customer"]["id"]]) {
-              job_details_id = record["customer"]["id"];
-              actual_job_details_id = record["customer"]["id"];
+              customer_id = record["customer"]["id"];
+              actual_customer_id = record["customer"]["id"];
+              customer_name = record["customer"]["name"];
             }
           }
 
@@ -2666,14 +2668,24 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           let address_zip = "default";
           let address_country = "default";
           if (record["locationAddress"]) {
-            if (customer_data_pool[record["locationAddress"]["id"]]) {
-              address_street = record["locationAddress"]["street"];
-              address_unit = record["locationAddress"]["unit"];
-              address_city = record["locationAddress"]["city"];
-              address_state = record["locationAddress"]["state"];
-              address_country = record["locationAddress"]["country"];
-              address_zip = record["locationAddress"]["zip"];
-            }
+            address_street = record["locationAddress"]["street"]
+              ? record["locationAddress"]["street"]
+              : "default";
+            address_unit = record["locationAddress"]["unit"]
+              ? record["locationAddress"]["unit"]
+              : "default";
+            address_city = record["locationAddress"]["city"]
+              ? record["locationAddress"]["city"]
+              : "default";
+            address_state = record["locationAddress"]["state"]
+              ? record["locationAddress"]["state"]
+              : "default";
+            address_country = record["locationAddress"]["country"]
+              ? record["locationAddress"]["country"]
+              : "default";
+            address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : "default";
           }
 
           let invoice_date = "2000-01-01T00:00:00.00Z";
@@ -2772,7 +2784,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               address_zip: address_zip,
               customer_id: customer_id,
               actual_customer_id: actual_customer_id,
-              customer_name: "default",
+              customer_name: customer_name,
             });
           }
 
@@ -2898,37 +2910,43 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                   actual_sku_details_id = items_record["skuId"];
                 }
 
+                console.log(
+                  "generalLedgerAccounttype: ",
+                  generalLedgerAccounttype
+                );
                 // for gross profit
                 switch (generalLedgerAccounttype) {
                   case "Accounts Receivable": {
                     accounts_receivable += items_record["total"]
-                      ? items_record["total"]
+                      ? parseFloat(items_record["total"])
                       : 0;
 
                     break;
                   }
                   case "Expense": {
                     expense += items_record["total"]
-                      ? items_record["total"]
+                      ? parseFloat(items_record["total"])
                       : 0;
 
                     break;
                   }
                   case "Income": {
-                    income += items_record["total"] ? items_record["total"] : 0;
+                    income += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
 
                     break;
                   }
                   case "Current Liability": {
                     current_liability += items_record["total"]
-                      ? items_record["total"]
+                      ? parseFloat(items_record["total"])
                       : 0;
 
                     break;
                   }
                   case "Membership Liability": {
                     membership_liability += items_record["total"]
-                      ? items_record["total"]
+                      ? parseFloat(items_record["total"])
                       : 0;
 
                     break;
@@ -3256,7 +3274,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         const technician_data_pool =
           data_lake["technician"]["settings__technicians"]["data_pool"];
         const invoice_data_pool =
-          data_lake[api_name]["accounting__invoices"]["data_pool"];
+          data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
         let final_data_pool = [];

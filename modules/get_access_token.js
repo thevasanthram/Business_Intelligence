@@ -2,6 +2,7 @@ async function getAccessToken(client_id, client_secret) {
   let access_token = "";
   try {
     const auth_url = "https://auth.servicetitan.io/connect/token";
+
     const auth_response = await fetch(auth_url, {
       method: "POST",
       headers: {

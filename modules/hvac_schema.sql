@@ -120,11 +120,51 @@ CREATE TABLE sku_details (
 );
 END;
 
+-- invoice
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'invoice')
+BEGIN
+CREATE TABLE invoice (
+  id INT PRIMARY KEY,
+  syncStatus NVARCHAR(MAX) NULL,
+  date DATETIME2 NULL,
+  dueDate DATETIME2 NULL,
+  subtotal DECIMAL(10, 0) NULL,
+  tax DECIMAL(10, 0) NULL,
+  total DECIMAL(10, 0) NULL,
+  balance DECIMAL(10, 0) NULL,
+  depositedOn DATETIME2 NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL, -- syncStatus, dueDate, 
+  invoice_type_id INT NULL,
+  invoice_type_name NVARCHAR(MAX) NULL,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  address_street NVARCHAR(MAX) NULL,
+  address_unit NVARCHAR(MAX) NULL,
+  address_city NVARCHAR(MAX) NULL,
+  address_state NVARCHAR(MAX) NULL,
+  address_country NVARCHAR(MAX) NULL,
+  address_zip NVARCHAR(MAX) NULL,
+  customer_id INT NOT NULL,
+  actual_customer_id INT NULL,
+  customer_name NVARCHAR(MAX) NULL,
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (location_id) REFERENCES location (id),
+  FOREIGN KEY (customer_id) REFERENCES customer_details (id)
+);
+END;
+
+
 -- cogs_labor
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_labor')
 BEGIN
 CREATE TABLE cogs_labor (
-  id INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incrementing primary key
+  id INT IDENTITY(1,1) PRIMARY KEY,
   paid_duration DECIMAL(10, 0) NULL,
   burden_rate DECIMAL NULL,
   labor_cost DECIMAL(10, 0) NULL,
@@ -165,7 +205,7 @@ BEGIN
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    FOREIGN KEY (invoice_id) REFERENCES invoice (id)
+    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
@@ -190,7 +230,7 @@ BEGIN
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
     FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    FOREIGN KEY (invoice_id) REFERENCES invoice (id)
+    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
@@ -217,47 +257,8 @@ CREATE TABLE cogs_equipment (
   sku_details_id INT NOT NULL,
   actual_sku_details_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (invoice_id) REFERENCES invoice (id)
+  FOREIGN KEY (invoice_id) REFERENCES invoice (id),
   FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
-);
-END;
-
--- invoice
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'invoice')
-BEGIN
-CREATE TABLE invoice (
-  id INT PRIMARY KEY,
-  syncStatus NVARCHAR(MAX) NULL,
-  date DATETIME2 NULL,
-  dueDate DATETIME2 NULL,
-  subtotal DECIMAL(10, 0) NULL,
-  tax DECIMAL(10, 0) NULL,
-  total DECIMAL(10, 0) NULL,
-  balance DECIMAL(10, 0) NULL,
-  depositedOn DATETIME2 NULL,
-  createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL, -- syncStatus, dueDate, 
-  invoice_type_id INT NULL,
-  invoice_type_name NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
-  address_street NVARCHAR(MAX) NULL,
-  address_unit NVARCHAR(MAX) NULL,
-  address_city NVARCHAR(MAX) NULL,
-  address_state NVARCHAR(MAX) NULL,
-  address_country NVARCHAR(MAX) NULL,
-  address_zip NVARCHAR(MAX) NULL,
-  customer_id INT NOT NULL,
-  actual_customer_id INT NULL,
-  customer_name NVARCHAR(MAX) NULL,
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id)
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)
-  FOREIGN KEY (location_id) REFERENCES location (id)
-  FOREIGN KEY (customer_id) REFERENCES customer_details (id)
 );
 END;
 
