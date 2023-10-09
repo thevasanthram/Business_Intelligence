@@ -1597,9 +1597,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             id: 1,
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
+            trade_type: "OTHR",
+            revenue_type: "OTHR",
+            account_type: "OTHR",
             legal_entity_id: 1,
           });
 
@@ -1607,9 +1607,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             id: 2,
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
+            trade_type: "OTHR",
+            revenue_type: "OTHR",
+            account_type: "OTHR",
             legal_entity_id: 2,
           });
 
@@ -1617,9 +1617,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             id: 3,
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
+            trade_type: "OTHR",
+            revenue_type: "OTHR",
+            account_type: "OTHR",
             legal_entity_id: 3,
           });
 
