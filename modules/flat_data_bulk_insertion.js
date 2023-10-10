@@ -29,7 +29,7 @@ async function flat_data_bulk_insertion(
       table.columns.add(columnName, mssql.NVarChar(mssql.MAX)); // Adjust the data type as needed
     });
 
-    const batch = 1000;
+    const batch = 500;
 
     console.log("Total inserting records: ", data_pool.length);
     for (let i = 0; i < data_pool.length; i = i + batch) {
