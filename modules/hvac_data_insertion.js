@@ -70,7 +70,7 @@ async function hvac_data_insertion(
 
     // console.log("schema: ", table.schema);
     // console.log("columns: ", table.columns);
-    console.log("rows: ", table.rows[0]);
+    // console.log("rows: ", table.rows);
 
     // Bulk insert
     const bulkResult = await sql_pool.bulk(table);
