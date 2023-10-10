@@ -723,6 +723,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       sku_total: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -798,6 +802,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       sku_total: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -870,6 +878,10 @@ const hvac_tables = {
       },
       price: {
         data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sku_name: {
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       sku_total: {
@@ -2868,6 +2880,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                     ? items_record["totalCost"]
                     : 0,
                   price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
                   sku_total: items_record["total"] ? items_record["total"] : 0,
                   generalLedgerAccountid: generalLedgerAccountid,
                   generalLedgerAccountname: generalLedgerAccountname,
@@ -2903,6 +2918,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                     ? items_record["totalCost"]
                     : 0,
                   price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
                   sku_total: items_record["total"] ? items_record["total"] : 0,
                   generalLedgerAccountid: generalLedgerAccountid,
                   generalLedgerAccountname: generalLedgerAccountname,
@@ -2981,6 +2999,9 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                     ? items_record["totalCost"]
                     : 0,
                   price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
                   sku_total: items_record["total"] ? items_record["total"] : 0,
                   generalLedgerAccountid: generalLedgerAccountid,
                   generalLedgerAccountname: generalLedgerAccountname,

@@ -193,6 +193,7 @@ BEGIN
     cost DECIMAL(18, 10) NULL,
     total_cost DECIMAL(10, 2) NULL,
     price DECIMAL(18, 10) NULL,
+    sku_name NVARCHAR(MAX) NULL,
     sku_total DECIMAL(18, 10) NULL,
     generalLedgerAccountid BIGINT NULL,
     generalLedgerAccountname NVARCHAR(MAX) NULL,
@@ -218,6 +219,7 @@ BEGIN
     cost DECIMAL(18, 10) NULL,
     total_cost DECIMAL(10, 2) NULL,
     price DECIMAL(18, 10) NULL,
+    sku_name NVARCHAR(MAX) NULL,
     sku_total DECIMAL(18, 10) NULL,
     generalLedgerAccountid BIGINT NULL,
     generalLedgerAccountname NVARCHAR(MAX) NULL,
@@ -245,6 +247,7 @@ CREATE TABLE cogs_equipment (
   cost DECIMAL(18, 10) NULL,
   total_cost DECIMAL(10, 2) NULL,
   price DECIMAL(18, 10) NULL,
+  sku_name NVARCHAR(MAX) NULL,
   sku_total DECIMAL(18, 10) NULL,
   generalLedgerAccountid BIGINT NULL,
   generalLedgerAccountname NVARCHAR(MAX) NULL,
@@ -309,5 +312,6 @@ CREATE TABLE gross_profit (
   labor_hours DECIMAL(10, 2) NULL,
   invoice_id INT NOT NULL,
   FOREIGN KEY (invoice_id) REFERENCES invoice (id)
+
 );
 END;
