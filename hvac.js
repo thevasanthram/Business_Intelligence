@@ -1213,6 +1213,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      default: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -2817,6 +2821,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           let income = 0;
           let current_liability = 0;
           let membership_liability = 0;
+          let default_val = 0;
 
           if (record["items"]) {
             record["items"].map((items_record) => {
@@ -2917,10 +2922,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                   actual_sku_details_id = items_record["skuId"];
                 }
 
-                console.log(
-                  "generalLedgerAccounttype: ",
-                  generalLedgerAccounttype
-                );
                 // for gross profit
                 switch (generalLedgerAccounttype) {
                   case "Accounts Receivable": {
@@ -2953,6 +2954,13 @@ async function data_processor(data_lake, sql_pool, sql_request) {
                   }
                   case "Membership Liability": {
                     membership_liability += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                  case "default": {
+                    default_val += items_record["total"]
                       ? parseFloat(items_record["total"])
                       : 0;
 
@@ -3011,6 +3019,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               income: income,
               current_liability: current_liability,
               membership_liability: membership_liability,
+              default: default_val,
               po_cost: po_cost, // purchase orders
               equipment_cost: equipment_cost, //
               material_cost: material_cost, //
