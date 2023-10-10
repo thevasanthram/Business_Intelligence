@@ -1217,6 +1217,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -2088,7 +2092,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           });
         });
 
-        console.log("final_data_pool: ", final_data_pool);
+        // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
 
         // await hvac_flat_data_insertion(
@@ -3020,6 +3024,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               current_liability: current_liability,
               membership_liability: membership_liability,
               default: default_val,
+              total: record["total"] ? parseFloat(record["total"]) : 0,
               po_cost: po_cost, // purchase orders
               equipment_cost: equipment_cost, //
               material_cost: material_cost, //

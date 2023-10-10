@@ -299,6 +299,7 @@ CREATE TABLE gross_profit (
   current_liability DECIMAL(10, 2) NULL,
   membership_liability DECIMAL(10, 2) NULL,
   [default] DECIMAL(10, 2) NULL,
+  total DECIMAL(10, 2) NULL,
   po_cost DECIMAL(10, 2) NULL,
   equipment_cost DECIMAL(10, 2) NULL,
   material_cost DECIMAL(10, 2) NULL,
