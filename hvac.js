@@ -51,8 +51,9 @@ createdBeforeTime.setMinutes(
 );
 
 const params_header = {
-  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: createdBeforeTime.toISOString(),
+  createdOnOrAfter: "2023-10-11T13:31:22.488Z", // 2023-08-01T00:00:00.00Z
+  createdBefore: "2023-10-11T14:31:22.488Z",
+  // createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
 };
@@ -3200,8 +3201,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log("header_data: ", header_data);
-
         let final_data_pool = [];
 
         // console.log("purchase_order_data_pool: ", purchase_order_data_pool);
@@ -3487,10 +3486,12 @@ function auto_update() {
 
   params_header["createdOnOrAfter"] = params_header["createdBefore"];
   // params_header["createdBefore"] = new Date();
-  params_header["createdBefore"] = createdBeforeTime;
+  params_header["createdBefore"] = createdBeforeTime.toDateString();
   console.log("params_header: ", params_header);
   start_pipeline(); // Call your function
 }
 
 // Check the time every second
-setInterval(auto_update, 3600000);
+// setInterval(auto_update, 3600000);
+
+setInterval(auto_update, 900000);
