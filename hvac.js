@@ -1723,6 +1723,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         });
 
         console.log("business unit data: ", final_data_pool.length);
+        console.log('bu data: ', final_data_pool)
 
         // console.log("final data pool", final_data_pool);
         // await hvac_flat_data_insertion(
