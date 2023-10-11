@@ -10,8 +10,8 @@ const hvac_data_insertion = require("./modules/hvac_data_insertion");
 const hvac_flat_data_insertion = require("./modules/hvac_flat_data_insertion");
 const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
+const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
-const { log } = require("console");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -43,17 +43,14 @@ const timezoneOffsetMinutes = 30; // 30 minutes ahead of UTC
 
 let createdBeforeTime = new Date();
 
-createdBeforeTime.setHours(
-  createdBeforeTime.getHours() - 1 + timezoneOffsetHours
-);
+createdBeforeTime.setHours(createdBeforeTime.getHours() + timezoneOffsetHours);
 createdBeforeTime.setMinutes(
   createdBeforeTime.getMinutes() + timezoneOffsetMinutes
 );
 
 const params_header = {
-  createdOnOrAfter: "2023-10-11T13:31:22.488Z", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-10-11T14:31:22.488Z",
-  // createdBefore: createdBeforeTime.toISOString(),
+  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
+  createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
 };
@@ -1565,6 +1562,7 @@ async function azure_sql_operations(data_lake) {
   const pushing_time = startStopwatch("pushing data");
   await data_processor(data_lake, sql_pool, sql_request);
   console.log("Time Taken for pushing all data: ", pushing_time());
+
   // Close the connection pool
   await sql.close();
 }
@@ -1578,11 +1576,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
     // Object.keys(data_lake).length
     const api_name = Object.keys(data_lake)[api_count];
 
-    // const stop2 = startStopwatch("inserting data");
-
     console.log("table_name: ", api_name);
-
-    // console.log("Time taken for inserting data: ", stop2());
 
     switch (api_name) {
       case "legal_entity": {
@@ -1723,7 +1717,6 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         });
 
         console.log("business unit data: ", final_data_pool.length);
-        console.log("bu data: ", final_data_pool);
 
         // console.log("final data pool", final_data_pool);
         // await hvac_flat_data_insertion(
@@ -3479,19 +3472,21 @@ async function start_pipeline() {
 
 start_pipeline();
 
-function auto_update() {
-  initial_execute = false;
+async function flush_data_pool() {
+  const sql_request = await create_sql_connection();
+  await flush_hvac_schema(sql_request);
+  await sql.close();
+}
+
+async function auto_update() {
+  await flush_data_pool();
   // increamenting created before time by one hour
   createdBeforeTime.setHours(createdBeforeTime.getHours() + 1);
-
-  params_header["createdOnOrAfter"] = params_header["createdBefore"];
-  // params_header["createdBefore"] = new Date();
   params_header["createdBefore"] = createdBeforeTime.toISOString();
   console.log("params_header: ", params_header);
+
   start_pipeline(); // Call your function
 }
 
 // Check the time every second
-// setInterval(auto_update, 3600000);
-
-setInterval(auto_update, 900000);
+setInterval(auto_update, 3600000);

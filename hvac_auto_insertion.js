@@ -51,9 +51,8 @@ createdBeforeTime.setMinutes(
 );
 
 const params_header = {
-  createdOnOrAfter: "2023-10-11T13:31:22.488Z", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-10-11T14:31:22.488Z",
-  // createdBefore: createdBeforeTime.toISOString(),
+  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
+  createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
 };
