@@ -312,6 +312,32 @@ CREATE TABLE gross_profit (
   labor_hours DECIMAL(10, 2) NULL,
   invoice_id INT NOT NULL,
   FOREIGN KEY (invoice_id) REFERENCES invoice (id)
+);
+END;
 
+
+-- auto_update
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
+BEGIN
+CREATE TABLE auto_update (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  start_time DATETIME2 NULL,
+  end_time DATETIME2 NULL,
+  total_minutes DECIMAL(10, 2) NULL,
+  legal_entity NVARCHAR(MAX) NULL,
+  business_unit NVARCHAR(MAX) NULL,
+  customer_details NVARCHAR(MAX) NULL,
+  [location] NVARCHAR(MAX) NULL,
+  job_details NVARCHAR(MAX) NULL,
+  vendor NVARCHAR(MAX) NULL,
+  technician NVARCHAR(MAX) NULL,
+  sku_details NVARCHAR(MAX) NULL,
+  invoice NVARCHAR(MAX) NULL,
+  cogs_material NVARCHAR(MAX) NULL,
+  cogs_equipment NVARCHAR(MAX) NULL,
+  cogs_service NVARCHAR(MAX) NULL,
+  cogs_labor NVARCHAR(MAX) NULL,
+  purchase_order NVARCHAR(MAX) NULL,
+  gross_profit NVARCHAR(MAX) NULL
 );
 END;

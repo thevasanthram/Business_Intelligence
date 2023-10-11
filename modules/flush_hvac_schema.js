@@ -15,7 +15,9 @@ async function flush_hvac_schema(sql_request) {
     DROP TABLE location
     DROP TABLE customer_details
     DROP TABLE business_unit
-    DROP TABLE legal_entity`;
+    DROP TABLE legal_entity
+    DROP TABLE auto_update`;
+
     const createTable = await sql_request.query(flushing_query);
 
     // console.log(fomatted_table_name + " created");

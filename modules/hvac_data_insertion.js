@@ -8,6 +8,7 @@ async function hvac_data_insertion(
   header_data,
   table_name
 ) {
+  let status = "failure";
   try {
     // Create a table object with create option set to false
     const table = new mssql.Table(table_name);
@@ -81,11 +82,15 @@ async function hvac_data_insertion(
       `${table_name} data insertion completed. Affected no of rows: `,
       bulkResult.rowsAffected
     );
+
+    status = "success";
   } catch (err) {
     console.error(table_name, "Bulk insert error: trying again..", err);
 
-    hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
+    status = hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
   }
+
+  return status;
 }
 
 module.exports = hvac_data_insertion;
