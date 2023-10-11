@@ -52,10 +52,12 @@ createdBeforeTime.setMinutes(
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: createdBeforeTime,
+  createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
 };
+
+console.log("params_header: ", params_header);
 
 let initial_execute = true;
 
