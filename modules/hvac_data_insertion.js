@@ -84,7 +84,7 @@ async function hvac_data_insertion(
   } catch (err) {
     console.error(table_name, "Bulk insert error: trying again..", err);
 
-    // hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
+    hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
   }
 }
 
