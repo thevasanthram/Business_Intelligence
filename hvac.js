@@ -38,9 +38,21 @@ const instance_details = [
   },
 ];
 
+const timezoneOffsetHours = 5; // 5 hours ahead of UTC
+const timezoneOffsetMinutes = 30; // 30 minutes ahead of UTC
+
+let createdBeforeTime = new Date();
+
+createdBeforeTime.setHours(
+  createdBeforeTime.getHours() - 1 + timezoneOffsetHours
+);
+createdBeforeTime.setMinutes(
+  createdBeforeTime.getMinutes() + timezoneOffsetMinutes
+);
+
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-10-07T00:00:00.00Z",
+  createdBefore: createdBeforeTime,
   includeTotal: true,
   pageSize: 2000,
 };
@@ -1707,7 +1719,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           });
         });
 
-        // console.log('final_data_pool: ', final_data_pool)
+        console.log("business unit data: ", final_data_pool.length);
 
         // console.log("final data pool", final_data_pool);
         // await hvac_flat_data_insertion(
@@ -1822,6 +1834,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
+        console.log("customer details data: ", final_data_pool.length);
+
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -1912,6 +1926,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   header_data,
         //   table_name
         // );
+
+        console.log("location data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
@@ -2114,6 +2130,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
+        console.log("job details data: ", final_data_pool.length);
+
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -2175,6 +2193,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   header_data,
         //   table_name
         // );
+
+        console.log("vendor data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
@@ -2250,7 +2270,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           });
         });
 
-        console.log("final_data_pool: ", final_data_pool);
+        console.log("techician data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
 
         // await hvac_flat_data_insertion(
@@ -2436,6 +2456,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   header_data,
         //   table_name
         // );
+
+        console.log("sku_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
@@ -3102,6 +3124,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   "gross_profit"
         // );
 
+        console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3111,6 +3134,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           );
         }
 
+        console.log(
+          "cogs_material data: ",
+          cogs_material_final_data_pool.length
+        );
         if (cogs_material_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3120,6 +3147,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           );
         }
 
+        console.log(
+          "cogs_equipment data: ",
+          cogs_equipment_final_data_pool.length
+        );
         if (cogs_equipment_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3129,6 +3160,10 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           );
         }
 
+        console.log(
+          "cogs_service data: ",
+          cogs_services_final_data_pool.length
+        );
         if (cogs_services_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3138,6 +3173,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
           );
         }
 
+        console.log("gross_profit data: ", gross_profit_final_data_pool.length);
         if (gross_profit_final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3293,6 +3329,8 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
+        console.log("purchase order data: ", final_data_pool.length);
+
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3393,6 +3431,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
         //   table_name
         // );
 
+        console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
           await hvac_data_insertion(
             sql_request,
@@ -3441,20 +3480,15 @@ async function start_pipeline() {
 start_pipeline();
 
 function auto_update() {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
+  // increamenting created before time by one hour
+  createdBeforeTime.setHours(createdBeforeTime.getHours() + 1);
 
-  // Check if it's midnight (00:00:00)
-  if (hours === 14 && minutes === 0 && seconds === 0) {
-    params_header["createdOnOrAfter"] = params_header["createdBefore"];
-    // params_header["createdBefore"] = new Date();
-    params_header["createdBefore"] = "2023-10-06T00:00:00.00Z";
-    console.log("params_header: ", params_header);
-    start_pipeline(); // Call your function
-  }
+  params_header["createdOnOrAfter"] = params_header["createdBefore"];
+  // params_header["createdBefore"] = new Date();
+  params_header["createdBefore"] = createdBeforeTime;
+  console.log("params_header: ", params_header);
+  start_pipeline(); // Call your function
 }
 
 // Check the time every second
-// setInterval(auto_update, 1000);
+setInterval(auto_update, 3600000);

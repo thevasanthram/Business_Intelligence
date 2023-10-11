@@ -15,7 +15,7 @@ async function hvac_data_insertion(
 
     // Define the columns based on the header_data
     // console.log("table_name: ", table_name);
-    console.log("header_data: ", header_data);
+    // console.log("header_data: ", header_data);
 
     Object.keys(header_data).map((column) => {
       const data_type = header_data[column]["data_type"];
