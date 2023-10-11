@@ -3521,7 +3521,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
   // entry into auto_update table
   try {
     const auto_update_query = `INSERT INTO auto_update(
-      start_time
+      start_time,
       end_time,
       total_minutes,
       legal_entity,
