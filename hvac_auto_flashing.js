@@ -15,13 +15,13 @@ const kpi_data = require("./modules/business_units_details");
 
 // Service Titan's API parameters
 const instance_details = [
-  // {
-  //   instance_name: "Expert Heating and Cooling Co LLC",
-  //   tenant_id: 1011756844,
-  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  // },
+  {
+    instance_name: "Expert Heating and Cooling Co LLC",
+    tenant_id: 1011756844,
+    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  },
   {
     instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     tenant_id: 1475606437,
@@ -29,13 +29,13 @@ const instance_details = [
     client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
     client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
   },
-  // {
-  //   instance_name: "Family Heating & Cooling Co LLC",
-  //   tenant_id: 1056112968,
-  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  // },
+  {
+    instance_name: "Family Heating & Cooling Co LLC",
+    tenant_id: 1056112968,
+    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  },
 ];
 
 const timezoneOffsetHours = 5; // 5 hours ahead of UTC
