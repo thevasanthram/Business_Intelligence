@@ -3555,6 +3555,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
     }','${hvac_tables_responses["purchase_order"]["status"]}','${
       hvac_tables_responses["gross_profit"]["status"]
     }')`;
+
     await sql_request.query(auto_update_query);
 
     console.log("Auto_Update log created ");
