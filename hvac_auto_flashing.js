@@ -3771,7 +3771,7 @@ async function data_processor(
 
     await sql_request.query(auto_update_query);
 
-    console.log("Auto_Update log created ", auto_update_query);
+    console.log("Auto_Update log created ");
   } catch (err) {
     console.log("Error while inserting into auto_update", err);
   }
