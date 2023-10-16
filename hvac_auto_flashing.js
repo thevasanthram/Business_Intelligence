@@ -3758,7 +3758,7 @@ async function data_processor(
 
   // entry into auto_update table
   try {
-    const auto_update_query = `UPDATE auto_update SET end_time = '${end_time.toISOString()}' and total_minutes=${timeDifferenceInMilliseconds}  WHERE id=${lastInsertedId}`;
+    const auto_update_query = `UPDATE auto_update SET end_time = '${end_time.toISOString()}', total_minutes=${timeDifferenceInMinutes}  WHERE id=${lastInsertedId}`;
 
     await sql_request.query(auto_update_query);
 
