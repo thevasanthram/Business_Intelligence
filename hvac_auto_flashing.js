@@ -46,7 +46,7 @@ const today = new Date();
 const daylightSavingStart = new Date(today.getFullYear(), 2, 14); // March 14
 const daylightSavingEnd = new Date(today.getFullYear(), 10, 7); // November 7
 
-if (today >= daylightSavingStart && today < daylightSavingEnd) {
+if (today >= daylightSavingStart && today < daylightSavingEnd) { 
   // Date is in PDT
   timezoneOffsetHours = 7;
 } else {
