@@ -338,10 +338,10 @@ const api_collection = [
   //     api_group: "telecom",
   //     api_name: "export/calls",
   //   },
-  //   {
-  //     api_group: "telecom",
-  //     api_name: "calls",
-  //   },
+    {
+      api_group: "telecom",
+      api_name: "calls",
+    },
   //   {
   //     api_group: "forms",
   //     api_name: "forms",

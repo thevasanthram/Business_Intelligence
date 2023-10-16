@@ -3616,4 +3616,4 @@ async function auto_update() {
 }
 
 // Check the time every second
-setInterval(auto_update, 3600000);
+setInterval(auto_update, 10800000);
