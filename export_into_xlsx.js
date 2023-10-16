@@ -10,17 +10,17 @@ const config = {
   database: "main_hvac_db",
 };
 
-// Create an Excel workbook
-const filename = "all_tables.xlsx";
-
 // Function to export data from a table to Excel in batches
-async function exportTableToExcel(connection, tableName, worksheet, batchSize) {
+async function exportTableToExcel(connection, tableName, batchSize) {
   try {
     const query = `SELECT * FROM ${tableName}`;
     console.log("Executing query:", query);
 
     const request = connection.request();
     request.stream = true; // Enable streaming
+
+    const workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet(tableName);
 
     // Define a promise to handle stream completion
     const streamPromise = new Promise((resolve, reject) => {
@@ -37,6 +37,18 @@ async function exportTableToExcel(connection, tableName, worksheet, batchSize) {
 
         // If you've written batchSize rows, resolve the promise to process the next batch
         if (worksheet.rowCount >= batchSize) {
+          // Save the workbook to a separate file
+          const filename = `${tableName}.xlsx`;
+          const writer = fs.createWriteStream(filename);
+          workbook.xlsx.write(writer).then(() => {
+            writer.end();
+            console.log(`Data from table ${tableName} exported to ${filename}`);
+          });
+
+          // Reset the worksheet for the next batch
+          workbook.removeWorksheet(tableName);
+          const newWorksheet = workbook.addWorksheet(tableName);
+          worksheet = newWorksheet;
           resolve();
         }
       });
@@ -76,7 +88,7 @@ async function getAllTableNames() {
   return tableNames;
 }
 
-// Export data from all tables to Excel
+// Export data from all tables to separate Excel files
 (async () => {
   const tableNames = await getAllTableNames();
 
@@ -85,22 +97,14 @@ async function getAllTableNames() {
   // Batch size for writing rows
   const batchSize = 1000; // You can adjust this value based on performance
 
-  const workbook = new ExcelJS.Workbook();
-
   for (const tableName of tableNames) {
     console.log("tableName: ", tableName);
-    const worksheet = workbook.addWorksheet(tableName);
-    await exportTableToExcel(connection, tableName, worksheet, batchSize);
+    await exportTableToExcel(connection, tableName, batchSize);
   }
 
   await connection.close();
 
-  // Save the Excel file
-  const writer = fs.createWriteStream(filename);
-  await workbook.xlsx.write(writer);
-  writer.end();
-
-  console.log(`Data from all tables exported to ${filename}`);
+  console.log(`Data from all tables exported to separate Excel files.`);
 })().catch((err) => {
   console.error("Error:", err);
 });

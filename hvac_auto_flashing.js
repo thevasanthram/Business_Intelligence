@@ -1624,7 +1624,7 @@ async function azure_sql_operations(data_lake) {
   await create_hvac_schema(sql_request);
 
   // entering into auto update table
-  end_time = "0000-00-00T00:00:00.00Z";
+  end_time = "0001-01-01T00:00:00.00Z";
 
   const timeDifferenceInMilliseconds = 0;
 
@@ -1656,7 +1656,7 @@ async function azure_sql_operations(data_lake) {
       purchase_order,
       gross_profit) VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','','','','','','','','','','','','','','','')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated')`;
 
     await sql_request.query(auto_update_query);
 
