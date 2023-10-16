@@ -340,5 +340,6 @@ CREATE TABLE auto_update (
   cogs_labor NVARCHAR(MAX) NULL,
   purchase_order NVARCHAR(MAX) NULL,
   gross_profit NVARCHAR(MAX) NULL
+  overall_status NVARCHAR(MAX) NULL
 );
 END;

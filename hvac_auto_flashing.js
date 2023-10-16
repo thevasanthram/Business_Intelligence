@@ -1654,11 +1654,12 @@ async function azure_sql_operations(data_lake) {
       cogs_service,
       cogs_labor,
       purchase_order,
-      gross_profit)
+      gross_profit,
+      overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3758,7 +3759,15 @@ async function data_processor(
 
   // entry into auto_update table
   try {
-    const auto_update_query = `UPDATE auto_update SET end_time = '${end_time.toISOString()}', total_minutes=${timeDifferenceInMinutes}  WHERE id=${lastInsertedId}`;
+    let is_all_table_updated = "success";
+
+    Object.keys(hvac_tables_responses).map((table) => {
+      if (hvac_tables_responses[table]["status"] != "success") {
+        is_all_table_updated = "failure";
+      }
+    });
+
+    const auto_update_query = `UPDATE auto_update SET end_time = '${end_time.toISOString()}', total_minutes=${timeDifferenceInMinutes}, overall_status = '${is_all_table_updated}'  WHERE id=${lastInsertedId}`;
 
     await sql_request.query(auto_update_query);
 
