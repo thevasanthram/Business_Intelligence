@@ -46,7 +46,7 @@ const today = new Date();
 const daylightSavingStart = new Date(today.getFullYear(), 2, 14); // March 14
 const daylightSavingEnd = new Date(today.getFullYear(), 10, 7); // November 7
 
-if (today >= daylightSavingStart && today < daylightSavingEnd) { 
+if (today >= daylightSavingStart && today < daylightSavingEnd) {
   // Date is in PDT
   timezoneOffsetHours = 7;
 } else {
@@ -1623,16 +1623,68 @@ async function azure_sql_operations(data_lake) {
 
   await create_hvac_schema(sql_request);
 
+  // entering into auto update table
+  end_time = "0000-00-00T00:00:00.00Z";
+
+  const timeDifferenceInMilliseconds = 0;
+
+  // Convert the time difference to minutes
+  const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60);
+
+  let lastInsertedId = 0;
+
+  // entry into auto_update table
+  try {
+    const auto_update_query = `INSERT INTO auto_update(
+      query_date,
+      start_time,
+      end_time,
+      total_minutes,
+      legal_entity,
+      business_unit,
+      customer_details,
+      [location],
+      job_details,
+      vendor,
+      technician,
+      sku_details,
+      invoice,
+      cogs_material,
+      cogs_equipment,
+      cogs_service,
+      cogs_labor,
+      purchase_order,
+      gross_profit) VALUES ('${
+        params_header["createdBefore"]
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','','','','','','','','','','','','','','','')`;
+
+    await sql_request.query(auto_update_query);
+
+    const result = await sql_request.query(
+      "SELECT SCOPE_IDENTITY() AS last_inserted_id"
+    );
+    lastInsertedId = result.recordset[0].last_inserted_id;
+    console.log("Last inserted ID:", lastInsertedId);
+
+    console.log("Auto_Update log created ");
+  } catch (err) {
+    console.log("Error while inserting into auto_update", err);
+  }
+
   const pushing_time = startStopwatch("pushing data");
-  await data_processor(data_lake, sql_pool, sql_request);
-  total_pushing_time = pushing_time();
+  await data_processor(data_lake, sql_pool, sql_request, lastInsertedId);
   console.log("Time Taken for pushing all data: ", pushing_time());
 
   // Close the connection pool
   await sql.close();
 }
 
-async function data_processor(data_lake, sql_pool, sql_request) {
+async function data_processor(
+  data_lake,
+  sql_pool,
+  sql_request,
+  lastInsertedId
+) {
   for (
     let api_count = 0;
     api_count < Object.keys(data_lake).length;
@@ -1664,6 +1716,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -1800,6 +1863,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET business_unit = '${hvac_tables_responses["business_unit"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -1908,6 +1982,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET customer_details = '${hvac_tables_responses["customer_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -2002,6 +2087,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET location = '${hvac_tables_responses["location"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -2206,6 +2302,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET job_details = '${hvac_tables_responses["job_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -2270,6 +2377,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
             header_data,
             table_name
           );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET vendor = '${hvac_tables_responses["vendor"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -2355,6 +2473,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET technician = '${hvac_tables_responses["technician"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -2535,6 +2664,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sku_details = '${hvac_tables_responses["sku_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3202,6 +3342,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               invoice_header_data,
               "invoice"
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET invoice = '${hvac_tables_responses["invoice"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -3216,6 +3367,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               cogs_material_header_data,
               "cogs_material"
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_material = '${hvac_tables_responses["cogs_material"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -3230,6 +3392,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               cogs_equipment_header_data,
               "cogs_equipment"
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_equipment = '${hvac_tables_responses["cogs_equipment"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -3244,6 +3417,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               cogs_service_header_data,
               "cogs_service"
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_service = '${hvac_tables_responses["cogs_service"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log("gross_profit data: ", gross_profit_final_data_pool.length);
@@ -3255,6 +3439,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               gross_profit_header_data,
               "gross_profit"
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET gross_profit = '${hvac_tables_responses["gross_profit"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3411,6 +3606,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET purchase_order = '${hvac_tables_responses["purchase_order"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3513,6 +3719,17 @@ async function data_processor(data_lake, sql_pool, sql_request) {
               header_data,
               table_name
             );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_labor = '${hvac_tables_responses["cogs_labor"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3536,41 +3753,7 @@ async function data_processor(data_lake, sql_pool, sql_request) {
 
   // entry into auto_update table
   try {
-    const auto_update_query = `INSERT INTO auto_update(
-      start_time,
-      end_time,
-      total_minutes,
-      legal_entity,
-      business_unit,
-      customer_details,
-      [location],
-      job_details,
-      vendor,
-      technician,
-      sku_details,
-      invoice,
-      cogs_material,
-      cogs_equipment,
-      cogs_service,
-      cogs_labor,
-      purchase_order,
-      gross_profit) VALUES ('${start_time.toISOString()}','${end_time.toISOString()}','${timeDifferenceInMinutes}','${
-      hvac_tables_responses["legal_entity"]["status"]
-    }','${hvac_tables_responses["business_unit"]["status"]}','${
-      hvac_tables_responses["customer_details"]["status"]
-    }','${hvac_tables_responses["location"]["status"]}','${
-      hvac_tables_responses["job_details"]["status"]
-    }','${hvac_tables_responses["vendor"]["status"]}','${
-      hvac_tables_responses["technician"]["status"]
-    }','${hvac_tables_responses["sku_details"]["status"]}','${
-      hvac_tables_responses["invoice"]["status"]
-    }','${hvac_tables_responses["cogs_material"]["status"]}','${
-      hvac_tables_responses["cogs_equipment"]["status"]
-    }','${hvac_tables_responses["cogs_service"]["status"]}','${
-      hvac_tables_responses["cogs_labor"]["status"]
-    }','${hvac_tables_responses["purchase_order"]["status"]}','${
-      hvac_tables_responses["gross_profit"]["status"]
-    }')`;
+    const auto_update_query = `UPDATE auto_update SET end_time = '${end_time.toISOString()}' and total_minutes=${timeDifferenceInMilliseconds}  WHERE id=${lastInsertedId}`;
 
     await sql_request.query(auto_update_query);
 

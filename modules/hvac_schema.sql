@@ -321,6 +321,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
 BEGIN
 CREATE TABLE auto_update (
   id INT IDENTITY(1,1) PRIMARY KEY,
+  query_date DATETIME2 NULL,
   start_time DATETIME2 NULL,
   end_time DATETIME2 NULL,
   total_minutes DECIMAL(10, 2) NULL,
