@@ -1654,17 +1654,22 @@ async function azure_sql_operations(data_lake) {
       cogs_service,
       cogs_labor,
       purchase_order,
-      gross_profit) VALUES ('${
+      gross_profit)
+      OUTPUT INSERTED.id -- Return the inserted ID
+      VALUES ('${
         params_header["createdBefore"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated')`;
 
-    await sql_request.query(auto_update_query);
+    // Execute the INSERT query and retrieve the ID
+    const result = await sql_request.query(auto_update_query);
 
-    const result = await sql_request.query(
-      "SELECT SCOPE_IDENTITY() AS last_inserted_id"
-    );
-    lastInsertedId = result.recordset[0].last_inserted_id;
-    console.log("Last inserted ID:", lastInsertedId);
+    if (result.recordset.length > 0) {
+      // Assuming 'id' is the name of the auto-incrementing primary key column
+      lastInsertedId = result.recordset[0].id;
+      console.log("Last inserted ID:", lastInsertedId);
+    } else {
+      console.log("No ID retrieved");
+    }
 
     console.log("Auto_Update log created ");
   } catch (err) {
