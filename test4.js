@@ -1,3 +1,6 @@
-let start_time = new Date().toISOString();
+let yourDate = new Date(); // Create a Date object
 
-console.log(start_time)
+// Set minutes to 0
+yourDate.setMinutes(0-30);
+
+console.log(yourDate);

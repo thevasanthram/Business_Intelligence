@@ -39,8 +39,8 @@ const instance_details = [
   },
 ];
 
-let timezoneOffsetHours = 0; // 5 hours ahead of UTC
-let timezoneOffsetMinutes = 0; // 30 minutes ahead of UTC
+let timezoneOffsetHours = 0; // 0 hours ahead of UTC
+let timezoneOffsetMinutes = 0; // 0 minutes ahead of UTC
 
 // Check if the date is in daylight saving time (PDT)
 const today = new Date();
@@ -58,9 +58,11 @@ if (today >= daylightSavingStart && today < daylightSavingEnd) {
 let createdBeforeTime = new Date();
 
 createdBeforeTime.setHours(createdBeforeTime.getHours() + timezoneOffsetHours);
-createdBeforeTime.setMinutes(
-  createdBeforeTime.getMinutes() + timezoneOffsetMinutes
-);
+createdBeforeTime.setMinutes(0 - 30); // Set minutes to 0
+createdBeforeTime.setSeconds(0);
+createdBeforeTime.setMilliseconds(0);
+
+console.log(createdBeforeTime.toISOString());
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
@@ -3836,7 +3838,7 @@ async function auto_update() {
     await flush_data_pool();
 
     // increamenting created before time by one hour
-    createdBeforeTime.setHours(createdBeforeTime.getHours() + 1);
+    createdBeforeTime.setHours(currentHour);
     params_header["createdBefore"] = createdBeforeTime.toISOString();
     console.log("params_header: ", params_header);
 
