@@ -12,6 +12,7 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
+const { table } = require("console");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -71,6 +72,7 @@ const params_header = {
 console.log("params_header: ", params_header);
 
 let initial_execute = true;
+let lastInsertedId = 0;
 
 const hvac_tables1 = {
   legal_entity: {
@@ -1616,7 +1618,7 @@ async function fetch_main_data(
   );
 }
 
-async function azure_sql_operations(data_lake) {
+async function azure_sql_operations(data_lake, table_list) {
   // creating a client for azure sql database operations
   const sql_request = await create_sql_connection();
   const sql_pool = await create_sql_pool();
@@ -1630,8 +1632,6 @@ async function azure_sql_operations(data_lake) {
 
   // Convert the time difference to minutes
   const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60);
-
-  let lastInsertedId = 0;
 
   // entry into auto_update table
   try {
@@ -1678,26 +1678,17 @@ async function azure_sql_operations(data_lake) {
   }
 
   const pushing_time = startStopwatch("pushing data");
-  await data_processor(data_lake, sql_pool, sql_request, lastInsertedId);
+  await data_processor(data_lake, sql_pool, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
 
   // Close the connection pool
   await sql.close();
 }
 
-async function data_processor(
-  data_lake,
-  sql_pool,
-  sql_request,
-  lastInsertedId
-) {
-  for (
-    let api_count = 0;
-    api_count < Object.keys(data_lake).length;
-    api_count++
-  ) {
+async function data_processor(data_lake, sql_pool, sql_request, table_list) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
-    const api_name = Object.keys(data_lake)[api_count];
+    const api_name = table_list[api_count];
 
     console.log("table_name: ", api_name);
 
@@ -3747,6 +3738,10 @@ async function data_processor(
     }
   }
 
+  await post_insertion();
+}
+
+async function post_insertion() {
   end_time = new Date();
 
   end_time.setHours(end_time.getHours() + timezoneOffsetHours);
@@ -3757,12 +3752,15 @@ async function data_processor(
   // Convert the time difference to minutes
   const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60);
 
+  let is_all_table_updated = "success";
+
+  const failure_tables = [];
+
   // entry into auto_update table
   try {
-    let is_all_table_updated = "success";
-
     Object.keys(hvac_tables_responses).map((table) => {
       if (hvac_tables_responses[table]["status"] != "success") {
+        failure_tables.push(table);
         is_all_table_updated = "failure";
       }
     });
@@ -3771,9 +3769,17 @@ async function data_processor(
 
     await sql_request.query(auto_update_query);
 
-    console.log("Auto_Update log created ");
+    console.log("final Auto_Update log created ");
   } catch (err) {
     console.log("Error while inserting into auto_update", err);
+  }
+
+  if (!is_all_table_updated) {
+    console.log("final condition checkk");
+    azure_sql_operations(data_lake, failure_tables);
+  } else {
+    console.log("final condition checkk");
+    auto_update();
   }
 }
 
@@ -3803,10 +3809,8 @@ async function start_pipeline() {
 
   // await find_total_length(data_lake);
 
-  await azure_sql_operations(data_lake);
+  await azure_sql_operations(data_lake, Object.keys(data_lake));
 }
-
-start_pipeline();
 
 async function flush_data_pool() {
   const sql_request = await create_sql_connection();
@@ -3815,15 +3819,32 @@ async function flush_data_pool() {
 }
 
 async function auto_update() {
-  await flush_data_pool();
+  // Get the current date and time
+  const previous_batch_time = new Date(params_header["createdBefore"]);
+  const previous_batch_hour = previous_batch_time.getHours();
 
-  // increamenting created before time by one hour
-  createdBeforeTime.setHours(createdBeforeTime.getHours() + 1);
-  params_header["createdBefore"] = createdBeforeTime.toISOString();
-  console.log("params_header: ", params_header);
+  // Calculate the next hour
+  const previous_batch_next_hour = (previous_batch_hour + 1) % 24;
 
-  start_pipeline(); // Call your function
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // Check if it's the next hour
+  if (currentHour != previous_batch_next_hour) {
+    auto_update();
+  } else {
+    await flush_data_pool();
+
+    // increamenting created before time by one hour
+    createdBeforeTime.setHours(createdBeforeTime.getHours() + 1);
+    params_header["createdBefore"] = createdBeforeTime.toISOString();
+    console.log("params_header: ", params_header);
+
+    start_pipeline(); // Call your function
+  }
 }
 
+start_pipeline();
+
 // Check the time every second
-setInterval(auto_update, 10800000);
+// setInterval(auto_update, 10800000);
