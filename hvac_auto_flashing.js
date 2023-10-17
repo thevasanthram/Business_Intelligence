@@ -3740,10 +3740,10 @@ async function data_processor(data_lake, sql_pool, sql_request, table_list) {
     }
   }
 
-  await post_insertion();
+  await post_insertion(sql_request);
 }
 
-async function post_insertion() {
+async function post_insertion(sql_request) {
   end_time = new Date();
 
   end_time.setHours(end_time.getHours() + timezoneOffsetHours);
@@ -3778,10 +3778,10 @@ async function post_insertion() {
 
   if (!is_all_table_updated) {
     console.log("final condition checkk");
-    azure_sql_operations(data_lake, failure_tables);
+    await azure_sql_operations(data_lake, failure_tables);
   } else {
     console.log("final condition checkk");
-    auto_update();
+    await auto_update();
   }
 }
 
@@ -3842,7 +3842,7 @@ async function auto_update() {
     params_header["createdBefore"] = createdBeforeTime.toISOString();
     console.log("params_header: ", params_header);
 
-    start_pipeline(); // Call your function
+    await start_pipeline(); // Call your function
   }
 }
 
