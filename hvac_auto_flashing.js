@@ -3777,10 +3777,9 @@ async function post_insertion(sql_request) {
   }
 
   if (!is_all_table_updated) {
-    console.log("final condition checkk");
+    console.log("Pushing failed tables again.");
     await azure_sql_operations(data_lake, failure_tables);
   } else {
-    console.log("final condition checkk");
     await auto_update();
   }
 }
@@ -3825,6 +3824,8 @@ async function auto_update() {
   const previous_batch_time = new Date(params_header["createdBefore"]);
   const previous_batch_hour = previous_batch_time.getHours();
 
+  console.log("entering auto update function");
+
   // Calculate the next hour
   const previous_batch_next_hour = (previous_batch_hour + 1) % 24;
 
@@ -3835,8 +3836,10 @@ async function auto_update() {
   if (currentHour !== previous_batch_next_hour) {
     // Schedule the next call after an hour
     const timeUntilNextHour = (60 - now.getMinutes()) * 60 * 1000; // Calculate milliseconds until the next hour
+    console.log("timeUntilNextHour", timeUntilNextHour);
     setTimeout(auto_update, timeUntilNextHour);
   } else {
+    console.log("next batch initiated");
     await flush_data_pool();
 
     // Incrementing createdBefore time by one hour
