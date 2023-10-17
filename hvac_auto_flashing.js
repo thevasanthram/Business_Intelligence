@@ -3832,12 +3832,15 @@ async function auto_update() {
   const currentHour = now.getHours();
 
   // Check if it's the next hour
-  if (currentHour != previous_batch_next_hour) {
-    auto_update();
+  if (currentHour !== previous_batch_next_hour) {
+    // Schedule the next call after an hour
+    const timeUntilNextHour = (60 - now.getMinutes()) * 60 * 1000; // Calculate milliseconds until the next hour
+    setTimeout(auto_update, timeUntilNextHour);
   } else {
     await flush_data_pool();
 
-    // increamenting created before time by one hour
+    // Incrementing createdBefore time by one hour
+    const createdBeforeTime = new Date(params_header["createdBefore"]);
     createdBeforeTime.setHours(currentHour);
     params_header["createdBefore"] = createdBeforeTime.toISOString();
     console.log("params_header: ", params_header);
