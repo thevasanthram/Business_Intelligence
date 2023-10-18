@@ -3834,9 +3834,9 @@ async function auto_update() {
 
   // Check if it's the next hour
   if (currentHour !== previous_batch_next_hour) {
-    console.log("timer funtion entering");
     // Schedule the next call after an hour
     const timeUntilNextHour = (60 - now.getMinutes()) * 60 * 1000; // Calculate milliseconds until the next hour
+    console.log("timer funtion entering", timeUntilNextHour);
     setTimeout(auto_update, timeUntilNextHour);
   } else {
     console.log("next batch initiated");
