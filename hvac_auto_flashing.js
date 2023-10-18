@@ -3449,7 +3449,6 @@ async function post_insertion(sql_request) {
   end_time = new Date();
 
   end_time.setHours(end_time.getHours() + timezoneOffsetHours);
-  end_time.setMinutes(end_time.getMinutes() + timezoneOffsetMinutes);
 
   const timeDifferenceInMilliseconds = end_time - start_time;
 
@@ -3495,7 +3494,6 @@ async function start_pipeline() {
   start_time = new Date();
 
   start_time.setHours(start_time.getHours() + timezoneOffsetHours);
-  start_time.setMinutes(start_time.getMinutes() + timezoneOffsetMinutes);
 
   // fetching all data from Service Titan's API
   const stop1 = startStopwatch("data fetching");
