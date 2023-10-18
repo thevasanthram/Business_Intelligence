@@ -3820,6 +3820,8 @@ async function flush_data_pool() {
 }
 
 async function auto_update() {
+  console.log("auto_update callingg");
+
   // Get the current date and time
   const previous_batch_time = new Date(params_header["createdBefore"]);
   const previous_batch_hour = previous_batch_time.getHours();
@@ -3832,10 +3834,12 @@ async function auto_update() {
 
   // Check if it's the next hour
   if (currentHour !== previous_batch_next_hour) {
+    console.log("timer funtion entering");
     // Schedule the next call after an hour
     const timeUntilNextHour = (60 - now.getMinutes()) * 60 * 1000; // Calculate milliseconds until the next hour
-    setTimeout(auto_update, timeUntilNextHour / 2);
+    setTimeout(auto_update, timeUntilNextHour);
   } else {
+    console.log("next batch initiated");
     await flush_data_pool();
 
     // Incrementing createdBefore time by one hour
