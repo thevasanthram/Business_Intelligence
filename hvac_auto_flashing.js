@@ -3561,6 +3561,7 @@ async function auto_update() {
 }
 
 start_pipeline().then(() => {
+  console.log("should auto update ????");
   if (should_auto_update) {
     start_pipeline();
   }
