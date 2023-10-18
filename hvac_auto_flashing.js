@@ -13,13 +13,6 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
 
-const heapdump = require("heapdump");
-
-// Insert this code at the beginning of your application's entry point
-heapdump.writeSnapshot("/path/to/heapdump.heapsnapshot");
-
-// Rest of your application startup code
-
 // Service Titan's API parameters
 const instance_details = [
   {
@@ -83,6 +76,7 @@ let initial_execute = true;
 let lastInsertedId = 0;
 
 let data_lake = {};
+let should_auto_update = false;
 
 const hvac_tables = {
   legal_entity: {
@@ -3494,6 +3488,8 @@ async function post_insertion(sql_request) {
 
 // for automatic mass ETL
 async function start_pipeline() {
+  should_auto_update = false;
+
   start_time = new Date();
 
   start_time.setHours(start_time.getHours() + timezoneOffsetHours);
@@ -3560,16 +3556,15 @@ async function auto_update() {
     params_header["createdBefore"] = createdBeforeTime.toISOString();
     console.log("params_header: ", params_header);
 
-    await start_pipeline(); // Call your function
+    should_auto_update = true;
   }
 }
 
-try {
-  start_pipeline();
-} catch (err) {
-  console.log("error: ", err);
-  start_pipeline();
-}
+start_pipeline().then(() => {
+  if (should_auto_update) {
+    start_pipeline();
+  }
+});
 
 // Check the time every second
 // setInterval(auto_update, 10800000);
