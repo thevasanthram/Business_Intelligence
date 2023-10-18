@@ -57,7 +57,7 @@ if (today >= daylightSavingStart && today < daylightSavingEnd) {
 let createdBeforeTime = new Date();
 
 createdBeforeTime.setHours(createdBeforeTime.getHours() + timezoneOffsetHours);
-createdBeforeTime.setMinutes(0 - 30); // Set minutes to 0
+createdBeforeTime.setMinutes(0); // Set minutes to 0
 createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
