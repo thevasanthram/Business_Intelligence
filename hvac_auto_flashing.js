@@ -12,7 +12,6 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
-const { table } = require("console");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -76,307 +75,7 @@ console.log("params_header: ", params_header);
 let initial_execute = true;
 let lastInsertedId = 0;
 
-const hvac_tables1 = {
-  legal_entity: {
-    // manual entry
-    columns: ["id", "legal_name"],
-  },
-  business_unit: {
-    // settings business units
-    columns: [
-      "id",
-      "business_unit_name",
-      "business_unit_official_name",
-      "account_type",
-      "revenue_type",
-      "trade_type",
-      "legal_entity_id",
-    ],
-    local_table: {
-      account_type: "",
-      business_unit_name: "",
-      business_unit_official_name: "",
-      id: "",
-      revenue_type: "",
-      trade_type: "",
-    },
-    foreign_table: {
-      legal_entity__id: "",
-    },
-  },
-  customer_details: {
-    columns: [
-      "id",
-      "name",
-      "is_active",
-      "type",
-      "creation_date",
-      "address_street",
-      "address_unit",
-      "address_city",
-      "address_state",
-      "address_zip",
-    ],
-    // crm customers
-    local_table: {
-      address_city: "",
-      address_state: "",
-      address_street: "",
-      address_unit: "",
-      address_zip: "",
-      creation_date: "",
-      id: "",
-      is_active: "",
-      name: "",
-      type: "",
-    },
-    foreign_table: {},
-  },
-  location: {
-    columns: [
-      "id",
-      "street",
-      "unit",
-      "city",
-      "state",
-      "zip",
-      "taxzone",
-      "zone_id",
-    ],
-    // crm locations
-    local_table: {
-      city: "",
-      id: "",
-      state: "",
-      street: "",
-      taxzone: "",
-      unit: "",
-      zip: "",
-      zone_id: "",
-    },
-    foreign_table: {},
-  },
-  job_details: {
-    columns: [
-      "id",
-      "job_type_id",
-      "job_type_name",
-      "job_number",
-      "job_status",
-      "job_start_time",
-      "project_id",
-      "job_completion_time",
-      "business_unit_id",
-      "location_id",
-      "customer_details_id",
-      "campaign_id",
-      "created_by_id",
-      "lead_call_id",
-      "booking_id",
-      "sold_by_id",
-    ],
-    // jpm -  jobs, job-types
-    local_table: {
-      booking_id: "",
-      campaign_id: "",
-      created_by_id: "",
-      id: "",
-      job_completion_time: "",
-      job_number: "",
-      job_start_time: "",
-      job_type_id: "",
-      job_type_name: "",
-      lead_call_id: "",
-      project_id: "",
-      sold_by_id: "",
-    },
-    foreign_table: {
-      business_unit__id: "",
-      location__id: "",
-      customer_details__id: "",
-    },
-  },
-  vendor: {
-    columns: ["id", "name", "is_active"],
-    // inventory vendors
-    local_table: {
-      id: "",
-      is_active: "",
-      name: "",
-    },
-    foreign_table: {},
-  },
-  sku_details: {
-    columns: ["id", "sku_name", "sku_type", "sku_unit_price", "vendor_id"],
-    // materials, equipment, invoices_item
-    local_table: {
-      id: "",
-      sku_name: "", // skuCode
-      sku_type: "",
-      sku_unit_price: "",
-    },
-    foreign_table: {
-      vendor__id: "", // primaryVendor['vendorId']
-    },
-  },
-  cogs_equipment: {
-    // invoice api -- items
-    columns: [
-      "id",
-      "quantity",
-      "cost",
-      "total_cost",
-      "price",
-      "sku_total",
-      "job_details_id",
-      "sku_details_id",
-    ],
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
-    },
-  },
-  cogs_material: {
-    columns: [
-      "id",
-      "quantity",
-      "cost",
-      "total_cost",
-      "price",
-      "sku_total",
-      "job_details_id",
-      "sku_details_id",
-    ],
-    // invoice api-- items
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
-    },
-  },
-  technician: {
-    columns: ["id", "name", "business_unit_id"],
-    local_table: {
-      id: "",
-      name: "",
-    },
-    foreign_table: {
-      business_unit__id: "",
-    },
-  },
-  cogs_labor: {
-    columns: [
-      "paid_duration",
-      "burden_rate",
-      "labor_cost",
-      "burden_cost",
-      "activity",
-      "paid_time_type",
-      "job_details_id",
-      "technician_id",
-    ],
-    // payroll - gross pay items, payrolls
-    local_table: {
-      activity: "",
-      burden_cost: "",
-      burden_rate: "",
-      id: "", // running number for cogs
-      labor_cost: "",
-      paid_duration: "",
-      paid_time_type: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      technician__id: "",
-    },
-  },
-  purchase_order: {
-    columns: [
-      "id",
-      "status",
-      "total",
-      "tax",
-      "date",
-      "requiredOn",
-      "sentOn",
-      "receivedOn",
-      "createdOn",
-      "modifiedOn",
-      "job_details_id",
-      "invoice_id",
-      "vendor_id",
-    ],
-  },
-  invoice: {
-    columns: [
-      "id",
-      "date",
-      "dueDate",
-      "subtotal",
-      "tax",
-      "total",
-      "createdOn",
-      "modifiedOn",
-      "invoice_type_id",
-      "invoice_type_name",
-      "job_details_id",
-    ],
-    // invoice
-    local_table: {
-      date: "",
-      id: "",
-      invoice_type_id: "",
-      invoice_type_name: "",
-      is_trialdata: "",
-      subtotal: "",
-      tax: "",
-      total: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-    },
-  },
-  gross_profit: {
-    columns: [
-      "revenue",
-      "po_cost",
-      "equipment_cost",
-      "material_cost",
-      "labor_cost",
-      "burden",
-      "gross_profit",
-      "gross_margin",
-      "units",
-      "labor_hours",
-      "invoice_id",
-    ],
-    local_table: {
-      burden: "",
-      equipment_cost: "",
-      gross_margin: "",
-      gross_profit: "",
-      id: "",
-      labor_cost: "",
-      labor_hours: "",
-      material_cost: "",
-      po_cost: "",
-      revenue: "",
-      units: "",
-    },
-    foreign_table: {
-      invoice__id: "",
-    },
-  },
-};
+let data_lake = {};
 
 const hvac_tables = {
   legal_entity: {
@@ -3780,14 +3479,14 @@ async function post_insertion(sql_request) {
     console.log("Pushing failed tables again.");
     await azure_sql_operations(data_lake, failure_tables);
   } else {
+    // free previous batch data lake and call next iteration
+    data_lake = {};
     await auto_update();
   }
 }
 
 // for automatic mass ETL
 async function start_pipeline() {
-  const data_lake = {};
-
   start_time = new Date();
 
   start_time.setHours(start_time.getHours() + timezoneOffsetHours);
@@ -3858,7 +3557,12 @@ async function auto_update() {
   }
 }
 
-start_pipeline();
+try {
+  start_pipeline();
+} catch (err) {
+  console.log("error: ", err);
+  start_pipeline();
+}
 
 // Check the time every second
 // setInterval(auto_update, 10800000);
