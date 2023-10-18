@@ -3536,12 +3536,10 @@ async function auto_update() {
   const now = new Date();
   now.setHours(now.getHours() + timezoneOffsetHours);
 
-  console.log("currentHour: ", currentHour);
-
   // Check if it's the next hour
-  if (currentHour < previous_batch_next_hour) {
+  if (now < previous_batch_next_hour) {
     // Schedule the next call after an hour
-    const timeUntilNextHour = previous_batch_next_hour - currentHour; // Calculate milliseconds until the next hour
+    const timeUntilNextHour = previous_batch_next_hour - now + 60000; // Calculate milliseconds until the next hour
     console.log("timer funtion entering", timeUntilNextHour);
     setTimeout(auto_update, timeUntilNextHour);
   } else {
@@ -3549,9 +3547,10 @@ async function auto_update() {
     await flush_data_pool();
 
     // Incrementing createdBefore time by one hour
-    const createdBeforeTime = new Date(params_header["createdBefore"]);
-    createdBeforeTime.setHours(currentHour);
-    params_header["createdBefore"] = createdBeforeTime.toISOString();
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    params_header["createdBefore"] = now.toISOString();
     console.log("params_header: ", params_header);
 
     should_auto_update = true;
