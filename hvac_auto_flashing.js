@@ -68,6 +68,10 @@ const params_header = {
   pageSize: 2000,
 };
 
+let cuurent_time = new Date();
+cuurent_time.setHours(cuurent_time.getHours() + timezoneOffsetHours);
+
+console.log("cuurent_time: ", cuurent_time);
 console.log("params_header: ", params_header);
 
 let initial_execute = true;
