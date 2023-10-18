@@ -68,10 +68,10 @@ const params_header = {
   pageSize: 2000,
 };
 
-let cuurent_time = new Date();
-cuurent_time.setHours(cuurent_time.getHours() + timezoneOffsetHours);
+// let cuurent_time = new Date();
+// cuurent_time.setHours(cuurent_time.getHours() + timezoneOffsetHours);
 
-console.log("cuurent_time: ", cuurent_time);
+// console.log("cuurent_time: ", cuurent_time);
 console.log("params_header: ", params_header);
 
 let initial_execute = true;
@@ -3526,34 +3526,24 @@ async function flush_data_pool() {
 async function auto_update() {
   console.log("auto_update callingg");
 
-  // Get the current date and time
-  const previous_batch_time = new Date(params_header["createdBefore"]);
-  const previous_batch_hour = previous_batch_time.getHours();
+  // Get the current date and time // Calculate the next hour
+  const previous_batch_next_hour = new Date(params_header["createdBefore"]);
+  previous_batch_next_hour.setHours(previous_batch_next_hour.getHours() + 1);
 
-  console.log("params_header: ", params_header["createdBefore"]);
-  console.log("previous_batch_time: ", previous_batch_time);
-  console.log("previous_batch_hour: ", previous_batch_hour);
-
-  // Calculate the next hour
-  const previous_batch_next_hour = (previous_batch_hour + 1) % 24;
-
-  const now = new Date();
-  console.log("now: before", now);
-  now.setHours(now.getHours() + timezoneOffsetHours);
-  console.log("now: after modifying.. ", now);
-  const currentHour = now.getHours();
-
-  console.log("currentHour: ", currentHour);
+  console.log("previous_batch_hour: ", params_header["createdBefore"]);
   console.log("previous_batch_next_hour: ", previous_batch_next_hour);
 
-  console.log("condition: ", currentHour != previous_batch_next_hour);
+  const now = new Date();
+  now.setHours(now.getHours() + timezoneOffsetHours);
+
+  console.log("currentHour: ", currentHour);
 
   // Check if it's the next hour
-  if (currentHour != previous_batch_next_hour) {
+  if (currentHour < previous_batch_next_hour) {
     // Schedule the next call after an hour
-    const timeUntilNextHour = (60 - now.getMinutes()) * 60 * 1000; // Calculate milliseconds until the next hour
+    const timeUntilNextHour = previous_batch_next_hour - currentHour; // Calculate milliseconds until the next hour
     console.log("timer funtion entering", timeUntilNextHour);
-    setTimeout(auto_update, timeUntilNextHour + 60000);
+    setTimeout(auto_update, timeUntilNextHour);
   } else {
     console.log("next batch initiated");
     await flush_data_pool();
