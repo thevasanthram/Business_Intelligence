@@ -3830,6 +3830,7 @@ async function auto_update() {
   const previous_batch_next_hour = (previous_batch_hour + 1) % 24;
 
   const now = new Date();
+  now.setHours(now.getHours() + timezoneOffsetHours);
   const currentHour = now.getHours();
 
   console.log("currentHour: ", currentHour);
