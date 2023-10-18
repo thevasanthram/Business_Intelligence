@@ -61,8 +61,6 @@ createdBeforeTime.setMinutes(0 - 30); // Set minutes to 0
 createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
-console.log(createdBeforeTime.toISOString());
-
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
   createdBefore: createdBeforeTime.toISOString(),
@@ -3535,6 +3533,7 @@ async function auto_update() {
   now.setHours(now.getHours() + timezoneOffsetHours);
   const currentHour = now.getHours();
 
+  console.log("params_header: ", params_header["createdBefore"]);
   console.log("currentHour: ", currentHour);
   console.log("previous_batch_next_hour: ", previous_batch_next_hour);
 
