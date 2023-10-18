@@ -3539,7 +3539,10 @@ async function auto_update() {
     // Schedule the next call after an hour
     const timeUntilNextHour = previous_batch_next_hour - now + 60000; // Calculate milliseconds until the next hour
     console.log("timer funtion entering", timeUntilNextHour);
-    setTimeout(auto_update, timeUntilNextHour);
+
+    await new Promise((resolve) => setTimeout(resolve, timeUntilNextHour));
+
+    await auto_update();
   } else {
     console.log("next batch initiated");
     await flush_data_pool();
