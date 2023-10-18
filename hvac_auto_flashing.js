@@ -13,6 +13,13 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const kpi_data = require("./modules/business_units_details");
 
+const heapdump = require("heapdump");
+
+// Insert this code at the beginning of your application's entry point
+heapdump.writeSnapshot("/path/to/heapdump.heapsnapshot");
+
+// Rest of your application startup code
+
 // Service Titan's API parameters
 const instance_details = [
   {
