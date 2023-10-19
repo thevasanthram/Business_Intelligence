@@ -3566,6 +3566,10 @@ async function auto_update() {
 // });
 
 do {
+  console.log("===========================================");
+  console.log("===========================================");
+  console.log("===========================================");
+  console.log("starting pipeline");
   start_pipeline();
 } while (should_auto_update);
 
