@@ -1593,7 +1593,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default_customer_1",
             is_active: 1,
             type: "default_type",
-            creation_date: "2001-01-01T00:00:00.00Z",
+            creation_date: "1999-01-01T00:00:00.00Z",
             address_street: "default",
             address_unit: "default",
             address_city: "default",
@@ -1606,7 +1606,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default_customer_2",
             is_active: 1,
             type: "default_type",
-            creation_date: "2001-01-01T00:00:00.00Z",
+            creation_date: "1999-01-01T00:00:00.00Z",
             address_street: "default",
             address_unit: "default",
             address_city: "default",
@@ -1619,7 +1619,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default_customer_3",
             is_active: 1,
             type: "default_type",
-            creation_date: "2001-01-01T00:00:00.00Z",
+            creation_date: "1999-01-01T00:00:00.00Z",
             address_street: "default",
             address_unit: "default",
             address_city: "default",
@@ -1640,6 +1640,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               creation_date = record["createdOn"];
             }
+          } else {
+            creation_date = "2001-01-01T00:00:00.00Z";
           }
 
           final_data_pool.push({
@@ -1828,7 +1830,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "1",
             job_status: "default",
             project_id: 0,
-            job_completion_time: "2001-01-01T00:00:00.00Z",
+            job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 1,
             actual_business_unit_id: 1,
             location_id: 1,
@@ -1836,8 +1838,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_details_id: 1,
             actual_customer_details_id: 1,
             campaign_id: 0,
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             created_by_id: 0,
             leadCallId: 0,
             booking_id: 0,
@@ -1851,7 +1853,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "2",
             job_status: "default",
             project_id: 0,
-            job_completion_time: "2001-01-01T00:00:00.00Z",
+            job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 2,
             actual_business_unit_id: 2,
             location_id: 2,
@@ -1859,8 +1861,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_details_id: 2,
             actual_customer_details_id: 2,
             campaign_id: 0,
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             created_by_id: 0,
             leadCallId: 0,
             booking_id: 0,
@@ -1874,7 +1876,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "3",
             job_status: "default",
             project_id: 0,
-            job_completion_time: "2001-01-01T00:00:00.00Z",
+            job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 3,
             actual_business_unit_id: 3,
             location_id: 3,
@@ -1882,8 +1884,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_details_id: 3,
             actual_customer_details_id: 3,
             campaign_id: 0,
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             created_by_id: 0,
             leadCallId: 0,
             booking_id: 0,
@@ -1936,6 +1938,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               createdOn = record["createdOn"];
             }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
           }
 
           let modifiedOn = "2000-01-01T00:00:00.00Z";
@@ -1946,6 +1950,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               modifiedOn = record["modifiedOn"];
             }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
           let job_completion_time = "2000-01-01T00:00:00.00Z";
@@ -1957,6 +1963,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               job_completion_time = record["completedOn"];
             }
+          } else {
+            job_completion_time = "2001-01-01T00:00:00.00Z";
           }
 
           final_data_pool.push({
@@ -2073,7 +2081,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (final_data_pool.length > 0) {
           hvac_tables_responses["vendor"]["status"] = await hvac_data_insertion(
-
             sql_request,
             final_data_pool,
             header_data,
@@ -2489,15 +2496,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           invoice_final_data_pool.push({
             id: 1,
             syncStatus: "default",
-            date: "2001-01-01T00:00:00.00Z",
-            dueDate: "2001-01-01T00:00:00.00Z",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
             subtotal: 0,
             tax: 0,
             total: 0,
             balance: 0,
-            depositedOn: "2001-01-01T00:00:00.00Z",
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             invoice_type_id: 0,
             invoice_type_name: "default_invoice",
             job_details_id: 1,
@@ -2520,15 +2527,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           invoice_final_data_pool.push({
             id: 2,
             syncStatus: "default",
-            date: "2001-01-01T00:00:00.00Z",
-            dueDate: "2001-01-01T00:00:00.00Z",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
             subtotal: 0,
             tax: 0,
             total: 0,
             balance: 0,
-            depositedOn: "2001-01-01T00:00:00.00Z",
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             invoice_type_id: 0,
             invoice_type_name: "default_invoice",
             job_details_id: 2,
@@ -2551,15 +2558,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           invoice_final_data_pool.push({
             id: 3,
             syncStatus: "default",
-            date: "2001-01-01T00:00:00.00Z",
-            dueDate: "2001-01-01T00:00:00.00Z",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
             subtotal: 0,
             tax: 0,
             total: 0,
             balance: 0,
-            depositedOn: "2001-01-01T00:00:00.00Z",
-            createdOn: "2001-01-01T00:00:00.00Z",
-            modifiedOn: "2001-01-01T00:00:00.00Z",
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
             invoice_type_id: 0,
             invoice_type_name: "default_invoice",
             job_details_id: 3,
@@ -2577,6 +2584,237 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_id: 3,
             actual_customer_id: 3,
             customer_name: "default",
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: 0, // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            burden: 0, // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: 0, // cogs_labor paid duration
+            invoice_id: 1,
+          });
+
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: 0, // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            burden: 0, // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: 0, // cogs_labor paid duration
+            invoice_id: 2,
+          });
+
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: 0, // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            burden: 0, // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: 0, // cogs_labor paid duration
+            invoice_id: 3,
           });
         }
 
@@ -2657,6 +2895,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               invoice_date = record["invoiceDate"];
             }
+          } else {
+            invoice_date = "2001-01-01T00:00:00.00Z";
           }
 
           let dueDate = "2000-01-01T00:00:00.00Z";
@@ -2667,6 +2907,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               dueDate = record["dueDate"];
             }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
           }
 
           let depositedOn = "2000-01-01T00:00:00.00Z";
@@ -2678,6 +2920,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               depositedOn = record["depositedOn"];
             }
+          } else {
+            depositedOn = "2001-01-01T00:00:00.00Z";
           }
 
           let createdOn = "2000-01-01T00:00:00.00Z";
@@ -2689,6 +2933,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               createdOn = record["createdOn"];
             }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
           }
 
           let modifiedOn = "2000-01-01T00:00:00.00Z";
@@ -2700,6 +2946,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               modifiedOn = record["modifiedOn"];
             }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
           const js_date = new Date(invoice_date);
@@ -3212,6 +3460,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               date = record["date"];
             }
+          } else {
+            date = "2001-01-01T00:00:00.00Z";
           }
 
           let requiredOn = "2000-01-01T00:00:00.00Z";
@@ -3223,6 +3473,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               requiredOn = record["requiredOn"];
             }
+          } else {
+            requiredOn = "2001-01-01T00:00:00.00Z";
           }
 
           let sentOn = "2000-01-01T00:00:00.00Z";
@@ -3233,6 +3485,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               sentOn = record["sentOn"];
             }
+          } else {
+            sentOn = "2001-01-01T00:00:00.00Z";
           }
 
           let receivedOn = "2000-01-01T00:00:00.00Z";
@@ -3244,6 +3498,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               receivedOn = record["receivedOn"];
             }
+          } else {
+            receivedOn = "2001-01-01T00:00:00.00Z";
           }
 
           let createdOn = "2000-01-01T00:00:00.00Z";
@@ -3255,6 +3511,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               createdOn = record["createdOn"];
             }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
           }
 
           let modifiedOn = "2000-01-01T00:00:00.00Z";
@@ -3266,6 +3524,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             ) {
               modifiedOn = record["modifiedOn"];
             }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
           final_data_pool.push({
