@@ -3422,6 +3422,65 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("purchase_order_data_pool: ", purchase_order_data_pool);
         // console.log("header_data: ", header_data);
 
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            actual_invoice_id: 1,
+            vendor_id: 1,
+            actual_vendor_id: 1,
+          });
+
+          final_data_pool.push({
+            id: 2,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            actual_invoice_id: 2,
+            vendor_id: 2,
+            actual_vendor_id: 2,
+          });
+
+          final_data_pool.push({
+            id: 3,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            actual_invoice_id: 3,
+            vendor_id: 3,
+            actual_vendor_id: 3,
+          });
+        }
+
         Object.keys(purchase_order_data_pool).map((record_id) => {
           const record = purchase_order_data_pool[record_id];
 
@@ -3605,6 +3664,53 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("jobs_data_pool: ", jobs_data_pool);
         // console.log("technician_data_pool: ", technician_data_pool);
         // console.log("header_data: ", header_data);
+
+        if (initial_execute) {
+          final_data_pool.push({
+            paid_duration: 0,
+            burden_rate: 0,
+            labor_cost: 0,
+            burden_cost: 0,
+            activity: "default",
+            paid_time_type: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            actual_invoice_id: 1,
+            technician_id: 1,
+            actual_technician_id: 1,
+          });
+
+          final_data_pool.push({
+            paid_duration: 0,
+            burden_rate: 0,
+            labor_cost: 0,
+            burden_cost: 0,
+            activity: "default",
+            paid_time_type: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            actual_invoice_id: 2,
+            technician_id: 2,
+            actual_technician_id: 2,
+          });
+
+          final_data_pool.push({
+            paid_duration: 0,
+            burden_rate: 0,
+            labor_cost: 0,
+            burden_cost: 0,
+            activity: "default",
+            paid_time_type: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            actual_invoice_id: 3,
+            technician_id: 3,
+            actual_technician_id: 3,
+          });
+        }
 
         gross_pay_items_data_pool.map((record) => {
           let burden_rate = payrolls_data_pool[record["payrollId"]][
@@ -3828,7 +3934,6 @@ async function auto_update() {
 
 async function orchestrate() {
   do {
-    console.log("===========================================");
     console.log("===========================================");
     console.log("===========================================");
     console.log("starting pipeline");
