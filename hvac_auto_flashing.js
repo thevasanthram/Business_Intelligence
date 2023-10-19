@@ -3537,7 +3537,7 @@ async function auto_update() {
   // Check if it's the next hour
   if (now < previous_batch_next_hour) {
     // Schedule the next call after an hour
-    const timeUntilNextHour = previous_batch_next_hour - now + 60000; // Calculate milliseconds until the next hour
+    const timeUntilNextHour = previous_batch_next_hour - now; // Calculate milliseconds until the next hour
     console.log("timer funtion entering", timeUntilNextHour);
 
     await new Promise((resolve) => setTimeout(resolve, timeUntilNextHour));
