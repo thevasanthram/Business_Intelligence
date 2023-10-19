@@ -1382,14 +1382,14 @@ async function azure_sql_operations(data_lake, table_list) {
   }
 
   const pushing_time = startStopwatch("pushing data");
-  await data_processor(data_lake, sql_pool, sql_request, table_list);
+  await data_processor(data_lake, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
 
   // Close the connection pool
   await sql.close();
 }
 
-async function data_processor(data_lake, sql_pool, sql_request, table_list) {
+async function data_processor(data_lake, sql_request, table_list) {
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
@@ -2073,6 +2073,7 @@ async function data_processor(data_lake, sql_pool, sql_request, table_list) {
 
         if (final_data_pool.length > 0) {
           hvac_tables_responses["vendor"]["status"] = await hvac_data_insertion(
+
             sql_request,
             final_data_pool,
             header_data,

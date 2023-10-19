@@ -87,7 +87,16 @@ async function hvac_data_insertion(
   } catch (err) {
     console.error(table_name, "Bulk insert error: trying again..", err);
 
-    status = hvac_data_insertion(sql_pool, data_pool, header_data, table_name);
+    const delete_table_records = `DELETE FROM ${table_name}`;
+
+    await sql_pool.query(delete_table_records);
+
+    status = await hvac_data_insertion(
+      sql_pool,
+      data_pool,
+      header_data,
+      table_name
+    );
   }
 
   return status;
