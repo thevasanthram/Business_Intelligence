@@ -3565,15 +3565,19 @@ async function auto_update() {
 //   }
 // });
 
-do {
-  console.log("===========================================");
-  console.log("===========================================");
-  console.log("===========================================");
-  console.log("starting pipeline");
-  console.log("should_auto_update: before", should_auto_update);
-  start_pipeline();
-  console.log("should_auto_update: after", should_auto_update);
-} while (should_auto_update);
+async function orchestrate() {
+  do {
+    console.log("===========================================");
+    console.log("===========================================");
+    console.log("===========================================");
+    console.log("starting pipeline");
+    console.log("should_auto_update: before", should_auto_update);
+    await start_pipeline();
+    console.log("should_auto_update: after", should_auto_update);
+  } while (should_auto_update);
+}
+
+orchestrate();
 
 // Check the time every second
 // setInterval(auto_update, 10800000);
