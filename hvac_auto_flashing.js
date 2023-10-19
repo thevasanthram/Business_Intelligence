@@ -3570,8 +3570,17 @@ do {
   console.log("===========================================");
   console.log("===========================================");
   console.log("starting pipeline");
+  console.log("should_auto_update: before", should_auto_update);
   start_pipeline();
+  console.log("should_auto_update: after", should_auto_update);
 } while (should_auto_update);
 
 // Check the time every second
 // setInterval(auto_update, 10800000);
+
+// auto_update callingghing data: 00:33:49.075
+// previous_batch_hour:  2023-10-19T17:30:00.000Z
+// previous_batch_next_hour:  2023-10-19T18:30:00.000Z
+// next batch initiated
+// HVAC Tables deletedshing data: 00:33:52.131
+// params_header:
