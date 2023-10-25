@@ -1288,15 +1288,30 @@ async function fetch_main_data(
                 } while (!access_token);
 
                 // continuously fetching whole api data
-                const data_pool = await getAPIWholeData(
-                  access_token,
-                  app_key,
-                  instance_name,
-                  tenant_id,
-                  api_group_temp,
-                  api_name_temp,
-                  params_header
-                );
+                let data_pool_object = {};
+                let data_pool = [];
+                let page_count = 0;
+                let has_error_occured = false;
+
+                do {
+                  ({
+                    data_pool_object,
+                    data_pool,
+                    page_count,
+                    has_error_occured,
+                  } = await getAPIWholeData(
+                    access_token,
+                    app_key,
+                    instance_name,
+                    tenant_id,
+                    api_group_temp,
+                    api_name_temp,
+                    params_header,
+                    data_pool_object,
+                    data_pool,
+                    page_count
+                  ));
+                } while (has_error_occured);
 
                 if (api_name_temp == "gross-pay-items") {
                   data_lake[api_key][api_group_temp + "__" + api_name_temp][
@@ -1314,7 +1329,7 @@ async function fetch_main_data(
                     ...data_lake[api_key][
                       api_group_temp + "__" + api_name_temp
                     ]["data_pool"],
-                    ...data_pool,
+                    ...data_pool_object,
                   }; //;
                 }
               })

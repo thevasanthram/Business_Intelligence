@@ -8,14 +8,18 @@ async function getAPIWholeData(
   tenant_id,
   api_group,
   api_name,
-  params_header
+  params_header,
+  data_pool_object,
+  data_pool,
+  page_count
 ) {
-  let data_pool_object = {};
-  let data_pool = [];
+  // let data_pool_object = {};
+  // let data_pool = [];
+
+  let has_error_occured = false;
 
   try {
     // automatic api fetch data code
-    let count = 0;
     let shouldIterate = false;
 
     const instance_list = [
@@ -43,7 +47,7 @@ async function getAPIWholeData(
         .join("&");
 
     do {
-      const filtering_condition = `${params_condition}&page=${count + 1}`;
+      const filtering_condition = `${params_condition}&page=${page_count + 1}`;
 
       console.log("request url: ", api_url + filtering_condition);
 
@@ -110,7 +114,7 @@ async function getAPIWholeData(
         break;
       }
 
-      count = count + 1;
+      page_count = page_count + 1;
     } while (shouldIterate);
 
     // console.log("Data fetching completed successfully");
@@ -120,22 +124,26 @@ async function getAPIWholeData(
       error
     );
 
-    data_pool_object = getAPIWholeData(
-      access_token,
-      app_key,
-      instance_name,
-      tenant_id,
-      api_group,
-      api_name,
-      params_header
-    );
+    // data_pool_object = getAPIWholeData(
+    //   access_token,
+    //   app_key,
+    //   instance_name,
+    //   tenant_id,
+    //   api_group,
+    //   api_name,
+    //   params_header
+    // );
+
+    has_error_occured = true;
   }
 
-  if (api_name == "gross-pay-items") {
-    return data_pool;
-  } else {
-    return data_pool_object;
-  }
+  // if (api_name == "gross-pay-items") {
+  //   return data_pool;
+  // } else {
+  //   return data_pool_object;
+  // }
+
+  return { data_pool_object, data_pool, page_count, has_error_occured };
 }
 
 module.exports = getAPIWholeData;
