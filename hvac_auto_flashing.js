@@ -1242,13 +1242,6 @@ async function fetch_main_data(
       const client_id = instance_data["client_id"];
       const client_secret = instance_data["client_secret"];
 
-      // signing a new access token in Service Titan's API
-      let access_token = "";
-
-      do {
-        access_token = await getAccessToken(client_id, client_secret);
-      } while (!access_token);
-
       await Promise.all(
         Object.keys(main_api_list).map(async (api_key) => {
           if (!data_lake[api_key]) {
@@ -1286,6 +1279,13 @@ async function fetch_main_data(
                       };
                   }
                 }
+
+                // signing a new access token in Service Titan's API
+                let access_token = "";
+
+                do {
+                  access_token = await getAccessToken(client_id, client_secret);
+                } while (!access_token);
 
                 // continuously fetching whole api data
                 const data_pool = await getAPIWholeData(
