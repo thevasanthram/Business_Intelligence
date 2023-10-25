@@ -1,6 +1,7 @@
 const fs = require("fs");
 
 async function create_hvac_schema(sql_request) {
+  let create_hvac_schema_status = false;
   try {
     const schema = fs.readFileSync("./modules/hvac_schema.sql", "utf-8");
 
@@ -19,10 +20,12 @@ async function create_hvac_schema(sql_request) {
     } else {
       console.log("HVAC Schema already exists");
     }
+
+    create_hvac_schema_status = true;
   } catch (error) {
     console.error("Error while creating the hvac schema: ", error);
 
-    await create_hvac_schema(sql_request);
+    create_hvac_schema_status = false;
   }
 }
 

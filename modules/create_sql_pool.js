@@ -24,7 +24,7 @@ async function create_sql_connection_pool() {
     request = new mssql.Request(pool);
   } catch (err) {
     console.log("Error while creating sql pool connection. Trying Again!", err);
-    request = await create_sql_connection_pool();
+    request = false;
   }
 
   return request; // Return both the pool and request objects

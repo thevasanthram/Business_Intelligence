@@ -20,7 +20,7 @@ async function getAccessToken(client_id, client_secret) {
 
     // console.log('Access Token: ', access_token);
   } catch (error) {
-    access_token = await getAccessToken(client_id, client_secret);
+    access_token = false;
     console.error("Error while getting access token:", error);
   }
 
