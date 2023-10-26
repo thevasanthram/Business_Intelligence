@@ -1353,7 +1353,7 @@ async function azure_sql_operations(data_lake, table_list) {
     sql_pool = await create_sql_pool();
   } while (!sql_pool);
 
-  let create_hvac_schema_status = "";
+  let create_hvac_schema_status = false;
   do {
     create_hvac_schema_status = await create_hvac_schema(sql_request);
   } while (!create_hvac_schema_status);

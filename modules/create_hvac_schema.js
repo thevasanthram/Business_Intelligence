@@ -27,6 +27,8 @@ async function create_hvac_schema(sql_request) {
 
     create_hvac_schema_status = false;
   }
+
+  return create_hvac_schema_status;
 }
 
 module.exports = create_hvac_schema;
