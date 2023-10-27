@@ -526,7 +526,7 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
 
 async function find_max_and_write_csv(data_lake) {
   // find max and write into csv
-  const api_batch_limit = 10;
+  const api_batch_limit = 1;
   for (
     let api_count = 0;
     api_count < Object.keys(data_lake).length;
@@ -720,15 +720,15 @@ async function start_pipeline() {
   console.log("Time taken for fetching data: ", stop1());
 
   // Storing Data into Azure SQL Database using bulk insert
-  const stop2 = startStopwatch("inserting data");
-  await find_max_and_bulk_insert(data_lake);
-  console.log("Time taken for inserting data: ", stop2());
+  // const stop2 = startStopwatch("inserting data");
+  // await find_max_and_bulk_insert(data_lake);
+  // console.log("Time taken for inserting data: ", stop2());
 
   // await find_total_length(data_lake);
 
   // {
   // Creating CSVs
-  // await find_max_and_write_csv(data_lake);
+  await find_max_and_write_csv(data_lake);
   // }
 
   // {
