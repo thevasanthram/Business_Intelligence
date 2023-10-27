@@ -1196,7 +1196,7 @@ function startStopwatch(task_name) {
       "." +
       String(elapsedTime % 1000).padStart(3, "0");
 
-    // process.stdout.write(`Time elapsed for ${task_name}: ${formattedTime}\r`);
+    process.stdout.write(`Time elapsed for ${task_name}: ${formattedTime}\r`);
 
     elapsed_time_cache = formattedTime;
 
