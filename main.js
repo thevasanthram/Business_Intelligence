@@ -298,10 +298,10 @@ const api_collection = [
     api_group: "sales",
     api_name: "estimates",
   },
-  {
-    api_group: "sales",
-    api_name: "estimates/export",
-  },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates/export",
+  // },
   {
     api_group: "sales",
     api_name: "estimates/items",
@@ -334,10 +334,10 @@ const api_collection = [
     api_group: "taskmanagement",
     api_name: "data",
   },
-  {
-    api_group: "telecom",
-    api_name: "export/calls",
-  },
+  // {
+  //   api_group: "telecom",
+  //   api_name: "export/calls",
+  // },
   {
     api_group: "telecom",
     api_name: "calls",
