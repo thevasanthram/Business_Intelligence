@@ -527,11 +527,13 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
 async function find_max_and_write_csv(data_lake) {
   // find max and write into csv
   const api_batch_limit = 1;
+  console.log("find_max_and_write_csv");
   for (
     let api_count = 0;
     api_count < Object.keys(data_lake).length;
     api_count = api_count + api_batch_limit
   ) {
+    console.log("inside for loop");
     await Promise.all(
       Object.keys(data_lake)
         .slice(api_count, api_count + api_batch_limit)
@@ -549,6 +551,7 @@ async function find_max_and_write_csv(data_lake) {
           );
 
           if (api_mode == "normal") {
+            console.log("csv_generator");
             await csv_generator(
               current_data_pool,
               data_lake[key]["header_data"],
@@ -557,6 +560,7 @@ async function find_max_and_write_csv(data_lake) {
             // json_to_text_convertor
             // json_to_text_convertor(current_data_pool, api_group, api_name);
           } else {
+            console.log("csv_generator");
             await csv_generator(
               current_data_pool,
               data_lake[key]["header_data"],
