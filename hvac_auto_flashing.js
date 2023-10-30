@@ -3940,12 +3940,12 @@ async function post_insertion(sql_request) {
     console.log("==================================");
 
     await flush_hvac_data(sql_request);
-    await azure_sql_operations(data_lake, Object.keys(data_lake));
+    await data_processor(data_lake, Object.keys(data_lake));
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
     console.log("==================================");
-    
+
     console.log("goint to enter auto_update");
     console.log("==================================");
     await auto_update();
@@ -4010,7 +4010,6 @@ async function auto_update() {
     await auto_update();
   } else {
     console.log("next batch initiated");
-    await flush_data_pool();
 
     // setting createdBefore time to current hour
     now.setMinutes(0);
@@ -4036,6 +4035,7 @@ async function orchestrate() {
     console.log("===========================================");
     console.log("starting pipeline");
     console.log("should_auto_update: before", should_auto_update);
+    await flush_data_pool();
     await start_pipeline();
     console.log("should_auto_update: after", should_auto_update);
   } while (should_auto_update);
