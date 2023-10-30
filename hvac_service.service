@@ -1,0 +1,14 @@
+[Unit]
+Description=HVAC Application
+Documentation=
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /home/deevia/Business_Intelligence/hvac_auto_flashing.js
+Restart=always
+User=deevia
+Group=deevia
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
