@@ -1,8 +1,7 @@
-let obj = { a: 1, b: 2, c: 3 };
+const txt = "failure";
 
-let a, b, c;
-({ a, b, c } = obj);
-
-console.log(a); // 1
-console.log(b); // 2
-console.log(c); // 3
+if (txt) {
+  console.log("txtttt");
+} else {
+  console.log("noooo");
+}

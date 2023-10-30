@@ -534,43 +534,39 @@ async function find_max_and_write_csv(data_lake) {
     api_count = api_count + api_batch_limit
   ) {
     console.log("inside for loop");
-    await Promise.all(
-      Object.keys(data_lake)
-        .slice(api_count, api_count + api_batch_limit)
-        .map(async (key) => {
-          const current_data_pool = data_lake[key]["data_pool"];
-          const current_instance_name = data_lake[key]["instance_name"];
 
-          const [api_group, api_name_and_mode] = key.split("__");
+    const key = Object.keys(data_lake)[api_count];
+    const current_data_pool = data_lake[key]["data_pool"];
+    const current_instance_name = data_lake[key]["instance_name"];
 
-          const [api_name, api_mode] = api_name_and_mode.split("&&");
+    const [api_group, api_name_and_mode] = key.split("__");
 
-          // find lengthiest data
-          data_lake[key]["header_data"] = await find_lenghthiest_header(
-            current_data_pool
-          );
+    const [api_name, api_mode] = api_name_and_mode.split("&&");
 
-          if (api_mode == "normal") {
-            console.log("csv_generator");
-            await csv_generator(
-              current_data_pool,
-              data_lake[key]["header_data"],
-              api_group + "_" + api_name
-            );
-            // json_to_text_convertor
-            // json_to_text_convertor(current_data_pool, api_group, api_name);
-          } else {
-            console.log("csv_generator");
-            await csv_generator(
-              current_data_pool,
-              data_lake[key]["header_data"],
-              api_group + "_" + api_name + "_" + api_mode
-            );
-            // json_to_text_convertor
-            // json_to_text_convertor(current_data_pool, api_group, api_name);
-          }
-        })
+    // find lengthiest data
+    data_lake[key]["header_data"] = await find_lenghthiest_header(
+      current_data_pool
     );
+
+    if (api_mode == "normal") {
+      console.log("csv_generator");
+      await csv_generator(
+        current_data_pool,
+        data_lake[key]["header_data"],
+        api_group + "_" + api_name
+      );
+      // json_to_text_convertor
+      // json_to_text_convertor(current_data_pool, api_group, api_name);
+    } else {
+      console.log("csv_generator");
+      await csv_generator(
+        current_data_pool,
+        data_lake[key]["header_data"],
+        api_group + "_" + api_name + "_" + api_mode
+      );
+      // json_to_text_convertor
+      // json_to_text_convertor(current_data_pool, api_group, api_name);
+    }
   }
 }
 

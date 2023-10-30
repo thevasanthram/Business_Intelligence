@@ -11,6 +11,7 @@ const hvac_flat_data_insertion = require("./modules/hvac_flat_data_insertion");
 const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
+const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/business_units_details");
 
 // Service Titan's API parameters
@@ -3922,8 +3923,9 @@ async function post_insertion(sql_request) {
 
   if (is_all_table_updated == "failure") {
     // it will never get executed.. bcoz if table insertion failed, then & there we re-inserting table. so is_all_table_updated will alwys be true
-    console.log("Pushing failed tables again.");
-    await azure_sql_operations(data_lake, failure_tables);
+    console.log("Pushing failed tables again.", failure_tables);
+    await flush_hvac_data(sql_request);
+    await azure_sql_operations(data_lake, Object.keys(data_lake));
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
