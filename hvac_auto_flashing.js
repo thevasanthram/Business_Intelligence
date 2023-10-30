@@ -3980,9 +3980,9 @@ async function start_pipeline() {
   await azure_sql_operations(data_lake, Object.keys(data_lake));
 }
 
-async function flush_data_pool() {
+async function flush_data_pool(initial_execute) {
   const sql_request = await create_sql_connection();
-  await flush_hvac_schema(sql_request);
+  await flush_hvac_schema(sql_request, initial_execute);
   await sql.close();
 }
 
@@ -4035,7 +4035,7 @@ async function orchestrate() {
     console.log("===========================================");
     console.log("starting pipeline");
     console.log("should_auto_update: before", should_auto_update);
-    await flush_data_pool();
+    await flush_data_pool(!should_auto_update);
     await start_pipeline();
     console.log("should_auto_update: after", should_auto_update);
   } while (should_auto_update);
