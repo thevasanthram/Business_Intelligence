@@ -3980,9 +3980,9 @@ async function start_pipeline() {
   await azure_sql_operations(data_lake, Object.keys(data_lake));
 }
 
-async function flush_data_pool(initial_execute) {
+async function flush_data_pool(is_initial_execute) {
   const sql_request = await create_sql_connection();
-  await flush_hvac_schema(sql_request, initial_execute);
+  await flush_hvac_schema(sql_request, is_initial_execute);
   await sql.close();
 }
 

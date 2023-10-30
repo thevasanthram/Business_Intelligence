@@ -1,4 +1,4 @@
-async function flush_hvac_schema(sql_request, initial_execute) {
+async function flush_hvac_schema(sql_request, is_initial_execute) {
   try {
     const flushing_query = `
     DROP TABLE gross_profit
@@ -22,7 +22,7 @@ async function flush_hvac_schema(sql_request, initial_execute) {
     // console.log(fomatted_table_name + " created");
     console.log("HVAC Tables deleted");
   } catch (error) {
-    if (!initial_execute) {
+    if (!is_initial_execute) {
       console.log("HVAC Tables deletion failed. Trying Again!", error);
     }
     // create_flat_tables(sql_request, flattenedObj, table_name);
