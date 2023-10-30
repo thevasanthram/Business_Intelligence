@@ -3920,7 +3920,7 @@ async function post_insertion(sql_request) {
     console.log("Error while inserting into auto_update", err);
   }
 
-  if (!is_all_table_updated) {
+  if (is_all_table_updated == "failure") {
     // it will never get executed.. bcoz if table insertion failed, then & there we re-inserting table. so is_all_table_updated will alwys be true
     console.log("Pushing failed tables again.");
     await azure_sql_operations(data_lake, failure_tables);
