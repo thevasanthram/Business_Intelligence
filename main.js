@@ -19,73 +19,73 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 // Service Titan's API parameters
 
 const api_collection = [
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-    mode: "items",
-  },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-    mode: "items",
-  },
-  {
-    api_group: "inventory",
-    api_name: "transfers",
-    mode: "items",
-  },
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
-  {
-    api_group: "accounting",
-    api_name: "inventory-bills",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payments",
-  },
-  {
-    api_group: "accounting",
-    api_name: "ap-payments",
-  },
-  {
-    api_group: "accounting",
-    api_name: "journal-entries",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payment-terms",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payment-types",
-  },
-  {
-    api_group: "accounting",
-    api_name: "tax-zones",
-  },
   // {
-  //   api_group: "crm",
-  //   api_name: "customers",
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  //   mode: "items",
   // },
   // {
-  //   api_group: "crm",
-  //   api_name: "bookings",
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  //   mode: "items",
   // },
   // {
-  //   api_group: "crm",
-  //   api_name: "locations",
+  //   api_group: "inventory",
+  //   api_name: "transfers",
+  //   mode: "items",
   // },
   // {
-  //   api_group: "crm",
-  //   api_name: "booking-provider-tags",
+  //   api_group: "accounting",
+  //   api_name: "invoices",
   // },
   // {
-  //   api_group: "crm",
-  //   api_name: "leads",
+  //   api_group: "accounting",
+  //   api_name: "inventory-bills",
   // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payments",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "ap-payments",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "journal-entries",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payment-terms",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payment-types",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "tax-zones",
+  // },
+  {
+    api_group: "crm",
+    api_name: "customers",
+  },
+  {
+    api_group: "crm",
+    api_name: "bookings",
+  },
+  {
+    api_group: "crm",
+    api_name: "locations",
+  },
+  {
+    api_group: "crm",
+    api_name: "booking-provider-tags",
+  },
+  {
+    api_group: "crm",
+    api_name: "leads",
+  },
   // {
   //   api_group: "dispatch",
   //   api_name: "appointment-assignments",
