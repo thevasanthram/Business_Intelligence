@@ -3944,10 +3944,11 @@ async function post_insertion(sql_request) {
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
-    console.log("==================================");
 
+    console.log("==================================");
     console.log("goint to enter auto_update");
     console.log("==================================");
+
     await auto_update();
   }
 }
