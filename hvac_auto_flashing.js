@@ -3924,11 +3924,29 @@ async function post_insertion(sql_request) {
   if (is_all_table_updated == "failure") {
     // it will never get executed.. bcoz if table insertion failed, then & there we re-inserting table. so is_all_table_updated will alwys be true
     console.log("Pushing failed tables again.", failure_tables);
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+    console.log("==================================");
+
     await flush_hvac_data(sql_request);
     await azure_sql_operations(data_lake, Object.keys(data_lake));
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
+    console.log("==================================");
+    console.log("goint to enter auto_update");
+    console.log("==================================");
     await auto_update();
   }
 }
