@@ -110,50 +110,50 @@ const api_collection = [
     api_group: "equipmentsystems",
     api_name: "installed-equipment",
   },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "adjustments",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "transfers",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-orders",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "receipts",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "returns",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "trucks",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "vendors",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "warehouses",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-order-markups",
-  // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-order-types",
-  // },
-  // {
-  //   api_group: "jbce",
-  //   api_name: "call-reasons",
-  // },
+  {
+    api_group: "inventory",
+    api_name: "adjustments",
+  },
+  {
+    api_group: "inventory",
+    api_name: "transfers",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-orders",
+  },
+  {
+    api_group: "inventory",
+    api_name: "receipts",
+  },
+  {
+    api_group: "inventory",
+    api_name: "returns",
+  },
+  {
+    api_group: "inventory",
+    api_name: "trucks",
+  },
+  {
+    api_group: "inventory",
+    api_name: "vendors",
+  },
+  {
+    api_group: "inventory",
+    api_name: "warehouses",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-order-markups",
+  },
+  {
+    api_group: "inventory",
+    api_name: "purchase-order-types",
+  },
+  {
+    api_group: "jbce",
+    api_name: "call-reasons",
+  },
   // {
   //   api_group: "jpm",
   //   api_name: "appointments", // end keyword is used in this api response
