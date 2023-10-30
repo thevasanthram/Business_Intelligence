@@ -86,146 +86,146 @@ const api_collection = [
   //   api_group: "crm",
   //   api_name: "leads",
   // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "appointment-assignments",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "zones",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "non-job-appointments",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "teams",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "technician-shifts",
+  // },
+  // {
+  //   api_group: "equipmentsystems",
+  //   api_name: "installed-equipment",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "transfers",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "purchase-orders",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "receipts",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "returns",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "trucks",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "vendors",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "warehouses",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "purchase-order-markups",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "purchase-order-types",
+  // },
+  // {
+  //   api_group: "jbce",
+  //   api_name: "call-reasons",
+  // },
   {
-    api_group: "dispatch",
-    api_name: "appointment-assignments",
+    api_group: "jpm",
+    api_name: "appointments", // end keyword is used in this api response
   },
   {
-    api_group: "dispatch",
-    api_name: "zones",
+    api_group: "jpm",
+    api_name: "job-types",
   },
   {
-    api_group: "dispatch",
-    api_name: "non-job-appointments",
+    api_group: "jpm",
+    api_name: "jobs",
   },
   {
-    api_group: "dispatch",
-    api_name: "teams",
+    api_group: "jpm",
+    api_name: "projects",
   },
   {
-    api_group: "dispatch",
-    api_name: "technician-shifts",
+    api_group: "jpm",
+    api_name: "job-cancel-reasons",
   },
   {
-    api_group: "equipmentsystems",
-    api_name: "installed-equipment",
+    api_group: "jpm",
+    api_name: "job-hold-reasons",
   },
   {
-    api_group: "inventory",
-    api_name: "adjustments",
+    api_group: "jpm",
+    api_name: "project-statuses",
   },
   {
-    api_group: "inventory",
-    api_name: "transfers",
+    api_group: "jpm",
+    api_name: "project-substatuses",
   },
   {
-    api_group: "inventory",
-    api_name: "purchase-orders",
+    api_group: "marketing",
+    api_name: "campaigns",
   },
   {
-    api_group: "inventory",
-    api_name: "receipts",
+    api_group: "marketing",
+    api_name: "categories",
   },
   {
-    api_group: "inventory",
-    api_name: "returns",
+    api_group: "marketing",
+    api_name: "suppressions",
   },
   {
-    api_group: "inventory",
-    api_name: "trucks",
+    api_group: "marketing",
+    api_name: "costs",
   },
   {
-    api_group: "inventory",
-    api_name: "vendors",
+    api_group: "marketingreputation",
+    api_name: "reviews",
   },
   {
-    api_group: "inventory",
-    api_name: "warehouses",
+    api_group: "memberships",
+    api_name: "memberships",
   },
   {
-    api_group: "inventory",
-    api_name: "purchase-order-markups",
+    api_group: "memberships",
+    api_name: "recurring-services",
   },
   {
-    api_group: "inventory",
-    api_name: "purchase-order-types",
+    api_group: "memberships",
+    api_name: "recurring-service-events",
   },
   {
-    api_group: "jbce",
-    api_name: "call-reasons",
+    api_group: "memberships",
+    api_name: "recurring-service-types",
   },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "appointments", // end keyword is used in this api response
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "job-types",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "jobs",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "projects",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "job-cancel-reasons",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "job-hold-reasons",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "project-statuses",
-  // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "project-substatuses",
-  // },
-  // {
-  //   api_group: "marketing",
-  //   api_name: "campaigns",
-  // },
-  // {
-  //   api_group: "marketing",
-  //   api_name: "categories",
-  // },
-  // {
-  //   api_group: "marketing",
-  //   api_name: "suppressions",
-  // },
-  // {
-  //   api_group: "marketing",
-  //   api_name: "costs",
-  // },
-  // {
-  //   api_group: "marketingreputation",
-  //   api_name: "reviews",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "memberships",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-services",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-service-events",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "recurring-service-types",
-  // },
-  // {
-  //   api_group: "memberships",
-  //   api_name: "membership-types",
-  // },
+  {
+    api_group: "memberships",
+    api_name: "membership-types",
+  },
   // {
   //   api_group: "payroll",
   //   api_name: "payrolls",
