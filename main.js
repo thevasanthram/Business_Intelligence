@@ -66,50 +66,50 @@ const api_collection = [
   //   api_group: "accounting",
   //   api_name: "tax-zones",
   // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "customers",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "bookings",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "locations",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "booking-provider-tags",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "leads",
+  // },
   {
-    api_group: "crm",
-    api_name: "customers",
+    api_group: "dispatch",
+    api_name: "appointment-assignments",
   },
   {
-    api_group: "crm",
-    api_name: "bookings",
+    api_group: "dispatch",
+    api_name: "zones",
   },
   {
-    api_group: "crm",
-    api_name: "locations",
+    api_group: "dispatch",
+    api_name: "non-job-appointments",
   },
   {
-    api_group: "crm",
-    api_name: "booking-provider-tags",
+    api_group: "dispatch",
+    api_name: "teams",
   },
   {
-    api_group: "crm",
-    api_name: "leads",
+    api_group: "dispatch",
+    api_name: "technician-shifts",
   },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "appointment-assignments",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "zones",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "non-job-appointments",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "teams",
-  // },
-  // {
-  //   api_group: "dispatch",
-  //   api_name: "technician-shifts",
-  // },
-  // {
-  //   api_group: "equipmentsystems",
-  //   api_name: "installed-equipment",
-  // },
+  {
+    api_group: "equipmentsystems",
+    api_name: "installed-equipment",
+  },
   // {
   //   api_group: "inventory",
   //   api_name: "adjustments",
