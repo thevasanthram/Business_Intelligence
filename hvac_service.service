@@ -4,7 +4,7 @@ Documentation=
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/node /home/deevia/Business_Intelligence/hvac_auto_flashing.js
+ExecStart=/home/deevia/.nvm/versions/node/v18.17.1/bin/node /home/deevia/Business_Intelligence/hvac_auto_flashing.js
 Restart=always
 User=deevia
 Group=deevia
