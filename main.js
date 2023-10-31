@@ -290,50 +290,50 @@ const api_collection = [
   //   api_group: "pricebook",
   //   api_name: "materialsmarkup",
   // },
-  {
-    api_group: "reporting",
-    api_name: "report-categories",
-  },
-  {
-    api_group: "sales",
-    api_name: "estimates",
-  },
+  // {
+  //   api_group: "reporting",
+  //   api_name: "report-categories",
+  // },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates",
+  // },
   // {
   //   api_group: "sales",
   //   api_name: "estimates/export",
   // },
-  {
-    api_group: "sales",
-    api_name: "estimates/items",
-  },
-  {
-    api_group: "service-agreements",
-    api_name: "service-agreements",
-  },
-  {
-    api_group: "settings",
-    api_name: "business-units",
-  },
-  {
-    api_group: "settings",
-    api_name: "employees",
-  },
-  {
-    api_group: "settings",
-    api_name: "technicians",
-  },
-  {
-    api_group: "settings",
-    api_name: "tag-types",
-  },
-  {
-    api_group: "settings",
-    api_name: "user-roles",
-  },
-  {
-    api_group: "taskmanagement",
-    api_name: "data",
-  },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates/items",
+  // },
+  // {
+  //   api_group: "service-agreements",
+  //   api_name: "service-agreements",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "business-units",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "employees",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "technicians",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "tag-types",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "user-roles",
+  // },
+  // {
+  //   api_group: "taskmanagement",
+  //   api_name: "data",
+  // },
   // {
   //   api_group: "telecom",
   //   api_name: "export/calls",
@@ -342,14 +342,14 @@ const api_collection = [
     api_group: "telecom",
     api_name: "calls",
   },
-  {
-    api_group: "forms",
-    api_name: "forms",
-  },
-  {
-    api_group: "forms",
-    api_name: "submissions",
-  },
+  // {
+  //   api_group: "forms",
+  //   api_name: "forms",
+  // },
+  // {
+  //   api_group: "forms",
+  //   api_name: "submissions",
+  // },
 ];
 
 const instance_details = [
