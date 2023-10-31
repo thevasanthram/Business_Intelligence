@@ -1,7 +1,5 @@
-const txt = "failure";
+const fs = require("fs");
+const file = 
 
-if (txt) {
-  console.log("txtttt");
-} else {
-  console.log("noooo");
-}
+const schema = fs.readFileSync("./modules/hvac_schema.sql", "utf-8");
+console.log(schema);
