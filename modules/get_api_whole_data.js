@@ -82,6 +82,7 @@ async function getAPIWholeData(
             api_data["totalCount"],
             " records  fetched  successfully"
           );
+          console.log("Node.js version:", process.version);
         }
       } catch {
         // if theres a exceptional response in some api
