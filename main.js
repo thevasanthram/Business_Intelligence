@@ -642,6 +642,8 @@ async function find_max_and_bulk_insert(data_lake) {
 
     const current_data_pool = data_lake[key]["data_pool"];
 
+    console.log("current_data_pool: ", current_data_pool);
+
     const [api_group, api_name_and_mode] = key.split("__");
 
     const [api_name, api_mode] = api_name_and_mode.split("&&");
