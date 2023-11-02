@@ -2909,7 +2909,13 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_customer_id = record["instance_id"];
           let customer_name = "default";
           if (record["customer"]) {
+            if (record["id"] == 72918791) {
+              console.log("entering first block");
+            }
             if (customer_data_pool[record["customer"]["id"]]) {
+              if (record["id"] == 72918791) {
+                console.log("entering inner block");
+              }
               customer_id = record["customer"]["id"];
               actual_customer_id = record["customer"]["id"];
               customer_name = record["customer"]["name"];
