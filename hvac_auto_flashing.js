@@ -2913,9 +2913,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           let customer_name = "default";
           if (record["customer"]) {
             actual_customer_id = record["customer"]["id"];
+            customer_name = record["customer"]["name"]
+              ? record["customer"]["name"]
+              : "default";
             if (customer_data_pool[record["customer"]["id"]]) {
               customer_id = record["customer"]["id"];
-              customer_name = record["customer"]["name"];
             }
           }
 
