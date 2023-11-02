@@ -2874,6 +2874,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         Object.keys(invoice_data_pool).map((record_id) => {
           const record = invoice_data_pool[record_id];
 
+          if (record["id"] == 72918791) {
+            console.log("present", record);
+          }
+
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["job"]) {
@@ -3013,6 +3017,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (record["invoiceType"]) {
               invoice_type_id = record["invoiceType"]["id"];
               invoice_type_name = record["invoiceType"]["name"];
+            }
+
+            if (record["id"] == 72918791) {
+              console.log("present", record);
             }
 
             invoice_final_data_pool.push({
