@@ -1942,11 +1942,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         Object.keys(jobs_data_pool).map((record_id) => {
           const record = jobs_data_pool[record_id];
           let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["businessUnitId"]
+            ? record["businessUnitId"]
+            : record["instance_id"];
           let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["customerId"]
+            ? record["customerId"]
+            : record["instance_id"];
           let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
+          let actual_location_id = record["locationId"]
+            ? (actual_location_id = record["locationId"])
+            : record["instance_id"];
           let job_type_name = "default";
 
           if (
@@ -1956,17 +1962,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             record["businessUnitId"] == 166181
           ) {
             business_unit_id = record["businessUnitId"];
-            actual_business_unit_id = record["businessUnitId"];
           }
 
           if (customer_data_pool[record["customerId"]]) {
             customer_details_id = record["customerId"];
-            actual_customer_details_id = record["customerId"];
           }
 
           if (location_data_pool[record["locationId"]]) {
             location_id = record["locationId"];
-            actual_location_id = record["locationId"];
           }
 
           if (job_types_data_pool[record["jobTypeId"]]) {
@@ -2881,27 +2884,27 @@ async function data_processor(data_lake, sql_request, table_list) {
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["job"]) {
+            actual_job_details_id = record["job"]["id"];
             if (jobs_data_pool[record["job"]["id"]]) {
               job_details_id = record["job"]["id"];
-              actual_job_details_id = record["job"]["id"];
             }
           }
 
           let business_unit_id = record["instance_id"];
           let actual_business_unit_id = record["instance_id"];
           if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"];
             if (business_unit_data_pool[record["businessUnit"]["id"]]) {
               business_unit_id = record["businessUnit"]["id"];
-              actual_business_unit_id = record["businessUnit"]["id"];
             }
           }
 
           let location_id = record["instance_id"];
           let actual_location_id = record["instance_id"];
           if (record["location"]) {
+            actual_location_id = record["location"]["id"];
             if (location_data_pool[record["location"]["id"]]) {
               location_id = record["location"]["id"];
-              actual_location_id = record["location"]["id"];
             }
           }
 
@@ -2909,15 +2912,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_customer_id = record["instance_id"];
           let customer_name = "default";
           if (record["customer"]) {
-            if (record["id"] == 72918791) {
-              console.log("entering first block");
-            }
+            actual_customer_id = record["customer"]["id"];
             if (customer_data_pool[record["customer"]["id"]]) {
-              if (record["id"] == 72918791) {
-                console.log("entering inner block");
-              }
               customer_id = record["customer"]["id"];
-              actual_customer_id = record["customer"]["id"];
               customer_name = record["customer"]["name"];
             }
           }
@@ -3113,10 +3110,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                   material_cost + parseFloat(items_record["totalCost"]);
 
                 let sku_details_id = record["instance_id"];
-                let actual_sku_details_id = record["instance_id"];
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
                 if (sku_details_data_pool[items_record["skuId"]]) {
                   sku_details_id = items_record["skuId"];
-                  actual_sku_details_id = items_record["skuId"];
                 }
 
                 cogs_material_final_data_pool.push({
@@ -3151,10 +3149,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                   equipment_cost + parseFloat(items_record["totalCost"]);
 
                 let sku_details_id = record["instance_id"] + 3;
-                let actual_sku_details_id = record["instance_id"];
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
                 if (sku_details_data_pool[items_record["skuId"]]) {
                   sku_details_id = items_record["skuId"];
-                  actual_sku_details_id = items_record["skuId"];
                 }
 
                 cogs_equipment_final_data_pool.push({
@@ -3186,10 +3185,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               if (items_record["type"] == "Service") {
                 let sku_details_id = record["instance_id"] + 6;
-                let actual_sku_details_id = record["instance_id"];
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
                 if (sku_details_data_pool[items_record["skuId"]]) {
                   sku_details_id = items_record["skuId"];
-                  actual_sku_details_id = items_record["skuId"];
                 }
 
                 // for gross profit
@@ -3572,27 +3572,27 @@ async function data_processor(data_lake, sql_request, table_list) {
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["jobId"]) {
+            actual_job_details_id = record["jobId"];
             if (jobs_data_pool[record["jobId"]]) {
               job_details_id = record["jobId"];
-              actual_job_details_id = record["jobId"];
             }
           }
 
           let invoice_id = record["instance_id"];
           let actual_invoice_id = record["instance_id"];
           if (record["invoiceId"]) {
+            actual_invoice_id = record["invoiceId"];
             if (invoice_data_pool[record["invoiceId"]]) {
               invoice_id = record["invoiceId"];
-              actual_invoice_id = record["invoiceId"];
             }
           }
 
           let vendor_id = record["instance_id"];
           let actual_vendor_id = record["instance_id"];
           if (record["vendorId"]) {
+            actual_vendor_id = record["vendorId"];
             if (vendors_data_pool[record["vendorId"]]) {
               vendor_id = record["vendorId"];
-              actual_vendor_id = record["vendorId"];
             }
           }
 
@@ -3815,26 +3815,27 @@ async function data_processor(data_lake, sql_request, table_list) {
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["jobId"]) {
+            actual_job_details_id = record["jobId"];
             if (jobs_data_pool[record["jobId"]]) {
               job_details_id = record["jobId"];
-              actual_job_details_id = record["jobId"];
             }
           }
 
           let invoice_id = record["instance_id"];
           let actual_invoice_id = record["instance_id"];
           if (record["invoiceId"]) {
+            actual_invoice_id = record["invoiceId"];
             if (invoice_data_pool[record["invoiceId"]]) {
               invoice_id = record["invoiceId"];
-              actual_invoice_id = record["invoiceId"];
             }
           }
 
           let technician_id = record["instance_id"];
-          let actual_technician_id = record["instance_id"];
+          let actual_technician_id = record["employeeId"]
+            ? record["employeeId"]
+            : record["instance_id"];
           if (technician_data_pool[record["employeeId"]]) {
             technician_id = record["employeeId"];
-            actual_technician_id = record["employeeId"];
           }
 
           final_data_pool.push({
