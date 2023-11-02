@@ -1951,7 +1951,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             : record["instance_id"];
           let location_id = record["instance_id"];
           let actual_location_id = record["locationId"]
-            ? (actual_location_id = record["locationId"])
+            ? record["locationId"]
             : record["instance_id"];
           let job_type_name = "default";
 

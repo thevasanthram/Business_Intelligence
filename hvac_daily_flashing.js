@@ -1948,7 +1948,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             : record["instance_id"];
           let location_id = record["instance_id"];
           let actual_location_id = record["locationId"]
-            ? (actual_location_id = record["locationId"])
+            ? record["locationId"]
             : record["instance_id"];
           let job_type_name = "default";
 
@@ -2873,10 +2873,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(invoice_data_pool).map((record_id) => {
           const record = invoice_data_pool[record_id];
-
-          if (record["id"] == 72918791) {
-            console.log("present", record);
-          }
 
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
