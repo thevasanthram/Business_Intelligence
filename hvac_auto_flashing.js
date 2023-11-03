@@ -2496,6 +2496,24 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const po_and_gpi_data = {};
 
+        const dummy_values = {
+          po_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          labor_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          burden_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+        };
+
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
@@ -2509,7 +2527,15 @@ async function data_processor(data_lake, sql_request, table_list) {
               };
             }
 
+            if (!invoice_data_pool[po_record["invoiceId"]]) {
+              dummy_values["po_cost"][po_record["instance_id"]] +=
+                po_record["total"];
+            }
+
             po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+              po_record["total"];
+          } else {
+            dummy_values["po_cost"][po_record["instance_id"]] +=
               po_record["total"];
           }
         });
@@ -2518,34 +2544,59 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
           const gpi_record = gross_pay_items_data_pool[gpi_record_id];
-          if (!po_and_gpi_data[gpi_record["invoiceId"]]) {
-            po_and_gpi_data[gpi_record["invoiceId"]] = {
-              po_total: 0,
-              labor_cost: 0,
-              labor_hours: 0,
-              burden: 0,
-            };
+          if (gpi_record["invoiceId"] != null) {
+            if (!po_and_gpi_data[gpi_record["invoiceId"]]) {
+              po_and_gpi_data[gpi_record["invoiceId"]] = {
+                po_total: 0,
+                labor_cost: 0,
+                labor_hours: 0,
+                burden: 0,
+              };
+            }
+
+            if (!invoice_data_pool[gpi_record["invoiceId"]]) {
+              dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
+            }
+
+            po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
+              gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+            po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
+              gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0;
+
+            po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
+              (gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0) *
+              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                : 0);
+          } else {
+            dummy_values["labor_cost"][gpi_record["instance_id"]] += gpi_record[
+              "amount"
+            ]
+              ? gpi_record["amount"]
+              : 0;
+
+            dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+              (gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0) *
+              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                : 0);
           }
-
-          po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] += gpi_record[
-            "amount"
-          ]
-            ? gpi_record["amount"]
-            : 0;
-
-          po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] += gpi_record[
-            "paidDurationHours"
-          ]
-            ? gpi_record["paidDurationHours"]
-            : 0;
-
-          po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
-            (gpi_record["paidDurationHours"]
-              ? gpi_record["paidDurationHours"]
-              : 0) *
-            (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-              ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-              : 0);
         });
 
         if (initial_execute) {
@@ -2821,10 +2872,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
-            po_cost: 0, // purchase orders
+            po_cost: dummy_values["po_cost"][1], // purchase orders
             equipment_cost: 0, //
             material_cost: 0, //
-            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            labor_cost: dummy_values["po_cost"][1], // cogs_labor burden cost, labor cost, paid duration
             burden: 0, // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
@@ -2841,10 +2892,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
-            po_cost: 0, // purchase orders
+            po_cost: dummy_values["po_cost"][2], // purchase orders
             equipment_cost: 0, //
             material_cost: 0, //
-            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            labor_cost: dummy_values["po_cost"][2], // cogs_labor burden cost, labor cost, paid duration
             burden: 0, // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
@@ -2861,10 +2912,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
-            po_cost: 0, // purchase orders
+            po_cost: dummy_values["po_cost"][3], // purchase orders
             equipment_cost: 0, //
             material_cost: 0, //
-            labor_cost: 0, // cogs_labor burden cost, labor cost, paid duration
+            labor_cost: dummy_values["labor_cost"][3], // cogs_labor burden cost, labor cost, paid duration
             burden: 0, // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
