@@ -4010,10 +4010,10 @@ async function auto_update() {
 
   // Get the current date and time // Calculate the next hour
   const previous_batch_next_hour = new Date(params_header["createdBefore"]);
-  // previous_batch_next_hour.setHours(previous_batch_next_hour.getHours() + 1);
-  previous_batch_next_hour.setMinutes(
-    previous_batch_next_hour.getMinutes() + 30
-  );
+  previous_batch_next_hour.setHours(previous_batch_next_hour.getHours() + 1);
+  // previous_batch_next_hour.setMinutes(
+  //   previous_batch_next_hour.getMinutes() + 30
+  // );
 
   console.log("previous_batch_hour: ", params_header["createdBefore"]);
   console.log("previous_batch_next_hour: ", previous_batch_next_hour);
