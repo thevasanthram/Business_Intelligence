@@ -3010,18 +3010,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           const js_date = new Date(invoice_date);
 
-          if (record["id"] == 82280840) {
-            console.log("record: ", record);
-            console.log("invoice_date: ", invoice_date);
-            console.log("js_date: ", js_date);
-          }
-
           const current_date = new Date();
 
           if (js_date <= current_date) {
-            if (record["id"] == 82280840) {
-              console.log("--- enteringg inside ---: ");
-            }
             let invoice_type_id = 0;
             let invoice_type_name = "default_invoice";
             if (record["invoiceType"]) {
@@ -3204,20 +3195,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                     break;
                   }
-                  case "Expense": {
-                    expense += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Income": {
-                    income += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
                   case "Current Liability": {
                     current_liability += items_record["total"]
                       ? parseFloat(items_record["total"])
@@ -3266,6 +3243,24 @@ async function data_processor(data_lake, sql_request, table_list) {
                   sku_details_id: sku_details_id,
                   actual_sku_details_id: actual_sku_details_id,
                 });
+              }
+
+              // for gross profit
+              switch (generalLedgerAccounttype) {
+                case "Expense": {
+                  expense += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  break;
+                }
+                case "Income": {
+                  income += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  break;
+                }
               }
             });
           }
