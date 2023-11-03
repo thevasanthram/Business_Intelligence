@@ -2507,6 +2507,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             2: 0,
             3: 0,
           },
+          labor_hours: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
           burden_cost: {
             1: 0,
             2: 0,
@@ -2530,10 +2535,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (!invoice_data_pool[po_record["invoiceId"]]) {
               dummy_values["po_cost"][po_record["instance_id"]] +=
                 po_record["total"];
+            } else {
+              po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+                po_record["total"];
             }
-
-            po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
-              po_record["total"];
           } else {
             dummy_values["po_cost"][po_record["instance_id"]] +=
               po_record["total"];
@@ -2558,6 +2563,11 @@ async function data_processor(data_lake, sql_request, table_list) {
               dummy_values["labor_cost"][gpi_record["instance_id"]] +=
                 gpi_record["amount"] ? gpi_record["amount"] : 0;
 
+              dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
+                gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0;
+
               dummy_values["burden_cost"][gpi_record["instance_id"]] +=
                 (gpi_record["paidDurationHours"]
                   ? gpi_record["paidDurationHours"]
@@ -2565,28 +2575,34 @@ async function data_processor(data_lake, sql_request, table_list) {
                 (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
                   ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
                   : 0);
+            } else {
+              po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
+                gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0;
+
+              po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
             }
-
-            po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
-              gpi_record["amount"] ? gpi_record["amount"] : 0;
-
-            po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
-              gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
-                : 0;
-
-            po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
-              (gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                : 0);
           } else {
             dummy_values["labor_cost"][gpi_record["instance_id"]] += gpi_record[
               "amount"
             ]
               ? gpi_record["amount"]
+              : 0;
+
+            dummy_values["labor_hours"][gpi_record["invoiceId"]] += gpi_record[
+              "paidDurationHours"
+            ]
+              ? gpi_record["paidDurationHours"]
               : 0;
 
             dummy_values["burden_cost"][gpi_record["instance_id"]] +=
@@ -2880,7 +2896,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
-            labor_hours: 0, // cogs_labor paid duration
+            labor_hours: dummy_values["labor_hours"][1], // cogs_labor paid duration
             invoice_id: 1,
           });
 
@@ -2900,7 +2916,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
-            labor_hours: 0, // cogs_labor paid duration
+            labor_hours: dummy_values["labor_hours"][2], // cogs_labor paid duration
             invoice_id: 2,
           });
 
@@ -2920,7 +2936,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
-            labor_hours: 0, // cogs_labor paid duration
+            labor_hours: dummy_values["labor_hours"][3], // cogs_labor paid duration
             invoice_id: 3,
           });
         }
