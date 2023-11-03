@@ -2891,8 +2891,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             po_cost: dummy_values["po_cost"][1], // purchase orders
             equipment_cost: 0, //
             material_cost: 0, //
-            labor_cost: dummy_values["po_cost"][1], // cogs_labor burden cost, labor cost, paid duration
-            burden: 0, // cogs_labor
+            labor_cost: dummy_values["labor_cost"][1], // cogs_labor burden cost, labor cost, paid duration
+            burden: dummy_values["burden_cost"][1], // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
@@ -2911,8 +2911,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             po_cost: dummy_values["po_cost"][2], // purchase orders
             equipment_cost: 0, //
             material_cost: 0, //
-            labor_cost: dummy_values["po_cost"][2], // cogs_labor burden cost, labor cost, paid duration
-            burden: 0, // cogs_labor
+            labor_cost: dummy_values["labor_cost"][2], // cogs_labor burden cost, labor cost, paid duration
+            burden: dummy_values["burden_cost"][2], // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
@@ -2932,7 +2932,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             equipment_cost: 0, //
             material_cost: 0, //
             labor_cost: dummy_values["labor_cost"][3], // cogs_labor burden cost, labor cost, paid duration
-            burden: 0, // cogs_labor
+            burden: dummy_values["burden_cost"][3], // cogs_labor
             // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
             // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
             units: 1, //  currently for 1
