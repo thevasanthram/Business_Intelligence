@@ -3005,20 +3005,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
-          if (record["id"] == 82280840) {
-            console.log("record: ", record);
-            console.log("invoice_date: ", invoice_date);
-            console.log("js_date: ", js_date);
-          }
-
           const js_date = new Date(invoice_date);
 
           const current_date = new Date();
 
           if (js_date <= current_date) {
-            if (record["id"] == 82280840) {
-              console.log("---enteringg and considered---");
-            }
             let invoice_type_id = 0;
             let invoice_type_name = "default_invoice";
             if (record["invoiceType"]) {

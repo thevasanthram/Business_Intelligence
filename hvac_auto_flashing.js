@@ -2499,9 +2499,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
-          if (po_record["jobId"] != null) {
-            if (!po_and_gpi_data[po_record["jobId"]]) {
-              po_and_gpi_data[po_record["jobId"]] = {
+          if (po_record["invoiceId"] != null) {
+            if (!po_and_gpi_data[po_record["invoiceId"]]) {
+              po_and_gpi_data[po_record["invoiceId"]] = {
                 po_total: 0,
                 labor_cost: 0,
                 labor_hours: 0,
@@ -2509,7 +2509,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               };
             }
 
-            po_and_gpi_data[po_record["jobId"]]["po_total"] +=
+            po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
               po_record["total"];
           }
         });
@@ -2518,8 +2518,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
           const gpi_record = gross_pay_items_data_pool[gpi_record_id];
-          if (!po_and_gpi_data[gpi_record["jobId"]]) {
-            po_and_gpi_data[gpi_record["jobId"]] = {
+          if (!po_and_gpi_data[gpi_record["invoiceId"]]) {
+            po_and_gpi_data[gpi_record["invoiceId"]] = {
               po_total: 0,
               labor_cost: 0,
               labor_hours: 0,
@@ -2527,19 +2527,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             };
           }
 
-          po_and_gpi_data[gpi_record["jobId"]]["labor_cost"] += gpi_record[
+          po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] += gpi_record[
             "amount"
           ]
             ? gpi_record["amount"]
             : 0;
 
-          po_and_gpi_data[gpi_record["jobId"]]["labor_hours"] += gpi_record[
+          po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] += gpi_record[
             "paidDurationHours"
           ]
             ? gpi_record["paidDurationHours"]
             : 0;
 
-          po_and_gpi_data[gpi_record["jobId"]]["burden"] +=
+          po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
             (gpi_record["paidDurationHours"]
               ? gpi_record["paidDurationHours"]
               : 0) *
@@ -3010,9 +3010,18 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           const js_date = new Date(invoice_date);
 
+          if (record["id"] == 82280840) {
+            console.log("record: ", record);
+            console.log("invoice_date: ", invoice_date);
+            console.log("js_date: ", js_date);
+          }
+
           const current_date = new Date();
 
           if (js_date <= current_date) {
+            if (record["id"] == 82280840) {
+              console.log("--- enteringg inside ---: ");
+            }
             let invoice_type_id = 0;
             let invoice_type_name = "default_invoice";
             if (record["invoiceType"]) {
@@ -3060,10 +3069,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           let burden = 0;
 
           try {
-            po_cost = po_and_gpi_data[job_details_id]["po_total"];
-            labor_cost = po_and_gpi_data[job_details_id]["labor_cost"];
-            labor_hours = po_and_gpi_data[job_details_id]["labor_hours"];
-            burden = po_and_gpi_data[job_details_id]["burden"];
+            po_cost = po_and_gpi_data[record["id"]]["po_total"];
+            labor_cost = po_and_gpi_data[record["id"]]["labor_cost"];
+            labor_hours = po_and_gpi_data[record["id"]]["labor_hours"];
+            burden = po_and_gpi_data[record["id"]]["burden"];
           } catch (err) {
             // console.log("job_details_id: ", job_details_id);
           }
