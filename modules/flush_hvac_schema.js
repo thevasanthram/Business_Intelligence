@@ -1,7 +1,6 @@
 async function flush_hvac_schema(sql_request, is_initial_execute) {
   try {
     const flushing_query = `
-    DROP TABLE call_details
     DROP TABLE gross_profit
     DROP TABLE purchase_order
     DROP TABLE cogs_material
@@ -14,6 +13,7 @@ async function flush_hvac_schema(sql_request, is_initial_execute) {
     DROP TABLE invoice
     DROP TABLE job_details
     DROP TABLE location
+    DROP TABLE call_details
     DROP TABLE customer_details
     DROP TABLE business_unit
     DROP TABLE legal_entity`;
