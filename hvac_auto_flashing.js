@@ -1146,82 +1146,82 @@ const main_api_list = {
       table_name: "call_details",
     },
   ],
-  location: [
-    {
-      api_group: "crm",
-      api_name: "locations",
-      table_name: "location",
-    },
-  ],
-  job_details: [
-    {
-      api_group: "jpm",
-      api_name: "jobs",
-      table_name: "job_details",
-    },
-    {
-      api_group: "jpm",
-      api_name: "job-types",
-      table_name: "job_details",
-    },
-  ],
-  vendor: [
-    {
-      api_group: "inventory",
-      api_name: "vendors",
-      table_name: "vendor",
-    },
-  ],
-  technician: [
-    {
-      api_group: "settings",
-      api_name: "technicians",
-      table_name: "technician",
-    },
-  ],
-  sku_details: [
-    {
-      api_group: "pricebook",
-      api_name: "materials",
-      table_name: "sku_details",
-    },
-    {
-      api_group: "pricebook",
-      api_name: "equipment",
-      table_name: "sku_details",
-    },
-    {
-      api_group: "pricebook",
-      api_name: "services",
-      table_name: "sku_details",
-    },
-  ],
-  invoice: [
-    {
-      api_group: "accounting",
-      api_name: "invoices",
-      table_name: ["business_unit", "cogs_equipment", "cogs_material"],
-    },
-  ],
-  purchase_order: [
-    {
-      api_group: "inventory",
-      api_name: "purchase-orders",
-      table_name: "purchase_order",
-    },
-  ],
-  cogs_labor: [
-    {
-      api_group: "payroll",
-      api_name: "gross-pay-items",
-      table_name: "cogs_labor",
-    },
-    {
-      api_group: "payroll",
-      api_name: "payrolls",
-      table_name: "cogs_labor",
-    },
-  ],
+  // location: [
+  //   {
+  //     api_group: "crm",
+  //     api_name: "locations",
+  //     table_name: "location",
+  //   },
+  // ],
+  // job_details: [
+  //   {
+  //     api_group: "jpm",
+  //     api_name: "jobs",
+  //     table_name: "job_details",
+  //   },
+  //   {
+  //     api_group: "jpm",
+  //     api_name: "job-types",
+  //     table_name: "job_details",
+  //   },
+  // ],
+  // vendor: [
+  //   {
+  //     api_group: "inventory",
+  //     api_name: "vendors",
+  //     table_name: "vendor",
+  //   },
+  // ],
+  // technician: [
+  //   {
+  //     api_group: "settings",
+  //     api_name: "technicians",
+  //     table_name: "technician",
+  //   },
+  // ],
+  // sku_details: [
+  //   {
+  //     api_group: "pricebook",
+  //     api_name: "materials",
+  //     table_name: "sku_details",
+  //   },
+  //   {
+  //     api_group: "pricebook",
+  //     api_name: "equipment",
+  //     table_name: "sku_details",
+  //   },
+  //   {
+  //     api_group: "pricebook",
+  //     api_name: "services",
+  //     table_name: "sku_details",
+  //   },
+  // ],
+  // invoice: [
+  //   {
+  //     api_group: "accounting",
+  //     api_name: "invoices",
+  //     table_name: ["business_unit", "cogs_equipment", "cogs_material"],
+  //   },
+  // ],
+  // purchase_order: [
+  //   {
+  //     api_group: "inventory",
+  //     api_name: "purchase-orders",
+  //     table_name: "purchase_order",
+  //   },
+  // ],
+  // cogs_labor: [
+  //   {
+  //     api_group: "payroll",
+  //     api_name: "gross-pay-items",
+  //     table_name: "cogs_labor",
+  //   },
+  //   {
+  //     api_group: "payroll",
+  //     api_name: "payrolls",
+  //     table_name: "cogs_labor",
+  //   },
+  // ],
 };
 
 function startStopwatch(task_name) {
