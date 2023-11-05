@@ -1031,7 +1031,7 @@ const hvac_tables = {
       },
       business_unit_id: {
         data_type: "INT",
-        constraint: { nullable: true },
+        constraint: { nullable: false },
       },
       actual_business_unit_id: {
         data_type: "INT",

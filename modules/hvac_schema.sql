@@ -342,7 +342,7 @@ CREATE TABLE call_details (
   [state] NVARCHAR(MAX) NULL,
   country NVARCHAR(MAX) NULL,
   zip NVARCHAR(MAX) NULL,
-  latitude DECIMAL(9, 6) NOT NULL, -- Up to 6 decimal places of precision for latitude
+  latitude DECIMAL(9, 6) NOT NULL,
   longitude DECIMAL(9, 6) NOT NULL,
   customer_import_id NVARCHAR(MAX) NULL,
   customer_type NVARCHAR(MAX) NULL,
