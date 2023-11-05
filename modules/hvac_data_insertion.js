@@ -81,7 +81,7 @@ async function hvac_data_insertion(
 
 
     // console.log("schema: ", table.schema);
-    // console.log("columns: ", table.columns);
+    console.log("columns: ", table.columns);
     console.log("rows: ", table.rows[0]);
 
     // Bulk insert
