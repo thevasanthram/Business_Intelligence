@@ -71,7 +71,11 @@ async function getAPIWholeData(
         if (pusing_item.length > 0) {
           pusing_item.map((record) => {
             record["instance_id"] = instance_list.indexOf(instance_name) + 1;
-            data_pool_object[record["id"]] = record;
+            if (api_name != "calls") {
+              data_pool_object[record["id"]] = record;
+            } else {
+              data_pool_object[record["leadCall"]["id"]] = record;
+            }
           });
 
           data_pool.push(...pusing_item);

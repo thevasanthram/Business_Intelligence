@@ -42,10 +42,18 @@ async function hvac_data_insertion(
           mssql.DateTime2,
           constraint ? constraint : {}
         );
+      } else if (data_type === "TIME") {
+        table.columns.add(column, mssql.Time, constraint ? constraint : {});
       } else if (data_type === "DECIMAL") {
         table.columns.add(
           column,
           mssql.Decimal(18, 10),
+          constraint ? constraint : {}
+        );
+      } else if (data_type === "DECIMAL96") {
+        table.columns.add(
+          column,
+          mssql.Decimal(9, 6),
           constraint ? constraint : {}
         );
       } else if (data_type === "BIGINT") {

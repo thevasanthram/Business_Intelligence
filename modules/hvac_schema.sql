@@ -315,6 +315,62 @@ CREATE TABLE gross_profit (
 );
 END;
 
+-- call_details
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
+BEGIN
+CREATE TABLE call_details (
+  lead_call_id INT PRIMARY KEY,
+  id INT NULL,
+  instance_id INT NULL,
+  job_number NVARCHAR(MAX) NULL,
+  project_id INT NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  duration TIME NULL,
+  [from] NVARCHAR(MAX) NULL,
+  [to] NVARCHAR(MAX) NULL,
+  direction NVARCHAR(MAX) NULL,
+  call_type NVARCHAR(MAX) NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  is_customer_active TINYINT NULL,
+  customer_name NVARCHAR(MAX) NULL,
+  street_address NVARCHAR(MAX) NULL,
+  street NVARCHAR(MAX) NULL,
+  unit NVARCHAR(MAX) NULL,
+  city NVARCHAR(MAX) NULL,
+  [state] NVARCHAR(MAX) NULL,
+  country NVARCHAR(MAX) NULL,
+  zip NVARCHAR(MAX) NULL,
+  latitude DECIMAL(9, 6) NOT NULL, -- Up to 6 decimal places of precision for latitude
+  longitude DECIMAL(9, 6) NOT NULL,
+  customer_import_id NVARCHAR(MAX) NULL,
+  customer_type NVARCHAR(MAX) NULL,
+  campaign_id INT NULL,
+  campaign_category NVARCHAR(MAX) NULL,
+  campaign_source NVARCHAR(MAX) NULL,
+  campaign_medium NVARCHAR(MAX) NULL,
+  campaign_dnis NVARCHAR(MAX) NULL,
+  campaign_name NVARCHAR(MAX) NULL,
+  campaign_createdOn DATETIME2 NULL,
+  campaign_modifiedOn DATETIME2 NULL,
+  is_campaign_active TINYINT NULL,
+  agent_id INT NULL,
+  agent_externalId INT NULL,
+  agent_name NVARCHAR(MAX) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  business_unit_active TINYINT NULL,
+  business_unit_name NVARCHAR(MAX) NULL,
+  business_unit_official_name NVARCHAR(MAX) NULL,
+  type_id INT NULL,
+  type_name NVARCHAR(MAX) NULL,
+  type_modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
+
 
 -- auto_update
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
@@ -340,6 +396,7 @@ CREATE TABLE auto_update (
   cogs_labor NVARCHAR(MAX) NULL,
   purchase_order NVARCHAR(MAX) NULL,
   gross_profit NVARCHAR(MAX) NULL,
+  call_details NVARCHAR(MAX) NULL,
   overall_status NVARCHAR(MAX) NULL
 );
 END;
