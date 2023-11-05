@@ -326,7 +326,7 @@ CREATE TABLE call_details (
   project_id INT NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
-  -- duration TIME NULL,
+  duration TIME NULL,
   [from] NVARCHAR(MAX) NULL,
   [to] NVARCHAR(MAX) NULL,
   direction NVARCHAR(MAX) NULL,
