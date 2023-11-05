@@ -4255,7 +4255,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       await hvac_flat_data_insertion(
         sql_request,
         final_data_pool,
-        header_data,
+        Object.keys(header_data),
         table_name
       );
 
