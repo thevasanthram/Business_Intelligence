@@ -965,14 +965,14 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      latitude: {
-        data_type: "DECIMAL96",
-        constraint: { nullable: true },
-      },
-      longitude: {
-        data_type: "DECIMAL96",
-        constraint: { nullable: true },
-      },
+      // latitude: {
+      //   data_type: "DECIMAL96",
+      //   constraint: { nullable: true },
+      // },
+      // longitude: {
+      //   data_type: "DECIMAL96",
+      //   constraint: { nullable: true },
+      // },
       customer_import_id: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -4228,8 +4228,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           state: state,
           country: country,
           zip: zip,
-          latitude: latitude,
-          longitude: longitude,
+          // latitude: latitude,
+          // longitude: longitude,
           customer_import_id: customer_import_id,
           customer_type: customer_type,
           campaign_id: campaign_id,
