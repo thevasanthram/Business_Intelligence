@@ -1,55 +1,48 @@
 const sql = require("mssql");
 
-// Connection configuration
 const config = {
   user: "pinnacleadmin",
   password: "PiTestBi01",
   server: "pinnaclemep.database.windows.net",
-  database: "hvac_db",
-  options: {
-    encrypt: true, // Use encryption
-  },
+  database: "hvac_data_pool",
 };
 
-// Sample data (replace with your data)
-const dataToInsert = [
-  { id: 1, name: "Item 1" },
-  { id: 2, name: "Item 2" },
-  // Add more rows as needed
-];
+const pool = new sql.ConnectionPool(config);
+const request = new sql.Request(pool);
 
-async function bulkInsert() {
+(async () => {
   try {
-    // Connect to the database
-    await sql.connect(config);
+    await pool.connect();
 
-    // Create a table object for the target table
-    const table = new sql.Table("sample_table");
+    // Replace 'YourTableName' with your actual table name
+    const tableName = "sample_table";
 
-    // Define the schema of the table (columns)
-    table.create = true; // Create the table if it doesn't exist
-    table.columns.add("id", sql.Int, { primary: true }); // Add primary key column
-    table.columns.add("name", sql.NVarChar(255));
+    const timeValues = [
+      "00:00:20",
+      "01:30:45",
+      "03:15:00",
+      // Add more time values as needed
+    ];
 
-    // Add data to the table
-    dataToInsert.forEach((row) => {
-      table.rows.add(row.id, row.name);
+    // Create a table to hold the time values as strings
+    const table = new sql.Table(tableName);
+    table.create = true; // Do not create a new table
+
+    // Define the schema for the table
+    table.columns.add("duration", sql.Time);
+
+    // Populate the table with data
+    timeValues.forEach((time) => {
+      table.rows.add(time);
     });
 
-    // Create a request to perform the bulk insert
-    const request = new sql.Request();
-
     // Perform the bulk insert
-    await request.bulk(table);
+    const bulkInsertResult = await request.bulk(table);
 
     console.log("Bulk insert completed successfully.");
   } catch (err) {
-    console.error("Error:", err.message);
+    console.error("Error:", err);
   } finally {
-    // Close the connection
-    sql.close();
+    await pool.close();
   }
-}
-
-// Call the bulkInsert function to perform the bulk insert
-bulkInsert();
+})();

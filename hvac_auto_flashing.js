@@ -901,8 +901,12 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
       duration: {
-        data_type: "TIME",
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       from: {
@@ -4014,6 +4018,19 @@ async function data_processor(data_lake, sql_request, table_list) {
           modifiedOn = "2001-01-01T00:00:00.00Z";
         }
 
+        let receivedOn = "2000-01-01T00:00:00.00Z";
+
+        if (record["leadCall"]["receivedOn"]) {
+          if (
+            new Date(record["leadCall"]["receivedOn"]) >
+            new Date("2000-01-01T00:00:00.00Z")
+          ) {
+            receivedOn = record["leadCall"]["receivedOn"];
+          }
+        } else {
+          receivedOn = "2001-01-01T00:00:00.00Z";
+        }
+
         let business_unit_id = record["instance_id"];
         let actual_business_unit_id = record["instance_id"];
         let business_unit_active = 0;
@@ -4204,6 +4221,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           project_id: record["projectId"] ? record["projectId"] : 0,
           createdOn: createdOn,
           modifiedOn: modifiedOn,
+          receivedOn: receivedOn,
           duration: record["leadCall"]["duration"]
             ? record["leadCall"]["duration"]
             : "00:00:00",
