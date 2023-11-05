@@ -82,18 +82,18 @@ async function hvac_data_insertion(
     // console.log("fullway: ");
 
     // console.log("schema: ", table.schema);
-    console.log("columns: ", table.columns);
-    console.log("rows: ", table.rows[0]);
+    // console.log("columns: ", table.columns);
+    // console.log("rows: ", table.rows[0]);
 
     // Bulk insert
-    // const bulkResult = await sql_pool.bulk(table);
+    const bulkResult = await sql_pool.bulk(table);
 
     // Log the queries
 
-    // console.log(
-    //   `${table_name} data insertion completed. Affected no of rows: `,
-    //   bulkResult.rowsAffected
-    // );
+    console.log(
+      `${table_name} data insertion completed. Affected no of rows: `,
+      bulkResult.rowsAffected
+    );
 
     status = "success";
   } catch (err) {
