@@ -4258,38 +4258,38 @@ async function data_processor(data_lake, sql_request, table_list) {
       // console.log("final_data_pool: ", final_data_pool);
       // console.log("header_data: ", header_data);
 
-      await hvac_flat_data_insertion(
-        sql_request,
-        final_data_pool,
-        Object.keys(header_data),
-        table_name
-      );
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   final_data_pool,
+      //   Object.keys(header_data),
+      //   table_name
+      // );
 
       console.log("telecom_calls data: ", final_data_pool.length);
       // console.log("telecom_calls data: ", final_data_pool);
 
-      // if (final_data_pool.length > 0) {
-      //   do {
-      //     hvac_tables_responses["call_details"]["status"] =
-      //       await hvac_data_insertion(
-      //         sql_request,
-      //         final_data_pool,
-      //         header_data,
-      //         table_name
-      //       );
-      //   } while (hvac_tables_responses["call_details"]["status"] != "success");
+      if (final_data_pool.length > 0) {
+        do {
+          hvac_tables_responses["call_details"]["status"] =
+            await hvac_data_insertion(
+              sql_request,
+              final_data_pool,
+              header_data,
+              table_name
+            );
+        } while (hvac_tables_responses["call_details"]["status"] != "success");
 
-      //   // entry into auto_update table
-      //   try {
-      //     const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
+        // entry into auto_update table
+        try {
+          const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
-      //     await sql_request.query(auto_update_query);
+          await sql_request.query(auto_update_query);
 
-      //     console.log("Auto_Update log created ");
-      //   } catch (err) {
-      //     console.log("Error while inserting into auto_update", err);
-      //   }
-      // }
+          console.log("Auto_Update log created ");
+        } catch (err) {
+          console.log("Error while inserting into auto_update", err);
+        }
+      }
 
       break;
     }
