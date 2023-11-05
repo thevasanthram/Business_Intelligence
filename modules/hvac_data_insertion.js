@@ -90,10 +90,10 @@ async function hvac_data_insertion(
 
     // Log the queries
 
-    console.log(
-      `${table_name} data insertion completed. Affected no of rows: `,
-      bulkResult.rowsAffected
-    );
+    // console.log(
+    //   `${table_name} data insertion completed. Affected no of rows: `,
+    //   bulkResult.rowsAffected
+    // );
 
     status = "success";
   } catch (err) {
