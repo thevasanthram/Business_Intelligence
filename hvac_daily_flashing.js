@@ -124,17 +124,6 @@ const hvac_tables = {
         constraint: { nullable: false },
       },
     },
-    local_table: {
-      account_type: "",
-      business_unit_name: "",
-      business_unit_official_name: "",
-      id: "",
-      revenue_type: "",
-      trade_type: "",
-    },
-    foreign_table: {
-      legal_entity__id: "",
-    },
   },
   customer_details: {
     columns: {
@@ -180,19 +169,6 @@ const hvac_tables = {
       },
     },
     // crm customers
-    local_table: {
-      address_city: "",
-      address_state: "",
-      address_street: "",
-      address_unit: "",
-      address_zip: "",
-      creation_date: "",
-      id: "",
-      is_active: "",
-      name: "",
-      type: "",
-    },
-    foreign_table: {},
   },
   location: {
     columns: {
@@ -229,18 +205,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    // crm locations
-    local_table: {
-      city: "",
-      id: "",
-      state: "",
-      street: "",
-      taxzone: "",
-      unit: "",
-      zip: "",
-      zone_id: "",
-    },
-    foreign_table: {},
   },
   job_details: {
     columns: {
@@ -325,26 +289,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    // jpm -  jobs, job-types
-    local_table: {
-      booking_id: "",
-      campaign_id: "",
-      created_by_id: "",
-      id: "",
-      job_completion_time: "",
-      job_number: "",
-      job_start_time: "",
-      job_type_id: "",
-      job_type_name: "",
-      lead_call_id: "",
-      project_id: "",
-      sold_by_id: "",
-    },
-    foreign_table: {
-      business_unit__id: "",
-      location__id: "",
-      customer_details__id: "",
-    },
   },
   vendor: {
     columns: {
@@ -361,13 +305,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    // inventory vendors
-    local_table: {
-      id: "",
-      is_active: "",
-      name: "",
-    },
-    foreign_table: {},
   },
   technician: {
     columns: {
@@ -387,13 +324,6 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-    },
-    local_table: {
-      id: "",
-      name: "",
-    },
-    foreign_table: {
-      business_unit__id: "",
     },
   },
   sku_details: {
@@ -422,16 +352,6 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-    },
-    // materials, equipment, invoices_item
-    local_table: {
-      id: "",
-      sku_name: "", // skuCode
-      sku_type: "",
-      sku_unit_price: "",
-    },
-    foreign_table: {
-      vendor__id: "", // primaryVendor['vendorId']
     },
   },
   cogs_material: {
@@ -500,16 +420,6 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-    },
-    // invoice api-- items
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
     },
   },
   cogs_equipment: {
@@ -580,15 +490,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
-    },
   },
   cogs_service: {
     // invoice api -- items
@@ -658,15 +559,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    local_table: {
-      id: "",
-      quantity: "",
-      total_cost: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      sku_details__id: "",
-    },
   },
   cogs_labor: {
     columns: {
@@ -718,20 +610,6 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-    },
-    // payroll - gross pay items, payrolls
-    local_table: {
-      activity: "",
-      burden_cost: "",
-      burden_rate: "",
-      id: "", // running number for cogs
-      labor_cost: "",
-      paid_duration: "",
-      paid_time_type: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-      technician__id: "",
     },
   },
   purchase_order: {
@@ -917,20 +795,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
     },
-    // invoice
-    local_table: {
-      date: "",
-      id: "",
-      invoice_type_id: "",
-      invoice_type_name: "",
-      is_trialdata: "",
-      subtotal: "",
-      tax: "",
-      total: "",
-    },
-    foreign_table: {
-      job_details__id: "",
-    },
   },
   gross_profit: {
     columns: {
@@ -1003,21 +867,201 @@ const hvac_tables = {
         constraint: { nullable: false },
       },
     },
-    local_table: {
-      burden: "",
-      equipment_cost: "",
-      gross_margin: "",
-      gross_profit: "",
-      id: "",
-      labor_cost: "",
-      labor_hours: "",
-      material_cost: "",
-      po_cost: "",
-      revenue: "",
-      units: "",
-    },
-    foreign_table: {
-      invoice__id: "",
+  },
+  call_details: {
+    columns: {
+      lead_call_id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      instance_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      duration: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      from: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      to: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      direction: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      call_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      is_customer_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      customer_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      street_address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      latitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      customer_import_id: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      campaign_category: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_source: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_medium: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_dnis: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      campaign_modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      is_campaign_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      agent_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      agent_externalId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      agent_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      business_unit_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      type_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      type_modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
     },
   },
 };
@@ -1068,6 +1112,9 @@ const hvac_tables_responses = {
   purchase_order: {
     status: "",
   },
+  call_details: {
+    status: "",
+  },
 };
 
 let start_time = "";
@@ -1091,6 +1138,13 @@ const main_api_list = {
       api_group: "crm",
       api_name: "customers",
       table_name: "customer_details",
+    },
+  ],
+  call_details: [
+    {
+      api_group: "telecom",
+      api_name: "calls",
+      table_name: "call_details",
     },
   ],
   location: [
@@ -1422,7 +1476,6 @@ async function data_processor(data_lake, sql_request, table_list) {
     const api_name = table_list[api_count];
 
     console.log("table_name: ", api_name);
-
     switch (api_name) {
       case "legal_entity": {
         const table_name = main_api_list[api_name][0]["table_name"];
@@ -3076,47 +3129,47 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           const current_date = new Date();
 
-          if (js_date <= current_date) {
-            let invoice_type_id = 0;
-            let invoice_type_name = "default_invoice";
-            if (record["invoiceType"]) {
-              invoice_type_id = record["invoiceType"]["id"];
-              invoice_type_name = record["invoiceType"]["name"];
-            }
-
-            invoice_final_data_pool.push({
-              id: record["id"],
-              syncStatus: record["syncStatus"]
-                ? record["syncStatus"]
-                : "default",
-              date: invoice_date,
-              dueDate: dueDate,
-              subtotal: record["subTotal"] ? record["subTotal"] : 0,
-              tax: record["salesTax"] ? record["salesTax"] : 0,
-              total: record["total"] ? record["total"] : 0,
-              balance: record["balance"] ? record["balance"] : 0,
-              depositedOn: depositedOn,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              invoice_type_id: invoice_type_id,
-              invoice_type_name: invoice_type_name,
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              address_street: address_street,
-              address_unit: address_unit,
-              address_city: address_city,
-              address_state: address_state,
-              address_country: address_country,
-              address_zip: address_zip,
-              customer_id: customer_id,
-              actual_customer_id: actual_customer_id,
-              customer_name: customer_name,
-            });
+          if (js_date > current_date) {
+            invoice_date = "2002-01-01T00:00:00.00Z";
           }
+
+          let invoice_type_id = 0;
+          let invoice_type_name = "default_invoice";
+          if (record["invoiceType"]) {
+            invoice_type_id = record["invoiceType"]["id"];
+            invoice_type_name = record["invoiceType"]["name"];
+          }
+
+          invoice_final_data_pool.push({
+            id: record["id"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            date: invoice_date,
+            dueDate: dueDate,
+            subtotal: record["subTotal"] ? record["subTotal"] : 0,
+            tax: record["salesTax"] ? record["salesTax"] : 0,
+            total: record["total"] ? record["total"] : 0,
+            balance: record["balance"] ? record["balance"] : 0,
+            depositedOn: depositedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            invoice_type_id: invoice_type_id,
+            invoice_type_name: invoice_type_name,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_country: address_country,
+            address_zip: address_zip,
+            customer_id: customer_id,
+            actual_customer_id: actual_customer_id,
+            customer_name: customer_name,
+          });
 
           let po_cost = 0;
           let labor_cost = 0;
@@ -3945,6 +3998,352 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET cogs_labor = '${hvac_tables_responses["cogs_labor"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
+      case "call_details": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const telecom_calls_data_pool =
+          data_lake[table_name]["telecom__calls"]["data_pool"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const customer_data_pool =
+          data_lake["customer_details"]["crm__customers"]["data_pool"];
+
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
+        // console.log("header_data: ", header_data);
+
+        Object.keys(telecom_calls_data_pool).map((record_id) => {
+          const record = telecom_calls_data_pool[record_id];
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["createdOn"]) {
+            if (
+              new Date(record["leadCall"]["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["leadCall"]["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["modifiedOn"]) {
+            if (
+              new Date(record["leadCall"]["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["leadCall"]["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let receivedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["receivedOn"]) {
+            if (
+              new Date(record["leadCall"]["receivedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              receivedOn = record["leadCall"]["receivedOn"];
+            }
+          } else {
+            receivedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          let business_unit_active = 0;
+          let business_unit_name = "default";
+          let business_unit_official_name = "default";
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            business_unit_active = record["businessUnit"]["active"] ? 1 : 0;
+            business_unit_name = record["businessUnit"]["name"]
+              ? record["businessUnit"]["name"]
+              : "default";
+            business_unit_official_name = record["businessUnit"]["officialName"]
+              ? record["businessUnit"]["officialName"]
+              : "default";
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["instance_id"];
+          let customer_name = "default";
+          let is_customer_active = 0;
+          let street_address = "default";
+          let street = "default";
+          let unit = "default";
+          let city = "default";
+          let state = "default";
+          let country = "default";
+          let zip = "default";
+          let latitude = 0.0;
+          let longitude = 0.0;
+          let customer_import_id = "default";
+          let customer_type = "default";
+          if (record["leadCall"]["customer"]) {
+            actual_customer_details_id = record["leadCall"]["customer"]["id"];
+            customer_name = record["leadCall"]["customer"]["name"]
+              ? record["leadCall"]["customer"]["name"]
+              : "default";
+            is_customer_active = record["leadCall"]["customer"]["active"]
+              ? 1
+              : 0;
+
+            if (record["leadCall"]["customer"]["address"]) {
+              street_address = record["leadCall"]["customer"]["address"][
+                "streetAddress"
+              ]
+                ? record["leadCall"]["customer"]["address"]["streetAddress"]
+                : "default";
+              street = record["leadCall"]["customer"]["address"]["street"]
+                ? record["leadCall"]["customer"]["address"]["street"]
+                : "default";
+              unit = record["leadCall"]["customer"]["address"]["unit"]
+                ? record["leadCall"]["customer"]["address"]["unit"]
+                : "default";
+              city = record["leadCall"]["customer"]["address"]["city"]
+                ? record["leadCall"]["customer"]["address"]["city"]
+                : "default";
+              state = record["leadCall"]["customer"]["address"]["state"]
+                ? record["leadCall"]["customer"]["address"]["state"]
+                : "default";
+              country = record["leadCall"]["customer"]["address"]["country"]
+                ? record["leadCall"]["customer"]["address"]["country"]
+                : "default";
+              zip = record["leadCall"]["customer"]["address"]["zip"]
+                ? record["leadCall"]["customer"]["address"]["zip"]
+                : "default";
+              latitude = record["leadCall"]["customer"]["address"]["latitude"]
+                ? record["leadCall"]["customer"]["address"]["latitude"]
+                : 0.0;
+              longitude = record["leadCall"]["customer"]["address"]["longitude"]
+                ? record["leadCall"]["customer"]["address"]["longitude"]
+                : 0.0;
+            }
+
+            customer_import_id = record["leadCall"]["customer"]["importId"]
+              ? record["leadCall"]["customer"]["importId"]
+              : "default";
+            customer_type = record["leadCall"]["customer"]["type"]
+              ? record["leadCall"]["customer"]["type"]
+              : "default";
+
+            if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
+              customer_details_id = record["leadCall"]["customer"]["id"];
+            }
+          }
+
+          let campaign_id = 0;
+          let campaign_category = "default";
+          let campaign_source = "default";
+          let campaign_medium = "default";
+          let campaign_dnis = "default";
+          let campaign_name = "default";
+          let campaign_createdOn = "2000-01-01T00:00:00.00Z";
+          let campaign_modifiedOn = "2000-01-01T00:00:00.00Z";
+          let is_campaign_active = 0;
+          if (record["leadCall"]["campaign"]) {
+            if (record["leadCall"]["campaign"]["createdOn"]) {
+              if (
+                new Date(record["leadCall"]["campaign"]["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                campaign_createdOn =
+                  record["leadCall"]["campaign"]["createdOn"];
+              }
+            } else {
+              campaign_createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            if (record["leadCall"]["campaign"]["modifiedOn"]) {
+              if (
+                new Date(record["leadCall"]["campaign"]["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                campaign_modifiedOn =
+                  record["leadCall"]["campaign"]["modifiedOn"];
+              }
+            } else {
+              campaign_modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            campaign_id = record["leadCall"]["campaign"]["id"]
+              ? record["leadCall"]["campaign"]["id"]
+              : 0;
+
+            if (record["leadCall"]["campaign"]["category"]) {
+              campaign_category = record["leadCall"]["campaign"]["category"][
+                "name"
+              ]
+                ? record["leadCall"]["campaign"]["category"]["name"]
+                : "default";
+            }
+
+            campaign_source = record["leadCall"]["campaign"]["source"]
+              ? record["leadCall"]["campaign"]["source"]
+              : "default";
+            campaign_medium = record["leadCall"]["campaign"]["medium"]
+              ? record["leadCall"]["campaign"]["medium"]
+              : "default";
+            campaign_dnis = record["leadCall"]["campaign"]["dnis"]
+              ? record["leadCall"]["campaign"]["dnis"]
+              : "default";
+            campaign_name = record["leadCall"]["campaign"]["name"]
+              ? record["leadCall"]["campaign"]["name"]
+              : "default";
+            is_campaign_active = record["leadCall"]["campaign"]["active"]
+              ? 1
+              : 0;
+          }
+
+          let agent_id = 0;
+          let agent_externalId = 0;
+          let agent_name = "default";
+          if (record["leadCall"]["agent"]) {
+            agent_id = record["leadCall"]["agent"]["id"]
+              ? record["leadCall"]["agent"]["id"]
+              : 0;
+            agent_externalId = record["leadCall"]["agent"]["externalId"]
+              ? record["leadCall"]["agent"]["externalId"]
+              : 0;
+            agent_name = record["leadCall"]["agent"]["name"]
+              ? record["leadCall"]["agent"]["name"]
+              : "default";
+          }
+
+          let type_id = 0;
+          let type_name = "default";
+          let type_modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["type"]) {
+            type_id = record["type"]["id"] ? record["type"]["id"] : 0;
+            type_name = record["type"]["name"]
+              ? record["type"]["name"]
+              : "default";
+            if (record["type"]["modifiedOn"]) {
+              if (
+                new Date(record["type"]["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["type"]["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+          }
+
+          final_data_pool.push({
+            lead_call_id: record["leadCall"]["id"],
+            id: record["id"],
+            instance_id: record["instance_id"],
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            project_id: record["projectId"] ? record["projectId"] : 0,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            receivedOn: receivedOn,
+            duration: record["leadCall"]["duration"]
+              ? record["leadCall"]["duration"]
+              : "00:00:00",
+            from: record["leadCall"]["from"]
+              ? record["leadCall"]["from"]
+              : "default",
+            to: record["leadCall"]["to"] ? record["leadCall"]["to"] : "default",
+            direction: record["leadCall"]["direction"]
+              ? record["leadCall"]["direction"]
+              : "default",
+            call_type: record["leadCall"]["callType"]
+              ? record["leadCall"]["callType"]
+              : "default",
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+            is_customer_active: is_customer_active,
+            customer_name: customer_name,
+            street_address: street_address,
+            street: street,
+            unit: unit,
+            city: city,
+            state: state,
+            country: country,
+            zip: zip,
+            latitude: latitude,
+            longitude: longitude,
+            customer_import_id: customer_import_id,
+            customer_type: customer_type,
+            campaign_id: campaign_id,
+            campaign_category: campaign_category,
+            campaign_source: campaign_source,
+            campaign_medium: campaign_medium,
+            campaign_dnis: campaign_dnis,
+            campaign_name: campaign_name,
+            campaign_createdOn: campaign_createdOn,
+            campaign_modifiedOn: campaign_modifiedOn,
+            is_campaign_active: is_campaign_active,
+            agent_id: agent_id,
+            agent_externalId: agent_externalId,
+            agent_name: agent_name,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            business_unit_active: business_unit_active,
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            type_id: type_id,
+            type_name: type_name,
+            type_modifiedOn: type_modifiedOn,
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   Object.keys(header_data),
+        //   table_name
+        // );
+
+        console.log("telecom_calls data: ", final_data_pool.length);
+        // console.log("telecom_calls data: ", final_data_pool);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["call_details"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["call_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
