@@ -901,10 +901,10 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
-      duration: {
-        data_type: "TIME",
-        constraint: { nullable: true },
-      },
+      // duration: {
+      //   data_type: "TIME",
+      //   constraint: { nullable: true },
+      // },
       from: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -4204,9 +4204,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           project_id: record["projectId"] ? record["projectId"] : 0,
           createdOn: createdOn,
           modifiedOn: modifiedOn,
-          duration: record["leadCall"]["duration"]
-            ? record["leadCall"]["duration"]
-            : "00:00:00",
+          // duration: record["leadCall"]["duration"]
+          //   ? record["leadCall"]["duration"]
+          //   : "00:00:00",
           from: record["leadCall"]["from"]
             ? record["leadCall"]["from"]
             : "default",
