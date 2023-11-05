@@ -4137,9 +4137,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           campaign_id = record["leadCall"]["campaign"]["id"]
             ? record["leadCall"]["campaign"]["id"]
             : 0;
-          campaign_category = record["leadCall"]["campaign"]["category"]
-            ? record["leadCall"]["campaign"]["category"]
-            : "default";
+
+          if (record["leadCall"]["campaign"]["category"]) {
+            campaign_category = record["leadCall"]["campaign"]["category"][
+              "name"
+            ]
+              ? record["leadCall"]["campaign"]["category"]["name"]
+              : "default";
+          }
+
           campaign_source = record["leadCall"]["campaign"]["source"]
             ? record["leadCall"]["campaign"]["source"]
             : "default";
