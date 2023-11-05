@@ -901,10 +901,10 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
-      // duration: {
-      //   data_type: "TIME",
-      //   constraint: { nullable: true },
-      // },
+      duration: {
+        data_type: "TIME",
+        constraint: { nullable: true },
+      },
       from: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
