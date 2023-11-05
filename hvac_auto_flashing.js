@@ -941,7 +941,7 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      stree: {
+      street: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
