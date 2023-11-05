@@ -4252,12 +4252,12 @@ async function data_processor(data_lake, sql_request, table_list) {
       // console.log("final_data_pool: ", final_data_pool);
       // console.log("header_data: ", header_data);
 
-      await hvac_flat_data_insertion(
-        sql_request,
-        final_data_pool,
-        Object.keys(header_data),
-        table_name
-      );
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   final_data_pool,
+      //   Object.keys(header_data),
+      //   table_name
+      // );
 
       console.log("telecom_calls data: ", final_data_pool.length);
       // console.log("telecom_calls data: ", final_data_pool);
