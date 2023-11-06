@@ -3792,24 +3792,26 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
-          final_data_pool.push({
-            id: record["id"],
-            status: record["status"] ? record["status"] : "default",
-            total: record["total"] ? record["total"] : 0,
-            tax: record["tax"] ? record["tax"] : 0,
-            date: date,
-            requiredOn: requiredOn,
-            sentOn: sentOn,
-            receivedOn: receivedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            invoice_id: invoice_id,
-            actual_invoice_id: actual_invoice_id,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-          });
+          if (record["status"] != "Canceled") {
+            final_data_pool.push({
+              id: record["id"],
+              status: record["status"] ? record["status"] : "default",
+              total: record["total"] ? record["total"] : 0,
+              tax: record["tax"] ? record["tax"] : 0,
+              date: date,
+              requiredOn: requiredOn,
+              sentOn: sentOn,
+              receivedOn: receivedOn,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              invoice_id: invoice_id,
+              actual_invoice_id: actual_invoice_id,
+              vendor_id: vendor_id,
+              actual_vendor_id: actual_vendor_id,
+            });
+          }
         });
 
         // console.log("final_data_pool: ", final_data_pool);

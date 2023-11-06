@@ -29,7 +29,7 @@ const request = new sql.Request(pool);
     table.create = true; // Do not create a new table
 
     // Define the schema for the table
-    table.columns.add("duration", sql.Time);
+    table.columns.add("duration", sql.NVarChar(sql.MAX));
 
     // Populate the table with data
     timeValues.forEach((time) => {
