@@ -4357,6 +4357,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
+        delete data_lake[table_name]["telecom__calls"]
+
         break;
       }
 
