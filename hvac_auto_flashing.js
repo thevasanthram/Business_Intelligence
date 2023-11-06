@@ -2577,6 +2577,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
+
           if (po_record["invoiceId"] != null) {
             if (!po_and_gpi_data[po_record["invoiceId"]]) {
               po_and_gpi_data[po_record["invoiceId"]] = {
@@ -2587,16 +2588,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               };
             }
 
-            if (!invoice_data_pool[po_record["invoiceId"]]) {
-              dummy_values["po_cost"][po_record["instance_id"]] +=
-                po_record["total"];
-            } else {
-              po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
-                po_record["total"];
+            if (po_record["status"] != "Canceled") {
+              if (!invoice_data_pool[po_record["invoiceId"]]) {
+                dummy_values["po_cost"][po_record["instance_id"]] +=
+                  po_record["total"];
+              } else {
+                po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+                  po_record["total"];
+              }
             }
           } else {
-            dummy_values["po_cost"][po_record["instance_id"]] +=
-              po_record["total"];
+            if (po_record["status"] != "Canceled") {
+              dummy_values["po_cost"][po_record["instance_id"]] +=
+                po_record["total"];
+            }
           }
         });
 
