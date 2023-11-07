@@ -2593,7 +2593,19 @@ async function data_processor(data_lake, sql_request, table_list) {
               console.log("status: ", po_record["status"]);
               console.log("-==============-==-=-=-=-=-=-=-");
             }
+
+            if (po_record["invoiceId"] == 80931469) {
+              console.log("=========foundd========");
+              console.log("p_id: ", po_record_id);
+              console.log("po_record[total]: ", po_record["total"]);
+            }
+
             if (po_record["status"] != "Canceled") {
+              if (po_record["invoiceId"] == 80931469) {
+                console.log("-==============-==-=-=-=-=-=-=-");
+                console.log(" enteringgg", po_record_id);
+                console.log("-==============-==-=-=-=-=-=-=-");
+              }
               if (!invoice_data_pool[po_record["invoiceId"]]) {
                 dummy_values["po_cost"][po_record["instance_id"]] +=
                   po_record["total"];
@@ -2602,9 +2614,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                   po_record["total"];
               }
             } else {
-              if (po_record_id == 81531037) {
+              if (po_record["invoiceId"] == 80931469) {
                 console.log("-==============-==-=-=-=-=-=-=-");
-                console.log(" not enteringgg");
+                console.log(" not enteringgg", po_record_id);
                 console.log("-==============-==-=-=-=-=-=-=-");
               }
             }
@@ -3420,6 +3432,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
           //   gross_margin = 0;
           // }
+
+          if (record_id == 80931469) {
+            console.log("po_ cost: ", po_cost);
+          }
 
           if (js_date <= current_date) {
             gross_profit_final_data_pool.push({
