@@ -2588,6 +2588,11 @@ async function data_processor(data_lake, sql_request, table_list) {
               };
             }
 
+            if (po_record_id == 81531037) {
+              console.log("-==============-==-=-=-=-=-=-=-");
+              console.log("status: ", po_record["status"]);
+              console.log("-==============-==-=-=-=-=-=-=-");
+            }
             if (po_record["status"] != "Canceled") {
               if (!invoice_data_pool[po_record["invoiceId"]]) {
                 dummy_values["po_cost"][po_record["instance_id"]] +=
@@ -2595,6 +2600,12 @@ async function data_processor(data_lake, sql_request, table_list) {
               } else {
                 po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
                   po_record["total"];
+              }
+            } else {
+              if (po_record_id == 81531037) {
+                console.log("-==============-==-=-=-=-=-=-=-");
+                console.log(" not enteringgg");
+                console.log("-==============-==-=-=-=-=-=-=-");
               }
             }
           } else {
