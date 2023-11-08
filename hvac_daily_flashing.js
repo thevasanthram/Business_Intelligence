@@ -2493,6 +2493,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
+        delete data_lake["sku_details"];
+
         break;
       }
 
@@ -3405,10 +3407,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
           //   gross_margin = 0;
           // }
-
-          if (record_id == 80931469) {
-            console.log("po_ cost: ", po_cost);
-          }
 
           if (js_date <= current_date) {
             gross_profit_final_data_pool.push({
