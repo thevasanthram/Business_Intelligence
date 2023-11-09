@@ -4260,10 +4260,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                 new Date(record["type"]["modifiedOn"]) >
                 new Date("2000-01-01T00:00:00.00Z")
               ) {
-                modifiedOn = record["type"]["modifiedOn"];
+                type_modifiedOn = record["type"]["modifiedOn"];
               }
             } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
+              type_modifiedOn = "2001-01-01T00:00:00.00Z";
             }
           }
 
