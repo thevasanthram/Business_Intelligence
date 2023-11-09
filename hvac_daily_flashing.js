@@ -1477,6 +1477,7 @@ async function data_processor(data_lake, sql_request, table_list) {
     const api_name = table_list[api_count];
 
     console.log("table_name: ", api_name);
+
     switch (api_name) {
       case "legal_entity": {
         const table_name = main_api_list[api_name][0]["table_name"];
@@ -4256,10 +4257,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                 new Date(record["type"]["modifiedOn"]) >
                 new Date("2000-01-01T00:00:00.00Z")
               ) {
-                modifiedOn = record["type"]["modifiedOn"];
+                type_modifiedOn = record["type"]["modifiedOn"];
               }
             } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
+              type_modifiedOn = "2001-01-01T00:00:00.00Z";
             }
           }
 
