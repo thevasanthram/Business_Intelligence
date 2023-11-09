@@ -2497,8 +2497,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake["sku_details"];
-
         break;
       }
 
