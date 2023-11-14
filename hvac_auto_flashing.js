@@ -407,6 +407,10 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      businessUnitName: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       job_details_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -2469,7 +2473,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           const record = data_pool[record_id];
 
           let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
+          let acutal_business_unit_id = record["instance_id"];
           let businessUnitName = record["businessUnitName"]
             ? record["businessUnitName"]
             : "default";
@@ -2562,6 +2566,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
             business_unit_id: business_unit_id,
             acutal_business_unit_id: acutal_business_unit_id,
+            businessUnitName: businessUnitName,
             job_details_id: job_details_id,
             actual_job_details_id: actual_job_details_id,
             location_id: location_id,

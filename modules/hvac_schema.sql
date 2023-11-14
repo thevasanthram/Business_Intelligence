@@ -124,6 +124,7 @@ CREATE TABLE sales_details (
   modifiedOn DATETIME2 NULL,
   business_unit_id INT NOT NULL,
   actual_business_unit_id INT NULL,
+  businessUnitName NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
   location_id INT NOT NULL,
