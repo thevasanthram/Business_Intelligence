@@ -889,6 +889,10 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       project_id: {
         data_type: "INT",
         constraint: { nullable: true },
@@ -1118,6 +1122,9 @@ const hvac_tables_responses = {
   call_details: {
     status: "",
   },
+  appointments: {
+    status: "",
+  },
 };
 
 let start_time = "";
@@ -1167,6 +1174,13 @@ const main_api_list = {
       api_group: "jpm",
       api_name: "job-types",
       table_name: "job_details",
+    },
+  ],
+  appointments: [
+    {
+      api_group: "jpm",
+      api_name: "appointments",
+      table_name: "appointments",
     },
   ],
   vendor: [
@@ -4028,6 +4042,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const customer_data_pool =
           data_lake["customer_details"]["crm__customers"]["data_pool"];
+        const appointments_data_pool =
+          data_lake["appointments"]["jpm__appointments"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -4035,6 +4051,16 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
         // console.log("header_data: ", header_data);
+
+        let lead_call_status = {};
+
+        Object.keys(appointments_data_pool).map((record_id) => {
+          const record = appointments_data_pool[record_id];
+
+          if (record["jobId"]) {
+            lead_call_status[record["jobId"]] = record["status"];
+          }
+        });
 
         Object.keys(telecom_calls_data_pool).map((record_id) => {
           const record = telecom_calls_data_pool[record_id];
@@ -4265,11 +4291,17 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
+          let status = "Not Known";
+          if (lead_call_status[record["jobNumber"]]) {
+            status = lead_call_status[record["jobNumber"]];
+          }
+
           final_data_pool.push({
             lead_call_id: record["leadCall"]["id"],
             id: record["id"],
             instance_id: record["instance_id"],
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            status: status,
             project_id: record["projectId"] ? record["projectId"] : 0,
             createdOn: createdOn,
             modifiedOn: modifiedOn,

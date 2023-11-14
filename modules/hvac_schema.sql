@@ -323,6 +323,7 @@ CREATE TABLE call_details (
   id INT NULL,
   instance_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
+  [status] NVARCHAR(MAX) NULL,
   project_id INT NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
