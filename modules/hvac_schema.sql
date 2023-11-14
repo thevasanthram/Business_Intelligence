@@ -84,6 +84,29 @@ CREATE TABLE job_details (
 );
 END;
 
+-- appointments
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
+BEGIN
+CREATE TABLE appointments (
+  id INT PRIMARY KEY,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  appointmentNumber NVARCHAR(MAX) NULL,
+  [start] DATETIME2 NULL,
+  [end] DATETIME2 NULL,
+  arrivalWindowStart DATETIME2 NULL,
+  arrivalWindowEnd DATETIME2 NULL,
+  [status] NVARCHAR(MAX) NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
+
+
 -- vendor_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'vendor')
 BEGIN
@@ -373,7 +396,6 @@ CREATE TABLE call_details (
 );
 END;
 
-
 -- auto_update
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
 BEGIN
@@ -388,6 +410,7 @@ CREATE TABLE auto_update (
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
+  appointments NVARCHAR(MAX) NULL,
   vendor NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
   sku_details NVARCHAR(MAX) NULL,
