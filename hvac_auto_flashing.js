@@ -349,6 +349,90 @@ const hvac_tables = {
       },
     },
   },
+  sales_details: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      projectId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      soldOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      soldBy: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      status_value: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      status_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   vendor: {
     columns: {
       id: {
@@ -1151,6 +1235,9 @@ const hvac_tables_responses = {
   appointments: {
     status: "",
   },
+  sales_details: {
+    status: "",
+  },
   vendor: {
     status: "",
   },
@@ -1237,6 +1324,13 @@ const main_api_list = {
       api_group: "jpm",
       api_name: "appointments",
       table_name: "appointments",
+    },
+  ],
+  sales_details: [
+    {
+      api_group: "sales",
+      api_name: "estimates",
+      table_name: "sales_details",
     },
   ],
   vendor: [
@@ -1504,6 +1598,7 @@ async function azure_sql_operations(data_lake, table_list) {
       [location],
       job_details,
       appointments,
+      sales_details,
       vendor,
       technician,
       sku_details,
@@ -1519,7 +1614,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2349,6 +2444,161 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        delete data_lake[table_name]["jpm__appointments"];
+
+        break;
+      }
+
+      case "sales_details": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const jobs_data_pool =
+          data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        const customer_data_pool =
+          data_lake["customer_details"]["crm__customers"]["data_pool"];
+        const location_data_pool =
+          data_lake["location"]["crm__locations"]["data_pool"];
+
+        let final_data_pool = [];
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          let businessUnitName = record["businessUnitName"]
+            ? record["businessUnitName"]
+            : "default";
+          if (business_unit_data_pool[record["businessUnitId"]]) {
+            business_unit_id = record["businessUnitId"];
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+
+          let location_id = record["instance_id"];
+          let actual_location_id = record["instance_id"];
+          if (location_data_pool[record["locationId"]]) {
+            location_id = record["locationId"];
+          }
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["customerId"]
+            ? record["customerId"]
+            : record["instance_id"];
+          if (customer_data_pool[record["customerId"]]) {
+            customer_details_id = record["customerId"];
+          }
+
+          let soldOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["soldOn"]) {
+            if (
+              new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              soldOn = record["soldOn"];
+            }
+          } else {
+            soldOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let status_value = 0;
+          let status_name = "default";
+          if (record["status"]) {
+            status_value = record["status"]["value"]
+              ? record["status"]["value"]
+              : 0;
+            status_name = record["status"]["name"]
+              ? record["status"]["name"]
+              : "default";
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            name: record["name"] ? record["name"] : "default",
+            project_id: record["projectId"] ? record["projectId"] : 0,
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            soldOn: soldOn,
+            soldBy: record["soldBy"] ? record["soldBy"] : 0,
+            is_active: record["active"] ? 1 : 0,
+            subtotal: record["subtotal"] ? record["subtotal"] : 0,
+            status_value: status_value,
+            status_name: status_name,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            business_unit_id: business_unit_id,
+            acutal_business_unit_id: acutal_business_unit_id,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+          });
+        });
+
+        console.log("sales_details data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["sales_details"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["sales_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[table_name]["sales__estimates"];
 
         break;
       }

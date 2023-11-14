@@ -106,6 +106,36 @@ CREATE TABLE appointments (
 );
 END;
 
+-- sales_details
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
+BEGIN
+CREATE TABLE sales_details (
+  id INT PRIMARY KEY,
+  name NVARCHAR(MAX) NULL,
+  projectId INT NULL,
+  job_number NVARCHAR(MAX) NULL,
+  soldOn DATETIME2 NULL,
+  soldBy INT NULL,
+  is_active TINYINT NULL,
+  subtotal DECIMAL(10, 2) NULL,
+  status_value INT NULL,
+  status_name NVARCHAR(MAX) NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (location_id) REFERENCES location (id),
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
 
 -- vendor_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'vendor')
