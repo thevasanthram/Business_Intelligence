@@ -441,6 +441,7 @@ CREATE TABLE auto_update (
   [location] NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
   appointments NVARCHAR(MAX) NULL,
+  sales_details NVARCHAR(MAX) NULL,
   vendor NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
   sku_details NVARCHAR(MAX) NULL,
