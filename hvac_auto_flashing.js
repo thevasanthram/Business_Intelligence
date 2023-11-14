@@ -2478,6 +2478,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             ? record["businessUnitName"]
             : "default";
           if (business_unit_data_pool[record["businessUnitId"]]) {
+            acutal_business_unit_id = record["businessUnitId"];
             business_unit_id = record["businessUnitId"];
           }
 
@@ -2493,6 +2494,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_location_id = record["instance_id"];
           if (location_data_pool[record["locationId"]]) {
             location_id = record["locationId"];
+            actual_location_id = record["locationId"];
           }
 
           let customer_details_id = record["instance_id"];
