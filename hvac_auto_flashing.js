@@ -294,57 +294,59 @@ const hvac_tables = {
     },
   },
   appointments: {
-    id: {
-      data_type: "INT",
-      constraint: { primary: true, nullable: false },
-    },
-    job_details_id: {
-      data_type: "INT",
-      constraint: { nullable: false },
-    },
-    actual_job_details_id: {
-      data_type: "INT",
-      constraint: { nullable: true },
-    },
-    appointmentNumber: {
-      data_type: "NVARCHAR",
-      constraint: { nullable: true },
-    },
-    start: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    end: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    arrivalWindowStart: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    arrivalWindowEnd: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    status: {
-      data_type: "NVARCHAR",
-      constraint: { nullable: true },
-    },
-    createdOn: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    modifiedOn: {
-      data_type: "DATETIME2",
-      constraint: { nullable: true },
-    },
-    customer_details_id: {
-      data_type: "INT",
-      constraint: { nullable: false },
-    },
-    actual_customer_details_id: {
-      data_type: "INT",
-      constraint: { nullable: true },
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      appointmentNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      end: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowStart: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowEnd: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
     },
   },
   vendor: {
