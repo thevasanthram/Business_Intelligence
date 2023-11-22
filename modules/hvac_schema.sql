@@ -140,7 +140,7 @@ CREATE TABLE job_details (
   sold_by_id INT NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
-  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (lead_call_id) REFERENCES call_details (lead_call_id)
 );
 END;
