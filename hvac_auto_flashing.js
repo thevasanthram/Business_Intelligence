@@ -5446,7 +5446,7 @@ async function orchestrate() {
     console.log("===========================================");
     console.log("starting pipeline");
     console.log("should_auto_update: before", should_auto_update);
-    // await flush_data_pool(!should_auto_update);
+    await flush_data_pool(!should_auto_update);
     await start_pipeline();
     console.log("should_auto_update: after", should_auto_update);
   } while (should_auto_update);
