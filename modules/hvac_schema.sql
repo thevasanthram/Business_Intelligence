@@ -463,6 +463,7 @@ CREATE TABLE auto_update (
   total_minutes DECIMAL(10, 2) NULL,
   legal_entity NVARCHAR(MAX) NULL,
   business_unit NVARCHAR(MAX) NULL,
+  campaigns NVARCHAR(MAX) NULL,
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
