@@ -3843,8 +3843,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                   generalLedgerAccounttype: generalLedgerAccounttype,
                   generalLedgerAccountdetailType:
                     generalLedgerAccountdetailType,
-                  job_details_id: record["instance_id"],
-                  actual_job_details_id: record["instance_id"],
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
                   invoice_id: record["id"],
                   sku_details_id: sku_details_id,
                   actual_sku_details_id: actual_sku_details_id,
