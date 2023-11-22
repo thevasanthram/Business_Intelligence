@@ -39,6 +39,65 @@ CREATE TABLE customer_details (
 );
 END;
 
+-- call_details
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
+BEGIN
+CREATE TABLE call_details (
+  lead_call_id INT PRIMARY KEY,
+  id INT NULL,
+  instance_id INT NULL,
+  job_number NVARCHAR(MAX) NULL,
+  [status] NVARCHAR(MAX) NULL,
+  project_id INT NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  receivedOn DATETIME2 NULL,
+  duration NVARCHAR(MAX) NULL,
+  [from] NVARCHAR(MAX) NULL,
+  [to] NVARCHAR(MAX) NULL,
+  direction NVARCHAR(MAX) NULL,
+  call_type NVARCHAR(MAX) NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  is_customer_active TINYINT NULL,
+  customer_name NVARCHAR(MAX) NULL,
+  street_address NVARCHAR(MAX) NULL,
+  street NVARCHAR(MAX) NULL,
+  unit NVARCHAR(MAX) NULL,
+  city NVARCHAR(MAX) NULL,
+  [state] NVARCHAR(MAX) NULL,
+  country NVARCHAR(MAX) NULL,
+  zip NVARCHAR(MAX) NULL,
+  latitude DECIMAL(9, 6) NULL,
+  longitude DECIMAL(9, 6) NULL,
+  customer_import_id NVARCHAR(MAX) NULL,
+  customer_type NVARCHAR(MAX) NULL,
+  campaign_id INT NULL,
+  campaign_category NVARCHAR(MAX) NULL,
+  campaign_source NVARCHAR(MAX) NULL,
+  campaign_medium NVARCHAR(MAX) NULL,
+  campaign_dnis NVARCHAR(MAX) NULL,
+  campaign_name NVARCHAR(MAX) NULL,
+  campaign_createdOn DATETIME2 NULL,
+  campaign_modifiedOn DATETIME2 NULL,
+  is_campaign_active TINYINT NULL,
+  agent_id INT NULL,
+  agent_externalId INT NULL,
+  agent_name NVARCHAR(MAX) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  business_unit_active TINYINT NULL,
+  business_unit_name NVARCHAR(MAX) NULL,
+  business_unit_official_name NVARCHAR(MAX) NULL,
+  type_id INT NULL,
+  type_name NVARCHAR(MAX) NULL,
+  type_modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
+
+
 -- location
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'location')
 BEGIN
@@ -82,6 +141,7 @@ CREATE TABLE job_details (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+  FOREIGN KEY (lead_call_id) REFERENCES call_details (lead_call_id)
 );
 END;
 
@@ -367,64 +427,6 @@ CREATE TABLE gross_profit (
   labor_hours DECIMAL(10, 2) NULL,
   invoice_id INT NOT NULL,
   FOREIGN KEY (invoice_id) REFERENCES invoice (id)
-);
-END;
-
--- call_details
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
-BEGIN
-CREATE TABLE call_details (
-  lead_call_id INT PRIMARY KEY,
-  id INT NULL,
-  instance_id INT NULL,
-  job_number NVARCHAR(MAX) NULL,
-  [status] NVARCHAR(MAX) NULL,
-  project_id INT NULL,
-  createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL,
-  receivedOn DATETIME2 NULL,
-  duration NVARCHAR(MAX) NULL,
-  [from] NVARCHAR(MAX) NULL,
-  [to] NVARCHAR(MAX) NULL,
-  direction NVARCHAR(MAX) NULL,
-  call_type NVARCHAR(MAX) NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
-  is_customer_active TINYINT NULL,
-  customer_name NVARCHAR(MAX) NULL,
-  street_address NVARCHAR(MAX) NULL,
-  street NVARCHAR(MAX) NULL,
-  unit NVARCHAR(MAX) NULL,
-  city NVARCHAR(MAX) NULL,
-  [state] NVARCHAR(MAX) NULL,
-  country NVARCHAR(MAX) NULL,
-  zip NVARCHAR(MAX) NULL,
-  latitude DECIMAL(9, 6) NULL,
-  longitude DECIMAL(9, 6) NULL,
-  customer_import_id NVARCHAR(MAX) NULL,
-  customer_type NVARCHAR(MAX) NULL,
-  campaign_id INT NULL,
-  campaign_category NVARCHAR(MAX) NULL,
-  campaign_source NVARCHAR(MAX) NULL,
-  campaign_medium NVARCHAR(MAX) NULL,
-  campaign_dnis NVARCHAR(MAX) NULL,
-  campaign_name NVARCHAR(MAX) NULL,
-  campaign_createdOn DATETIME2 NULL,
-  campaign_modifiedOn DATETIME2 NULL,
-  is_campaign_active TINYINT NULL,
-  agent_id INT NULL,
-  agent_externalId INT NULL,
-  agent_name NVARCHAR(MAX) NULL,
-  business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NULL,
-  business_unit_active TINYINT NULL,
-  business_unit_name NVARCHAR(MAX) NULL,
-  business_unit_official_name NVARCHAR(MAX) NULL,
-  type_id INT NULL,
-  type_name NVARCHAR(MAX) NULL,
-  type_modifiedOn DATETIME2 NULL,
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
-  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
 );
 END;
 
