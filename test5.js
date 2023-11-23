@@ -207,7 +207,7 @@ async function starter() {
   Object.keys(data_pool).map((record_id) => {
     const record = data_pool[record_id];
 
-    console.log("record: ", record["createdOn"]);
+    console.log("record: ", record["customerType"]);
   });
 }
 
