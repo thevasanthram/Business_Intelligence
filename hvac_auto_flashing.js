@@ -180,6 +180,90 @@ const hvac_tables = {
       },
     },
   },
+  bookings: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      source: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      bookingProviderId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      address_street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      campaign_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_campaign_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   customer_details: {
     columns: {
       id: {
@@ -544,6 +628,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       booking_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_booking_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -1287,6 +1375,9 @@ const hvac_tables_responses = {
   campaigns: {
     status: "",
   },
+  bookings: {
+    status: "",
+  },
   customer_details: {
     status: "",
   },
@@ -1358,6 +1449,13 @@ const main_api_list = {
       api_group: "marketing",
       api_name: "campaigns",
       table_name: "campaigns",
+    },
+  ],
+  bookings: [
+    {
+      api_group: "crm",
+      api_name: "bookings",
+      table_name: "bookings",
     },
   ],
   customer_details: [
@@ -1669,6 +1767,7 @@ async function azure_sql_operations(data_lake, table_list) {
       legal_entity,
       business_unit,
       campaigns,
+      bookings,
       customer_details,
       [location],
       job_details,
@@ -1689,7 +1788,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2078,6 +2177,229 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "bookings": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["crm__bookings"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const campaigns_data_pool =
+          data_lake["campaigns"]["marketing__campaigns"]["data_pool"];
+
+        let final_data_pool = [];
+
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            name: "default",
+            source: "default",
+            status: "default",
+            status: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            bookingProviderId: 1,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_zip: "default",
+            address_country: "default",
+            business_unit_id: 1,
+            actual_business_unit_id: 1,
+            campaign_id: 1,
+            actual_campaign_id: 1,
+            job_details_id: 1,
+          });
+
+          final_data_pool.push({
+            id: 2,
+            name: "default",
+            source: "default",
+            status: "default",
+            status: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            bookingProviderId: 2,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_zip: "default",
+            address_country: "default",
+            business_unit_id: 2,
+            actual_business_unit_id: 2,
+            campaign_id: 2,
+            actual_campaign_id: 2,
+            job_details_id: 2,
+          });
+
+          final_data_pool.push({
+            id: 3,
+            name: "default",
+            source: "default",
+            status: "default",
+            status: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            bookingProviderId: 3,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_zip: "default",
+            address_country: "default",
+            business_unit_id: 3,
+            actual_business_unit_id: 3,
+            campaign_id: 3,
+            actual_campaign_id: 3,
+            job_details_id: 3,
+          });
+        }
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let start = "2000-01-01T00:00:00.00Z";
+
+          if (record["start"]) {
+            if (
+              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              start = record["start"];
+            }
+          } else {
+            start = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let address_street = "default";
+          let address_unit = "default";
+          let address_city = "default";
+          let address_state = "default";
+          let address_zip = "default";
+          let address_country = "default";
+          if (record["address"]) {
+            address_street = record["address"]["street"]
+              ? record["address"]["street"]
+              : "default";
+            address_unit = record["address"]["unit"]
+              ? record["address"]["unit"]
+              : "default";
+            address_city = record["address"]["city"]
+              ? record["address"]["city"]
+              : "default";
+            address_state = record["address"]["state"]
+              ? record["address"]["state"]
+              : "default";
+            address_zip = record["address"]["zip"]
+              ? record["address"]["zip"]
+              : "default";
+            address_country = record["address"]["country"]
+              ? record["address"]["country"]
+              : "default";
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["businessUnitId"]
+            ? record["businessUnitId"]
+            : record["instance_id"];
+          if (business_unit_data_pool[record["businessUnitId"]]) {
+            business_unit_id = record["businessUnitId"];
+          }
+
+          let campaign_id = record["instance_id"];
+          let actual_campaign_id = record["campaignId"]
+            ? record["campaignId"]
+            : record["campaignId"];
+          if (campaigns_data_pool[record["campaignId"]]) {
+            campaign_id = record["campaignId"];
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            name: record["name"] ? record["name"] : "default",
+            source: record["source"] ? record["source"] : "default",
+            status: record["status"] ? record["status"] : "default",
+            status: record["customerType"] ? record["customerType"] : "default",
+            start: start,
+            bookingProviderId: record["bookingProviderId"]
+              ? record["bookingProviderId"]
+              : record["instance_id"],
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_zip: address_zip,
+            address_country: address_country,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            campaign_id: campaign_id,
+            actual_campaign_id: actual_campaign_id,
+            job_details_id: record["jobId"]
+              ? record["jobId"]
+              : record["instance_id"],
+          });
+        });
+
+        console.log("bookings data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["bookings"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["bookings"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET bookings = '${hvac_tables_responses["bookings"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
       case "customer_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool = data_lake[api_name]["crm__customers"]["data_pool"];
@@ -2142,27 +2464,40 @@ async function data_processor(data_lake, sql_request, table_list) {
             creation_date = "2001-01-01T00:00:00.00Z";
           }
 
+          let address_street = "default";
+          let address_unit = "default";
+          let address_city = "default";
+          let address_state = "default";
+          let address_zip = "default";
+          if (record["address"]) {
+            address_street = record["address"]["street"]
+              ? record["address"]["street"]
+              : "default";
+            address_unit = record["address"]["unit"]
+              ? record["address"]["unit"]
+              : "default";
+            address_city = record["address"]["city"]
+              ? record["address"]["city"]
+              : "default";
+            address_state = record["address"]["state"]
+              ? record["address"]["state"]
+              : "default";
+            address_zip = record["address"]["zip"]
+              ? record["address"]["zip"]
+              : "default";
+          }
+
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default",
             is_active: record["active"] ? 1 : 0,
             type: record["type"] ? record["type"] : "default",
             creation_date: creation_date,
-            address_street: record["address"]["street"]
-              ? record["address"]["street"]
-              : "default",
-            address_unit: record["address"]["unit"]
-              ? record["address"]["unit"]
-              : "default",
-            address_city: record["address"]["city"]
-              ? record["address"]["city"]
-              : "default",
-            address_state: record["address"]["state"]
-              ? record["address"]["state"]
-              : "default",
-            address_zip: record["address"]["zip"]
-              ? record["address"]["zip"]
-              : "default",
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_zip: address_zip,
           });
         });
 
@@ -2847,6 +3182,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["call_details"]["telecom__calls"]["data_pool"];
         const campaigns_data_pool =
           data_lake["campaigns"]["marketing__campaigns"]["data_pool"];
+        const bookings_data_pool =
+          data_lake["bookings"]["crm__bookings"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -2954,6 +3291,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_campaign_id = record["campaignId"]
             ? record["campaignId"]
             : record["instance_id"];
+          let booking_id = record["instance_id"];
+          let actual_booking_id = record["bookingId"]
+            ? record["bookingId"]
+            : record["instance_id"];
 
           if (
             business_unit_data_pool[record["businessUnitId"]] ||
@@ -2978,6 +3319,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           if (campaigns_data_pool[record["campaignId"]]) {
             campaign_id = record["campaignId"];
+          }
+
+          if (bookings_data_pool[record["bookingId"]]) {
+            campaign_id = record["bookingId"];
           }
 
           if (job_types_data_pool[record["jobTypeId"]]) {
@@ -3043,7 +3388,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             created_by_id: record["createdById"] ? record["createdById"] : 0,
             lead_call_id: lead_call_id,
             actual_lead_call_id: actual_lead_call_id,
-            booking_id: record["bookingId"] ? record["bookingId"] : 0,
+            booking_id: booking_id,
+            actual_booking_id: actual_booking_id,
             sold_by_id: record["soldById"] ? record["soldById"] : 0,
           });
         });
@@ -3084,7 +3430,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake["call_details"]["telecom__calls"];
-        data_lake["campaigns"]["marketing__campaigns"];
+        delete data_lake["campaigns"]["marketing__campaigns"];
+        delete data_lake["bookings"]["crm__bookings"];
 
         break;
       }

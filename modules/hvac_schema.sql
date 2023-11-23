@@ -42,6 +42,35 @@ CREATE TABLE campaigns (
 );
 END;
 
+-- bookings
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'bookings')
+BEGIN
+CREATE TABLE bookings (
+  id INT PRIMARY KEY,
+  [name] NVARCHAR(MAX) NULL,
+  source NVARCHAR(MAX) NULL,
+  [status] NVARCHAR(MAX) NULL,
+  customer_type NVARCHAR(MAX) NULL,
+  [start] DATETIME2 NULL,
+  bookingProviderId INT NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  address_street NVARCHAR(MAX) NULL,
+  address_unit NVARCHAR(MAX) NULL,
+  address_city NVARCHAR(MAX) NULL,
+  address_state NVARCHAR(MAX) NULL,
+  address_zip NVARCHAR(MAX) NULL,
+  address_country NVARCHAR(MAX) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  campaign_id INT NOT NULL,
+  actual_campaign_id INT NULL,
+  job_details_id INT NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
+);
+END;
+
 -- customer_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'customer_details')
 BEGIN
@@ -157,13 +186,15 @@ CREATE TABLE job_details (
   created_by_id INT NULL,
   lead_call_id INT NOT NULL,
   actual_lead_call_id INT NULL,
-  booking_id INT NULL,
+  booking_id INT NOT NULL,
+  actual_booking_id INT NULL,
   sold_by_id INT NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (lead_call_id) REFERENCES call_details (lead_call_id),
   FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
+  FOREIGN KEY (booking_id) REFERENCES bookings (id)
 );
 END;
 
