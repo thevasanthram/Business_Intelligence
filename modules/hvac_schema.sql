@@ -495,7 +495,7 @@ CREATE TABLE auto_update (
   legal_entity NVARCHAR(MAX) NULL,
   business_unit NVARCHAR(MAX) NULL,
   campaigns NVARCHAR(MAX) NULL,
-  bookings NVARCHAR(MAX) NULL,
+  bookings NVARCHAR(MAX) NULL,  
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
