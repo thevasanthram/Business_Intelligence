@@ -2191,7 +2191,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             source: "default",
             status: "default",
-            status: "default",
+            customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
             bookingProviderId: 1,
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -2214,7 +2214,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             source: "default",
             status: "default",
-            status: "default",
+            customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
             bookingProviderId: 2,
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -2237,7 +2237,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             source: "default",
             status: "default",
-            status: "default",
+            customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
             bookingProviderId: 3,
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -2345,7 +2345,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: record["name"] ? record["name"] : "default",
             source: record["source"] ? record["source"] : "default",
             status: record["status"] ? record["status"] : "default",
-            status: record["customerType"] ? record["customerType"] : "default",
+            customer_type: record["customerType"]
+              ? record["customerType"]
+              : "default",
             start: start,
             bookingProviderId: record["bookingProviderId"]
               ? record["bookingProviderId"]
