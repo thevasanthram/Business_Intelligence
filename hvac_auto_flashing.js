@@ -2359,6 +2359,13 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       console.log("bookings data: ", final_data_pool.length);
 
+      // await hvac_flat_data_insertion(
+      //   sql_request,
+      //   final_data_pool,
+      //   Object.keys(header_data),
+      //   table_name
+      // );
+
       if (final_data_pool.length > 0) {
         do {
           hvac_tables_responses["bookings"]["status"] =
@@ -5725,7 +5732,7 @@ async function orchestrate() {
     console.log("===========================================");
     console.log("starting pipeline");
     console.log("should_auto_update: before", should_auto_update);
-    await flush_data_pool(!should_auto_update);
+    // await flush_data_pool(!should_auto_update);
     await start_pipeline();
     console.log("should_auto_update: after", should_auto_update);
   } while (should_auto_update);
