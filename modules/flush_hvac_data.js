@@ -17,6 +17,7 @@ async function flush_hvac_data(sql_request) {
     DELETE FROM location
     DELETE FROM call_details
     DELETE FROM customer_details
+    DELETE FROM bookings
     DELETE FROM campaigns
     DELETE FROM business_unit
     DELETE FROM legal_entity`;

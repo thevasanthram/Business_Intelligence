@@ -193,7 +193,7 @@ CREATE TABLE job_details (
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (lead_call_id) REFERENCES call_details (lead_call_id),
-  FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
+  FOREIGN KEY (campaign_id) REFERENCES campaigns (id),
   FOREIGN KEY (booking_id) REFERENCES bookings (id)
 );
 END;
