@@ -4085,8 +4085,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake[table_name]["jpm__appointments"];
-
         break;
       }
 
@@ -4546,7 +4544,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake[api_name]["dispatch__non-job-appointments"];
+        delete data_lake[api_name]["dispatch__appointment-assignments"];
+        delete data_lake["appointments"]["jpm__appointments"];
+
         break;
       }
 
