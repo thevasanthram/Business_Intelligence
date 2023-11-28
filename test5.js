@@ -64,7 +64,7 @@ createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
 const params_header = {
-  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
+  createdOnOrAfter: "2023-06-01T00:00:00.00Z", // 2023-08-01T00:00:00.00Z
   createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
@@ -238,7 +238,7 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table = data_lake["bookings"]["telecom__calls"]["data_pool"];
+  const first_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
   const comparing_table1 = data_lake["bookings"]["jpm__jobs"]["data_pool"];
   const comparing_table2 =
     data_lake["bookings"]["sales__estimates"]["data_pool"];
