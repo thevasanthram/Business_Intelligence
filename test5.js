@@ -238,7 +238,7 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
+  const first_table = data_lake["bookings"]["jpm__appointments"]["data_pool"];
   const comparing_table1 = data_lake["bookings"]["jpm__jobs"]["data_pool"];
   const comparing_table2 =
     data_lake["bookings"]["sales__estimates"]["data_pool"];
