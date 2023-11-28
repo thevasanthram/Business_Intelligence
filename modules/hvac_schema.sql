@@ -252,7 +252,8 @@ BEGIN
 CREATE TABLE sales_details (
   id INT PRIMARY KEY,
   name NVARCHAR(MAX) NULL,
-  projectId INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
   soldOn DATETIME2 NULL,
   soldBy INT NULL,
@@ -271,6 +272,7 @@ CREATE TABLE sales_details (
   actual_location_id INT NULL,
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (location_id) REFERENCES location (id),

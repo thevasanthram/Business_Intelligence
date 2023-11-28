@@ -775,7 +775,11 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      projectId: {
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -3918,11 +3922,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["customer_details"]["crm__customers"]["data_pool"];
         const location_data_pool =
           data_lake["location"]["crm__locations"]["data_pool"];
+        const projects_data_pool =
+          data_lake["business_unit"]["jpm__projects"]["data_pool"];
 
         let final_data_pool = [];
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (projects_data_pool[record["projectId"]]) {
+            project_id = record["projectId"];
+          }
 
           let business_unit_id = record["instance_id"];
           let acutal_business_unit_id = record["instance_id"];
@@ -4008,7 +4022,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default",
-            project_id: record["projectId"] ? record["projectId"] : 0,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             soldOn: soldOn,
             soldBy: record["soldBy"] ? record["soldBy"] : 0,
