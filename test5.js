@@ -258,8 +258,8 @@ async function starter() {
       Object.keys(first_table).map((record_id) => {
         const record = first_table[record_id];
 
-        if (record["jobNumber"]) {
-          return record["jobNumber"];
+        if (record["id"]) {
+          return record["id"];
         }
       })
     ),
