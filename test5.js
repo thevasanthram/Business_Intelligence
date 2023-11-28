@@ -238,8 +238,7 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table =
-    data_lake["bookings"]["accounting__invoices"]["data_pool"];
+  const first_table = data_lake["bookings"]["crm__bookings"]["data_pool"];
   const comparing_table1 = data_lake["bookings"]["jpm__jobs"]["data_pool"];
   const comparing_table2 =
     data_lake["bookings"]["sales__estimates"]["data_pool"];
@@ -259,8 +258,8 @@ async function starter() {
       Object.keys(first_table).map((record_id) => {
         const record = first_table[record_id];
 
-        if (record["job"]) {
-          return record["job"]["id"];
+        if (record["jobId"]) {
+          return record["jobId"];
         }
       })
     ),
