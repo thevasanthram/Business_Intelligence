@@ -188,6 +188,11 @@ async function starter() {
   const data_lake = {};
   main_api_list = {
     bookings: [
+      // {
+      //   api_group: "jpm",
+      //   api_name: "jobs",
+      //   table_name: "invoices",
+      // },
       {
         api_group: "sales",
         api_name: "estimates",
@@ -195,14 +200,34 @@ async function starter() {
       },
       // {
       //   api_group: "jpm",
-      //   api_name: "jobs",
-      //   table_name: "bookings",
+      //   api_name: "appointments",
+      //   table_name: "invoices",
+      // },
+      // {
+      //   api_group: "dispatch",
+      //   api_name: "appointment-assignments",
+      //   table_name: "invoices",
+      // },
+      // {
+      //   api_group: "dispatch",
+      //   api_name: "non-job-appointments",
+      //   table_name: "invoices",
       // },
       {
         api_group: "accounting",
         api_name: "invoices",
         table_name: "invoices",
       },
+      // {
+      //   api_group: "crm",
+      //   api_name: "bookings",
+      //   table_name: "bookings",
+      // },
+      // {
+      //   api_group: "telecom",
+      //   api_name: "calls",
+      //   table_name: "bookings",
+      // },
     ],
   };
   const hvac_tables = [];
@@ -228,7 +253,7 @@ async function starter() {
       })
     ),
   ];
-  console.log("job id length: ", unique_job_id.length);
+  console.log("self job_ids count: ", unique_job_id.length);
 
   const new_job_id1 = {};
 
