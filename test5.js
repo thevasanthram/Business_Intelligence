@@ -193,16 +193,16 @@ async function starter() {
         api_name: "estimates",
         table_name: "jobs",
       },
-      {
-        api_group: "jpm",
-        api_name: "jobs",
-        table_name: "bookings",
-      },
       // {
       //   api_group: "jpm",
-      //   api_name: "appointments",
-      //   table_name: "invoices",
+      //   api_name: "jobs",
+      //   table_name: "bookings",
       // },
+      {
+        api_group: "jpm",
+        api_name: "appointments",
+        table_name: "invoices",
+      },
     ],
   };
   const hvac_tables = [];
@@ -214,7 +214,8 @@ async function starter() {
   );
 
   const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
-  const comparing_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
+  const comparing_table =
+    data_lake["bookings"]["jpm__appointments"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
@@ -234,8 +235,8 @@ async function starter() {
   Object.keys(comparing_table).map((record_id) => {
     const record = comparing_table[record_id];
 
-    if (record["id"]) {
-      new_job_id[record["id"]] = "something";
+    if (record["jobId"]) {
+      new_job_id[record["jobId"]] = "something";
     }
   });
 
