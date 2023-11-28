@@ -200,7 +200,7 @@ async function starter() {
       // },
       {
         api_group: "dispatch",
-        api_name: "appointment-assignments",
+        api_name: "non-job-appointments",
         table_name: "invoices",
       },
     ],
@@ -215,7 +215,7 @@ async function starter() {
 
   const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
   const comparing_table =
-    data_lake["bookings"]["dispatch__appointment-assignments"]["data_pool"];
+    data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
@@ -235,8 +235,8 @@ async function starter() {
   Object.keys(comparing_table).map((record_id) => {
     const record = comparing_table[record_id];
 
-    if (record["jobId"]) {
-      new_job_id[record["jobId"]] = "something";
+    if (record["id"]) {
+      new_job_id[record["id"]] = "something";
     }
   });
 
