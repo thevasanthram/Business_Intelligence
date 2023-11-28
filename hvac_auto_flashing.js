@@ -2948,7 +2948,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const appointments_data_pool =
           data_lake["appointments"]["jpm__appointments"]["data_pool"];
         const projects_data_pool =
-          data_lake["business_unit"]["jpm__projects"]["data_pool"];
+          data_lake["projects"]["jpm__projects"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -3479,7 +3479,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const job_types_data_pool =
           data_lake[api_name]["jpm__job-types"]["data_pool"];
         const projects_data_pool =
-          data_lake["business_unit"]["jpm__projects"]["data_pool"];
+          data_lake["projects"]["jpm__projects"]["data_pool"];
         const business_unit_data_pool =
           data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const customer_data_pool =
@@ -3752,7 +3752,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         delete data_lake["call_details"]["telecom__calls"];
         delete data_lake["campaigns"]["marketing__campaigns"];
         delete data_lake["bookings"]["crm__bookings"];
-        delete data_lake["projects"]["jpm__projects"];
 
         break;
       }
@@ -3923,7 +3922,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const location_data_pool =
           data_lake["location"]["crm__locations"]["data_pool"];
         const projects_data_pool =
-          data_lake["business_unit"]["jpm__projects"]["data_pool"];
+          data_lake["projects"]["jpm__projects"]["data_pool"];
 
         let final_data_pool = [];
 
@@ -4073,6 +4072,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake[table_name]["sales__estimates"];
+        delete data_lake["projects"]["jpm__projects"];
 
         break;
       }
