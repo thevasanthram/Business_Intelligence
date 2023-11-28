@@ -890,6 +890,58 @@ const hvac_tables = {
       },
     },
   },
+  appointment_assignments: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      technician_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_technician_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      technician_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      assigned_by_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      assignedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_paused: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      appointment_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_appointment_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   non_job_appointments: {
     columns: {
       id: {
@@ -1534,6 +1586,9 @@ const hvac_tables_responses = {
   technician: {
     status: "",
   },
+  appointment_assignments: {
+    status: "",
+  },
   non_job_appointments: {
     status: "",
   },
@@ -1659,6 +1714,13 @@ const main_api_list = {
       api_group: "settings",
       api_name: "technicians",
       table_name: "technician",
+    },
+  ],
+  appointment_assignments: [
+    {
+      api_group: "dispatch",
+      api_name: "appointment-assignments",
+      table_name: "appointment_assignments",
     },
   ],
   non_job_appointments: [
@@ -1926,6 +1988,7 @@ async function azure_sql_operations(data_lake, table_list) {
       sales_details,
       vendor,
       technician,
+      appointment_assignments,
       non_job_appointments,
       sku_details,
       invoice,
@@ -1939,7 +2002,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3835,6 +3898,56 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            appointmentNumber: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            end: "1999-01-01T00:00:00.00Z",
+            arrivalWindowStart: "1999-01-01T00:00:00.00Z",
+            arrivalWindowEnd: "1999-01-01T00:00:00.00Z",
+            status: "Not Known",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            customer_details_id: 1,
+            actual_customer_details_id: 1,
+          });
+
+          final_data_pool.push({
+            id: 2,
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            appointmentNumber: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            end: "1999-01-01T00:00:00.00Z",
+            arrivalWindowStart: "1999-01-01T00:00:00.00Z",
+            arrivalWindowEnd: "1999-01-01T00:00:00.00Z",
+            status: "Not Known",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            customer_details_id: 2,
+            actual_customer_details_id: 2,
+          });
+
+          final_data_pool.push({
+            id: 3,
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            appointmentNumber: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            end: "1999-01-01T00:00:00.00Z",
+            arrivalWindowStart: "1999-01-01T00:00:00.00Z",
+            arrivalWindowEnd: "1999-01-01T00:00:00.00Z",
+            status: "Not Known",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            customer_details_id: 3,
+            actual_customer_details_id: 3,
+          });
+        }
+
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
@@ -4321,12 +4434,126 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "appointment_assignments": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool =
+          data_lake[api_name]["dispatch__appointment-assignments"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const technician_data_pool =
+          data_lake["technician"]["settings__technicians"]["data_pool"];
+        const jobs_data_pool =
+          data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        const appointments_data_pool =
+          data_lake["appointments"]["jpm__appointments"]["data_pool"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let technician_id = record["instance_id"];
+          let actual_technician_id = record["technicianId"]
+            ? record["technicianId"]
+            : record["instance_id"];
+          if (technician_data_pool[record["technicianId"]]) {
+            technician_id = record["technicianId"];
+          }
+
+          let assignedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["assignedOn"]) {
+            if (
+              new Date(record["assignedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              assignedOn = record["assignedOn"];
+            }
+          } else {
+            assignedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+
+          let appointment_id = record["instance_id"];
+          let actual_appointment_id = record["appointmentId"]
+            ? record["appointmentId"]
+            : record["instance_id"];
+          if (appointments_data_pool[record["appointmentId"]]) {
+            appointment_id = record["appointmentId"];
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            technician_id: technician_id,
+            actual_technician_id: actual_technician_id,
+            technician_name: record["technicianName"]
+              ? record["technicianName"]
+              : "default",
+            assigned_by_id: record["assignedById"] ? record["assignedById"] : 0,
+            assignedOn: assignedOn,
+            status: record["status"] ? record["status"] : "default",
+            is_paused: record["isPaused"] ? record["isPaused"] : 0,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            appointment_id: appointment_id,
+            actual_appointment_id: actual_appointment_id,
+          });
+        });
+
+        console.log("appointment_assignments data: ", final_data_pool.length);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["appointment_assignments"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["appointment_assignments"]["status"] !=
+            "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET appointment_assignments = '${hvac_tables_responses["appointment_assignments"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[api_name]["dispatch__non-job-appointments"];
+        break;
+      }
+
       case "non_job_appointments": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool =
           data_lake[api_name]["dispatch__non-job-appointments"]["data_pool"];
-        const business_unit_data_pool =
-          data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
         const technician_data_pool =
@@ -4394,12 +4621,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
               ? record["removeTechnicianFromCapacityPlanning"]
               : 0,
-            is_all_day: record["is_all_day"] ? record["is_all_day"] : 0,
-            is_active: record["is_active"] ? record["is_active"] : 0,
+            is_all_day: record["allDay"] ? record["allDay"] : 0,
+            is_active: record["active"] ? record["active"] : 0,
             createdOn: createdOn,
-            created_by_id: record["created_by_id"]
-              ? record["created_by_id"]
-              : 0,
+            created_by_id: record["createdById"] ? record["createdById"] : 0,
           });
         });
 

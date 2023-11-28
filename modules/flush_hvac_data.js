@@ -6,6 +6,7 @@ async function flush_hvac_data(sql_request) {
     DELETE FROM cogs_material
     DELETE FROM cogs_labor
     DELETE FROM non_job_appointments
+    DELETE FROM appointment_assignments
     DELETE FROM technician
     DELETE FROM cogs_equipment
     DELETE FROM cogs_service

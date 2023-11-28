@@ -6,6 +6,7 @@ async function flush_hvac_schema(sql_request, is_initial_execute) {
     DROP TABLE cogs_material
     DROP TABLE cogs_labor
     DROP TABLE non_job_appointments
+    DROP TABLE appointment_assignments
     DROP TABLE technician
     DROP TABLE cogs_equipment
     DROP TABLE cogs_service

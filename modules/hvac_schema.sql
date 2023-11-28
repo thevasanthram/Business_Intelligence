@@ -302,6 +302,28 @@ CREATE TABLE technician (
 );
 END;
 
+--appointment_assignments
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointment_assignments')
+BEGIN
+CREATE TABLE appointment_assignments (
+  id INT PRIMARY KEY,
+  technician_id INT NOT NULL,
+  actual_technician_id INT NULL,
+  technician_name NVARCHAR(MAX) NULL,
+  assigned_by_id INT NULL,
+  assignedOn DATETIME2 NULL,
+  [status] NVARCHAR(MAX) NULL,
+  is_paused TINYINT NULL,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  appointment_id INT NOT NULL,
+  actual_appointment_id INT NULL,
+  FOREIGN KEY (technician_id) REFERENCES technician (id),
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  FOREIGN KEY (appointment_id) REFERENCES appointments (id),
+);
+END;
+
 -- non-job-appointments
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'non_job_appointments')
 BEGIN
