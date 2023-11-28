@@ -226,7 +226,7 @@ async function starter() {
     const record = comparing_table[record_id];
 
     if (record["job"]) {
-      new_job_id[record["job"]["id"]] = "";
+      new_job_id[record["job"]["id"]] = "something";
     }
   });
 
