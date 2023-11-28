@@ -13,6 +13,7 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/business_units_details");
+const { compose } = require("async");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -228,6 +229,8 @@ async function starter() {
       new_job_id[record["job"]["id"]] = "";
     }
   });
+
+  console.log("new_job_id: ", new_job_id);
 
   let count = 0;
   unique_job_id.map((job_id) => {
