@@ -890,6 +890,66 @@ const hvac_tables = {
       },
     },
   },
+  non_job_appointments: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      technician_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_technician_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      duration: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      timesheetCodeId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      clearDispatchBoard: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      clearTechnicianView: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      removeTechnicianFromCapacityPlanning: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      is_all_day: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      created_by_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   sku_details: {
     columns: {
       id: {
@@ -1474,6 +1534,9 @@ const hvac_tables_responses = {
   technician: {
     status: "",
   },
+  non_job_appointments: {
+    status: "",
+  },
   sku_details: {
     status: "",
   },
@@ -1596,6 +1659,13 @@ const main_api_list = {
       api_group: "settings",
       api_name: "technicians",
       table_name: "technician",
+    },
+  ],
+  non_job_appointments: [
+    {
+      api_group: "dispatch",
+      api_name: "non-job-appointments",
+      table_name: "non_job_appointments",
     },
   ],
   sku_details: [
@@ -1856,6 +1926,7 @@ async function azure_sql_operations(data_lake, table_list) {
       sales_details,
       vendor,
       technician,
+      non_job_appointments,
       sku_details,
       invoice,
       cogs_material,
@@ -1868,7 +1939,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -4247,6 +4318,127 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
+        break;
+      }
+
+      case "non_job_appointments": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool =
+          data_lake[api_name]["dispatch__non-job-appointments"]["data_pool"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const technician_data_pool =
+          data_lake["technician"]["settings__technicians"]["data_pool"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let technician_id = record["instance_id"];
+          let actual_technician_id = record["technicianId"]
+            ? record["technicianId"]
+            : record["instance_id"];
+          if (technician_data_pool[record["technicianId"]]) {
+            technician_id = record["technicianId"];
+          }
+
+          let start = "2000-01-01T00:00:00.00Z";
+
+          if (record["start"]) {
+            if (
+              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              start = record["start"];
+            }
+          } else {
+            start = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            technician_id: technician_id,
+            actual_technician_id: actual_technician_id,
+            start: start,
+            name: record["name"] ? record["name"] : "default",
+            duration: record["duration"] ? record["duration"] : "00:00:00",
+            timesheetCodeId: record["timesheetCodeId"]
+              ? record["timesheetCodeId"]
+              : 0,
+            clearDispatchBoard: record["clearDispatchBoard"]
+              ? record["clearDispatchBoard"]
+              : 0,
+            clearTechnicianView: record["clearTechnicianView"]
+              ? record["clearTechnicianView"]
+              : 0,
+            removeTechnicianFromCapacityPlanning: record[
+              "removeTechnicianFromCapacityPlanning"
+            ]
+              ? record["removeTechnicianFromCapacityPlanning"]
+              : 0,
+            is_all_day: record["is_all_day"] ? record["is_all_day"] : 0,
+            is_active: record["is_active"] ? record["is_active"] : 0,
+            createdOn: createdOn,
+            created_by_id: record["created_by_id"]
+              ? record["created_by_id"]
+              : 0,
+          });
+        });
+
+        console.log("non_job_appointments data: ", final_data_pool.length);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["non_job_appointments"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["non_job_appointments"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET non_job_appointments = '${hvac_tables_responses["non_job_appointments"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[api_name]["dispatch__non-job-appointments"];
         break;
       }
 

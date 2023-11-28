@@ -302,6 +302,28 @@ CREATE TABLE technician (
 );
 END;
 
+-- non-job-appointments
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'non_job_appointments')
+BEGIN
+CREATE TABLE non_job_appointments (
+  id INT PRIMARY KEY,
+  technician_id INT NOT NULL,
+  actual_technician_id INT NULL,
+  [start] DATETIME2 NULL,
+  name NVARCHAR(MAX) NULL,
+  duration NVARCHAR(MAX) NULL,
+  timesheetCodeId INT NULL,
+  clearDispatchBoard TINYINT NULL,
+  clearTechnicianView TINYINT NULL,
+  removeTechnicianFromCapacityPlanning TINYINT NULL,
+  is_all_day TINYINT NULL,
+  is_active TINYINT NULL,
+  createdOn DATETIME2 NULL,
+  created_by_id INT NULL,
+  FOREIGN KEY (technician_id) REFERENCES technician (id)
+);
+END;
+
 -- sku_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sku_details')
 BEGIN
@@ -533,6 +555,7 @@ CREATE TABLE auto_update (
   sales_details NVARCHAR(MAX) NULL,
   vendor NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
+  non_job_appointments NVARCHAR(MAX) NULL,
   sku_details NVARCHAR(MAX) NULL,
   invoice NVARCHAR(MAX) NULL,
   cogs_material NVARCHAR(MAX) NULL,
