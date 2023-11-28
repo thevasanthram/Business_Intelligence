@@ -577,6 +577,7 @@ CREATE TABLE auto_update (
   sales_details NVARCHAR(MAX) NULL,
   vendor NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
+  appointment_assignments NVARCHAR(MAX) NULL,
   non_job_appointments NVARCHAR(MAX) NULL,
   sku_details NVARCHAR(MAX) NULL,
   invoice NVARCHAR(MAX) NULL,
