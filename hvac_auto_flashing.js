@@ -1540,13 +1540,6 @@ const main_api_list = {
       table_name: "customer_details",
     },
   ],
-  call_details: [
-    {
-      api_group: "telecom",
-      api_name: "calls",
-      table_name: "call_details",
-    },
-  ],
   location: [
     {
       api_group: "crm",
@@ -1559,6 +1552,13 @@ const main_api_list = {
       api_group: "jpm",
       api_name: "projects",
       table_name: "projects",
+    },
+  ],
+  call_details: [
+    {
+      api_group: "telecom",
+      api_name: "calls",
+      table_name: "call_details",
     },
   ],
   job_details: [
