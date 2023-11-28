@@ -189,13 +189,13 @@ async function starter() {
   main_api_list = {
     bookings: [
       {
-        api_group: "jpm",
-        api_name: "jobs",
+        api_group: "sales",
+        api_name: "estimates",
         table_name: "jobs",
       },
       {
-        api_group: "dispatch",
-        api_name: "non-job-appointments",
+        api_group: "jpm",
+        api_name: "jobs",
         table_name: "bookings",
       },
       // {
@@ -213,16 +213,17 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
-  const comparing_table =
-    data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
+  const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
+  const comparing_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
       Object.keys(first_table).map((record_id) => {
         const record = first_table[record_id];
 
-        return record_id;
+        if (record["jobId"]) {
+          return record["jobId"];
+        }
       })
     ),
   ];
