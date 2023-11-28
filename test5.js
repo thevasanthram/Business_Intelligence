@@ -199,8 +199,8 @@ async function starter() {
       //   table_name: "bookings",
       // },
       {
-        api_group: "sales",
-        api_name: "estimates",
+        api_group: "jpm",
+        api_name: "appointments",
         table_name: "invoices",
       },
     ],
@@ -215,7 +215,7 @@ async function starter() {
 
   const first_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
   const comparing_table =
-    data_lake["bookings"]["sales__estimates"]["data_pool"];
+    data_lake["bookings"]["jpm__appointments"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
