@@ -250,7 +250,7 @@ async function starter() {
     data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
   const comparing_table6 =
     data_lake["bookings"]["accounting__invoices"]["data_pool"];
-  const comparing_table7 = data_lake["bookings"]["crm_bookings"]["data_pool"];
+  const comparing_table7 = data_lake["bookings"]["crm__bookings"]["data_pool"];
   const comparing_table8 = data_lake["bookings"]["telecom__calls"]["data_pool"];
 
   const unique_job_id = [
