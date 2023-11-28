@@ -188,9 +188,19 @@ async function starter() {
   main_api_list = {
     bookings: [
       {
-        api_group: "crm",
-        api_name: "bookings",
-        table_name: "bookings",
+        api_group: "jpm",
+        api_name: "jobs",
+        table_name: "jobs",
+      },
+      // {
+      //   api_group: "crm",
+      //   api_name: "bookings",
+      //   table_name: "bookings",
+      // },
+      {
+        api_group: "accounting",
+        api_name: "invoices",
+        table_name: "invoices",
       },
     ],
   };
@@ -202,13 +212,44 @@ async function starter() {
     hvac_tables
   );
 
-  const data_pool = data_lake["bookings"]["crm__bookings"]["data_pool"];
+  const comparing_table =
+    data_lake["bookings"]["accounting__invoices"]["data_pool"];
+  const jobs_data_pool = data_lake["bookings"]["jpm__jobs"]["data_pool"];
 
-  Object.keys(data_pool).map((record_id) => {
-    const record = data_pool[record_id];
+  const unique_job_id = [...new Set(Object.keys(jobs_data_pool))];
+  console.log("job id length: ", unique_job_id.length);
 
-    console.log("record: ", record["campaignId"]);
+  const new_job_id = {};
+
+  Object.keys(comparing_table).map((record_id) => {
+    const record = comparing_table[record_id];
+
+    if (record["job"]) {
+      new_job_id[record["job"]["id"]] = "";
+    }
   });
+
+  let count = 0;
+  unique_job_id.map((job_id) => {
+    if (new_job_id[job_id]) {
+      count = count + 1;
+    }
+  });
+
+  console.log("no of job_id mapped in comparing table", count);
+
+  // Object.keys(data_lake['bookings']['crm__bookings']['data_pool']).map((record_id) => {
+  //   const record = data_lake['bookings']['crm__bookings']['data_pool'][record_id]
+  //   if(record['instance_id'] != 1){
+  //     console.log('record: ', record)
+  //   }
+  // })
+
+  // console.log("data_lake: ", data_lake['bookings']['crm__bookings']['data_pool']);
+  // console.log(
+  //   "data_lake: ",
+  //   data_lake["bookings"]["crm__bookings"]["data_pool"].length
+  // );
 }
 
 starter();
