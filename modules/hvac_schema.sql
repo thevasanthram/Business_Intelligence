@@ -162,6 +162,29 @@ CREATE TABLE location (
 );
 END;
 
+-- projects
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
+BEGIN
+CREATE TABLE projects(
+  id INT PRIMARY KEY,
+  number NVARCHAR(MAX) NULL,
+  name NVARCHAR(MAX) NULL,
+  status NVARCHAR(MAX) NULL,
+  subStatus NVARCHAR(MAX) NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  startDate DATETIME2 NULL,
+  targetCompletionDate DATETIME2 NULL,
+  actualCompletionDate DATETIME2 NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
+  FOREIGN KEY (location_id) REFERENCES location (id),
+)
+END;
+
 -- job_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'job_details')
 BEGIN
@@ -497,6 +520,7 @@ CREATE TABLE auto_update (
   campaigns NVARCHAR(MAX) NULL,
   bookings NVARCHAR(MAX) NULL,  
   customer_details NVARCHAR(MAX) NULL,
+  call_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
   appointments NVARCHAR(MAX) NULL,
@@ -511,7 +535,6 @@ CREATE TABLE auto_update (
   cogs_labor NVARCHAR(MAX) NULL,
   purchase_order NVARCHAR(MAX) NULL,
   gross_profit NVARCHAR(MAX) NULL,
-  call_details NVARCHAR(MAX) NULL,
   overall_status NVARCHAR(MAX) NULL
 );
 END;
