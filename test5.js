@@ -199,8 +199,8 @@ async function starter() {
       //   table_name: "bookings",
       // },
       {
-        api_group: "dispatch",
-        api_name: "non-job-appointments",
+        api_group: "accounting",
+        api_name: "invoices",
         table_name: "invoices",
       },
     ],
@@ -214,8 +214,8 @@ async function starter() {
   );
 
   const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
-  const comparing_table =
-    data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
+  const comparing_table1 =
+    data_lake["bookings"]["accounting__invoices"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
@@ -230,21 +230,19 @@ async function starter() {
   ];
   console.log("job id length: ", unique_job_id.length);
 
-  const new_job_id = {};
+  const new_job_id1 = {};
 
-  Object.keys(comparing_table).map((record_id) => {
-    const record = comparing_table[record_id];
+  Object.keys(comparing_table1).map((record_id) => {
+    const record = comparing_table1[record_id];
 
-    if (record["id"]) {
-      new_job_id[record["id"]] = "something";
+    if (record["job"]["id"]) {
+      new_job_id1[record["job"]["id"]] = "something";
     }
   });
 
-  // console.log("new_job_id: ", new_job_id);
-
   let count = 0;
   unique_job_id.map((job_id) => {
-    if (new_job_id[job_id]) {
+    if (new_job_id1[job_id]) {
       count = count + 1;
     }
   });
