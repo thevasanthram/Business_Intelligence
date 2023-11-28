@@ -193,16 +193,16 @@ async function starter() {
         api_name: "jobs",
         table_name: "jobs",
       },
-      // {
-      //   api_group: "crm",
-      //   api_name: "bookings",
-      //   table_name: "bookings",
-      // },
       {
-        api_group: "jpm",
-        api_name: "appointments",
-        table_name: "invoices",
+        api_group: "crm",
+        api_name: "bookings",
+        table_name: "bookings",
       },
+      // {
+      //   api_group: "jpm",
+      //   api_name: "appointments",
+      //   table_name: "invoices",
+      // },
     ],
   };
   const hvac_tables = [];
@@ -214,8 +214,7 @@ async function starter() {
   );
 
   const first_table = data_lake["bookings"]["jpm__jobs"]["data_pool"];
-  const comparing_table =
-    data_lake["bookings"]["jpm__appointments"]["data_pool"];
+  const comparing_table = data_lake["bookings"]["crm__bookings"]["data_pool"];
 
   const unique_job_id = [
     ...new Set(
