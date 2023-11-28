@@ -188,46 +188,46 @@ async function starter() {
   const data_lake = {};
   main_api_list = {
     bookings: [
-      // {
-      //   api_group: "jpm",
-      //   api_name: "jobs",
-      //   table_name: "invoices",
-      // },
+      {
+        api_group: "jpm",
+        api_name: "jobs",
+        table_name: "invoices",
+      },
       {
         api_group: "sales",
         api_name: "estimates",
         table_name: "jobs",
       },
-      // {
-      //   api_group: "jpm",
-      //   api_name: "appointments",
-      //   table_name: "invoices",
-      // },
-      // {
-      //   api_group: "dispatch",
-      //   api_name: "appointment-assignments",
-      //   table_name: "invoices",
-      // },
-      // {
-      //   api_group: "dispatch",
-      //   api_name: "non-job-appointments",
-      //   table_name: "invoices",
-      // },
+      {
+        api_group: "jpm",
+        api_name: "appointments",
+        table_name: "invoices",
+      },
+      {
+        api_group: "dispatch",
+        api_name: "appointment-assignments",
+        table_name: "invoices",
+      },
+      {
+        api_group: "dispatch",
+        api_name: "non-job-appointments",
+        table_name: "invoices",
+      },
       {
         api_group: "accounting",
         api_name: "invoices",
         table_name: "invoices",
       },
-      // {
-      //   api_group: "crm",
-      //   api_name: "bookings",
-      //   table_name: "bookings",
-      // },
-      // {
-      //   api_group: "telecom",
-      //   api_name: "calls",
-      //   table_name: "bookings",
-      // },
+      {
+        api_group: "crm",
+        api_name: "bookings",
+        table_name: "bookings",
+      },
+      {
+        api_group: "telecom",
+        api_name: "calls",
+        table_name: "bookings",
+      },
     ],
   };
   const hvac_tables = [];
