@@ -88,6 +88,44 @@ CREATE TABLE customer_details (
 );
 END;
 
+-- location
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'location')
+BEGIN
+CREATE TABLE location (
+  id INT PRIMARY KEY,
+  street NVARCHAR(MAX) NULL,
+  unit NVARCHAR(MAX) NULL,
+  city NVARCHAR(MAX) NULL,
+  state NVARCHAR(MAX) NULL,
+  zip NVARCHAR(MAX) NULL,
+  taxzone INT NULL,
+  zone_id INT NULL
+);
+END;
+
+-- projects
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
+BEGIN
+CREATE TABLE projects(
+  id INT PRIMARY KEY,
+  number NVARCHAR(MAX) NULL,
+  name NVARCHAR(MAX) NULL,
+  status NVARCHAR(MAX) NULL,
+  subStatus NVARCHAR(MAX) NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  startDate DATETIME2 NULL,
+  targetCompletionDate DATETIME2 NULL,
+  actualCompletionDate DATETIME2 NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
+  FOREIGN KEY (location_id) REFERENCES location (id),
+)
+END;
+
 -- call_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
 BEGIN
@@ -97,7 +135,8 @@ CREATE TABLE call_details (
   instance_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
-  project_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
   receivedOn DATETIME2 NULL,
@@ -141,48 +180,10 @@ CREATE TABLE call_details (
   type_id INT NULL,
   type_name NVARCHAR(MAX) NULL,
   type_modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
 );
-END;
-
-
--- location
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'location')
-BEGIN
-CREATE TABLE location (
-  id INT PRIMARY KEY,
-  street NVARCHAR(MAX) NULL,
-  unit NVARCHAR(MAX) NULL,
-  city NVARCHAR(MAX) NULL,
-  state NVARCHAR(MAX) NULL,
-  zip NVARCHAR(MAX) NULL,
-  taxzone INT NULL,
-  zone_id INT NULL
-);
-END;
-
--- projects
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
-BEGIN
-CREATE TABLE projects(
-  id INT PRIMARY KEY,
-  number NVARCHAR(MAX) NULL,
-  name NVARCHAR(MAX) NULL,
-  status NVARCHAR(MAX) NULL,
-  subStatus NVARCHAR(MAX) NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
-  startDate DATETIME2 NULL,
-  targetCompletionDate DATETIME2 NULL,
-  actualCompletionDate DATETIME2 NULL,
-  createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL,
-  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
-  FOREIGN KEY (location_id) REFERENCES location (id),
-)
 END;
 
 -- job_details
@@ -194,7 +195,8 @@ CREATE TABLE job_details (
   job_type_name NVARCHAR(MAX) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
-  project_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   job_completion_time DATETIME2 NULL,
   business_unit_id INT NOT NULL,
   actual_business_unit_id INT NULL,
@@ -212,6 +214,7 @@ CREATE TABLE job_details (
   booking_id INT NOT NULL,
   actual_booking_id INT NULL,
   sold_by_id INT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),

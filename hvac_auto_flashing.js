@@ -309,6 +309,102 @@ const hvac_tables = {
     },
     // crm customers
   },
+  location: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      taxzone: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      zone_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  projects: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      subStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      startDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      targetCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      actualCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+    },
+  },
   call_details: {
     columns: {
       lead_call_id: {
@@ -332,6 +428,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -509,102 +609,6 @@ const hvac_tables = {
       },
     },
   },
-  location: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      street: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      unit: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      city: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      state: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      zip: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      taxzone: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      zone_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  projects: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      number: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      status: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      subStatus: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      customer_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_customer_details_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      location_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_location_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      startDate: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      targetCompletionDate: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      actualCompletionDate: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-    },
-  },
   job_details: {
     columns: {
       id: {
@@ -628,6 +632,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -2611,6 +2619,320 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "location": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["crm__locations"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            zip: "default",
+            taxzone: 0,
+            zone_id: 0,
+          });
+
+          final_data_pool.push({
+            id: 2,
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            zip: "default",
+            taxzone: 0,
+            zone_id: 0,
+          });
+
+          final_data_pool.push({
+            id: 3,
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            zip: "default",
+            taxzone: 0,
+            zone_id: 0,
+          });
+        }
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+          final_data_pool.push({
+            id: record["id"],
+            street: record["address"]["street"]
+              ? record["address"]["street"]
+              : "default",
+            unit: record["address"]["unit"]
+              ? record["address"]["unit"]
+              : "default",
+            city: record["address"]["city"]
+              ? record["address"]["city"]
+              : "default",
+            state: record["address"]["state"]
+              ? record["address"]["state"]
+              : "default",
+            zip: record["address"]["zip"]
+              ? record["address"]["zip"]
+              : "default",
+            taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
+            zone_id: record["zoneId"] ? record["zoneId"] : 0,
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log("location data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["location"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["location"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET location = '${hvac_tables_responses["location"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
+      case "projects": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const customer_data_pool =
+          data_lake["customer_details"]["crm__customers"]["data_pool"];
+        const location_data_pool =
+          data_lake["location"]["crm__locations"]["data_pool"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            number: "default",
+            name: "default",
+            status: "default",
+            subStatus: "default",
+            customer_details_id: 1,
+            actual_customer_details_id: 1,
+            location_id: 1,
+            actual_location_id: 1,
+            startDate: "1999-01-01T00:00:00.00Z",
+            targetCompletionDate: "1999-01-01T00:00:00.00Z",
+            actualCompletionDate: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+
+          final_data_pool.push({
+            id: 2,
+            number: "default",
+            name: "default",
+            status: "default",
+            subStatus: "default",
+            customer_details_id: 2,
+            actual_customer_details_id: 2,
+            location_id: 2,
+            actual_location_id: 2,
+            startDate: "1999-01-01T00:00:00.00Z",
+            targetCompletionDate: "1999-01-01T00:00:00.00Z",
+            actualCompletionDate: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+
+          final_data_pool.push({
+            id: 3,
+            number: "default",
+            name: "default",
+            status: "default",
+            subStatus: "default",
+            customer_details_id: 3,
+            actual_customer_details_id: 3,
+            location_id: 3,
+            actual_location_id: 3,
+            startDate: "1999-01-01T00:00:00.00Z",
+            targetCompletionDate: "1999-01-01T00:00:00.00Z",
+            actualCompletionDate: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+        }
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["customerId"]
+            ? record["customerId"]
+            : record["instance_id"];
+          if (customer_data_pool[record["customerId"]]) {
+            customer_details_id = record["customerId"];
+          }
+
+          let location_id = record["instance_id"];
+          let actual_location_id = record["locationId"]
+            ? record["locationId"]
+            : record["instance_id"];
+          if (location_data_pool[record["locationId"]]) {
+            location_id = record["locationId"];
+          }
+
+          let startDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["startDate"]) {
+            if (
+              new Date(record["startDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              startDate = record["startDate"];
+            }
+          } else {
+            startDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let targetCompletionDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["targetCompletionDate"]) {
+            if (
+              new Date(record["targetCompletionDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              targetCompletionDate = record["targetCompletionDate"];
+            }
+          } else {
+            targetCompletionDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let actualCompletionDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["actualCompletionDate"]) {
+            if (
+              new Date(record["actualCompletionDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              actualCompletionDate = record["actualCompletionDate"];
+            }
+          } else {
+            actualCompletionDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            number: record["number"] ? record["number"] : "default",
+            name: record["name"] ? record["name"] : "default",
+            status: record["status"] ? record["status"] : "default",
+            subStatus: record["subStatus"] ? record["subStatus"] : "default",
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            startDate: startDate,
+            targetCompletionDate: targetCompletionDate,
+            actualCompletionDate: actualCompletionDate,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log("projects data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["projects"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["projects"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET projects = '${hvac_tables_responses["projects"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
       case "call_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const telecom_calls_data_pool =
@@ -2621,6 +2943,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["customer_details"]["crm__customers"]["data_pool"];
         const appointments_data_pool =
           data_lake["appointments"]["jpm__appointments"]["data_pool"];
+        const projects_data_pool =
+          data_lake["business_unit"]["jpm__projects"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -2637,6 +2961,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "default",
             status: "Not Known",
             project_id: 1,
+            actual_project_id: 1,
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
@@ -2689,6 +3014,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "default",
             status: "Not Known",
             project_id: 2,
+            actual_project_id: 2,
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
@@ -2741,6 +3067,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_number: "default",
             status: "Not Known",
             project_id: 1,
+            actual_project_id: 3,
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
@@ -2837,6 +3164,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           } else {
             receivedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (projects_data_pool[record["projectId"]]) {
+            project_id = record["projectId"];
           }
 
           let business_unit_id = record["instance_id"];
@@ -3037,7 +3372,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             instance_id: record["instance_id"],
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             status: status,
-            project_id: record["projectId"] ? record["projectId"] : 0,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
             createdOn: createdOn,
             modifiedOn: modifiedOn,
             receivedOn: receivedOn,
@@ -3133,307 +3469,13 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
-      case "location": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["crm__locations"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        let final_data_pool = [];
-
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
-
-        if (initial_execute) {
-          final_data_pool.push({
-            id: 1,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-
-          final_data_pool.push({
-            id: 2,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-
-          final_data_pool.push({
-            id: 3,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-        }
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-          final_data_pool.push({
-            id: record["id"],
-            street: record["address"]["street"]
-              ? record["address"]["street"]
-              : "default",
-            unit: record["address"]["unit"]
-              ? record["address"]["unit"]
-              : "default",
-            city: record["address"]["city"]
-              ? record["address"]["city"]
-              : "default",
-            state: record["address"]["state"]
-              ? record["address"]["state"]
-              : "default",
-            zip: record["address"]["zip"]
-              ? record["address"]["zip"]
-              : "default",
-            taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
-            zone_id: record["zoneId"] ? record["zoneId"] : 0,
-          });
-        });
-
-        // console.log("final_data_pool: ", final_data_pool);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        console.log("location data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["location"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["location"]["status"] != "success");
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET location = '${hvac_tables_responses["location"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        break;
-      }
-
-      case "projects": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        const customer_data_pool =
-          data_lake["customer_details"]["crm__customers"]["data_pool"];
-        const location_data_pool =
-          data_lake["location"]["crm__locations"]["data_pool"];
-
-        let final_data_pool = [];
-
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
-
-        if (initial_execute) {
-          final_data_pool.push({
-            id: 1,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-
-          final_data_pool.push({
-            id: 2,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-
-          final_data_pool.push({
-            id: 3,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
-            taxzone: 0,
-            zone_id: 0,
-          });
-        }
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["locationId"]
-            ? record["locationId"]
-            : record["instance_id"];
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-          }
-
-          let startDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["startDate"]) {
-            if (
-              new Date(record["startDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              startDate = record["startDate"];
-            }
-          } else {
-            startDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let targetCompletionDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["targetCompletionDate"]) {
-            if (
-              new Date(record["targetCompletionDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              targetCompletionDate = record["targetCompletionDate"];
-            }
-          } else {
-            targetCompletionDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let actualCompletionDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["actualCompletionDate"]) {
-            if (
-              new Date(record["actualCompletionDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              actualCompletionDate = record["actualCompletionDate"];
-            }
-          } else {
-            actualCompletionDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            number: record["number"] ? record["number"] : "default",
-            name: record["name"] ? record["name"] : "default",
-            status: record["status"] ? record["status"] : "default",
-            subStatus: record["subStatus"] ? record["subStatus"] : "default",
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            startDate: startDate,
-            targetCompletionDate: targetCompletionDate,
-            actualCompletionDate: actualCompletionDate,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-          });
-        });
-
-        // console.log("final_data_pool: ", final_data_pool);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        console.log("projects data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["projects"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["projects"]["status"] != "success");
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET projects = '${hvac_tables_responses["projects"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        break;
-      }
-
       case "job_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const jobs_data_pool = data_lake[api_name]["jpm__jobs"]["data_pool"];
         const job_types_data_pool =
           data_lake[api_name]["jpm__job-types"]["data_pool"];
+        const projects_data_pool =
+          data_lake["business_unit"]["jpm__projects"]["data_pool"];
         const business_unit_data_pool =
           data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const customer_data_pool =
@@ -3458,7 +3500,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_1",
             job_number: "1",
             job_status: "default",
-            project_id: 0,
+            project_id: 1,
+            actual_project_id: 1,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 1,
             actual_business_unit_id: 1,
@@ -3483,7 +3526,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_2",
             job_number: "2",
             job_status: "default",
-            project_id: 0,
+            project_id: 2,
+            actual_project_id: 2,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 2,
             actual_business_unit_id: 2,
@@ -3508,7 +3552,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_3",
             job_number: "3",
             job_status: "default",
-            project_id: 0,
+            project_id: 3,
+            actual_project_id: 3,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 3,
             actual_business_unit_id: 3,
@@ -3532,6 +3577,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(jobs_data_pool).map((record_id) => {
           const record = jobs_data_pool[record_id];
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
           let business_unit_id = record["instance_id"];
           let actual_business_unit_id = record["businessUnitId"]
             ? record["businessUnitId"]
@@ -3573,6 +3622,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           if (location_data_pool[record["locationId"]]) {
             location_id = record["locationId"];
+          }
+
+          if (projects_data_pool[record["projectId"]]) {
+            project_id = record["projectId"];
           }
 
           if (call_details_data_pool[record["leadCallId"]]) {
@@ -3635,7 +3688,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: job_type_name ? job_type_name : "default_job",
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
-            project_id: record["projectId"] ? record["projectId"] : 0,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
             job_completion_time: job_completion_time,
             business_unit_id: business_unit_id,
             actual_business_unit_id: actual_business_unit_id,
@@ -3694,6 +3748,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         delete data_lake["call_details"]["telecom__calls"];
         delete data_lake["campaigns"]["marketing__campaigns"];
         delete data_lake["bookings"]["crm__bookings"];
+        delete data_lake["projects"]["jpm__projects"];
 
         break;
       }
