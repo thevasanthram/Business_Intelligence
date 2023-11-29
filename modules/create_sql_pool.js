@@ -17,7 +17,7 @@ async function create_sql_connection_pool() {
       user: "pinnacleadmin",
       password: "PiTestBi01",
       server: "pinnaclemep.database.windows.net",
-      database: "hvac_data_pool",
+      database: "main_hvac_db",
       requestTimeout: 48 * 60 * 60 * 1000, // Set the request timeout to 60 seconds (adjust as needed)
     }).connect();
 
