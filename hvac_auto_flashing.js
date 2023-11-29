@@ -67,6 +67,7 @@ const params_header = {
   createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
+  active: "Any",
 };
 
 // let cuurent_time = new Date();
