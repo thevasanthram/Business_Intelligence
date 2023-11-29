@@ -2165,6 +2165,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
+        console.log("data_pool: ", data_pool);
+
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
