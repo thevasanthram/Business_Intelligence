@@ -57,7 +57,7 @@ let timezoneOffsetMinutes = 30; // 0 minutes ahead of UTC
 
 let createdBeforeTime = new Date();
 
-createdBeforeTime.setUTCHours(7, 30, 0, 0);
+createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
@@ -6531,7 +6531,7 @@ async function auto_update() {
     // now.setSeconds(0);
     // now.setMilliseconds(0);
 
-    now.setUTCHours(7, 30, 0, 0);
+    now.setUTCHours(7, 0, 0, 0);
 
     params_header["createdBefore"] = now.toISOString();
     console.log("params_header: ", params_header);
