@@ -67,7 +67,7 @@ const params_header = {
   createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
-  active: "Any",
+  active: "any",
 };
 
 // let cuurent_time = new Date();
@@ -2174,6 +2174,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
           // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
+          let trade_type = "";
+          let revenue_type = "";
+          let account_type = "";
+          try {
+            trade_type = kpi_data[record["id"]]["Trade Type"]
+              ? kpi_data[record["id"]]["Trade Type"]
+              : "";
+            revenue_type = kpi_data[record["id"]]["Revenue Type"]
+              ? kpi_data[record["id"]]["Revenue Type"]
+              : "";
+            account_type = kpi_data[record["id"]]["Account Type"]
+              ? kpi_data[record["id"]]["Account Type"]
+              : "";
+          } catch (err) {}
+
           final_data_pool.push({
             id: record["id"],
             business_unit_name: record["name"]
@@ -2182,15 +2197,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_official_name: record["officialName"]
               ? record["officialName"]
               : "default_business",
-            trade_type: kpi_data[record["id"]]["Trade Type"]
-              ? kpi_data[record["id"]]["Trade Type"]
-              : "",
-            revenue_type: kpi_data[record["id"]]["Revenue Type"]
-              ? kpi_data[record["id"]]["Revenue Type"]
-              : "",
-            account_type: kpi_data[record["id"]]["Account Type"]
-              ? kpi_data[record["id"]]["Account Type"]
-              : "",
+            trade_type: trade_type,
+            revenue_type: revenue_type,
+            account_type: account_type,
             legal_entity_id: record["instance_id"],
           });
         });
