@@ -2131,38 +2131,38 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           // MANUAL ENTRY
 
-          final_data_pool.push({
-            id: 108709,
-            business_unit_name: "Imported Default Businessunit",
-            business_unit_official_name:
-              "Expert Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 1,
-          });
+          // final_data_pool.push({
+          //   id: 108709,
+          //   business_unit_name: "Imported Default Businessunit",
+          //   business_unit_official_name:
+          //     "Expert Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 1,
+          // });
 
-          final_data_pool.push({
-            id: 1000004,
-            business_unit_name: "Imported Businessunit",
-            business_unit_official_name:
-              "Expert Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 1,
-          });
+          // final_data_pool.push({
+          //   id: 1000004,
+          //   business_unit_name: "Imported Businessunit",
+          //   business_unit_official_name:
+          //     "Expert Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 1,
+          // });
 
-          final_data_pool.push({
-            id: 166181,
-            business_unit_name: "Imported Default Businessunit",
-            business_unit_official_name:
-              "Family Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 3,
-          });
+          // final_data_pool.push({
+          //   id: 166181,
+          //   business_unit_name: "Imported Default Businessunit",
+          //   business_unit_official_name:
+          //     "Family Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 3,
+          // });
         }
 
         console.log("data_pool: ", data_pool);
