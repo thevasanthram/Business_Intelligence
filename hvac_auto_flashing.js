@@ -2165,8 +2165,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // });
         }
 
-        console.log("data_pool: ", data_pool);
-
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
@@ -3758,10 +3756,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             : record["instance_id"];
 
           if (
-            business_unit_data_pool[record["businessUnitId"]] ||
-            record["businessUnitId"] == 108709 ||
-            record["businessUnitId"] == 1000004 ||
-            record["businessUnitId"] == 166181
+            business_unit_data_pool[record["businessUnitId"]]
+            // ||
+            // record["businessUnitId"] == 108709 ||
+            // record["businessUnitId"] == 1000004 ||
+            // record["businessUnitId"] == 166181
           ) {
             business_unit_id = record["businessUnitId"];
           }
@@ -4391,10 +4390,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           let business_unit_id = record["instance_id"];
 
           if (
-            business_unit_data_pool[record["businessUnitId"]] ||
-            record["businessUnitId"] == 108709 ||
-            record["businessUnitId"] == 1000004 ||
-            record["businessUnitId"] == 166181
+            business_unit_data_pool[record["businessUnitId"]]
+            //  ||
+            // record["businessUnitId"] == 108709 ||
+            // record["businessUnitId"] == 1000004 ||
+            // record["businessUnitId"] == 166181
           ) {
             business_unit_id = record["businessUnitId"];
             acutal_business_unit_id = record["businessUnitId"];

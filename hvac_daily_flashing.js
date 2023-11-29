@@ -64,6 +64,7 @@ const params_header = {
   createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
+  active: "any",
 };
 
 // let cuurent_time = new Date();
@@ -2127,38 +2128,38 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           // MANUAL ENTRY
 
-          final_data_pool.push({
-            id: 108709,
-            business_unit_name: "Imported Default Businessunit",
-            business_unit_official_name:
-              "Expert Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 1,
-          });
+          // final_data_pool.push({
+          //   id: 108709,
+          //   business_unit_name: "Imported Default Businessunit",
+          //   business_unit_official_name:
+          //     "Expert Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 1,
+          // });
 
-          final_data_pool.push({
-            id: 1000004,
-            business_unit_name: "Imported Businessunit",
-            business_unit_official_name:
-              "Expert Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 1,
-          });
+          // final_data_pool.push({
+          //   id: 1000004,
+          //   business_unit_name: "Imported Businessunit",
+          //   business_unit_official_name:
+          //     "Expert Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 1,
+          // });
 
-          final_data_pool.push({
-            id: 166181,
-            business_unit_name: "Imported Default Businessunit",
-            business_unit_official_name:
-              "Family Imported Default Business Unit",
-            trade_type: "HIS",
-            revenue_type: "HIS",
-            account_type: "HIS",
-            legal_entity_id: 3,
-          });
+          // final_data_pool.push({
+          //   id: 166181,
+          //   business_unit_name: "Imported Default Businessunit",
+          //   business_unit_official_name:
+          //     "Family Imported Default Business Unit",
+          //   trade_type: "HIS",
+          //   revenue_type: "HIS",
+          //   account_type: "HIS",
+          //   legal_entity_id: 3,
+          // });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -2168,6 +2169,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
           // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
+          let trade_type = "";
+          let revenue_type = "";
+          let account_type = "";
+          try {
+            trade_type = kpi_data[record["id"]]["Trade Type"]
+              ? kpi_data[record["id"]]["Trade Type"]
+              : "";
+            revenue_type = kpi_data[record["id"]]["Revenue Type"]
+              ? kpi_data[record["id"]]["Revenue Type"]
+              : "";
+            account_type = kpi_data[record["id"]]["Account Type"]
+              ? kpi_data[record["id"]]["Account Type"]
+              : "";
+          } catch (err) {}
+
           final_data_pool.push({
             id: record["id"],
             business_unit_name: record["name"]
@@ -2176,15 +2192,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_official_name: record["officialName"]
               ? record["officialName"]
               : "default_business",
-            trade_type: kpi_data[record["id"]]["Trade Type"]
-              ? kpi_data[record["id"]]["Trade Type"]
-              : "",
-            revenue_type: kpi_data[record["id"]]["Revenue Type"]
-              ? kpi_data[record["id"]]["Revenue Type"]
-              : "",
-            account_type: kpi_data[record["id"]]["Account Type"]
-              ? kpi_data[record["id"]]["Account Type"]
-              : "",
+            trade_type: trade_type,
+            revenue_type: revenue_type,
+            account_type: account_type,
             legal_entity_id: record["instance_id"],
           });
         });
@@ -3743,10 +3753,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             : record["instance_id"];
 
           if (
-            business_unit_data_pool[record["businessUnitId"]] ||
-            record["businessUnitId"] == 108709 ||
-            record["businessUnitId"] == 1000004 ||
-            record["businessUnitId"] == 166181
+            business_unit_data_pool[record["businessUnitId"]]
+            // ||
+            // record["businessUnitId"] == 108709 ||
+            // record["businessUnitId"] == 1000004 ||
+            // record["businessUnitId"] == 166181
           ) {
             business_unit_id = record["businessUnitId"];
           }
@@ -4376,10 +4387,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           let business_unit_id = record["instance_id"];
 
           if (
-            business_unit_data_pool[record["businessUnitId"]] ||
-            record["businessUnitId"] == 108709 ||
-            record["businessUnitId"] == 1000004 ||
-            record["businessUnitId"] == 166181
+            business_unit_data_pool[record["businessUnitId"]]
+            //  ||
+            // record["businessUnitId"] == 108709 ||
+            // record["businessUnitId"] == 1000004 ||
+            // record["businessUnitId"] == 166181
           ) {
             business_unit_id = record["businessUnitId"];
             acutal_business_unit_id = record["businessUnitId"];
@@ -4545,7 +4557,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake[api_name]["dispatch__appointment-assignments"];
-        delete data_lake["appointments"]["jpm__appointments"];
+        delete data_lake[table_name]["jpm__appointments"];
 
         break;
       }
