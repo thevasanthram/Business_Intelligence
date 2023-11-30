@@ -2169,9 +2169,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
           // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
-          let trade_type = "";
-          let revenue_type = "";
-          let account_type = "";
+          let trade_type = "HIS";
+          let revenue_type = "HIS";
+          let account_type = "HIS";
           try {
             trade_type = kpi_data[record["id"]]["Trade Type"]
               ? kpi_data[record["id"]]["Trade Type"]
