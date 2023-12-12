@@ -2192,22 +2192,22 @@ async function data_processor(data_lake, sql_request, table_list) {
           try {
             trade_type = kpi_data[record["id"]]["Trade"]
               ? kpi_data[record["id"]]["Trade"]
-              : "";
+              : "DEF";
             segment_type = kpi_data[record["id"]]["Segment"]
               ? kpi_data[record["id"]]["Segment"]
-              : "";
+              : "DEF";
             revenue_type = kpi_data[record["id"]]["Type"]
               ? kpi_data[record["id"]]["Type"]
-              : "";
+              : "DEF";
             business = kpi_data[record["id"]]["Business"]
               ? kpi_data[record["id"]]["Business"]
-              : "";
+              : "DEF";
             business_unit_official_name = kpi_data[record["id"]]["Name"]
               ? kpi_data[record["id"]]["Name"]
-              : "";
+              : "DEF";
             business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
               ? kpi_data[record["id"]]["Invoice Business Unit"]
-              : "";
+              : "DEF";
           } catch (err) {}
 
           final_data_pool.push({
