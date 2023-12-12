@@ -12,7 +12,7 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
-const kpi_data = require("./modules/business_units_details");
+const kpi_data = require("./modules/updated_business_unit_details");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -112,11 +112,15 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      segment_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       revenue_type: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      account_type: {
+      business: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -1858,9 +1862,9 @@ async function fetch_main_data(
           if (api_key == "legal_entity") {
             data_lake[api_key] = {
               data_pool: {
-                1: { id: 1, legal_name: "Expert Heating and Cooling" },
-                2: { id: 2, legal_name: "Parket-Arntz Plumbing and Heating" },
-                3: { id: 3, legal_name: "Family Heating and Cooling" },
+                1: { id: 1, legal_name: "EXP" },
+                2: { id: 2, legal_name: "PA" },
+                3: { id: 3, legal_name: "NMI" },
               },
             };
           } else {
@@ -2105,8 +2109,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
             trade_type: "OTHR",
+            segment_type: "OTHR",
             revenue_type: "OTHR",
-            account_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 1,
           });
@@ -2116,8 +2121,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
             trade_type: "OTHR",
+            segment_type: "OTHR",
             revenue_type: "OTHR",
-            account_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 2,
           });
@@ -2127,8 +2133,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
             trade_type: "OTHR",
+            segment_type: "OTHR",
             revenue_type: "OTHR",
-            account_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 3,
           });
@@ -2176,32 +2183,41 @@ async function data_processor(data_lake, sql_request, table_list) {
           // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
           // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
-          let trade_type = "HIS";
-          let revenue_type = "HIS";
-          let account_type = "HIS";
+          let trade_type = "DEF";
+          let segment_type = "DEF";
+          let revenue_type = "DEF";
+          let business = "DEF";
+          let business_unit_official_name = "DEF";
+          let business_unit_name = "DEF";
           try {
-            trade_type = kpi_data[record["id"]]["Trade Type"]
-              ? kpi_data[record["id"]]["Trade Type"]
+            trade_type = kpi_data[record["id"]]["Trade"]
+              ? kpi_data[record["id"]]["Trade"]
               : "";
-            revenue_type = kpi_data[record["id"]]["Revenue Type"]
-              ? kpi_data[record["id"]]["Revenue Type"]
+            segment_type = kpi_data[record["id"]]["Segment"]
+              ? kpi_data[record["id"]]["Segment"]
               : "";
-            account_type = kpi_data[record["id"]]["Account Type"]
-              ? kpi_data[record["id"]]["Account Type"]
+            revenue_type = kpi_data[record["id"]]["Type"]
+              ? kpi_data[record["id"]]["Type"]
+              : "";
+            business = kpi_data[record["id"]]["Business"]
+              ? kpi_data[record["id"]]["Business"]
+              : "";
+            business_unit_official_name = kpi_data[record["id"]]["Name"]
+              ? kpi_data[record["id"]]["Name"]
+              : "";
+            business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
+              ? kpi_data[record["id"]]["Invoice Business Unit"]
               : "";
           } catch (err) {}
 
           final_data_pool.push({
             id: record["id"],
-            business_unit_name: record["name"]
-              ? record["name"]
-              : "default_business",
-            business_unit_official_name: record["officialName"]
-              ? record["officialName"]
-              : "default_business",
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
             trade_type: trade_type,
+            segment_type: segment_type,
             revenue_type: revenue_type,
-            account_type: account_type,
+            business: business,
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
           });
