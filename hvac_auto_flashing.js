@@ -12,7 +12,7 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
-const kpi_data = require("./modules/business_units_details");
+const kpi_data = require("./modules/updated_business_unit_details");
 
 // Service Titan's API parameters
 const instance_details = [
