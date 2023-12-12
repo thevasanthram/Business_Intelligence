@@ -15,8 +15,9 @@ CREATE TABLE business_unit (
   business_unit_name NVARCHAR(MAX) NULL,
   business_unit_official_name NVARCHAR(MAX) NULL,
   trade_type NVARCHAR(MAX) NULL,
+  segment_type NVARCHAR(MAX) NULL,
   revenue_type NVARCHAR(MAX) NULL,
-  account_type NVARCHAR(MAX) NULL,
+  business NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   legal_entity_id INT NOT NULL,
   FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
