@@ -2323,10 +2323,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           let createdOn = "2000-01-01T00:00:00.00Z";
           let modifiedOn = "2000-01-01T00:00:00.00Z";
 
-          // console.log("id: ", record["id"]);
-          // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
-          // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
-
           if (record["createdOn"]) {
             if (
               new Date(record["createdOn"]) >
