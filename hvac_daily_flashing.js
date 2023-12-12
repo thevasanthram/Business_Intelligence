@@ -120,6 +120,10 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
       legal_entity_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -2103,6 +2107,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             trade_type: "OTHR",
             revenue_type: "OTHR",
             account_type: "OTHR",
+            is_active: 0,
             legal_entity_id: 1,
           });
 
@@ -2113,6 +2118,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             trade_type: "OTHR",
             revenue_type: "OTHR",
             account_type: "OTHR",
+            is_active: 0,
             legal_entity_id: 2,
           });
 
@@ -2123,6 +2129,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             trade_type: "OTHR",
             revenue_type: "OTHR",
             account_type: "OTHR",
+            is_active: 0,
             legal_entity_id: 3,
           });
 
@@ -2195,6 +2202,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             trade_type: trade_type,
             revenue_type: revenue_type,
             account_type: account_type,
+            is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
           });
         });
