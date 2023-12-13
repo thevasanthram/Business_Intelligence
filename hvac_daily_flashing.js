@@ -67,10 +67,6 @@ const params_header = {
   active: "any",
 };
 
-// let cuurent_time = new Date();
-// cuurent_time.setHours(cuurent_time.getHours() + timezoneOffsetHours);
-
-// console.log("cuurent_time: ", cuurent_time);
 console.log("params_header: ", params_header);
 
 let initial_execute = true;
@@ -6580,13 +6576,3 @@ async function orchestrate() {
 }
 
 orchestrate();
-
-// Check the time every second
-// setInterval(auto_update, 10800000);
-
-// auto_update callingghing data: 00:33:49.075
-// previous_batch_hour:  2023-10-19T17:30:00.000Z
-// previous_batch_next_hour:  2023-10-19T18:30:00.000Z
-// next batch initiated
-// HVAC Tables deletedshing data: 00:33:52.131
-// params_header:
