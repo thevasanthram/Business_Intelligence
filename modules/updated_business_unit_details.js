@@ -830,7 +830,7 @@ const business_unit_data = {
   13107299: {
     "BU ID": "13107299",
     "Invoice Business Unit": "KNL OTHR NCO COM",
-    Trade: "OTHR",
+    Trade: "OTHER",
     Segment: "COM",
     Type: "NCO",
     Business: "NMI",
@@ -839,7 +839,7 @@ const business_unit_data = {
   13107300: {
     "BU ID": "13107300",
     "Invoice Business Unit": "KNL OTHR NCO MFY",
-    Trade: "OTHR",
+    Trade: "OTHER",
     Segment: "MULTI",
     Type: "NCO",
     Business: "NMI",
@@ -848,7 +848,7 @@ const business_unit_data = {
   13107301: {
     "BU ID": "13107301",
     "Invoice Business Unit": "KNL OTHR NCO RES",
-    Trade: "OTHR",
+    Trade: "OTHER",
     Segment: "RESI",
     Type: "NCO",
     Business: "NMI",

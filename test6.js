@@ -64,8 +64,8 @@ createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
 const params_header = {
-  createdOnOrAfter: "2023-12-12T00:00:00.00Z", // 2023-06-01T00:00:00.00Z
-  createdBefore: "2023-12-13T00:00:00.00Z", //createdBeforeTime.toISOString()
+  createdOnOrAfter: "", // 2023-06-01T00:00:00.00Z
+  createdBefore: "", //createdBeforeTime.toISOString()
   // modifiedOnOrAfter: "2023-12-12T00:00:00.00Z", // 2023-06-01T00:00:00.00Z
   // modifiedBefore: "2023-12-13T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
@@ -226,13 +226,13 @@ async function starter() {
     //     table_name: "customer_details",
     //   },
     // ],
-    // location: [
-    //   {
-    //     api_group: "crm",
-    //     api_name: "locations",
-    //     table_name: "location",
-    //   },
-    // ],
+    location: [
+      {
+        api_group: "crm",
+        api_name: "locations",
+        table_name: "location",
+      },
+    ],
     // projects: [
     //   {
     //     api_group: "jpm",
@@ -294,13 +294,13 @@ async function starter() {
     //     table_name: "appointment_assignments",
     //   },
     // ],
-    non_job_appointments: [
-      {
-        api_group: "dispatch",
-        api_name: "non-job-appointments",
-        table_name: "non_job_appointments",
-      },
-    ],
+    // non_job_appointments: [
+    //   {
+    //     api_group: "dispatch",
+    //     api_name: "non-job-appointments",
+    //     table_name: "non_job_appointments",
+    //   },
+    // ],
     // sku_details: [
     //   {
     //     api_group: "pricebook",
@@ -318,13 +318,13 @@ async function starter() {
     //     table_name: "sku_details",
     //   },
     // ],
-    // invoice: [
-    //   {
-    //     api_group: "accounting",
-    //     api_name: "invoices",
-    //     table_name: ["business_unit", "cogs_equipment", "cogs_material"],
-    //   },
-    // ],
+    invoice: [
+      {
+        api_group: "accounting",
+        api_name: "invoices",
+        table_name: ["business_unit", "cogs_equipment", "cogs_material"],
+      },
+    ],
     // purchase_order: [
     //   {
     //     api_group: "inventory",
@@ -354,10 +354,23 @@ async function starter() {
     hvac_tables
   );
 
-  const data_pool1 =
-    data_lake_true["non_job_appointments"]["dispatch__non-job-appointments"][
-      "data_pool"
-    ];
+  const invoice_data_pool =
+    data_lake_true["invoice"]["accounting__invoices"]["data_pool"];
+
+  const location_data_pool =
+    data_lake_true["location"]["crm__locations"]["data_pool"];
+
+  let count = 0;
+
+  Object.keys(invoice_data_pool).map((record_id) => {
+    const record = invoice_data_pool[record_id];
+
+    if (record["location"]) {
+      if (location_data_pool[record["location"]["id"]]) {
+        count = count + 1;
+      }
+    }
+  });
 
   // const data_pool2 =
   //   data_lake_true["cogs_labor"]["payroll__payrolls"]["data_pool"];
@@ -367,7 +380,7 @@ async function starter() {
 
   // console.log("total records count: ", Object.keys(data_pool));
 
-  console.log("total records count: ", Object.keys(data_pool1).length);
+  console.log("total records count: ", count);
 
   // console.log("total records count: ", Object.keys(data_pool2).length);
 

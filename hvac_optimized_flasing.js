@@ -67,6 +67,14 @@ const params_header = {
   active: "any",
 };
 
+const modifying_params_header = {
+  modifiedOnOrAfter: "", // 2023-08-01T00:00:00.00Z
+  modifiedBefore: createdBeforeTime.toISOString(),
+  includeTotal: true,
+  pageSize: 2000,
+  active: "any",
+};
+
 console.log("params_header: ", params_header);
 
 let initial_execute = true;
@@ -1463,10 +1471,6 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      address: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
       customer_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -2098,10 +2102,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 1,
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
+            trade_type: "OTHR",
+            segment_type: "OTHR",
+            revenue_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 1,
           });
@@ -2110,10 +2114,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 2,
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
+            trade_type: "OTHR",
+            segment_type: "OTHR",
+            revenue_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 2,
           });
@@ -2122,10 +2126,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 3,
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
+            trade_type: "OTHR",
+            segment_type: "OTHR",
+            revenue_type: "OTHR",
+            business: "OTHR",
             is_active: 0,
             legal_entity_id: 3,
           });
@@ -5084,7 +5088,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
-            address: "default",
             customer_id: 1,
             actual_customer_id: 1,
             customer_name: "default",
@@ -5116,7 +5119,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
-            address: "default",
             customer_id: 2,
             actual_customer_id: 2,
             customer_name: "default",
@@ -5148,7 +5150,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
-            address: "default",
             customer_id: 3,
             actual_customer_id: 3,
             customer_name: "default",
@@ -5456,19 +5457,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               : "default";
           }
 
-          let address_detail = [
-            address_street,
-            address_unit,
-            address_city,
-            address_state,
-            address_country,
-            address_zip,
-          ];
-
-          const address = address_detail
-            .filter((address_data) => address_data !== "default")
-            .join(",");
-
           let invoice_date = "2000-01-01T00:00:00.00Z";
 
           if (record["invoiceDate"]) {
@@ -5574,7 +5562,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: address_state,
             address_country: address_country,
             address_zip: address_zip,
-            address: address,
             customer_id: customer_id,
             actual_customer_id: actual_customer_id,
             customer_name: customer_name,
