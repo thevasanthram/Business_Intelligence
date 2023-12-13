@@ -5465,9 +5465,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_zip,
           ];
 
-          const address = address_detail
+          let address = address_detail
             .filter((address_data) => address_data !== "default")
             .join(",");
+
+          if (!address) {
+            address = "default";
+          }
 
           let invoice_date = "2000-01-01T00:00:00.00Z";
 
