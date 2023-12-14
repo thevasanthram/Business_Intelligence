@@ -23,6 +23,7 @@ async function flush_hvac_schema(sql_request, is_initial_execute) {
     DROP TABLE bookings
     DROP TABLE campaigns
     DROP TABLE business_unit
+    DROP TABLE us_cities
     DROP TABLE legal_entity`;
 
     const createTable = await sql_request.query(flushing_query);
