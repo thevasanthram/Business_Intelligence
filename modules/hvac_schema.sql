@@ -414,7 +414,7 @@ CREATE TABLE invoice (
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
-  FOREIGN KEY (customer_id) REFERENCES customer_details (id)
+  FOREIGN KEY (customer_id) REFERENCES customer_details (id),
   FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
 );
 END;
