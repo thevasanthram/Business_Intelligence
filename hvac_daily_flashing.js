@@ -3243,7 +3243,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             latitude: 0.0,
             longitude: 0.0,
             customer_import_id: "default",
-            customer_type: "default",
+            customer_type: "Others",
             campaign_id: 1,
             campaign_category: "default",
             campaign_source: "default",
@@ -3296,7 +3296,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             latitude: 0.0,
             longitude: 0.0,
             customer_import_id: "default",
-            customer_type: "default",
+            customer_type: "Others",
             campaign_id: 2,
             campaign_category: "default",
             campaign_source: "default",
@@ -3349,7 +3349,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             latitude: 0.0,
             longitude: 0.0,
             customer_import_id: "default",
-            customer_type: "default",
+            customer_type: "Others",
             campaign_id: 3,
             campaign_category: "default",
             campaign_source: "default",
@@ -3468,7 +3468,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let latitude = 0.0;
           let longitude = 0.0;
           let customer_import_id = "default";
-          let customer_type = "default";
+          let customer_type = "Others";
           if (record["leadCall"]["customer"]) {
             actual_customer_details_id = record["leadCall"]["customer"]["id"];
             customer_name = record["leadCall"]["customer"]["name"]
@@ -3515,7 +3515,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               : "default";
             customer_type = record["leadCall"]["customer"]["type"]
               ? record["leadCall"]["customer"]["type"]
-              : "default";
+              : "Others";
 
             if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
               customer_details_id = record["leadCall"]["customer"]["id"];
