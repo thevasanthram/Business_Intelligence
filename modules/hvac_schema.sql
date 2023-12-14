@@ -7,6 +7,19 @@ CREATE TABLE legal_entity (
 );
 END;
 
+-- us_cities
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'us_cities')
+BEGIN
+CREATE TABLE us_cities (
+  zip_code INT PRIMARY KEY,
+  latitude DECIMAL(9, 6) NULL,
+  longitude DECIMAL(9, 6) NULL,
+  city NVARCHAR(MAX) NULL,
+  [state] NVARCHAR(MAX) NULL,
+  county NVARCHAR(MAX) NULL,
+);
+END;
+
 -- business_unit
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'business_unit')
 BEGIN
@@ -568,6 +581,7 @@ CREATE TABLE auto_update (
   end_time DATETIME2 NULL,
   total_minutes DECIMAL(10, 2) NULL,
   legal_entity NVARCHAR(MAX) NULL,
+  us_cities NVARCHAR(MAX) NULL,
   business_unit NVARCHAR(MAX) NULL,
   campaigns NVARCHAR(MAX) NULL,
   bookings NVARCHAR(MAX) NULL,  
