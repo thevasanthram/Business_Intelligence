@@ -93,7 +93,7 @@ const hvac_tables = {
   us_cities: {
     columns: {
       zip_code: {
-        data_type: "INT",
+        data_type: "NVARCHAR",
         constraint: { primary: true, nullable: false },
       },
       latitude: {
