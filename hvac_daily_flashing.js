@@ -1490,6 +1490,10 @@ const hvac_tables = {
       },
       address_zip: {
         data_type: "NVARCHAR",
+        constraint: { nullable: false },
+      },
+      acutal_address_zip: {
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       address: {
@@ -1821,6 +1825,8 @@ const main_api_list = {
   ],
 };
 
+let unique_us_zip_codes = {};
+
 function startStopwatch(task_name) {
   let startTime = Date.now();
   let running = true;
@@ -1911,7 +1917,9 @@ async function fetch_main_data(
               },
             };
             us_cities_list.map((city) => {
-              const zip_code_index = Number(city["zip_code"]);
+              const zip_code_index = city["zip_code"];
+
+              unique_us_zip_codes[zip_code_index] = {};
 
               data_lake[api_key]["zip_codes"]["data_pool"][zip_code_index] = {
                 zip_code: Number(city["zip_code"]),
@@ -5179,7 +5187,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_city: "default",
             address_state: "default",
             address_country: "default",
-            address_zip: "default",
+            address_zip: "57483",
+            acutal_address_zip: "57483",
             address: "default",
             customer_id: 1,
             actual_customer_id: 1,
@@ -5211,7 +5220,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_city: "default",
             address_state: "default",
             address_country: "default",
-            address_zip: "default",
+            address_zip: "57483",
+            acutal_address_zip: "57483",
             address: "default",
             customer_id: 2,
             actual_customer_id: 2,
@@ -5243,7 +5253,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_city: "default",
             address_state: "default",
             address_country: "default",
-            address_zip: "default",
+            address_zip: "57483",
+            acutal_address_zip: "57483",
             address: "default",
             customer_id: 3,
             actual_customer_id: 3,
@@ -5529,7 +5540,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           let address_unit = "default";
           let address_city = "default";
           let address_state = "default";
-          let address_zip = "default";
+          let address_zip = "57483";
+          let acutal_address_zip = "57483";
           let address_country = "default";
           if (record["locationAddress"]) {
             address_street = record["locationAddress"]["street"]
@@ -5547,9 +5559,15 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_country = record["locationAddress"]["country"]
               ? record["locationAddress"]["country"]
               : "default";
-            address_zip = record["locationAddress"]["zip"]
+            acutal_address_zip = record["locationAddress"]["zip"]
               ? record["locationAddress"]["zip"]
-              : "default";
+              : "57483";
+
+            if (unique_us_zip_codes[record["locationAddress"]["zip"]]) {
+              address_zip = address_zip;
+            } else {
+              address_zip = "57483";
+            }
           }
 
           let address_detail = [
@@ -5674,6 +5692,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: address_state,
             address_country: address_country,
             address_zip: address_zip,
+            acutal_address_zip: acutal_address_zip,
             address: address,
             customer_id: customer_id,
             actual_customer_id: actual_customer_id,

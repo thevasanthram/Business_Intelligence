@@ -226,13 +226,13 @@ async function starter() {
     //     table_name: "customer_details",
     //   },
     // ],
-    location: [
-      {
-        api_group: "crm",
-        api_name: "locations",
-        table_name: "location",
-      },
-    ],
+    // location: [
+    //   {
+    //     api_group: "crm",
+    //     api_name: "locations",
+    //     table_name: "location",
+    //   },
+    // ],
     // projects: [
     //   {
     //     api_group: "jpm",
@@ -357,18 +357,28 @@ async function starter() {
   const invoice_data_pool =
     data_lake_true["invoice"]["accounting__invoices"]["data_pool"];
 
-  const location_data_pool =
-    data_lake_true["location"]["crm__locations"]["data_pool"];
+  // const location_data_pool =
+  //   data_lake_true["location"]["crm__locations"]["data_pool"];
 
   let count = 0;
 
   Object.keys(invoice_data_pool).map((record_id) => {
     const record = invoice_data_pool[record_id];
 
-    if (record["location"]) {
-      if (location_data_pool[record["location"]["id"]]) {
+    // if (record["location"]) {
+    //   if (location_data_pool[record["location"]["id"]]) {
+    //     count = count + 1;
+    //   }
+    // }
+
+    if (record["createdOn"]) {
+      if (new Date(record["createdOn"]) < new Date("2000-01-01T00:00:00.00Z")) {
+        console.log("OLD DATE FOUND: ", record_id);
+
         count = count + 1;
       }
+    } else {
+      modifiedOn = "2001-01-01T00:00:00.00Z";
     }
   });
 

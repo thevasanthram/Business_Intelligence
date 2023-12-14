@@ -405,7 +405,8 @@ CREATE TABLE invoice (
   address_city NVARCHAR(MAX) NULL,
   address_state NVARCHAR(MAX) NULL,
   address_country NVARCHAR(MAX) NULL,
-  address_zip NVARCHAR(MAX) NULL,
+  address_zip NVARCHAR(MAX) NOT NULL,
+  acutal_address_zip NVARCHAR(MAX) NULL,
   [address] NVARCHAR(MAX) NULL,
   customer_id INT NOT NULL,
   actual_customer_id INT NULL,
@@ -414,6 +415,7 @@ CREATE TABLE invoice (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_id) REFERENCES customer_details (id)
+  FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
 );
 END;
 

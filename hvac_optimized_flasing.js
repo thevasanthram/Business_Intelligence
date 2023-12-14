@@ -13,6 +13,7 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
+const us_cities_list = require("./modules/us_cities");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -59,28 +60,31 @@ let createdBeforeTime = new Date();
 
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
-const params_header = {
+const params_header_for_creation = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: createdBeforeTime.toISOString(),
+  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
 };
 
-const modifying_params_header = {
+const params_header_for_modification = {
   modifiedOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  modifiedBefore: createdBeforeTime.toISOString(),
+  modifiedBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
 };
 
-console.log("params_header: ", params_header);
+console.log("params_header_for_creation: ", params_header_for_creation);
+console.log("params_header_for_modification: ", params_header_for_modification);
 
 let initial_execute = true;
 let lastInsertedId = 0;
 
-let data_lake = {};
+let created_data_lake = {};
+let modified_data_lake = {};
+
 let should_auto_update = false;
 
 const hvac_tables = {
@@ -92,6 +96,34 @@ const hvac_tables = {
         constraint: { primary: true, nullable: false },
       },
       legal_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  us_cities: {
+    columns: {
+      zip_code: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      latitude: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      county: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -1471,6 +1503,10 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       customer_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1563,6 +1599,9 @@ const hvac_tables_responses = {
   legal_entity: {
     status: "",
   },
+  us_cities: {
+    status: "",
+  },
   business_unit: {
     status: "",
   },
@@ -1638,6 +1677,11 @@ const main_api_list = {
   legal_entity: [
     {
       table_name: "legal_entity",
+    },
+  ],
+  us_cities: [
+    {
+      table_name: "us_cities",
     },
   ],
   business_unit: [
@@ -1845,6 +1889,7 @@ async function fetch_main_data(
   data_lake,
   instance_details,
   main_api_list,
+  params_header,
   hvac_tables
 ) {
   // collect all data from all the instance
@@ -1871,6 +1916,24 @@ async function fetch_main_data(
                 3: { id: 3, legal_name: "NMI" },
               },
             };
+          } else if (api_key == "us_cities") {
+            data_lake[api_key] = {
+              zip_codes: {
+                data_pool: {},
+              },
+            };
+            us_cities_list.map((city) => {
+              const zip_code_index = Number(city["zip_code"]);
+
+              data_lake[api_key]["zip_codes"]["data_pool"][zip_code_index] = {
+                zip_code: Number(city["zip_code"]),
+                latitude: String(city["latitude"]),
+                longitude: String(city["longitude"]),
+                city: city["city"],
+                state: city["state"],
+                county: city["county"],
+              };
+            });
           } else {
             const api_list = main_api_list[api_key];
 
@@ -1956,7 +2019,11 @@ async function fetch_main_data(
   );
 }
 
-async function azure_sql_operations(data_lake, table_list) {
+async function azure_sql_operations(
+  created_data_lake,
+  modified_data_lake,
+  table_list
+) {
   // creating a client for azure sql database operations
   let sql_request = "";
   do {
@@ -1968,10 +2035,12 @@ async function azure_sql_operations(data_lake, table_list) {
     sql_pool = await create_sql_pool();
   } while (!sql_pool);
 
-  let create_hvac_schema_status = false;
-  do {
-    create_hvac_schema_status = await create_hvac_schema(sql_request);
-  } while (!create_hvac_schema_status);
+  if (initial_execute) {
+    let create_hvac_schema_status = false;
+    do {
+      create_hvac_schema_status = await create_hvac_schema(sql_request);
+    } while (!create_hvac_schema_status);
+  }
 
   // entering into auto update table
   end_time = "0001-01-01T00:00:00.00Z";
@@ -1989,6 +2058,7 @@ async function azure_sql_operations(data_lake, table_list) {
       end_time,
       total_minutes,
       legal_entity,
+      us_cities,
       business_unit,
       campaigns,
       bookings,
@@ -2014,8 +2084,8 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+        params_header_for_creation["createdBefore"]
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2034,14 +2104,33 @@ async function azure_sql_operations(data_lake, table_list) {
   }
 
   const pushing_time = startStopwatch("pushing data");
-  await data_processor(data_lake, sql_request, table_list);
-  console.log("Time Taken for pushing all data: ", pushing_time());
+  await data_processor(created_data_lake, sql_request, table_list, "creation");
+  console.log("Time Taken for pushing created data: ", pushing_time());
+
+  if (!initial_execute) {
+    // remove created records from modified records
+
+    // updating modified records
+    const pushing_time = startStopwatch("pushing data");
+    await data_processor(
+      modified_data_lake,
+      sql_request,
+      table_list,
+      "modification"
+    );
+    console.log("Time Taken for pushing created data: ", pushing_time());
+  }
 
   // Close the connection pool
   await sql.close();
 }
 
-async function data_processor(data_lake, sql_request, table_list) {
+async function data_processor(
+  data_lake,
+  sql_request,
+  table_list,
+  insertion_mode
+) {
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
@@ -2084,6 +2173,48 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+
+          delete data_lake[api_name];
+        }
+
+        break;
+      }
+
+      case "us_cities": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["zip_codes"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   Object.values(data_pool),
+        //   Object.keys(header_data),
+        //   table_name
+        // );
+
+        if (initial_execute) {
+          do {
+            hvac_tables_responses["us_cities"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                Object.values(data_pool),
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["us_cities"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET us_cities = '${hvac_tables_responses["us_cities"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+
+          delete data_lake[api_name];
         }
 
         break;
@@ -2102,10 +2233,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 1,
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
-            trade_type: "OTHR",
-            segment_type: "OTHR",
-            revenue_type: "OTHR",
-            business: "OTHR",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
             is_active: 0,
             legal_entity_id: 1,
           });
@@ -2114,10 +2245,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 2,
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
-            trade_type: "OTHR",
-            segment_type: "OTHR",
-            revenue_type: "OTHR",
-            business: "OTHR",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
             is_active: 0,
             legal_entity_id: 2,
           });
@@ -2126,10 +2257,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: 3,
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
-            trade_type: "OTHR",
-            segment_type: "OTHR",
-            revenue_type: "OTHR",
-            business: "OTHR",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
             is_active: 0,
             legal_entity_id: 3,
           });
@@ -2228,17 +2359,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["business_unit"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["business_unit"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["business_unit"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["business_unit"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -2390,15 +2523,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["campaigns"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["campaigns"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["campaigns"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (hvac_tables_responses["campaigns"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -2615,15 +2750,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("bookings data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["bookings"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["bookings"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["bookings"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (hvac_tables_responses["bookings"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -2751,17 +2888,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("customer details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["customer_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["customer_details"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["customer_details"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["customer_details"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -2860,15 +2999,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("location data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["location"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["location"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["location"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (hvac_tables_responses["location"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -3067,15 +3208,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("projects data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["projects"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["projects"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["projects"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (hvac_tables_responses["projects"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -3601,17 +3744,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("telecom_calls data: ", final_data_pool);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["call_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["call_details"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["call_details"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["call_details"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -3883,15 +4028,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["job_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["job_details"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["job_details"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["job_details"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4086,17 +4235,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("appointments data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["appointments"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["appointments"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["appointments"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["appointments"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4251,17 +4402,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sales_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["sales_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["sales_details"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["sales_details"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["sales_details"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4334,15 +4487,17 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("vendor data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["vendor"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["vendor"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["vendor"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (hvac_tables_responses["vendor"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -4433,15 +4588,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["technician"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["technician"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["technician"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["technician"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4545,18 +4704,20 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["appointment_assignments"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["appointment_assignments"]["status"] !=
-            "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["appointment_assignments"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["appointment_assignments"]["status"] !=
+              "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4665,17 +4826,20 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["non_job_appointments"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["non_job_appointments"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["non_job_appointments"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["non_job_appointments"]["status"] !=
+              "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -4861,15 +5025,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sku_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["sku_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["sku_details"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["sku_details"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["sku_details"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -5088,6 +5256,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
+            address: "default",
             customer_id: 1,
             actual_customer_id: 1,
             customer_name: "default",
@@ -5119,6 +5288,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
+            address: "default",
             customer_id: 2,
             actual_customer_id: 2,
             customer_name: "default",
@@ -5150,6 +5320,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_country: "default",
             address_zip: "default",
+            address: "default",
             customer_id: 3,
             actual_customer_id: 3,
             customer_name: "default",
@@ -5457,6 +5628,23 @@ async function data_processor(data_lake, sql_request, table_list) {
               : "default";
           }
 
+          let address_detail = [
+            address_street,
+            address_unit,
+            address_city,
+            address_state,
+            address_country,
+            address_zip,
+          ];
+
+          let address = address_detail
+            .filter((address_data) => address_data !== "default")
+            .join(",");
+
+          if (!address) {
+            address = "default";
+          }
+
           let invoice_date = "2000-01-01T00:00:00.00Z";
 
           if (record["invoiceDate"]) {
@@ -5562,6 +5750,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: address_state,
             address_country: address_country,
             address_zip: address_zip,
+            address: address,
             customer_id: customer_id,
             actual_customer_id: actual_customer_id,
             customer_name: customer_name,
@@ -5863,15 +6052,17 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["invoice"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                invoice_final_data_pool,
-                invoice_header_data,
-                "invoice"
-              );
-          } while (hvac_tables_responses["invoice"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["invoice"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  invoice_final_data_pool,
+                  invoice_header_data,
+                  "invoice"
+                );
+            } while (hvac_tables_responses["invoice"]["status"] != "success");
+          }
 
           // entry into auto_update table
           try {
@@ -5890,17 +6081,19 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_material_final_data_pool.length
         );
         if (cogs_material_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_material"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_material_final_data_pool,
-                cogs_material_header_data,
-                "cogs_material"
-              );
-          } while (
-            hvac_tables_responses["cogs_material"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["cogs_material"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  cogs_material_final_data_pool,
+                  cogs_material_header_data,
+                  "cogs_material"
+                );
+            } while (
+              hvac_tables_responses["cogs_material"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -5919,17 +6112,19 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_equipment_final_data_pool.length
         );
         if (cogs_equipment_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_equipment"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_equipment_final_data_pool,
-                cogs_equipment_header_data,
-                "cogs_equipment"
-              );
-          } while (
-            hvac_tables_responses["cogs_equipment"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["cogs_equipment"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  cogs_equipment_final_data_pool,
+                  cogs_equipment_header_data,
+                  "cogs_equipment"
+                );
+            } while (
+              hvac_tables_responses["cogs_equipment"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -5948,17 +6143,19 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_services_final_data_pool.length
         );
         if (cogs_services_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_service"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_services_final_data_pool,
-                cogs_service_header_data,
-                "cogs_service"
-              );
-          } while (
-            hvac_tables_responses["cogs_service"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["cogs_service"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  cogs_services_final_data_pool,
+                  cogs_service_header_data,
+                  "cogs_service"
+                );
+            } while (
+              hvac_tables_responses["cogs_service"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -5974,17 +6171,19 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("gross_profit data: ", gross_profit_final_data_pool.length);
         if (gross_profit_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["gross_profit"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                gross_profit_final_data_pool,
-                gross_profit_header_data,
-                "gross_profit"
-              );
-          } while (
-            hvac_tables_responses["gross_profit"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["gross_profit"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  gross_profit_final_data_pool,
+                  gross_profit_header_data,
+                  "gross_profit"
+                );
+            } while (
+              hvac_tables_responses["gross_profit"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -6216,17 +6415,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("purchase order data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["purchase_order"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["purchase_order"]["status"] != "success"
-          );
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["purchase_order"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["purchase_order"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -6381,15 +6582,19 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_labor"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
+          if (insertion_mode == "creation") {
+            do {
+              hvac_tables_responses["cogs_labor"]["status"] =
+                await hvac_data_insertion(
+                  sql_request,
+                  final_data_pool,
+                  header_data,
+                  table_name
+                );
+            } while (
+              hvac_tables_responses["cogs_labor"]["status"] != "success"
+            );
+          }
 
           // entry into auto_update table
           try {
@@ -6489,24 +6694,43 @@ async function start_pipeline() {
   start_time.setHours(start_time.getHours() + timezoneOffsetHours);
   start_time.setMinutes(start_time.getMinutes() + timezoneOffsetMinutes);
 
-  // fetching all data from Service Titan's API
+  // fetching all created data from Service Titan's API
   const stop1 = startStopwatch("data fetching");
   await fetch_main_data(
-    data_lake,
+    created_data_lake,
     instance_details,
     main_api_list,
+    params_header_for_creation,
     hvac_tables
   ); // taking 3 mins to fetch all data
 
-  console.log("data_lake: ", data_lake);
+  console.log("created_data_lake: ", created_data_lake);
 
   console.log("Time taken for fetching data: ", stop1());
 
-  // console.log("data_lake: ", data_lake['customer_details']['crm__customers']['data_pool']);
+  if (!initial_execute) {
+    // fetching all created data from Service Titan's API
+    const stop1 = startStopwatch("data fetching");
+    await fetch_main_data(
+      modified_data_lake,
+      instance_details,
+      main_api_list,
+      params_header_for_modification,
+      hvac_tables
+    ); // taking 3 mins to fetch all data
+
+    console.log("modified_data_lake: ", modified_data_lake);
+
+    console.log("Time taken for fetching data: ", stop1());
+  }
 
   // await find_total_length(data_lake);
 
-  await azure_sql_operations(data_lake, Object.keys(data_lake));
+  await azure_sql_operations(
+    created_data_lake,
+    modified_data_lake,
+    Object.keys(hvac_tables)
+  );
 }
 
 async function flush_data_pool(is_initial_execute) {
@@ -6519,10 +6743,12 @@ async function auto_update() {
   console.log("auto_update callingg");
 
   // Get the current date and time // Calculate the next hour
-  const previous_batch_next_day = new Date(params_header["createdBefore"]);
+  const previous_batch_next_day = new Date(
+    params_header_for_creation["createdBefore"]
+  );
   previous_batch_next_day.setDate(previous_batch_next_day.getDate() + 1);
 
-  console.log("finished batch: ", params_header["createdBefore"]);
+  console.log("finished batch: ", params_header_for_creation["createdBefore"]);
   console.log("next batch: ", previous_batch_next_day);
 
   const now = new Date();
@@ -6547,8 +6773,10 @@ async function auto_update() {
 
     now.setUTCHours(7, 0, 0, 0);
 
-    params_header["createdBefore"] = now.toISOString();
-    console.log("params_header: ", params_header);
+    initial_execute = false;
+
+    params_header_for_creation["createdBefore"] = now.toISOString();
+    console.log("params_header_for_creation: ", params_header_for_creation);
 
     should_auto_update = true;
   }
@@ -6567,7 +6795,9 @@ async function orchestrate() {
     console.log("===========================================");
     console.log("starting pipeline");
     console.log("should_auto_update: before", should_auto_update);
-    await flush_data_pool(!should_auto_update);
+    if (initial_execute) {
+      await flush_data_pool(!should_auto_update);
+    }
     await start_pipeline();
     console.log("should_auto_update: after", should_auto_update);
   } while (should_auto_update);
