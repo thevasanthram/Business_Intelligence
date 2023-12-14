@@ -1489,7 +1489,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       address_zip: {
-        data_type: "NVARCHAR",
+        data_type: "INT",
         constraint: { nullable: false },
       },
       acutal_address_zip: {

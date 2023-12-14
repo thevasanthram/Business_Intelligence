@@ -405,7 +405,7 @@ CREATE TABLE invoice (
   address_city NVARCHAR(MAX) NULL,
   address_state NVARCHAR(MAX) NULL,
   address_country NVARCHAR(MAX) NULL,
-  address_zip NVARCHAR(MAX) NOT NULL,
+  address_zip INT NOT NULL,
   acutal_address_zip NVARCHAR(MAX) NULL,
   [address] NVARCHAR(MAX) NULL,
   customer_id INT NOT NULL,
