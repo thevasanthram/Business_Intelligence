@@ -5497,8 +5497,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        console.log("unique_us_zip_codes: ", unique_us_zip_codes);
-
         Object.keys(invoice_data_pool).map((record_id) => {
           const record = invoice_data_pool[record_id];
 
@@ -5546,7 +5544,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let address_unit = "default";
           let address_city = "default";
           let address_state = "default";
-          let address_zip = "57483";
+          let address_zip = "";
           let acutal_address_zip = "57483";
           let address_country = "default";
           if (record["locationAddress"]) {
@@ -5569,13 +5567,14 @@ async function data_processor(data_lake, sql_request, table_list) {
               ? record["locationAddress"]["zip"]
               : "57483";
 
-            console.log(
-              'record["locationAddress"]["zip"]: ',
-              typeof record["locationAddress"]["zip"],
-              record["locationAddress"]["zip"]
-            );
-            if (unique_us_zip_codes[record["locationAddress"]["zip"]]) {
-              address_zip = address_zip;
+            address_zip = record["locationAddress"]["zip"];
+
+            if (address_zip) {
+              address_zip = address_zip.split("-")[0];
+            }
+
+            if (unique_us_zip_codes[address_zip]) {
+              address_zip = record["locationAddress"]["zip"];
             } else {
               address_zip = "57483";
             }

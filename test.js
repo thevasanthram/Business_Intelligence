@@ -1,9 +1,3 @@
-let obj = {
-  '1': 1
-}
+let obj = null;
 
-if(obj[1]){
-  console.log('present')
-}else{
-  console.log('not present')
-}
+console.log(obj.split('-'))
