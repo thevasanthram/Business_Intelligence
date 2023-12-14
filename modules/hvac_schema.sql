@@ -11,9 +11,11 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'us_cities')
 BEGIN
 CREATE TABLE us_cities (
-  zip_code NVARCHAR(MAX) PRIMARY KEY,
-  latitude DECIMAL(9, 6) NULL,
-  longitude DECIMAL(9, 6) NULL,
+  zip_code INT PRIMARY KEY,
+  -- latitude DECIMAL(9, 6) NULL,
+  -- longitude DECIMAL(9, 6) NULL,
+  latitude NVARCHAR(MAX) NULL,
+  longitude NVARCHAR(MAX) NULL,
   city NVARCHAR(MAX) NULL,
   [state] NVARCHAR(MAX) NULL,
   county NVARCHAR(MAX) NULL,

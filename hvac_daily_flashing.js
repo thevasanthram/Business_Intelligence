@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: createdBeforeTime.toISOString(),
+  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -93,15 +93,15 @@ const hvac_tables = {
   us_cities: {
     columns: {
       zip_code: {
-        data_type: "NVARCHAR",
+        data_type: "INT",
         constraint: { primary: true, nullable: false },
       },
       latitude: {
-        data_type: "DECIMAL96",
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       longitude: {
-        data_type: "DECIMAL96",
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       city: {
@@ -1906,14 +1906,17 @@ async function fetch_main_data(
             };
           } else if (api_key == "us_cities") {
             data_lake[api_key] = {
-              data_pool: {},
+              zip_codes: {
+                data_pool: {},
+              },
             };
             us_cities_list.map((city) => {
-              const zip_code_index = city["zip_code"];
-              data_lake[api_key]["data_pool"][zip_code_index] = {
-                zip_code: city["zip_code"],
-                latitude: city["latitude"],
-                longitude: city["longitude"],
+              const zip_code_index = Number(city["zip_code"]);
+
+              data_lake[api_key]["zip_codes"]["data_pool"][zip_code_index] = {
+                zip_code: Number(city["zip_code"]),
+                latitude: String(city["latitude"]),
+                longitude: String(city["longitude"]),
                 city: city["city"],
                 state: city["state"],
                 county: city["county"],
@@ -2140,13 +2143,13 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "us_cities": {
         const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["data_pool"];
+        const data_pool = data_lake[api_name]["zip_codes"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
         // await hvac_flat_data_insertion(
         //   sql_request,
         //   Object.values(data_pool),
-        //   header_data,
+        //   Object.keys(header_data),
         //   table_name
         // );
 
@@ -2172,6 +2175,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        delete data_lake[api_name];
 
         break;
       }
