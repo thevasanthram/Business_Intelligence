@@ -1919,7 +1919,7 @@ async function fetch_main_data(
             us_cities_list.map((city) => {
               const zip_code_index = city["zip_code"];
 
-              unique_us_zip_codes[zip_code_index] = {};
+              unique_us_zip_codes[zip_code_index] = 1;
 
               data_lake[api_key]["zip_codes"]["data_pool"][zip_code_index] = {
                 zip_code: Number(city["zip_code"]),
