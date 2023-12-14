@@ -13,6 +13,7 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
+const us_cities_list = require("./modules/us_cities");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -84,6 +85,34 @@ const hvac_tables = {
         constraint: { primary: true, nullable: false },
       },
       legal_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  us_cities: {
+    columns: {
+      zip_code: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      latitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      county: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -1559,6 +1588,9 @@ const hvac_tables_responses = {
   legal_entity: {
     status: "",
   },
+  us_cities: {
+    status: "",
+  },
   business_unit: {
     status: "",
   },
@@ -1634,6 +1666,11 @@ const main_api_list = {
   legal_entity: [
     {
       table_name: "legal_entity",
+    },
+  ],
+  us_cities: [
+    {
+      table_name: "us_cities",
     },
   ],
   business_unit: [
@@ -1867,6 +1904,21 @@ async function fetch_main_data(
                 3: { id: 3, legal_name: "NMI" },
               },
             };
+          } else if (api_key == "us_cities") {
+            data_lake[api_key] = {
+              data_pool: {},
+            };
+            us_cities_list.map((city) => {
+              const zip_code_index = city["zip_code"];
+              data_lake[api_key]["data_pool"][zip_code_index] = {
+                zip_code: city["zip_code"],
+                latitude: city["latitude"],
+                longitude: city["longitude"],
+                city: city["city"],
+                state: city["state"],
+                county: city["county"],
+              };
+            });
           } else {
             const api_list = main_api_list[api_key];
 
@@ -1985,6 +2037,7 @@ async function azure_sql_operations(data_lake, table_list) {
       end_time,
       total_minutes,
       legal_entity,
+      us_cities,
       business_unit,
       campaigns,
       bookings,
@@ -2011,7 +2064,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2073,6 +2126,44 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
+      case "us_cities": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   Object.values(data_pool),
+        //   header_data,
+        //   table_name
+        // );
+
+        if (initial_execute) {
+          do {
+            hvac_tables_responses["us_cities"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                Object.values(data_pool),
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["us_cities"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET us_cities = '${hvac_tables_responses["us_cities"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
