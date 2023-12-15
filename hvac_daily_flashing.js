@@ -5570,7 +5570,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_zip = record["locationAddress"]["zip"];
 
             if (address_zip) {
-              address_zip = Number(address_zip.split("-")[0]);
+              try {
+                address_zip = Number(address_zip.split("-")[0]);
+              } catch (err) {
+                console.log("address_zip: ", address_zip);
+                console.log("address_zip:  ", typeof address_zip);
+              }
             }
 
             if (unique_us_zip_codes[address_zip]) {
