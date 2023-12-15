@@ -5567,10 +5567,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               ? record["locationAddress"]["zip"]
               : "57483";
 
-            address_zip = record["locationAddress"]["zip"];
+            let temp_address_zip = record["locationAddress"]["zip"];
 
+            if (record_id == 21001502) {
+              console.log("21001502");
+              console.log(
+                "address_zip: ",
+                typeof temp_address_zip,
+                temp_address_zip
+              );
+            }
             if (address_zip) {
-              address_zip = address_zip.split("-")[0];
+              address_zip = temp_address_zip.split("-")[0];
+            } else {
+              address_zip = record["locationAddress"]["zip"];
             }
 
             if (unique_us_zip_codes[address_zip]) {
