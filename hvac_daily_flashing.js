@@ -2166,6 +2166,15 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (initial_execute) {
+          data_pool.push({
+            zip_code: 57483,
+            latitude: "23.6345",
+            longitude: "102.5528",
+            city: "Mexico",
+            state: "Mexico",
+            county: "Mexico",
+          });
+
           do {
             hvac_tables_responses["us_cities"]["status"] =
               await hvac_data_insertion(
@@ -5580,8 +5589,8 @@ async function data_processor(data_lake, sql_request, table_list) {
               console.log("address_zip: ", typeof address_zip, address_zip);
 
               console.log(
-                "unique_us_zip_codes[address_zip]: ",
-                unique_us_zip_codes[address_zip]
+                "Object.keys(unique_us_zip_codes).includes(String(address_zip)): ",
+                Object.keys(unique_us_zip_codes).includes(String(address_zip))
               );
 
               console.log(
@@ -5601,7 +5610,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               address_zip = Number(address_zip.split("-")[0]);
             }
 
-            if (unique_us_zip_codes[address_zip]) {
+            if (
+              Object.keys(unique_us_zip_codes).includes(String(address_zip))
+            ) {
               address_zip = Number(record["locationAddress"]["zip"]);
             } else {
               address_zip = 57483;
