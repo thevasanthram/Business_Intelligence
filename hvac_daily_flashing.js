@@ -5544,7 +5544,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let address_unit = "default";
           let address_city = "default";
           let address_state = "default";
-          let address_zip = "";
+          let address_zip = 57483;
           let acutal_address_zip = "57483";
           let address_country = "default";
           if (record["locationAddress"]) {
@@ -5567,7 +5567,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               ? record["locationAddress"]["zip"]
               : "57483";
 
-            address_zip = record["locationAddress"]["zip"];
+            address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : 57483;
 
             if (record_id == 21001502) {
               console.log(
@@ -5591,9 +5593,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                 'address_zip.split("-")[0]: ',
                 address_zip.split("-")[0]
               );
+
+              console.log(Object.keys(unique_us_zip_codes));
             }
 
-            if (address_zip) {
+            if (isNaN(address_zip)) {
               address_zip = Number(address_zip.split("-")[0]);
             }
 
