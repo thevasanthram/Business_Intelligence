@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: "2023-08-01T00:00:00.00Z", //createdBeforeTime.toISOString()
+  createdBefore: "2023-12-01T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -5618,7 +5618,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
 
             if (unique_us_zip_codes[String(address_zip)]) {
-              address_zip = Number(record["locationAddress"]["zip"]);
+              address_zip = Number(address_zip);
             } else {
               address_zip = 57483;
             }
