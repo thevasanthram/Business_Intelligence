@@ -5606,9 +5606,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             //   console.log(Object.keys(unique_us_zip_codes));
             // }
 
-            if (isNaN(address_zip)) {
+            if (typeof address_zip == "string") {
               address_zip = Number(address_zip.split("-")[0]);
-              if (isNaN(address_zip)) {
+              if (typeof address_zip == "string") {
                 address_zip = 57483;
               }
             }
@@ -5622,22 +5622,22 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          // if (isNaN(address_zip)) {
-          //   console.log("invoice_id: ", record_id);
-          //   console.log(
-          //     'record["locationAddress"]["zip"]: ',
-          //     record["locationAddress"]["zip"]
-          //   );
-          //   console.log(
-          //     "unique_us_zip_codes[address_zip]: ",
-          //     !!unique_us_zip_codes[address_zip]
-          //   );
-          //   console.log(
-          //     'address_zip.split("-")[0]: ',
-          //     address_zip.split("-")[0]
-          //   );
-          //   console.log("address_zip: ", address_zip);
-          // }
+          if (isNaN(address_zip)) {
+            console.log("invoice_id: ", record_id);
+            console.log(
+              'record["locationAddress"]["zip"]: ',
+              record["locationAddress"]["zip"]
+            );
+            console.log(
+              "unique_us_zip_codes[address_zip]: ",
+              !!unique_us_zip_codes[address_zip]
+            );
+            console.log(
+              'address_zip.split("-")[0]: ',
+              address_zip.split("-")[0]
+            );
+            console.log("address_zip: ", address_zip);
+          }
 
           if (address_zip != 57483) {
             console.log("======================================");
