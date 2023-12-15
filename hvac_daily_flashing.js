@@ -5608,6 +5608,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             if (isNaN(address_zip)) {
               address_zip = Number(address_zip.split("-")[0]);
+              if (isNaN(address_zip)) {
+                address_zip = 57483;
+              }
             }
 
             if (
