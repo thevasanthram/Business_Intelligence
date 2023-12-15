@@ -2105,7 +2105,7 @@ async function data_processor(data_lake, sql_request, table_list) {
   for (
     let api_count = 1;
     api_count < table_list.length;
-    api_count = +api_count + 1
+    api_count = api_count + 16
   ) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
