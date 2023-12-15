@@ -5569,10 +5569,35 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             address_zip = record["locationAddress"]["zip"];
 
+            if (record_id == 21001502) {
+              console.log(
+                'record["locationAddress"]["zip"]: ',
+                record["locationAddress"]["zip"]
+              );
+
+              console.log("address_zip: ", typeof address_zip, address_zip);
+
+              console.log(
+                "unique_us_zip_codes[address_zip]: ",
+                unique_us_zip_codes[address_zip]
+              );
+
+              console.log(
+                'Number(record["locationAddress"]["zip"]);: ',
+                Number(record["locationAddress"]["zip"])
+              );
+
+              console.log(
+                'address_zip.split("-")[0]: ',
+                address_zip.split("-")[0]
+              );
+            }
+
             if (address_zip) {
               try {
                 address_zip = Number(address_zip.split("-")[0]);
               } catch (err) {
+                console.log("errrrrrrrpoooor");
                 console.log("address_zip: ", address_zip);
                 console.log("address_zip:  ", typeof address_zip);
               }
@@ -5585,22 +5610,22 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          if (isNaN(address_zip)) {
-            console.log("invoice_id: ", record_id);
-            console.log(
-              'record["locationAddress"]["zip"]: ',
-              record["locationAddress"]["zip"]
-            );
-            console.log(
-              "unique_us_zip_codes[address_zip]: ",
-              !!unique_us_zip_codes[address_zip]
-            );
-            console.log(
-              'address_zip.split("-")[0]: ',
-              address_zip.split("-")[0]
-            );
-            console.log("address_zip: ", address_zip);
-          }
+          // if (isNaN(address_zip)) {
+          //   console.log("invoice_id: ", record_id);
+          //   console.log(
+          //     'record["locationAddress"]["zip"]: ',
+          //     record["locationAddress"]["zip"]
+          //   );
+          //   console.log(
+          //     "unique_us_zip_codes[address_zip]: ",
+          //     !!unique_us_zip_codes[address_zip]
+          //   );
+          //   console.log(
+          //     'address_zip.split("-")[0]: ',
+          //     address_zip.split("-")[0]
+          //   );
+          //   console.log("address_zip: ", address_zip);
+          // }
 
           let address_detail = [
             address_street,
