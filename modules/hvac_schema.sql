@@ -407,7 +407,6 @@ CREATE TABLE invoice (
   address_country NVARCHAR(MAX) NULL,
   address_zip INT NOT NULL,
   acutal_address_zip NVARCHAR(MAX) NULL,
-  [address] NVARCHAR(MAX) NULL,
   customer_id INT NOT NULL,
   actual_customer_id INT NULL,
   customer_name NVARCHAR(MAX) NULL,
