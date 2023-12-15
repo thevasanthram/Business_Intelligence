@@ -5607,11 +5607,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             // }
 
             if (typeof address_zip == "string") {
-              if (address_zip == "48095-2859") {
-                console.log("entierng;;; ", address_zip, typeof address_zip);
-              }
-              address_zip = Number(address_zip.split("-")[0]);
-              if (typeof address_zip == "string") {
+              const numericValue = Number(address_zip.split("-")[0]);
+              if (!isNaN(numericValue)) {
+                // If the conversion is successful and numericValue is not NaN, update address_zip
+                address_zip = numericValue;
+              } else {
+                // Handle the case where the conversion fails
                 address_zip = 57483;
               }
             }
