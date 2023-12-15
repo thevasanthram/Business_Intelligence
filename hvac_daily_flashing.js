@@ -5617,9 +5617,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
             }
 
-            if (unique_us_zip_codes[String(address_zip)]) {
-              address_zip = Number(address_zip);
-            } else {
+            if (!unique_us_zip_codes[String(address_zip)]) {
               address_zip = 57483;
             }
           }
