@@ -5624,19 +5624,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          // if (isNaN(address_zip)) {
-          //   console.log("invoice_id: ", record_id);
-          //   console.log(
-          //     'record["locationAddress"]["zip"]: ',
-          //     record["locationAddress"]["zip"]
-          //   );
-          //   console.log(
-          //     "unique_us_zip_codes[address_zip]: ",
-          //     Object.keys(unique_us_zip_codes).includes(String(address_zip))
-          //   );
+          if (isNaN(address_zip)) {
+            console.log("invoice_id: ", record_id);
+            console.log(
+              'record["locationAddress"]["zip"]: ',
+              record["locationAddress"]["zip"]
+            );
+            console.log(
+              "unique_us_zip_codes[address_zip]: ",
+              Object.keys(unique_us_zip_codes).includes(String(address_zip))
+            );
 
-          //   console.log("address_zip: ", address_zip);
-          // }
+            console.log("address_zip: ", address_zip);
+          }
 
           let address_detail = [
             address_street,
