@@ -1917,7 +1917,7 @@ async function fetch_main_data(
               },
             };
             us_cities_list.map((city) => {
-              const zip_code_index = city["zip_code"];
+              const zip_code_index = Number(city["zip_code"]);
 
               unique_us_zip_codes[zip_code_index] = 1;
 
@@ -5594,13 +5594,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
 
             if (address_zip) {
-              try {
-                address_zip = Number(address_zip.split("-")[0]);
-              } catch (err) {
-                console.log("errrrrrrrpoooor");
-                console.log("address_zip: ", address_zip);
-                console.log("address_zip:  ", typeof address_zip);
-              }
+              address_zip = Number(address_zip.split("-")[0]);
             }
 
             if (unique_us_zip_codes[address_zip]) {
