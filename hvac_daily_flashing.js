@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
-  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
+  createdBefore: "2023-08-01T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -5578,6 +5578,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             } else {
               address_zip = 57483;
             }
+          }
+
+          if (isNaN(address_zip)) {
+            console.log("invoice_id: ", record_id);
+            console.log("address_zip: ", address_zip);
           }
 
           let address_detail = [
