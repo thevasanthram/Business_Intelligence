@@ -5632,15 +5632,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               "unique_us_zip_codes[address_zip]: ",
               !!unique_us_zip_codes[address_zip]
             );
-            console.log(
-              'address_zip.split("-")[0]: ',
-              address_zip.split("-")[0]
-            );
-            console.log("address_zip: ", address_zip);
-          }
 
-          if (address_zip != 57483) {
-            console.log("======================================");
             console.log("address_zip: ", address_zip);
           }
 
