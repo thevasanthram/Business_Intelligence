@@ -2102,7 +2102,11 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (
+    let api_count = 1;
+    api_count < table_list.length;
+    api_count = +api_count + 1
+  ) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
 
@@ -5570,9 +5574,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
 
             if (unique_us_zip_codes[address_zip]) {
-              address_zip = record["locationAddress"]["zip"];
+              address_zip = Number(record["locationAddress"]["zip"]);
             } else {
-              address_zip = "57483";
+              address_zip = 57483;
             }
           }
 
