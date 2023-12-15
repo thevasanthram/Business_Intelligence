@@ -2166,14 +2166,14 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (initial_execute) {
-          data_pool.push({
+          data_pool[57483] = {
             zip_code: 57483,
             latitude: "23.6345",
             longitude: "102.5528",
             city: "Mexico",
             state: "Mexico",
             county: "Mexico",
-          });
+          };
 
           do {
             hvac_tables_responses["us_cities"]["status"] =
