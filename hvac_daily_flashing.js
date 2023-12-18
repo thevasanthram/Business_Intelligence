@@ -1915,7 +1915,9 @@ async function fetch_main_data(
             us_cities_list.map((city) => {
               const zip_code_index = Number(city["zip_code"]);
 
-              unique_us_zip_codes[zip_code_index] = 1;
+              unique_us_zip_codes[zip_code_index] = {
+                city: city["city"],
+              };
 
               data_lake[api_key]["zip_codes"]["data_pool"][zip_code_index] = {
                 zip_code: Number(city["zip_code"]),
@@ -2160,8 +2162,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           data_pool[57483] = {
             zip_code: 57483,
-            latitude: "23.6345",
-            longitude: "102.5528",
+            latitude: "19.432608",
+            longitude: "-99.133209",
             city: "Mexico",
             state: "Mexico",
             county: "Mexico",
@@ -5545,6 +5547,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let address_zip = 57483;
           let acutal_address_zip = "57483";
           let address_country = "default";
+          let city = "Mexico";
           if (record["locationAddress"]) {
             address_street = record["locationAddress"]["street"]
               ? record["locationAddress"]["street"]
@@ -5582,6 +5585,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             if (!unique_us_zip_codes[String(address_zip)]) {
               address_zip = 57483;
+            } else {
+              city = unique_us_zip_codes[String(address_zip)]["city"];
             }
           }
 
