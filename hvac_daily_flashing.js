@@ -5540,33 +5540,33 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          let address_street = "default";
-          let address_unit = "default";
-          let address_city = "default";
-          let address_state = "default";
+          let address_street = "";
+          let address_unit = "";
+          let address_city = "";
+          let address_state = "";
           let address_zip = 57483;
-          let acutal_address_zip = "57483";
-          let address_country = "default";
+          let acutal_address_zip = "";
+          let address_country = "";
           let city = "Mexico";
           if (record["locationAddress"]) {
             address_street = record["locationAddress"]["street"]
               ? record["locationAddress"]["street"]
-              : "default";
+              : "";
             address_unit = record["locationAddress"]["unit"]
               ? record["locationAddress"]["unit"]
-              : "default";
+              : "";
             address_city = record["locationAddress"]["city"]
               ? record["locationAddress"]["city"]
-              : "default";
+              : "";
             address_state = record["locationAddress"]["state"]
               ? record["locationAddress"]["state"]
-              : "default";
+              : "";
             address_country = record["locationAddress"]["country"]
               ? record["locationAddress"]["country"]
-              : "default";
+              : "";
             acutal_address_zip = record["locationAddress"]["zip"]
               ? record["locationAddress"]["zip"]
-              : "57483";
+              : "";
 
             address_zip = record["locationAddress"]["zip"]
               ? record["locationAddress"]["zip"]
