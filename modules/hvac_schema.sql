@@ -125,10 +125,21 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
 BEGIN
 CREATE TABLE projects(
   id INT PRIMARY KEY,
-  number NVARCHAR(MAX) NULL,
-  name NVARCHAR(MAX) NULL,
-  status NVARCHAR(MAX) NULL,
-  subStatus NVARCHAR(MAX) NULL,
+  [number] NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
+  [status] NVARCHAR(MAX) NULL,
+  billed_amount DECIMAL(10, 2) NULL,
+  po_cost DECIMAL(10, 2) NULL,
+  equipment_cost DECIMAL(10, 2) NULL,
+  material_cost DECIMAL(10, 2) NULL,
+  labor_cost DECIMAL(10, 2) NULL,
+  labor_hours DECIMAL(10, 2) NULL,
+  burden DECIMAL(10, 2) NULL,
+  accounts_receivable DECIMAL(10, 2) NULL,
+  expense DECIMAL(10, 2) NULL,
+  income DECIMAL(10, 2) NULL,
+  current_liability DECIMAL(10, 2) NULL,
+  membership_liability DECIMAL(10, 2) NULL,
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
   location_id INT NOT NULL,
@@ -212,8 +223,6 @@ CREATE TABLE job_details (
   job_type_name NVARCHAR(MAX) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
   job_completion_time DATETIME2 NULL,
   business_unit_id INT NOT NULL,
   actual_business_unit_id INT NULL,
@@ -231,7 +240,6 @@ CREATE TABLE job_details (
   booking_id INT NOT NULL,
   actual_booking_id INT NULL,
   sold_by_id INT NULL,
-  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
@@ -241,27 +249,18 @@ CREATE TABLE job_details (
 );
 END;
 
--- appointments
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
+--project_job_details
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='project_job_details')
 BEGIN
-CREATE TABLE appointments (
-  id INT PRIMARY KEY,
+CREATE TABLE project_job_details(
+  project_id INT NOT NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
-  appointmentNumber NVARCHAR(MAX) NULL,
-  [start] DATETIME2 NULL,
-  [end] DATETIME2 NULL,
-  arrivalWindowStart DATETIME2 NULL,
-  arrivalWindowEnd DATETIME2 NULL,
-  [status] NVARCHAR(MAX) NULL,
-  createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
-);
+)
 END;
+
 
 -- sales_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
@@ -293,6 +292,28 @@ CREATE TABLE sales_details (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
+  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
+
+-- appointments
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
+BEGIN
+CREATE TABLE appointments (
+  id INT PRIMARY KEY,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  appointmentNumber NVARCHAR(MAX) NULL,
+  [start] DATETIME2 NULL,
+  [end] DATETIME2 NULL,
+  arrivalWindowStart DATETIME2 NULL,
+  arrivalWindowEnd DATETIME2 NULL,
+  [status] NVARCHAR(MAX) NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
 );
 END;
@@ -417,7 +438,6 @@ CREATE TABLE invoice (
   FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
 );
 END;
-
 
 -- cogs_labor
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_labor')
@@ -591,6 +611,7 @@ CREATE TABLE auto_update (
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
+  project_job_details NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
   appointments NVARCHAR(MAX) NULL,

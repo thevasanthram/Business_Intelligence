@@ -394,10 +394,55 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      subStatus: {
-        data_type: "NVARCHAR",
+      billed_amount: {
+        data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      equipment_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      material_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      burden: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+
       customer_details_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -662,14 +707,6 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      project_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_project_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
       job_completion_time: {
         data_type: "DATETIME2",
         constraint: { nullable: true },
@@ -735,62 +772,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       sold_by_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  appointments: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      appointmentNumber: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      start: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      end: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      arrivalWindowStart: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      arrivalWindowEnd: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      status: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      customer_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_customer_details_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -888,6 +869,63 @@ const hvac_tables = {
       },
     },
   },
+  appointments: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      appointmentNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      end: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowStart: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowEnd: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
+
   vendor: {
     columns: {
       id: {
@@ -1734,18 +1772,18 @@ const main_api_list = {
       table_name: "job_details",
     },
   ],
-  appointments: [
-    {
-      api_group: "jpm",
-      api_name: "appointments",
-      table_name: "appointments",
-    },
-  ],
   sales_details: [
     {
       api_group: "sales",
       api_name: "estimates",
       table_name: "sales_details",
+    },
+  ],
+  appointments: [
+    {
+      api_group: "jpm",
+      api_name: "appointments",
+      table_name: "appointments",
     },
   ],
   vendor: [
@@ -1797,9 +1835,10 @@ const main_api_list = {
     {
       api_group: "accounting",
       api_name: "invoices",
-      table_name: ["business_unit", "cogs_equipment", "cogs_material"],
+      table_name: "invoices",
     },
   ],
+
   purchase_order: [
     {
       api_group: "inventory",
@@ -2054,6 +2093,7 @@ async function azure_sql_operations(data_lake, table_list) {
       call_details,
       [location],
       projects,
+      project_job_details,
       job_details,
       appointments,
       sales_details,
@@ -2073,7 +2113,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2100,6 +2140,7 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
+  let invoice_cache = {};
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
@@ -2997,15 +3038,972 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
+        const jobs_data_pool =
+          data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const customer_data_pool =
           data_lake["customer_details"]["crm__customers"]["data_pool"];
         const location_data_pool =
           data_lake["location"]["crm__locations"]["data_pool"];
+        const gross_pay_items_data_pool = JSON.parse(
+          JSON.stringify(
+            data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"]
+          )
+        );
+        const payrolls_data_pool =
+          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+        const purchase_order_data_pool = JSON.parse(
+          JSON.stringify(
+            data_lake["purchase_order"]["inventory__purchase-orders"][
+              "data_pool"
+            ]
+          )
+        );
+        const sku_details_data_pool = {
+          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
+        };
 
         let final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
+
+        const invoice_po_and_gpi_data = {};
+
+        const invoice_dummy_values = {
+          po_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          labor_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          labor_hours: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          burden_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+        };
+
+        const projects_po_and_gpi_data = {};
+
+        const project_total_data = {};
+
+        const project_dummy_values = {
+          po_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          labor_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          labor_hours: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          burden_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          billed_amount: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          equipment_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          material_cost: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          accounts_receivable: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          expense: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          income: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          current_liability: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          membership_liability: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+        };
+
+        // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
+        Object.keys(purchase_order_data_pool).map((po_record_id) => {
+          const po_record = purchase_order_data_pool[po_record_id];
+
+          if (po_record["status"] != "Canceled") {
+            // data accumulation for invoice table
+            if (po_record["invoiceId"] != null) {
+              if (!invoice_po_and_gpi_data[po_record["invoiceId"]]) {
+                invoice_po_and_gpi_data[po_record["invoiceId"]] = {
+                  po_total: 0,
+                  labor_cost: 0,
+                  labor_hours: 0,
+                  burden: 0,
+                };
+              }
+
+              if (!invoice_data_pool[po_record["invoiceId"]]) {
+                invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
+                  po_record["total"];
+              } else {
+                invoice_po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+                  po_record["total"];
+              }
+            } else {
+              invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
+                po_record["total"];
+            }
+
+            // data accumulation for projects table
+            if (po_record["projectId"] != null) {
+              if (!projects_po_and_gpi_data[po_record["projectId"]]) {
+                projects_po_and_gpi_data[po_record["projectId"]] = {
+                  po_total: 0,
+                  labor_cost: 0,
+                  labor_hours: 0,
+                  burden: 0,
+                };
+              }
+
+              if (!data_pool[po_record["projectId"]]) {
+                project_dummy_values["po_cost"][po_record["instance_id"]] +=
+                  po_record["total"];
+              } else {
+                projects_po_and_gpi_data[po_record["projectId"]]["po_total"] +=
+                  po_record["total"];
+              }
+            } else {
+              project_dummy_values["po_cost"][po_record["instance_id"]] +=
+                po_record["total"];
+            }
+          }
+        });
+
+        // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
+
+        Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
+          const gpi_record = gross_pay_items_data_pool[gpi_record_id];
+          // data accumulation for invoice table
+          if (gpi_record["invoiceId"] != null) {
+            if (!invoice_po_and_gpi_data[gpi_record["invoiceId"]]) {
+              invoice_po_and_gpi_data[gpi_record["invoiceId"]] = {
+                po_total: 0,
+                labor_cost: 0,
+                labor_hours: 0,
+                burden: 0,
+              };
+            }
+
+            if (!invoice_data_pool[gpi_record["invoiceId"]]) {
+              invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
+                gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0;
+
+              invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
+            } else {
+              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
+                gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0;
+
+              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
+            }
+          } else {
+            invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+              gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+            invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
+              gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0;
+
+            invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+              (gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0) *
+              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                : 0);
+          }
+
+          // data accumulation for projects table
+          if (gpi_record["projectId"] != null) {
+            if (!projects_po_and_gpi_data[gpi_record["projectId"]]) {
+              projects_po_and_gpi_data[gpi_record["projectId"]] = {
+                po_total: 0,
+                labor_cost: 0,
+                labor_hours: 0,
+                burden: 0,
+              };
+            }
+
+            if (!data_pool[gpi_record["projectId"]]) {
+              project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
+                gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0;
+
+              project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
+            } else {
+              projects_po_and_gpi_data[gpi_record["projectId"]]["labor_cost"] +=
+                gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+              projects_po_and_gpi_data[gpi_record["projectId"]][
+                "labor_hours"
+              ] += gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0;
+
+              projects_po_and_gpi_data[gpi_record["projectId"]]["burden"] +=
+                (gpi_record["paidDurationHours"]
+                  ? gpi_record["paidDurationHours"]
+                  : 0) *
+                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  : 0);
+            }
+          } else {
+            project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+              gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+            project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
+              gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0;
+
+            project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+              (gpi_record["paidDurationHours"]
+                ? gpi_record["paidDurationHours"]
+                : 0) *
+              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                : 0);
+          }
+        });
+
+        // caching for invoice table.. (optimized calculation)
+        invoice_cache["po_and_gpi_data"] = JSON.parse(
+          JSON.stringify(invoice_po_and_gpi_data)
+        );
+        invoice_cache["dummy_values"] = JSON.parse(
+          JSON.stringify(invoice_dummy_values)
+        );
+
+        invoice_po_and_gpi_data = {};
+        invoice_dummy_values = {};
+
+        let invoice_final_data_pool = [];
+        let cogs_material_final_data_pool = [];
+        let cogs_equipment_final_data_pool = [];
+        let cogs_services_final_data_pool = [];
+        let gross_profit_final_data_pool = [];
+
+        Object.keys(invoice_data_pool).map((record_id) => {
+          const record = invoice_data_pool[record_id];
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["instance_id"];
+          if (record["job"]) {
+            actual_job_details_id = record["job"]["id"];
+            if (jobs_data_pool[record["job"]["id"]]) {
+              job_details_id = record["job"]["id"];
+            }
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let location_id = record["instance_id"];
+          let actual_location_id = record["instance_id"];
+          if (record["location"]) {
+            actual_location_id = record["location"]["id"];
+            if (location_data_pool[record["location"]["id"]]) {
+              location_id = record["location"]["id"];
+            }
+          }
+
+          let customer_id = record["instance_id"];
+          let actual_customer_id = record["instance_id"];
+          let customer_name = "default";
+          if (record["customer"]) {
+            actual_customer_id = record["customer"]["id"];
+            customer_name = record["customer"]["name"]
+              ? record["customer"]["name"]
+              : "default";
+            if (customer_data_pool[record["customer"]["id"]]) {
+              customer_id = record["customer"]["id"];
+            }
+          }
+
+          let address_street = "";
+          let address_unit = "";
+          let address_city = "";
+          let address_state = "";
+          let address_zip = 57483;
+          let acutal_address_zip = "";
+          let address_country = "";
+          let city = "Mexico";
+          if (record["locationAddress"]) {
+            address_street = record["locationAddress"]["street"]
+              ? record["locationAddress"]["street"]
+              : "";
+            address_unit = record["locationAddress"]["unit"]
+              ? record["locationAddress"]["unit"]
+              : "";
+            address_city = record["locationAddress"]["city"]
+              ? record["locationAddress"]["city"]
+              : "";
+            address_state = record["locationAddress"]["state"]
+              ? record["locationAddress"]["state"]
+              : "";
+            address_country = record["locationAddress"]["country"]
+              ? record["locationAddress"]["country"]
+              : "";
+            acutal_address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : "";
+
+            address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : 57483;
+
+            if (typeof address_zip == "string") {
+              const numericValue = Number(address_zip.split("-")[0]);
+              if (!isNaN(numericValue)) {
+                // If the conversion is successful and numericValue is not NaN, update address_zip
+                address_zip = numericValue;
+              } else {
+                // Handle the case where the conversion fails
+                address_zip = 57483;
+              }
+            }
+
+            if (!unique_us_zip_codes[String(address_zip)]) {
+              address_zip = 57483;
+            } else {
+              city = unique_us_zip_codes[String(address_zip)]["city"];
+            }
+          }
+
+          let invoice_date = "2000-01-01T00:00:00.00Z";
+
+          if (record["invoiceDate"]) {
+            if (
+              new Date(record["invoiceDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              invoice_date = record["invoiceDate"];
+            }
+          } else {
+            invoice_date = "2001-01-01T00:00:00.00Z";
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let depositedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["depositedOn"]) {
+            if (
+              new Date(record["depositedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              depositedOn = record["depositedOn"];
+            }
+          } else {
+            depositedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          const js_date = new Date(invoice_date);
+
+          const current_date = new Date();
+
+          if (js_date > current_date) {
+            invoice_date = "2002-01-01T00:00:00.00Z";
+          }
+
+          let invoice_type_id = 0;
+          let invoice_type_name = "default_invoice";
+          if (record["invoiceType"]) {
+            invoice_type_id = record["invoiceType"]["id"];
+            invoice_type_name = record["invoiceType"]["name"];
+          }
+
+          // data accumulation for projects table
+          if (record["projectId"] != null) {
+            if (!project_total_data[record["projectId"]]) {
+              project_total_data[record["projectId"]] = {
+                billed_amount: 0,
+                equipment_cost: 0,
+                material_cost: 0,
+                accounts_receivable: 0,
+                expense: 0,
+                income: 0,
+                current_liability: 0,
+                membership_liability: 0,
+              };
+            }
+
+            // calculating billed amount
+            if (!data_pool[record["projectId"]]) {
+              project_dummy_values["billed_amount"][record["instance_id"]] +=
+                record["total"];
+            } else {
+              project_total_data[record["projectId"]]["billed_amount"] +=
+                record["total"];
+            }
+          } else {
+            project_dummy_values["billed_amount"][record["instance_id"]] +=
+              record["total"];
+          }
+
+          invoice_final_data_pool.push({
+            id: record["id"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            date: invoice_date,
+            dueDate: dueDate,
+            subtotal: record["subTotal"] ? record["subTotal"] : 0,
+            tax: record["salesTax"] ? record["salesTax"] : 0,
+            total: record["total"] ? record["total"] : 0,
+            balance: record["balance"] ? record["balance"] : 0,
+            depositedOn: depositedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            invoice_type_id: invoice_type_id,
+            invoice_type_name: invoice_type_name,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_country: address_country,
+            address_zip: address_zip,
+            acutal_address_zip: acutal_address_zip,
+            customer_id: customer_id,
+            actual_customer_id: actual_customer_id,
+            customer_name: customer_name,
+          });
+
+          let po_cost = 0;
+          let labor_cost = 0;
+          let labor_hours = 0;
+          let burden = 0;
+
+          try {
+            po_cost = invoice_po_and_gpi_data[record["id"]]["po_total"];
+            labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"];
+            labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"];
+            burden = invoice_po_and_gpi_data[record["id"]]["burden"];
+          } catch (err) {
+            // console.log("job_details_id: ", job_details_id);
+          }
+
+          let material_cost = 0;
+          let equipment_cost = 0;
+
+          let accounts_receivable = 0;
+          let expense = 0;
+          let income = 0;
+          let current_liability = 0;
+          let membership_liability = 0;
+          let default_val = 0;
+
+          if (record["items"]) {
+            record["items"].map((items_record) => {
+              let generalLedgerAccountid = 0;
+              let generalLedgerAccountname = "default";
+              let generalLedgerAccountnumber = 0;
+              let generalLedgerAccounttype = "default";
+              let generalLedgerAccountdetailType = "default";
+
+              if (items_record["generalLedgerAccount"]) {
+                generalLedgerAccountid =
+                  items_record["generalLedgerAccount"]["id"];
+                generalLedgerAccountname =
+                  items_record["generalLedgerAccount"]["name"];
+                generalLedgerAccountnumber =
+                  items_record["generalLedgerAccount"]["number"];
+                generalLedgerAccounttype =
+                  items_record["generalLedgerAccount"]["type"];
+                generalLedgerAccountdetailType =
+                  items_record["generalLedgerAccount"]["detailType"];
+              }
+
+              if (items_record["type"] == "Material") {
+                material_cost =
+                  material_cost + parseFloat(items_record["totalCost"]);
+
+                // for projects table
+                if (record["projectId"] != null) {
+                  // calculating material cost
+                  if (!data_pool[record["projectId"]]) {
+                    project_dummy_values["material_cost"][
+                      record["instance_id"]
+                    ] += parseFloat(items_record["totalCost"]);
+                  } else {
+                    project_total_data[record["projectId"]]["material_cost"] +=
+                      parseFloat(items_record["totalCost"]);
+                  }
+                } else {
+                  project_dummy_values["material_cost"][
+                    record["instance_id"]
+                  ] += parseFloat(items_record["totalCost"]);
+                }
+
+                let sku_details_id = record["instance_id"];
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                cogs_material_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              if (items_record["type"] == "Equipment") {
+                equipment_cost =
+                  equipment_cost + parseFloat(items_record["totalCost"]);
+
+                // for projects table
+                if (record["projectId"] != null) {
+                  // calculating equipment cost
+                  if (!data_pool[record["projectId"]]) {
+                    project_dummy_values["equipment_cost"][
+                      record["instance_id"]
+                    ] += parseFloat(items_record["totalCost"]);
+                  } else {
+                    project_total_data[record["projectId"]]["equipment_cost"] +=
+                      parseFloat(items_record["totalCost"]);
+                  }
+                } else {
+                  project_dummy_values["equipment_cost"][
+                    record["instance_id"]
+                  ] += parseFloat(items_record["totalCost"]);
+                }
+
+                let sku_details_id = record["instance_id"] + 3;
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                cogs_equipment_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              if (items_record["type"] == "Service") {
+                let sku_details_id = record["instance_id"] + 6;
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                // for gross profit
+                switch (generalLedgerAccounttype) {
+                  case "Accounts Receivable": {
+                    accounts_receivable += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating accounts_receivable
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["accounts_receivable"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "accounts_receivable"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["accounts_receivable"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
+
+                    break;
+                  }
+                  case "Current Liability": {
+                    current_liability += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating current_liability
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["current_liability"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "current_liability"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["current_liability"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
+
+                    break;
+                  }
+                  case "Membership Liability": {
+                    membership_liability += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating membership_liability
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["membership_liability"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "membership_liability"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["membership_liability"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
+
+                    break;
+                  }
+                  case "default": {
+                    default_val += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                }
+
+                cogs_services_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              // for gross profit
+              switch (generalLedgerAccounttype) {
+                case "Expense": {
+                  expense += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating expense
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["expense"][record["instance_id"]] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    } else {
+                      project_total_data[record["projectId"]]["expense"] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    }
+                  } else {
+                    project_dummy_values["expense"][record["instance_id"]] +=
+                      items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                  }
+
+                  break;
+                }
+                case "Income": {
+                  income += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating income
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["income"][record["instance_id"]] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    } else {
+                      project_total_data[record["projectId"]]["income"] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    }
+                  } else {
+                    project_dummy_values["income"][record["instance_id"]] +=
+                      items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                  }
+
+                  break;
+                }
+              }
+            });
+          }
+
+          let revenue = parseFloat(record["total"])
+            ? parseFloat(record["total"])
+            : 0;
+
+          // let gross_profit =
+          //   revenue -
+          //   po_cost -
+          //   equipment_cost -
+          //   material_cost -
+          //   labor_cost -
+          //   burden;
+
+          // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
+
+          // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
+          //   gross_margin = 0;
+          // }
+
+          if (js_date <= current_date) {
+            gross_profit_final_data_pool.push({
+              accounts_receivable: accounts_receivable,
+              expense: expense,
+              income: income,
+              current_liability: current_liability,
+              membership_liability: membership_liability,
+              default: default_val,
+              total: record["total"] ? parseFloat(record["total"]) : 0,
+              po_cost: po_cost, // purchase orders
+              equipment_cost: equipment_cost, //
+              material_cost: material_cost, //
+              labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+              burden: burden, // cogs_labor
+              // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+              // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+              units: 1, //  currently for 1
+              labor_hours: labor_hours, // cogs_labor paid duration
+              invoice_id: record["id"],
+            });
+          }
+        });
+
+        invoice_cache["invoice_final_data_pool"] = invoice_final_data_pool;
+        invoice_cache["cogs_material_final_data_pool"] =
+          cogs_material_final_data_pool;
+        invoice_cache["cogs_equipment_final_data_pool"] =
+          cogs_equipment_final_data_pool;
+        invoice_cache["cogs_services_final_data_pool"] =
+          cogs_services_final_data_pool;
+        invoice_cache["gross_profit_final_data_pool"] =
+          gross_profit_final_data_pool;
 
         if (initial_execute) {
           final_data_pool.push({
@@ -3013,7 +4011,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: "default",
             name: "default",
             status: "default",
-            subStatus: "default",
+            billed_amount: project_dummy_values["billed_amount"][1],
+            po_cost: project_dummy_values["po_cost"][1],
+            equipment_cost: project_dummy_values["equipment_cost"][1],
+            material_cost: project_dummy_values["material_cost"][1],
+            labor_cost: project_dummy_values["labor_cost"][1],
+            labor_hours: project_dummy_values["labor_hours"][1],
+            burden: project_dummy_values["burden_cost"][1],
+            accounts_receivable: project_dummy_values["accounts_receivable"][1],
+            expense: project_dummy_values["expense"][1],
+            income: project_dummy_values["income"][1],
+            current_liability: project_dummy_values["current_liability"][1],
+            membership_liability:
+              project_dummy_values["membership_liability"][1],
             customer_details_id: 1,
             actual_customer_details_id: 1,
             location_id: 1,
@@ -3030,7 +4040,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: "default",
             name: "default",
             status: "default",
-            subStatus: "default",
+            billed_amount: project_dummy_values["billed_amount"][2],
+            po_cost: project_dummy_values["po_cost"][2],
+            equipment_cost: project_dummy_values["equipment_cost"][2],
+            material_cost: project_dummy_values["material_cost"][2],
+            labor_cost: project_dummy_values["labor_cost"][2],
+            labor_hours: project_dummy_values["labor_hours"][2],
+            burden: project_dummy_values["burden_cost"][2],
+            accounts_receivable: project_dummy_values["accounts_receivable"][2],
+            expense: project_dummy_values["expense"][2],
+            income: project_dummy_values["income"][2],
+            current_liability: project_dummy_values["current_liability"][2],
+            membership_liability:
+              project_dummy_values["membership_liability"][2],
             customer_details_id: 2,
             actual_customer_details_id: 2,
             location_id: 2,
@@ -3047,7 +4069,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: "default",
             name: "default",
             status: "default",
-            subStatus: "default",
+            billed_amount: project_dummy_values["billed_amount"][3],
+            po_cost: project_dummy_values["po_cost"][3],
+            equipment_cost: project_dummy_values["equipment_cost"][3],
+            material_cost: project_dummy_values["material_cost"][3],
+            labor_cost: project_dummy_values["labor_cost"][3],
+            labor_hours: project_dummy_values["labor_hours"][3],
+            burden: project_dummy_values["burden_cost"][3],
+            accounts_receivable: project_dummy_values["accounts_receivable"][3],
+            expense: project_dummy_values["expense"][3],
+            income: project_dummy_values["income"][3],
+            current_liability: project_dummy_values["current_liability"][3],
+            membership_liability:
+              project_dummy_values["membership_liability"][3],
             customer_details_id: 3,
             actual_customer_details_id: 3,
             location_id: 3,
@@ -3060,7 +4094,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        Object.keys(data_pool).map((record_id) => {
+        Object.keys(projects_data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
           let customer_details_id = record["instance_id"];
@@ -3143,12 +4177,56 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
+          let billed_amount = 0;
+          let po_cost = 0;
+          let equipment_cost = 0;
+          let material_cost = 0;
+          let labor_cost = 0;
+          let labor_hours = 0;
+          let burden = 0;
+          let accounts_receivable = 0;
+          let expense = 0;
+          let income = 0;
+          let current_liability = 0;
+          let membership_liability = 0;
+
+          try {
+            billed_amount = project_total_data[record["id"]]["billed_amount"];
+            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"];
+            equipment_cost = project_total_data[record["id"]]["equipment_cost"];
+            material_cost = project_total_data[record["id"]]["material_cost"];
+            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"];
+            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"];
+            burden = projects_po_and_gpi_data[record["id"]]["burden"];
+            accounts_receivable =
+              project_total_data[record["id"]]["accounts_receivable"];
+            expense = project_total_data[record["id"]]["expense"];
+            income = project_total_data[record["id"]]["income"];
+            current_liability =
+              project_total_data[record["id"]]["current_liability"];
+            membership_liability =
+              project_total_data[record["id"]]["membership_liability"];
+          } catch (err) {
+            // console.log("job_details_id: ", job_details_id);
+          }
+
           final_data_pool.push({
             id: record["id"],
             number: record["number"] ? record["number"] : "default",
             name: record["name"] ? record["name"] : "default",
             status: record["status"] ? record["status"] : "default",
-            subStatus: record["subStatus"] ? record["subStatus"] : "default",
+            billed_amount: billed_amount,
+            po_cost: po_cost,
+            equipment_cost: equipment_cost,
+            material_cost: material_cost,
+            labor_cost: labor_cost,
+            labor_hours: labor_hours,
+            burden: burden,
+            accounts_receivable: accounts_receivable,
+            expense: expense,
+            income: income,
+            current_liability: current_liability,
+            membership_liability: membership_liability,
             customer_details_id: customer_details_id,
             actual_customer_details_id: actual_customer_details_id,
             location_id: location_id,
@@ -3199,549 +4277,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
-      case "call_details": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const telecom_calls_data_pool =
-          data_lake[table_name]["telecom__calls"]["data_pool"];
-        const business_unit_data_pool =
-          data_lake["business_unit"]["settings__business-units"]["data_pool"];
-        const customer_data_pool =
-          data_lake["customer_details"]["crm__customers"]["data_pool"];
-        const appointments_data_pool =
-          data_lake["appointments"]["jpm__appointments"]["data_pool"];
-        const projects_data_pool =
-          data_lake["projects"]["jpm__projects"]["data_pool"];
-
-        const header_data = hvac_tables[table_name]["columns"];
-
-        let final_data_pool = [];
-
-        // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
-        // console.log("header_data: ", header_data);
-
-        if (initial_execute) {
-          final_data_pool.push({
-            lead_call_id: 1,
-            id: 1,
-            instance_id: 1,
-            job_number: "default",
-            status: "Not Known",
-            project_id: 1,
-            actual_project_id: 1,
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            duration: "00:00:00",
-            from: "default",
-            to: "default",
-            direction: "Others",
-            call_type: "Others",
-            customer_details_id: 1,
-            actual_customer_details_id: 1,
-            is_customer_active: 0,
-            customer_name: "default",
-            street_address: "default",
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            country: "default",
-            zip: "default",
-            latitude: 0.0,
-            longitude: 0.0,
-            customer_import_id: "default",
-            customer_type: "Others",
-            campaign_id: 1,
-            campaign_category: "default",
-            campaign_source: "default",
-            campaign_medium: "default",
-            campaign_dnis: "default",
-            campaign_name: "default",
-            campaign_createdOn: "1999-01-01T00:00:00.00Z",
-            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
-            is_campaign_active: 0,
-            agent_id: 1,
-            agent_externalId: 1,
-            agent_name: "default",
-            business_unit_id: 1,
-            actual_business_unit_id: 1,
-            business_unit_active: 0,
-            business_unit_name: "default",
-            business_unit_official_name: "default",
-            type_id: 1,
-            type_name: "default",
-            type_modifiedOn: "1999-01-01T00:00:00.00Z",
-          });
-
-          final_data_pool.push({
-            lead_call_id: 2,
-            id: 2,
-            instance_id: 2,
-            job_number: "default",
-            status: "Not Known",
-            project_id: 2,
-            actual_project_id: 2,
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            duration: "00:00:00",
-            from: "default",
-            to: "default",
-            direction: "Others",
-            call_type: "Others",
-            customer_details_id: 2,
-            actual_customer_details_id: 2,
-            is_customer_active: 0,
-            customer_name: "default",
-            street_address: "default",
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            country: "default",
-            zip: "default",
-            latitude: 0.0,
-            longitude: 0.0,
-            customer_import_id: "default",
-            customer_type: "Others",
-            campaign_id: 2,
-            campaign_category: "default",
-            campaign_source: "default",
-            campaign_medium: "default",
-            campaign_dnis: "default",
-            campaign_name: "default",
-            campaign_createdOn: "1999-01-01T00:00:00.00Z",
-            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
-            is_campaign_active: 0,
-            agent_id: 2,
-            agent_externalId: 2,
-            agent_name: "default",
-            business_unit_id: 2,
-            actual_business_unit_id: 2,
-            business_unit_active: 0,
-            business_unit_name: "default",
-            business_unit_official_name: "default",
-            type_id: 2,
-            type_name: "default",
-            type_modifiedOn: "1999-01-01T00:00:00.00Z",
-          });
-
-          final_data_pool.push({
-            lead_call_id: 3,
-            id: 3,
-            instance_id: 3,
-            job_number: "default",
-            status: "Not Known",
-            project_id: 1,
-            actual_project_id: 3,
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            duration: "00:00:00",
-            from: "default",
-            to: "default",
-            direction: "Others",
-            call_type: "Others",
-            customer_details_id: 3,
-            actual_customer_details_id: 3,
-            is_customer_active: 0,
-            customer_name: "default",
-            street_address: "default",
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            country: "default",
-            zip: "default",
-            latitude: 0.0,
-            longitude: 0.0,
-            customer_import_id: "default",
-            customer_type: "Others",
-            campaign_id: 3,
-            campaign_category: "default",
-            campaign_source: "default",
-            campaign_medium: "default",
-            campaign_dnis: "default",
-            campaign_name: "default",
-            campaign_createdOn: "1999-01-01T00:00:00.00Z",
-            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
-            is_campaign_active: 0,
-            agent_id: 3,
-            agent_externalId: 3,
-            agent_name: "default",
-            business_unit_id: 3,
-            actual_business_unit_id: 3,
-            business_unit_active: 0,
-            business_unit_name: "default",
-            business_unit_official_name: "default",
-            type_id: 3,
-            type_name: "default",
-            type_modifiedOn: "1999-01-01T00:00:00.00Z",
-          });
-        }
-
-        let lead_call_status = {};
-
-        Object.keys(appointments_data_pool).map((record_id) => {
-          const record = appointments_data_pool[record_id];
-
-          if (record["jobId"]) {
-            lead_call_status[record["jobId"]] = record["status"];
-          }
-        });
-
-        Object.keys(telecom_calls_data_pool).map((record_id) => {
-          const record = telecom_calls_data_pool[record_id];
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["leadCall"]["createdOn"]) {
-            if (
-              new Date(record["leadCall"]["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["leadCall"]["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["leadCall"]["modifiedOn"]) {
-            if (
-              new Date(record["leadCall"]["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["leadCall"]["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let receivedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["leadCall"]["receivedOn"]) {
-            if (
-              new Date(record["leadCall"]["receivedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              receivedOn = record["leadCall"]["receivedOn"];
-            }
-          } else {
-            receivedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-          let business_unit_active = 0;
-          let business_unit_name = "default";
-          let business_unit_official_name = "default";
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"]
-              ? record["businessUnit"]["id"]
-              : record["instance_id"];
-            business_unit_active = record["businessUnit"]["active"] ? 1 : 0;
-            business_unit_name = record["businessUnit"]["name"]
-              ? record["businessUnit"]["name"]
-              : "default";
-            business_unit_official_name = record["businessUnit"]["officialName"]
-              ? record["businessUnit"]["officialName"]
-              : "default";
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["instance_id"];
-          let customer_name = "default";
-          let is_customer_active = 0;
-          let street_address = "default";
-          let street = "default";
-          let unit = "default";
-          let city = "default";
-          let state = "default";
-          let country = "default";
-          let zip = "default";
-          let latitude = 0.0;
-          let longitude = 0.0;
-          let customer_import_id = "default";
-          let customer_type = "Others";
-          if (record["leadCall"]["customer"]) {
-            actual_customer_details_id = record["leadCall"]["customer"]["id"];
-            customer_name = record["leadCall"]["customer"]["name"]
-              ? record["leadCall"]["customer"]["name"]
-              : "default";
-            is_customer_active = record["leadCall"]["customer"]["active"]
-              ? 1
-              : 0;
-
-            if (record["leadCall"]["customer"]["address"]) {
-              street_address = record["leadCall"]["customer"]["address"][
-                "streetAddress"
-              ]
-                ? record["leadCall"]["customer"]["address"]["streetAddress"]
-                : "default";
-              street = record["leadCall"]["customer"]["address"]["street"]
-                ? record["leadCall"]["customer"]["address"]["street"]
-                : "default";
-              unit = record["leadCall"]["customer"]["address"]["unit"]
-                ? record["leadCall"]["customer"]["address"]["unit"]
-                : "default";
-              city = record["leadCall"]["customer"]["address"]["city"]
-                ? record["leadCall"]["customer"]["address"]["city"]
-                : "default";
-              state = record["leadCall"]["customer"]["address"]["state"]
-                ? record["leadCall"]["customer"]["address"]["state"]
-                : "default";
-              country = record["leadCall"]["customer"]["address"]["country"]
-                ? record["leadCall"]["customer"]["address"]["country"]
-                : "default";
-              zip = record["leadCall"]["customer"]["address"]["zip"]
-                ? record["leadCall"]["customer"]["address"]["zip"]
-                : "default";
-              latitude = record["leadCall"]["customer"]["address"]["latitude"]
-                ? record["leadCall"]["customer"]["address"]["latitude"]
-                : 0.0;
-              longitude = record["leadCall"]["customer"]["address"]["longitude"]
-                ? record["leadCall"]["customer"]["address"]["longitude"]
-                : 0.0;
-            }
-
-            customer_import_id = record["leadCall"]["customer"]["importId"]
-              ? record["leadCall"]["customer"]["importId"]
-              : "default";
-            customer_type = record["leadCall"]["customer"]["type"]
-              ? record["leadCall"]["customer"]["type"]
-              : "Others";
-
-            if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
-              customer_details_id = record["leadCall"]["customer"]["id"];
-            }
-          }
-
-          let campaign_id = 0;
-          let campaign_category = "default";
-          let campaign_source = "default";
-          let campaign_medium = "default";
-          let campaign_dnis = "default";
-          let campaign_name = "default";
-          let campaign_createdOn = "2000-01-01T00:00:00.00Z";
-          let campaign_modifiedOn = "2000-01-01T00:00:00.00Z";
-          let is_campaign_active = 0;
-          if (record["leadCall"]["campaign"]) {
-            if (record["leadCall"]["campaign"]["createdOn"]) {
-              if (
-                new Date(record["leadCall"]["campaign"]["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                campaign_createdOn =
-                  record["leadCall"]["campaign"]["createdOn"];
-              }
-            } else {
-              campaign_createdOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            if (record["leadCall"]["campaign"]["modifiedOn"]) {
-              if (
-                new Date(record["leadCall"]["campaign"]["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                campaign_modifiedOn =
-                  record["leadCall"]["campaign"]["modifiedOn"];
-              }
-            } else {
-              campaign_modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            campaign_id = record["leadCall"]["campaign"]["id"]
-              ? record["leadCall"]["campaign"]["id"]
-              : 0;
-
-            if (record["leadCall"]["campaign"]["category"]) {
-              campaign_category = record["leadCall"]["campaign"]["category"][
-                "name"
-              ]
-                ? record["leadCall"]["campaign"]["category"]["name"]
-                : "default";
-            }
-
-            campaign_source = record["leadCall"]["campaign"]["source"]
-              ? record["leadCall"]["campaign"]["source"]
-              : "default";
-            campaign_medium = record["leadCall"]["campaign"]["medium"]
-              ? record["leadCall"]["campaign"]["medium"]
-              : "default";
-            campaign_dnis = record["leadCall"]["campaign"]["dnis"]
-              ? record["leadCall"]["campaign"]["dnis"]
-              : "default";
-            campaign_name = record["leadCall"]["campaign"]["name"]
-              ? record["leadCall"]["campaign"]["name"]
-              : "default";
-            is_campaign_active = record["leadCall"]["campaign"]["active"]
-              ? 1
-              : 0;
-          }
-
-          let agent_id = 0;
-          let agent_externalId = 0;
-          let agent_name = "default";
-          if (record["leadCall"]["agent"]) {
-            agent_id = record["leadCall"]["agent"]["id"]
-              ? record["leadCall"]["agent"]["id"]
-              : 0;
-            agent_externalId = record["leadCall"]["agent"]["externalId"]
-              ? record["leadCall"]["agent"]["externalId"]
-              : 0;
-            agent_name = record["leadCall"]["agent"]["name"]
-              ? record["leadCall"]["agent"]["name"]
-              : "default";
-          }
-
-          let type_id = 0;
-          let type_name = "default";
-          let type_modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["type"]) {
-            type_id = record["type"]["id"] ? record["type"]["id"] : 0;
-            type_name = record["type"]["name"]
-              ? record["type"]["name"]
-              : "default";
-            if (record["type"]["modifiedOn"]) {
-              if (
-                new Date(record["type"]["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                type_modifiedOn = record["type"]["modifiedOn"];
-              }
-            } else {
-              type_modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
-          }
-
-          let status = "Not Known";
-          if (lead_call_status[record["jobNumber"]]) {
-            status = lead_call_status[record["jobNumber"]];
-          }
-
-          final_data_pool.push({
-            lead_call_id: record["leadCall"]["id"],
-            id: record["id"],
-            instance_id: record["instance_id"],
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            status: status,
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            receivedOn: receivedOn,
-            duration: record["leadCall"]["duration"]
-              ? record["leadCall"]["duration"]
-              : "00:00:00",
-            from: record["leadCall"]["from"]
-              ? record["leadCall"]["from"]
-              : "default",
-            to: record["leadCall"]["to"] ? record["leadCall"]["to"] : "default",
-            direction: record["leadCall"]["direction"]
-              ? record["leadCall"]["direction"]
-              : "Others",
-            call_type: record["leadCall"]["callType"]
-              ? record["leadCall"]["callType"]
-              : "Others",
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            is_customer_active: is_customer_active,
-            customer_name: customer_name,
-            street_address: street_address,
-            street: street,
-            unit: unit,
-            city: city,
-            state: state,
-            country: country,
-            zip: zip,
-            latitude: latitude,
-            longitude: longitude,
-            customer_import_id: customer_import_id,
-            customer_type: customer_type,
-            campaign_id: campaign_id,
-            campaign_category: campaign_category,
-            campaign_source: campaign_source,
-            campaign_medium: campaign_medium,
-            campaign_dnis: campaign_dnis,
-            campaign_name: campaign_name,
-            campaign_createdOn: campaign_createdOn,
-            campaign_modifiedOn: campaign_modifiedOn,
-            is_campaign_active: is_campaign_active,
-            agent_id: agent_id,
-            agent_externalId: agent_externalId,
-            agent_name: agent_name,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            business_unit_active: business_unit_active,
-            business_unit_name: business_unit_name,
-            business_unit_official_name: business_unit_official_name,
-            type_id: type_id,
-            type_name: type_name,
-            type_modifiedOn: type_modifiedOn,
-          });
-        });
-
-        // console.log("final_data_pool: ", final_data_pool);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   Object.keys(header_data),
-        //   table_name
-        // );
-
-        console.log("telecom_calls data: ", final_data_pool.length);
-        // console.log("telecom_calls data: ", final_data_pool);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["call_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["call_details"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        break;
-      }
-
       case "job_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const jobs_data_pool = data_lake[api_name]["jpm__jobs"]["data_pool"];
         const job_types_data_pool =
           data_lake[api_name]["jpm__job-types"]["data_pool"];
-        const projects_data_pool =
-          data_lake["projects"]["jpm__projects"]["data_pool"];
         const business_unit_data_pool =
           data_lake["business_unit"]["settings__business-units"]["data_pool"];
         const customer_data_pool =
@@ -3766,8 +4306,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_1",
             job_number: "1",
             job_status: "default",
-            project_id: 1,
-            actual_project_id: 1,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 1,
             actual_business_unit_id: 1,
@@ -3792,8 +4330,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_2",
             job_number: "2",
             job_status: "default",
-            project_id: 2,
-            actual_project_id: 2,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 2,
             actual_business_unit_id: 2,
@@ -3818,8 +4354,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: "default_job_3",
             job_number: "3",
             job_status: "default",
-            project_id: 3,
-            actual_project_id: 3,
             job_completion_time: "1999-01-01T00:00:00.00Z",
             business_unit_id: 3,
             actual_business_unit_id: 3,
@@ -3843,10 +4377,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(jobs_data_pool).map((record_id) => {
           const record = jobs_data_pool[record_id];
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
           let business_unit_id = record["instance_id"];
           let actual_business_unit_id = record["businessUnitId"]
             ? record["businessUnitId"]
@@ -3889,10 +4419,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           if (location_data_pool[record["locationId"]]) {
             location_id = record["locationId"];
-          }
-
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
           }
 
           if (call_details_data_pool[record["leadCallId"]]) {
@@ -3955,8 +4481,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_name: job_type_name ? job_type_name : "default_job",
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
-            project_id: project_id,
-            actual_project_id: actual_project_id,
             job_completion_time: job_completion_time,
             business_unit_id: business_unit_id,
             actual_business_unit_id: actual_business_unit_id,
@@ -4216,174 +4740,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
-
-        break;
-      }
-
-      case "sales_details": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-        const business_unit_data_pool =
-          data_lake["business_unit"]["settings__business-units"]["data_pool"];
-        const jobs_data_pool =
-          data_lake["job_details"]["jpm__jobs"]["data_pool"];
-        const customer_data_pool =
-          data_lake["customer_details"]["crm__customers"]["data_pool"];
-        const location_data_pool =
-          data_lake["location"]["crm__locations"]["data_pool"];
-        const projects_data_pool =
-          data_lake["projects"]["jpm__projects"]["data_pool"];
-
-        let final_data_pool = [];
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
-          }
-
-          let business_unit_id = record["instance_id"];
-          let acutal_business_unit_id = record["instance_id"];
-          let businessUnitName = record["businessUnitName"]
-            ? record["businessUnitName"]
-            : "default";
-          if (business_unit_data_pool[record["businessUnitId"]]) {
-            acutal_business_unit_id = record["businessUnitId"];
-            business_unit_id = record["businessUnitId"];
-          }
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-            actual_location_id = record["locationId"];
-          }
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let soldOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["soldOn"]) {
-            if (
-              new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              soldOn = record["soldOn"];
-            }
-          } else {
-            soldOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let status_value = 0;
-          let status_name = "default";
-          if (record["status"]) {
-            status_value = record["status"]["value"]
-              ? record["status"]["value"]
-              : 0;
-            status_name = record["status"]["name"]
-              ? record["status"]["name"]
-              : "default";
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            soldOn: soldOn,
-            soldBy: record["soldBy"] ? record["soldBy"] : 0,
-            is_active: record["active"] ? 1 : 0,
-            subtotal: record["subtotal"] ? record["subtotal"] : 0,
-            status_value: status_value,
-            status_name: status_name,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            business_unit_id: business_unit_id,
-            acutal_business_unit_id: acutal_business_unit_id,
-            businessUnitName: businessUnitName,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-          });
-        });
-
-        console.log("sales_details data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["sales_details"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["sales_details"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[table_name]["sales__estimates"];
-        delete data_lake["projects"]["jpm__projects"];
 
         break;
       }
@@ -4995,35 +5351,35 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "invoice": {
         const table_name = main_api_list[api_name][0]["table_name"];
-        const invoice_data_pool =
-          data_lake[api_name]["accounting__invoices"]["data_pool"];
-        const jobs_data_pool =
-          data_lake["job_details"]["jpm__jobs"]["data_pool"];
-        const business_unit_data_pool =
-          data_lake["business_unit"]["settings__business-units"]["data_pool"];
-        const customer_data_pool =
-          data_lake["customer_details"]["crm__customers"]["data_pool"];
-        const location_data_pool =
-          data_lake["location"]["crm__locations"]["data_pool"];
-        const gross_pay_items_data_pool = JSON.parse(
-          JSON.stringify(
-            data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"]
-          )
-        );
-        const payrolls_data_pool =
-          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
-        const purchase_order_data_pool = JSON.parse(
-          JSON.stringify(
-            data_lake["purchase_order"]["inventory__purchase-orders"][
-              "data_pool"
-            ]
-          )
-        );
-        const sku_details_data_pool = {
-          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
-        };
+        // const invoice_data_pool =
+        //   data_lake[api_name]["accounting__invoices"]["data_pool"];
+        // const jobs_data_pool =
+        //   data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        // const business_unit_data_pool =
+        //   data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        // const customer_data_pool =
+        //   data_lake["customer_details"]["crm__customers"]["data_pool"];
+        // const location_data_pool =
+        //   data_lake["location"]["crm__locations"]["data_pool"];
+        // const gross_pay_items_data_pool = JSON.parse(
+        //   JSON.stringify(
+        //     data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"]
+        //   )
+        // );
+        // const payrolls_data_pool =
+        //   data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+        // const purchase_order_data_pool = JSON.parse(
+        //   JSON.stringify(
+        //     data_lake["purchase_order"]["inventory__purchase-orders"][
+        //       "data_pool"
+        //     ]
+        //   )
+        // );
+        // const sku_details_data_pool = {
+        //   ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
+        //   ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
+        //   ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
+        // };
 
         const invoice_header_data = hvac_tables["invoice"]["columns"];
         const cogs_material_header_data =
@@ -5034,966 +5390,928 @@ async function data_processor(data_lake, sql_request, table_list) {
         const gross_profit_header_data = hvac_tables["gross_profit"]["columns"];
         cogs_service_header_data;
 
-        let invoice_final_data_pool = [];
-        let cogs_material_final_data_pool = [];
-        let cogs_equipment_final_data_pool = [];
-        let cogs_services_final_data_pool = [];
-        let gross_profit_final_data_pool = [];
+        let invoice_final_data_pool = invoice_cache["invoice_final_data_pool"];
+        let cogs_material_final_data_pool =
+          invoice_cache["cogs_material_final_data_pool"];
+        let cogs_equipment_final_data_pool =
+          invoice_cache["cogs_equipment_final_data_pool"];
+        let cogs_services_final_data_pool =
+          invoice_cache["cogs_services_final_data_pool"];
+        let gross_profit_final_data_pool =
+          invoice_cache["gross_profit_final_data_pool"];
 
         // console.log("header_data: ", header_data);
 
-        const po_and_gpi_data = {};
+        // const po_and_gpi_data = {};
 
-        const dummy_values = {
-          po_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_hours: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          burden_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
+        // const dummy_values = {
+        //   po_cost: {
+        //     1: 0,
+        //     2: 0,
+        //     3: 0,
+        //   },
+        //   labor_cost: {
+        //     1: 0,
+        //     2: 0,
+        //     3: 0,
+        //   },
+        //   labor_hours: {
+        //     1: 0,
+        //     2: 0,
+        //     3: 0,
+        //   },
+        //   burden_cost: {
+        //     1: 0,
+        //     2: 0,
+        //     3: 0,
+        //   },
         };
 
-        // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
-        Object.keys(purchase_order_data_pool).map((po_record_id) => {
-          const po_record = purchase_order_data_pool[po_record_id];
-
-          if (po_record["invoiceId"] != null) {
-            if (!po_and_gpi_data[po_record["invoiceId"]]) {
-              po_and_gpi_data[po_record["invoiceId"]] = {
-                po_total: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (po_record["status"] != "Canceled") {
-              if (!invoice_data_pool[po_record["invoiceId"]]) {
-                dummy_values["po_cost"][po_record["instance_id"]] +=
-                  po_record["total"];
-              } else {
-                po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
-                  po_record["total"];
-              }
-            }
-          } else {
-            if (po_record["status"] != "Canceled") {
-              dummy_values["po_cost"][po_record["instance_id"]] +=
-                po_record["total"];
-            }
-          }
-        });
-
-        // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
-
-        Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
-          const gpi_record = gross_pay_items_data_pool[gpi_record_id];
-          if (gpi_record["invoiceId"] != null) {
-            if (!po_and_gpi_data[gpi_record["invoiceId"]]) {
-              po_and_gpi_data[gpi_record["invoiceId"]] = {
-                po_total: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (!invoice_data_pool[gpi_record["invoiceId"]]) {
-              dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
-
-              dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
-                gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
-                  : 0;
-
-              dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-                (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  : 0);
-            } else {
-              po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
-
-              po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
-                gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
-                  : 0;
-
-              po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
-                (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  : 0);
-            }
-          } else {
-            dummy_values["labor_cost"][gpi_record["instance_id"]] += gpi_record[
-              "amount"
-            ]
-              ? gpi_record["amount"]
-              : 0;
-
-            dummy_values["labor_hours"][gpi_record["invoiceId"]] += gpi_record[
-              "paidDurationHours"
-            ]
-              ? gpi_record["paidDurationHours"]
-              : 0;
-
-            dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-              (gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                : 0);
-          }
-        });
-
-        if (initial_execute) {
-          invoice_final_data_pool.push({
-            id: 1,
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: 0,
-            invoice_type_name: "default_invoice",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            business_unit_id: 1,
-            actual_business_unit_id: 1,
-            location_id: 1,
-            actual_location_id: 1,
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: 1,
-            actual_customer_id: 1,
-            customer_name: "default",
-          });
-
-          invoice_final_data_pool.push({
-            id: 2,
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: 0,
-            invoice_type_name: "default_invoice",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            business_unit_id: 2,
-            actual_business_unit_id: 2,
-            location_id: 2,
-            actual_location_id: 2,
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: 2,
-            actual_customer_id: 2,
-            customer_name: "default",
-          });
-
-          invoice_final_data_pool.push({
-            id: 3,
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: 0,
-            invoice_type_name: "default_invoice",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            business_unit_id: 3,
-            actual_business_unit_id: 3,
-            location_id: 3,
-            actual_location_id: 3,
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: 3,
-            actual_customer_id: 3,
-            customer_name: "default",
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            sku_details_id: 1,
-            actual_sku_details_id: 1,
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 2,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 2,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            sku_details_id: 2,
-            actual_sku_details_id: 2,
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 3,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 3,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            sku_details_id: 3,
-            actual_sku_details_id: 3,
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            sku_details_id: 1,
-            actual_sku_details_id: 1,
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 2,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 2,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            sku_details_id: 2,
-            actual_sku_details_id: 2,
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 3,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 3,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            sku_details_id: 3,
-            actual_sku_details_id: 3,
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            sku_details_id: 1,
-            actual_sku_details_id: 1,
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 2,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 2,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            sku_details_id: 2,
-            actual_sku_details_id: 2,
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 3,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 3,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            sku_details_id: 3,
-            actual_sku_details_id: 3,
-          });
-
-          gross_profit_final_data_pool.push({
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            po_cost: dummy_values["po_cost"][1], // purchase orders
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: dummy_values["labor_cost"][1], // cogs_labor burden cost, labor cost, paid duration
-            burden: dummy_values["burden_cost"][1], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: dummy_values["labor_hours"][1], // cogs_labor paid duration
-            invoice_id: 1,
-          });
-
-          gross_profit_final_data_pool.push({
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            po_cost: dummy_values["po_cost"][2], // purchase orders
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: dummy_values["labor_cost"][2], // cogs_labor burden cost, labor cost, paid duration
-            burden: dummy_values["burden_cost"][2], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: dummy_values["labor_hours"][2], // cogs_labor paid duration
-            invoice_id: 2,
-          });
-
-          gross_profit_final_data_pool.push({
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            po_cost: dummy_values["po_cost"][3], // purchase orders
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: dummy_values["labor_cost"][3], // cogs_labor burden cost, labor cost, paid duration
-            burden: dummy_values["burden_cost"][3], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: dummy_values["labor_hours"][3], // cogs_labor paid duration
-            invoice_id: 3,
-          });
-        }
-
-        Object.keys(invoice_data_pool).map((record_id) => {
-          const record = invoice_data_pool[record_id];
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["job"]) {
-            actual_job_details_id = record["job"]["id"];
-            if (jobs_data_pool[record["job"]["id"]]) {
-              job_details_id = record["job"]["id"];
-            }
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (record["location"]) {
-            actual_location_id = record["location"]["id"];
-            if (location_data_pool[record["location"]["id"]]) {
-              location_id = record["location"]["id"];
-            }
-          }
-
-          let customer_id = record["instance_id"];
-          let actual_customer_id = record["instance_id"];
-          let customer_name = "default";
-          if (record["customer"]) {
-            actual_customer_id = record["customer"]["id"];
-            customer_name = record["customer"]["name"]
-              ? record["customer"]["name"]
-              : "default";
-            if (customer_data_pool[record["customer"]["id"]]) {
-              customer_id = record["customer"]["id"];
-            }
-          }
-
-          let address_street = "";
-          let address_unit = "";
-          let address_city = "";
-          let address_state = "";
-          let address_zip = 57483;
-          let acutal_address_zip = "";
-          let address_country = "";
-          let city = "Mexico";
-          if (record["locationAddress"]) {
-            address_street = record["locationAddress"]["street"]
-              ? record["locationAddress"]["street"]
-              : "";
-            address_unit = record["locationAddress"]["unit"]
-              ? record["locationAddress"]["unit"]
-              : "";
-            address_city = record["locationAddress"]["city"]
-              ? record["locationAddress"]["city"]
-              : "";
-            address_state = record["locationAddress"]["state"]
-              ? record["locationAddress"]["state"]
-              : "";
-            address_country = record["locationAddress"]["country"]
-              ? record["locationAddress"]["country"]
-              : "";
-            acutal_address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : "";
-
-            address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : 57483;
-
-            if (typeof address_zip == "string") {
-              const numericValue = Number(address_zip.split("-")[0]);
-              if (!isNaN(numericValue)) {
-                // If the conversion is successful and numericValue is not NaN, update address_zip
-                address_zip = numericValue;
-              } else {
-                // Handle the case where the conversion fails
-                address_zip = 57483;
-              }
-            }
-
-            if (!unique_us_zip_codes[String(address_zip)]) {
-              address_zip = 57483;
-            } else {
-              city = unique_us_zip_codes[String(address_zip)]["city"];
-            }
-          }
-
-          let invoice_date = "2000-01-01T00:00:00.00Z";
-
-          if (record["invoiceDate"]) {
-            if (
-              new Date(record["invoiceDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              invoice_date = record["invoiceDate"];
-            }
-          } else {
-            invoice_date = "2001-01-01T00:00:00.00Z";
-          }
-
-          let dueDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["dueDate"]) {
-            if (
-              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              dueDate = record["dueDate"];
-            }
-          } else {
-            dueDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let depositedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["depositedOn"]) {
-            if (
-              new Date(record["depositedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              depositedOn = record["depositedOn"];
-            }
-          } else {
-            depositedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          const js_date = new Date(invoice_date);
-
-          const current_date = new Date();
-
-          if (js_date > current_date) {
-            invoice_date = "2002-01-01T00:00:00.00Z";
-          }
-
-          let invoice_type_id = 0;
-          let invoice_type_name = "default_invoice";
-          if (record["invoiceType"]) {
-            invoice_type_id = record["invoiceType"]["id"];
-            invoice_type_name = record["invoiceType"]["name"];
-          }
-
-          invoice_final_data_pool.push({
-            id: record["id"],
-            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
-            date: invoice_date,
-            dueDate: dueDate,
-            subtotal: record["subTotal"] ? record["subTotal"] : 0,
-            tax: record["salesTax"] ? record["salesTax"] : 0,
-            total: record["total"] ? record["total"] : 0,
-            balance: record["balance"] ? record["balance"] : 0,
-            depositedOn: depositedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            invoice_type_id: invoice_type_id,
-            invoice_type_name: invoice_type_name,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            address_street: address_street,
-            address_unit: address_unit,
-            address_city: address_city,
-            address_state: address_state,
-            address_country: address_country,
-            address_zip: address_zip,
-            acutal_address_zip: acutal_address_zip,
-            customer_id: customer_id,
-            actual_customer_id: actual_customer_id,
-            customer_name: customer_name,
-          });
-
-          let po_cost = 0;
-          let labor_cost = 0;
-          let labor_hours = 0;
-          let burden = 0;
-
-          try {
-            po_cost = po_and_gpi_data[record["id"]]["po_total"];
-            labor_cost = po_and_gpi_data[record["id"]]["labor_cost"];
-            labor_hours = po_and_gpi_data[record["id"]]["labor_hours"];
-            burden = po_and_gpi_data[record["id"]]["burden"];
-          } catch (err) {
-            // console.log("job_details_id: ", job_details_id);
-          }
-
-          let material_cost = 0;
-          let equipment_cost = 0;
-
-          let accounts_receivable = 0;
-          let expense = 0;
-          let income = 0;
-          let current_liability = 0;
-          let membership_liability = 0;
-          let default_val = 0;
-
-          if (record["items"]) {
-            record["items"].map((items_record) => {
-              let generalLedgerAccountid = 0;
-              let generalLedgerAccountname = "default";
-              let generalLedgerAccountnumber = 0;
-              let generalLedgerAccounttype = "default";
-              let generalLedgerAccountdetailType = "default";
-
-              if (items_record["generalLedgerAccount"]) {
-                generalLedgerAccountid =
-                  items_record["generalLedgerAccount"]["id"];
-                generalLedgerAccountname =
-                  items_record["generalLedgerAccount"]["name"];
-                generalLedgerAccountnumber =
-                  items_record["generalLedgerAccount"]["number"];
-                generalLedgerAccounttype =
-                  items_record["generalLedgerAccount"]["type"];
-                generalLedgerAccountdetailType =
-                  items_record["generalLedgerAccount"]["detailType"];
-              }
-
-              if (items_record["type"] == "Material") {
-                material_cost =
-                  material_cost + parseFloat(items_record["totalCost"]);
-
-                let sku_details_id = record["instance_id"];
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                cogs_material_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              if (items_record["type"] == "Equipment") {
-                equipment_cost =
-                  equipment_cost + parseFloat(items_record["totalCost"]);
-
-                let sku_details_id = record["instance_id"] + 3;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                cogs_equipment_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              if (items_record["type"] == "Service") {
-                let sku_details_id = record["instance_id"] + 6;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                // for gross profit
-                switch (generalLedgerAccounttype) {
-                  case "Accounts Receivable": {
-                    accounts_receivable += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Current Liability": {
-                    current_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Membership Liability": {
-                    membership_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "default": {
-                    default_val += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                }
-
-                cogs_services_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              // for gross profit
-              switch (generalLedgerAccounttype) {
-                case "Expense": {
-                  expense += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  break;
-                }
-                case "Income": {
-                  income += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  break;
-                }
-              }
-            });
-          }
-
-          let revenue = parseFloat(record["total"])
-            ? parseFloat(record["total"])
-            : 0;
-
-          // let gross_profit =
-          //   revenue -
-          //   po_cost -
-          //   equipment_cost -
-          //   material_cost -
-          //   labor_cost -
-          //   burden;
-
-          // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
-
-          // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
-          //   gross_margin = 0;
-          // }
-
-          if (js_date <= current_date) {
-            gross_profit_final_data_pool.push({
-              accounts_receivable: accounts_receivable,
-              expense: expense,
-              income: income,
-              current_liability: current_liability,
-              membership_liability: membership_liability,
-              default: default_val,
-              total: record["total"] ? parseFloat(record["total"]) : 0,
-              po_cost: po_cost, // purchase orders
-              equipment_cost: equipment_cost, //
-              material_cost: material_cost, //
-              labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-              burden: burden, // cogs_labor
-              // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-              // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-              units: 1, //  currently for 1
-              labor_hours: labor_hours, // cogs_labor paid duration
-              invoice_id: record["id"],
-            });
-          }
-        });
-
-        // console.log("invoice_final_data_pool: ", invoice_final_data_pool);
-        // console.log(
-        //   "cogs_material_final_data_pool: ",
-        //   cogs_material_final_data_pool
-        // );
-        // console.log(
-        //   "cogs_equipment_final_data_pool: ",
-        //   cogs_equipment_final_data_pool
-        // );
-        // console.log(
-        //   "gross_profit_final_data_pool: ",
-        //   gross_profit_final_data_pool
-        // );
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   invoice_final_data_pool,
-        //   invoice_header_data,
-        //   "invoice"
-        // );
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   cogs_material_final_data_pool,
-        //   cogs_material_header_data,
-        //   "cogs_material"
-        // );
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   cogs_equipment_final_data_pool,
-        //   cogs_equipment_header_data,
-        //   "cogs_equipment"
-        // );
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   gross_profit_final_data_pool,
-        //   gross_profit_header_data,
-        //   "gross_profit"
-        // );
+        // // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
+        // Object.keys(purchase_order_data_pool).map((po_record_id) => {
+        //   const po_record = purchase_order_data_pool[po_record_id];
+
+        //   if (po_record["invoiceId"] != null) {
+        //     if (!po_and_gpi_data[po_record["invoiceId"]]) {
+        //       po_and_gpi_data[po_record["invoiceId"]] = {
+        //         po_total: 0,
+        //         labor_cost: 0,
+        //         labor_hours: 0,
+        //         burden: 0,
+        //       };
+        //     }
+
+        //     if (po_record["status"] != "Canceled") {
+        //       if (!invoice_data_pool[po_record["invoiceId"]]) {
+        //         dummy_values["po_cost"][po_record["instance_id"]] +=
+        //           po_record["total"];
+        //       } else {
+        //         po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+        //           po_record["total"];
+        //       }
+        //     }
+        //   } else {
+        //     if (po_record["status"] != "Canceled") {
+        //       dummy_values["po_cost"][po_record["instance_id"]] +=
+        //         po_record["total"];
+        //     }
+        //   }
+        // });
+
+        // // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
+
+        // Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
+        //   const gpi_record = gross_pay_items_data_pool[gpi_record_id];
+        //   if (gpi_record["invoiceId"] != null) {
+        //     if (!po_and_gpi_data[gpi_record["invoiceId"]]) {
+        //       po_and_gpi_data[gpi_record["invoiceId"]] = {
+        //         po_total: 0,
+        //         labor_cost: 0,
+        //         labor_hours: 0,
+        //         burden: 0,
+        //       };
+        //     }
+
+        //     if (!invoice_data_pool[gpi_record["invoiceId"]]) {
+        //       dummy_values["labor_cost"][gpi_record["instance_id"]] +=
+        //         gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+        //       dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
+        //         gpi_record["paidDurationHours"]
+        //           ? gpi_record["paidDurationHours"]
+        //           : 0;
+
+        //       dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+        //         (gpi_record["paidDurationHours"]
+        //           ? gpi_record["paidDurationHours"]
+        //           : 0) *
+        //         (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //           ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //           : 0);
+        //     } else {
+        //       po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
+        //         gpi_record["amount"] ? gpi_record["amount"] : 0;
+
+        //       po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
+        //         gpi_record["paidDurationHours"]
+        //           ? gpi_record["paidDurationHours"]
+        //           : 0;
+
+        //       po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
+        //         (gpi_record["paidDurationHours"]
+        //           ? gpi_record["paidDurationHours"]
+        //           : 0) *
+        //         (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //           ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //           : 0);
+        //     }
+        //   } else {
+        //     dummy_values["labor_cost"][gpi_record["instance_id"]] += gpi_record[
+        //       "amount"
+        //     ]
+        //       ? gpi_record["amount"]
+        //       : 0;
+
+        //     dummy_values["labor_hours"][gpi_record["invoiceId"]] += gpi_record[
+        //       "paidDurationHours"
+        //     ]
+        //       ? gpi_record["paidDurationHours"]
+        //       : 0;
+
+        //     dummy_values["burden_cost"][gpi_record["instance_id"]] +=
+        //       (gpi_record["paidDurationHours"]
+        //         ? gpi_record["paidDurationHours"]
+        //         : 0) *
+        //       (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //         ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+        //         : 0);
+        //   }
+        // });
+
+        // if (initial_execute) {
+        //   invoice_final_data_pool.push({
+        //     id: 1,
+        //     syncStatus: "default",
+        //     date: "1999-01-01T00:00:00.00Z",
+        //     dueDate: "1999-01-01T00:00:00.00Z",
+        //     subtotal: 0,
+        //     tax: 0,
+        //     total: 0,
+        //     balance: 0,
+        //     depositedOn: "1999-01-01T00:00:00.00Z",
+        //     createdOn: "1999-01-01T00:00:00.00Z",
+        //     modifiedOn: "1999-01-01T00:00:00.00Z",
+        //     invoice_type_id: 0,
+        //     invoice_type_name: "default_invoice",
+        //     job_details_id: 1,
+        //     actual_job_details_id: 1,
+        //     business_unit_id: 1,
+        //     actual_business_unit_id: 1,
+        //     location_id: 1,
+        //     actual_location_id: 1,
+        //     address_street: "default",
+        //     address_unit: "default",
+        //     address_city: "default",
+        //     address_state: "default",
+        //     address_country: "default",
+        //     address_zip: 57483,
+        //     acutal_address_zip: "57483",
+        //     customer_id: 1,
+        //     actual_customer_id: 1,
+        //     customer_name: "default",
+        //   });
+
+        //   invoice_final_data_pool.push({
+        //     id: 2,
+        //     syncStatus: "default",
+        //     date: "1999-01-01T00:00:00.00Z",
+        //     dueDate: "1999-01-01T00:00:00.00Z",
+        //     subtotal: 0,
+        //     tax: 0,
+        //     total: 0,
+        //     balance: 0,
+        //     depositedOn: "1999-01-01T00:00:00.00Z",
+        //     createdOn: "1999-01-01T00:00:00.00Z",
+        //     modifiedOn: "1999-01-01T00:00:00.00Z",
+        //     invoice_type_id: 0,
+        //     invoice_type_name: "default_invoice",
+        //     job_details_id: 2,
+        //     actual_job_details_id: 2,
+        //     business_unit_id: 2,
+        //     actual_business_unit_id: 2,
+        //     location_id: 2,
+        //     actual_location_id: 2,
+        //     address_street: "default",
+        //     address_unit: "default",
+        //     address_city: "default",
+        //     address_state: "default",
+        //     address_country: "default",
+        //     address_zip: 57483,
+        //     acutal_address_zip: "57483",
+        //     customer_id: 2,
+        //     actual_customer_id: 2,
+        //     customer_name: "default",
+        //   });
+
+        //   invoice_final_data_pool.push({
+        //     id: 3,
+        //     syncStatus: "default",
+        //     date: "1999-01-01T00:00:00.00Z",
+        //     dueDate: "1999-01-01T00:00:00.00Z",
+        //     subtotal: 0,
+        //     tax: 0,
+        //     total: 0,
+        //     balance: 0,
+        //     depositedOn: "1999-01-01T00:00:00.00Z",
+        //     createdOn: "1999-01-01T00:00:00.00Z",
+        //     modifiedOn: "1999-01-01T00:00:00.00Z",
+        //     invoice_type_id: 0,
+        //     invoice_type_name: "default_invoice",
+        //     job_details_id: 3,
+        //     actual_job_details_id: 3,
+        //     business_unit_id: 3,
+        //     actual_business_unit_id: 3,
+        //     location_id: 3,
+        //     actual_location_id: 3,
+        //     address_street: "default",
+        //     address_unit: "default",
+        //     address_city: "default",
+        //     address_state: "default",
+        //     address_country: "default",
+        //     address_zip: 57483,
+        //     acutal_address_zip: "57483",
+        //     customer_id: 3,
+        //     actual_customer_id: 3,
+        //     customer_name: "default",
+        //   });
+
+        //   cogs_material_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 1,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 1,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 1,
+        //     actual_job_details_id: 1,
+        //     invoice_id: 1,
+        //     sku_details_id: 1,
+        //     actual_sku_details_id: 1,
+        //   });
+
+        //   cogs_material_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 2,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 2,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 2,
+        //     actual_job_details_id: 2,
+        //     invoice_id: 2,
+        //     sku_details_id: 2,
+        //     actual_sku_details_id: 2,
+        //   });
+
+        //   cogs_material_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 3,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 3,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 3,
+        //     actual_job_details_id: 3,
+        //     invoice_id: 3,
+        //     sku_details_id: 3,
+        //     actual_sku_details_id: 3,
+        //   });
+
+        //   cogs_equipment_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 1,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 1,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 1,
+        //     actual_job_details_id: 1,
+        //     invoice_id: 1,
+        //     sku_details_id: 1,
+        //     actual_sku_details_id: 1,
+        //   });
+
+        //   cogs_equipment_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 2,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 2,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 2,
+        //     actual_job_details_id: 2,
+        //     invoice_id: 2,
+        //     sku_details_id: 2,
+        //     actual_sku_details_id: 2,
+        //   });
+
+        //   cogs_equipment_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 3,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 3,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 3,
+        //     actual_job_details_id: 3,
+        //     invoice_id: 3,
+        //     sku_details_id: 3,
+        //     actual_sku_details_id: 3,
+        //   });
+
+        //   cogs_services_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 1,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 1,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 1,
+        //     actual_job_details_id: 1,
+        //     invoice_id: 1,
+        //     sku_details_id: 1,
+        //     actual_sku_details_id: 1,
+        //   });
+
+        //   cogs_services_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 2,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 2,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 2,
+        //     actual_job_details_id: 2,
+        //     invoice_id: 2,
+        //     sku_details_id: 2,
+        //     actual_sku_details_id: 2,
+        //   });
+
+        //   cogs_services_final_data_pool.push({
+        //     quantity: 0,
+        //     cost: 0,
+        //     total_cost: 0,
+        //     price: 0,
+        //     sku_name: "default",
+        //     sku_total: 0,
+        //     generalLedgerAccountid: 3,
+        //     generalLedgerAccountname: "default",
+        //     generalLedgerAccountnumber: 3,
+        //     generalLedgerAccounttype: "default",
+        //     generalLedgerAccountdetailType: "default",
+        //     job_details_id: 3,
+        //     actual_job_details_id: 3,
+        //     invoice_id: 3,
+        //     sku_details_id: 3,
+        //     actual_sku_details_id: 3,
+        //   });
+
+        //   gross_profit_final_data_pool.push({
+        //     accounts_receivable: 0,
+        //     expense: 0,
+        //     income: 0,
+        //     current_liability: 0,
+        //     membership_liability: 0,
+        //     default: 0,
+        //     total: 0,
+        //     po_cost: dummy_values["po_cost"][1], // purchase orders
+        //     equipment_cost: 0, //
+        //     material_cost: 0, //
+        //     labor_cost: dummy_values["labor_cost"][1], // cogs_labor burden cost, labor cost, paid duration
+        //     burden: dummy_values["burden_cost"][1], // cogs_labor
+        //     // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+        //     // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+        //     units: 1, //  currently for 1
+        //     labor_hours: dummy_values["labor_hours"][1], // cogs_labor paid duration
+        //     invoice_id: 1,
+        //   });
+
+        //   gross_profit_final_data_pool.push({
+        //     accounts_receivable: 0,
+        //     expense: 0,
+        //     income: 0,
+        //     current_liability: 0,
+        //     membership_liability: 0,
+        //     default: 0,
+        //     total: 0,
+        //     po_cost: dummy_values["po_cost"][2], // purchase orders
+        //     equipment_cost: 0, //
+        //     material_cost: 0, //
+        //     labor_cost: dummy_values["labor_cost"][2], // cogs_labor burden cost, labor cost, paid duration
+        //     burden: dummy_values["burden_cost"][2], // cogs_labor
+        //     // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+        //     // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+        //     units: 1, //  currently for 1
+        //     labor_hours: dummy_values["labor_hours"][2], // cogs_labor paid duration
+        //     invoice_id: 2,
+        //   });
+
+        //   gross_profit_final_data_pool.push({
+        //     accounts_receivable: 0,
+        //     expense: 0,
+        //     income: 0,
+        //     current_liability: 0,
+        //     membership_liability: 0,
+        //     default: 0,
+        //     total: 0,
+        //     po_cost: dummy_values["po_cost"][3], // purchase orders
+        //     equipment_cost: 0, //
+        //     material_cost: 0, //
+        //     labor_cost: dummy_values["labor_cost"][3], // cogs_labor burden cost, labor cost, paid duration
+        //     burden: dummy_values["burden_cost"][3], // cogs_labor
+        //     // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+        //     // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+        //     units: 1, //  currently for 1
+        //     labor_hours: dummy_values["labor_hours"][3], // cogs_labor paid duration
+        //     invoice_id: 3,
+        //   });
+        // }
+
+        // Object.keys(invoice_data_pool).map((record_id) => {
+        //   const record = invoice_data_pool[record_id];
+
+        //   let job_details_id = record["instance_id"];
+        //   let actual_job_details_id = record["instance_id"];
+        //   if (record["job"]) {
+        //     actual_job_details_id = record["job"]["id"];
+        //     if (jobs_data_pool[record["job"]["id"]]) {
+        //       job_details_id = record["job"]["id"];
+        //     }
+        //   }
+
+        //   let business_unit_id = record["instance_id"];
+        //   let actual_business_unit_id = record["instance_id"];
+        //   if (record["businessUnit"]) {
+        //     actual_business_unit_id = record["businessUnit"]["id"];
+        //     if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+        //       business_unit_id = record["businessUnit"]["id"];
+        //     }
+        //   }
+
+        //   let location_id = record["instance_id"];
+        //   let actual_location_id = record["instance_id"];
+        //   if (record["location"]) {
+        //     actual_location_id = record["location"]["id"];
+        //     if (location_data_pool[record["location"]["id"]]) {
+        //       location_id = record["location"]["id"];
+        //     }
+        //   }
+
+        //   let customer_id = record["instance_id"];
+        //   let actual_customer_id = record["instance_id"];
+        //   let customer_name = "default";
+        //   if (record["customer"]) {
+        //     actual_customer_id = record["customer"]["id"];
+        //     customer_name = record["customer"]["name"]
+        //       ? record["customer"]["name"]
+        //       : "default";
+        //     if (customer_data_pool[record["customer"]["id"]]) {
+        //       customer_id = record["customer"]["id"];
+        //     }
+        //   }
+
+        //   let address_street = "";
+        //   let address_unit = "";
+        //   let address_city = "";
+        //   let address_state = "";
+        //   let address_zip = 57483;
+        //   let acutal_address_zip = "";
+        //   let address_country = "";
+        //   let city = "Mexico";
+        //   if (record["locationAddress"]) {
+        //     address_street = record["locationAddress"]["street"]
+        //       ? record["locationAddress"]["street"]
+        //       : "";
+        //     address_unit = record["locationAddress"]["unit"]
+        //       ? record["locationAddress"]["unit"]
+        //       : "";
+        //     address_city = record["locationAddress"]["city"]
+        //       ? record["locationAddress"]["city"]
+        //       : "";
+        //     address_state = record["locationAddress"]["state"]
+        //       ? record["locationAddress"]["state"]
+        //       : "";
+        //     address_country = record["locationAddress"]["country"]
+        //       ? record["locationAddress"]["country"]
+        //       : "";
+        //     acutal_address_zip = record["locationAddress"]["zip"]
+        //       ? record["locationAddress"]["zip"]
+        //       : "";
+
+        //     address_zip = record["locationAddress"]["zip"]
+        //       ? record["locationAddress"]["zip"]
+        //       : 57483;
+
+        //     if (typeof address_zip == "string") {
+        //       const numericValue = Number(address_zip.split("-")[0]);
+        //       if (!isNaN(numericValue)) {
+        //         // If the conversion is successful and numericValue is not NaN, update address_zip
+        //         address_zip = numericValue;
+        //       } else {
+        //         // Handle the case where the conversion fails
+        //         address_zip = 57483;
+        //       }
+        //     }
+
+        //     if (!unique_us_zip_codes[String(address_zip)]) {
+        //       address_zip = 57483;
+        //     } else {
+        //       city = unique_us_zip_codes[String(address_zip)]["city"];
+        //     }
+        //   }
+
+        //   let invoice_date = "2000-01-01T00:00:00.00Z";
+
+        //   if (record["invoiceDate"]) {
+        //     if (
+        //       new Date(record["invoiceDate"]) >
+        //       new Date("2000-01-01T00:00:00.00Z")
+        //     ) {
+        //       invoice_date = record["invoiceDate"];
+        //     }
+        //   } else {
+        //     invoice_date = "2001-01-01T00:00:00.00Z";
+        //   }
+
+        //   let dueDate = "2000-01-01T00:00:00.00Z";
+
+        //   if (record["dueDate"]) {
+        //     if (
+        //       new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+        //     ) {
+        //       dueDate = record["dueDate"];
+        //     }
+        //   } else {
+        //     dueDate = "2001-01-01T00:00:00.00Z";
+        //   }
+
+        //   let depositedOn = "2000-01-01T00:00:00.00Z";
+
+        //   if (record["depositedOn"]) {
+        //     if (
+        //       new Date(record["depositedOn"]) >
+        //       new Date("2000-01-01T00:00:00.00Z")
+        //     ) {
+        //       depositedOn = record["depositedOn"];
+        //     }
+        //   } else {
+        //     depositedOn = "2001-01-01T00:00:00.00Z";
+        //   }
+
+        //   let createdOn = "2000-01-01T00:00:00.00Z";
+
+        //   if (record["createdOn"]) {
+        //     if (
+        //       new Date(record["createdOn"]) >
+        //       new Date("2000-01-01T00:00:00.00Z")
+        //     ) {
+        //       createdOn = record["createdOn"];
+        //     }
+        //   } else {
+        //     createdOn = "2001-01-01T00:00:00.00Z";
+        //   }
+
+        //   let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+        //   if (record["modifiedOn"]) {
+        //     if (
+        //       new Date(record["modifiedOn"]) >
+        //       new Date("2000-01-01T00:00:00.00Z")
+        //     ) {
+        //       modifiedOn = record["modifiedOn"];
+        //     }
+        //   } else {
+        //     modifiedOn = "2001-01-01T00:00:00.00Z";
+        //   }
+
+        //   const js_date = new Date(invoice_date);
+
+        //   const current_date = new Date();
+
+        //   if (js_date > current_date) {
+        //     invoice_date = "2002-01-01T00:00:00.00Z";
+        //   }
+
+        //   let invoice_type_id = 0;
+        //   let invoice_type_name = "default_invoice";
+        //   if (record["invoiceType"]) {
+        //     invoice_type_id = record["invoiceType"]["id"];
+        //     invoice_type_name = record["invoiceType"]["name"];
+        //   }
+
+        //   invoice_final_data_pool.push({
+        //     id: record["id"],
+        //     syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+        //     date: invoice_date,
+        //     dueDate: dueDate,
+        //     subtotal: record["subTotal"] ? record["subTotal"] : 0,
+        //     tax: record["salesTax"] ? record["salesTax"] : 0,
+        //     total: record["total"] ? record["total"] : 0,
+        //     balance: record["balance"] ? record["balance"] : 0,
+        //     depositedOn: depositedOn,
+        //     createdOn: createdOn,
+        //     modifiedOn: modifiedOn,
+        //     invoice_type_id: invoice_type_id,
+        //     invoice_type_name: invoice_type_name,
+        //     job_details_id: job_details_id,
+        //     actual_job_details_id: actual_job_details_id,
+        //     business_unit_id: business_unit_id,
+        //     actual_business_unit_id: actual_business_unit_id,
+        //     location_id: location_id,
+        //     actual_location_id: actual_location_id,
+        //     address_street: address_street,
+        //     address_unit: address_unit,
+        //     address_city: address_city,
+        //     address_state: address_state,
+        //     address_country: address_country,
+        //     address_zip: address_zip,
+        //     acutal_address_zip: acutal_address_zip,
+        //     customer_id: customer_id,
+        //     actual_customer_id: actual_customer_id,
+        //     customer_name: customer_name,
+        //   });
+
+        //   let po_cost = 0;
+        //   let labor_cost = 0;
+        //   let labor_hours = 0;
+        //   let burden = 0;
+
+        //   try {
+        //     po_cost = po_and_gpi_data[record["id"]]["po_total"];
+        //     labor_cost = po_and_gpi_data[record["id"]]["labor_cost"];
+        //     labor_hours = po_and_gpi_data[record["id"]]["labor_hours"];
+        //     burden = po_and_gpi_data[record["id"]]["burden"];
+        //   } catch (err) {
+        //     // console.log("job_details_id: ", job_details_id);
+        //   }
+
+        //   let material_cost = 0;
+        //   let equipment_cost = 0;
+
+        //   let accounts_receivable = 0;
+        //   let expense = 0;
+        //   let income = 0;
+        //   let current_liability = 0;
+        //   let membership_liability = 0;
+        //   let default_val = 0;
+
+        //   if (record["items"]) {
+        //     record["items"].map((items_record) => {
+        //       let generalLedgerAccountid = 0;
+        //       let generalLedgerAccountname = "default";
+        //       let generalLedgerAccountnumber = 0;
+        //       let generalLedgerAccounttype = "default";
+        //       let generalLedgerAccountdetailType = "default";
+
+        //       if (items_record["generalLedgerAccount"]) {
+        //         generalLedgerAccountid =
+        //           items_record["generalLedgerAccount"]["id"];
+        //         generalLedgerAccountname =
+        //           items_record["generalLedgerAccount"]["name"];
+        //         generalLedgerAccountnumber =
+        //           items_record["generalLedgerAccount"]["number"];
+        //         generalLedgerAccounttype =
+        //           items_record["generalLedgerAccount"]["type"];
+        //         generalLedgerAccountdetailType =
+        //           items_record["generalLedgerAccount"]["detailType"];
+        //       }
+
+        //       if (items_record["type"] == "Material") {
+        //         material_cost =
+        //           material_cost + parseFloat(items_record["totalCost"]);
+
+        //         let sku_details_id = record["instance_id"];
+        //         let actual_sku_details_id = items_record["skuId"]
+        //           ? items_record["skuId"]
+        //           : record["instance_id"];
+        //         if (sku_details_data_pool[items_record["skuId"]]) {
+        //           sku_details_id = items_record["skuId"];
+        //         }
+
+        //         cogs_material_final_data_pool.push({
+        //           quantity: items_record["quantity"]
+        //             ? items_record["quantity"]
+        //             : 0,
+        //           cost: items_record["cost"] ? items_record["cost"] : 0,
+        //           total_cost: items_record["totalCost"]
+        //             ? items_record["totalCost"]
+        //             : 0,
+        //           price: items_record["price"] ? items_record["price"] : 0,
+        //           sku_name: items_record["skuName"]
+        //             ? items_record["skuName"]
+        //             : "default",
+        //           sku_total: items_record["total"] ? items_record["total"] : 0,
+        //           generalLedgerAccountid: generalLedgerAccountid,
+        //           generalLedgerAccountname: generalLedgerAccountname,
+        //           generalLedgerAccountnumber: generalLedgerAccountnumber,
+        //           generalLedgerAccounttype: generalLedgerAccounttype,
+        //           generalLedgerAccountdetailType:
+        //             generalLedgerAccountdetailType,
+        //           job_details_id: job_details_id,
+        //           actual_job_details_id: actual_job_details_id,
+        //           invoice_id: record["id"],
+        //           sku_details_id: sku_details_id,
+        //           actual_sku_details_id: actual_sku_details_id,
+        //         });
+        //       }
+
+        //       if (items_record["type"] == "Equipment") {
+        //         equipment_cost =
+        //           equipment_cost + parseFloat(items_record["totalCost"]);
+
+        //         let sku_details_id = record["instance_id"] + 3;
+        //         let actual_sku_details_id = items_record["skuId"]
+        //           ? items_record["skuId"]
+        //           : record["instance_id"];
+        //         if (sku_details_data_pool[items_record["skuId"]]) {
+        //           sku_details_id = items_record["skuId"];
+        //         }
+
+        //         cogs_equipment_final_data_pool.push({
+        //           quantity: items_record["quantity"]
+        //             ? items_record["quantity"]
+        //             : 0,
+        //           cost: items_record["cost"] ? items_record["cost"] : 0,
+        //           total_cost: items_record["totalCost"]
+        //             ? items_record["totalCost"]
+        //             : 0,
+        //           price: items_record["price"] ? items_record["price"] : 0,
+        //           sku_name: items_record["skuName"]
+        //             ? items_record["skuName"]
+        //             : "default",
+        //           sku_total: items_record["total"] ? items_record["total"] : 0,
+        //           generalLedgerAccountid: generalLedgerAccountid,
+        //           generalLedgerAccountname: generalLedgerAccountname,
+        //           generalLedgerAccountnumber: generalLedgerAccountnumber,
+        //           generalLedgerAccounttype: generalLedgerAccounttype,
+        //           generalLedgerAccountdetailType:
+        //             generalLedgerAccountdetailType,
+        //           job_details_id: job_details_id,
+        //           actual_job_details_id: actual_job_details_id,
+        //           invoice_id: record["id"],
+        //           sku_details_id: sku_details_id,
+        //           actual_sku_details_id: actual_sku_details_id,
+        //         });
+        //       }
+
+        //       if (items_record["type"] == "Service") {
+        //         let sku_details_id = record["instance_id"] + 6;
+        //         let actual_sku_details_id = items_record["skuId"]
+        //           ? items_record["skuId"]
+        //           : record["instance_id"];
+        //         if (sku_details_data_pool[items_record["skuId"]]) {
+        //           sku_details_id = items_record["skuId"];
+        //         }
+
+        //         // for gross profit
+        //         switch (generalLedgerAccounttype) {
+        //           case "Accounts Receivable": {
+        //             accounts_receivable += items_record["total"]
+        //               ? parseFloat(items_record["total"])
+        //               : 0;
+
+        //             break;
+        //           }
+        //           case "Current Liability": {
+        //             current_liability += items_record["total"]
+        //               ? parseFloat(items_record["total"])
+        //               : 0;
+
+        //             break;
+        //           }
+        //           case "Membership Liability": {
+        //             membership_liability += items_record["total"]
+        //               ? parseFloat(items_record["total"])
+        //               : 0;
+
+        //             break;
+        //           }
+        //           case "default": {
+        //             default_val += items_record["total"]
+        //               ? parseFloat(items_record["total"])
+        //               : 0;
+
+        //             break;
+        //           }
+        //         }
+
+        //         cogs_services_final_data_pool.push({
+        //           quantity: items_record["quantity"]
+        //             ? items_record["quantity"]
+        //             : 0,
+        //           cost: items_record["cost"] ? items_record["cost"] : 0,
+        //           total_cost: items_record["totalCost"]
+        //             ? items_record["totalCost"]
+        //             : 0,
+        //           price: items_record["price"] ? items_record["price"] : 0,
+        //           sku_name: items_record["skuName"]
+        //             ? items_record["skuName"]
+        //             : "default",
+        //           sku_total: items_record["total"] ? items_record["total"] : 0,
+        //           generalLedgerAccountid: generalLedgerAccountid,
+        //           generalLedgerAccountname: generalLedgerAccountname,
+        //           generalLedgerAccountnumber: generalLedgerAccountnumber,
+        //           generalLedgerAccounttype: generalLedgerAccounttype,
+        //           generalLedgerAccountdetailType:
+        //             generalLedgerAccountdetailType,
+        //           job_details_id: job_details_id,
+        //           actual_job_details_id: actual_job_details_id,
+        //           invoice_id: record["id"],
+        //           sku_details_id: sku_details_id,
+        //           actual_sku_details_id: actual_sku_details_id,
+        //         });
+        //       }
+
+        //       // for gross profit
+        //       switch (generalLedgerAccounttype) {
+        //         case "Expense": {
+        //           expense += items_record["total"]
+        //             ? parseFloat(items_record["total"])
+        //             : 0;
+
+        //           break;
+        //         }
+        //         case "Income": {
+        //           income += items_record["total"]
+        //             ? parseFloat(items_record["total"])
+        //             : 0;
+
+        //           break;
+        //         }
+        //       }
+        //     });
+        //   }
+
+        //   let revenue = parseFloat(record["total"])
+        //     ? parseFloat(record["total"])
+        //     : 0;
+
+        //   // let gross_profit =
+        //   //   revenue -
+        //   //   po_cost -
+        //   //   equipment_cost -
+        //   //   material_cost -
+        //   //   labor_cost -
+        //   //   burden;
+
+        //   // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
+
+        //   // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
+        //   //   gross_margin = 0;
+        //   // }
+
+        //   if (js_date <= current_date) {
+        //     gross_profit_final_data_pool.push({
+        //       accounts_receivable: accounts_receivable,
+        //       expense: expense,
+        //       income: income,
+        //       current_liability: current_liability,
+        //       membership_liability: membership_liability,
+        //       default: default_val,
+        //       total: record["total"] ? parseFloat(record["total"]) : 0,
+        //       po_cost: po_cost, // purchase orders
+        //       equipment_cost: equipment_cost, //
+        //       material_cost: material_cost, //
+        //       labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+        //       burden: burden, // cogs_labor
+        //       // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+        //       // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+        //       units: 1, //  currently for 1
+        //       labor_hours: labor_hours, // cogs_labor paid duration
+        //       invoice_id: record["id"],
+        //     });
+        //   }
+        // });
 
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
@@ -6131,6 +6449,709 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        break;
+      }
+
+      case "call_details": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const telecom_calls_data_pool =
+          data_lake[table_name]["telecom__calls"]["data_pool"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const customer_data_pool =
+          data_lake["customer_details"]["crm__customers"]["data_pool"];
+        const appointments_data_pool =
+          data_lake["appointments"]["jpm__appointments"]["data_pool"];
+        const projects_data_pool =
+          data_lake["projects"]["jpm__projects"]["data_pool"];
+
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
+        // console.log("header_data: ", header_data);
+
+        if (initial_execute) {
+          final_data_pool.push({
+            lead_call_id: 1,
+            id: 1,
+            instance_id: 1,
+            job_number: "default",
+            status: "Not Known",
+            project_id: 1,
+            actual_project_id: 1,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            duration: "00:00:00",
+            from: "default",
+            to: "default",
+            direction: "Others",
+            call_type: "Others",
+            customer_details_id: 1,
+            actual_customer_details_id: 1,
+            is_customer_active: 0,
+            customer_name: "default",
+            street_address: "default",
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            country: "default",
+            zip: "default",
+            latitude: 0.0,
+            longitude: 0.0,
+            customer_import_id: "default",
+            customer_type: "Others",
+            campaign_id: 1,
+            campaign_category: "default",
+            campaign_source: "default",
+            campaign_medium: "default",
+            campaign_dnis: "default",
+            campaign_name: "default",
+            campaign_createdOn: "1999-01-01T00:00:00.00Z",
+            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
+            is_campaign_active: 0,
+            agent_id: 1,
+            agent_externalId: 1,
+            agent_name: "default",
+            business_unit_id: 1,
+            actual_business_unit_id: 1,
+            business_unit_active: 0,
+            business_unit_name: "default",
+            business_unit_official_name: "default",
+            type_id: 1,
+            type_name: "default",
+            type_modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+
+          final_data_pool.push({
+            lead_call_id: 2,
+            id: 2,
+            instance_id: 2,
+            job_number: "default",
+            status: "Not Known",
+            project_id: 2,
+            actual_project_id: 2,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            duration: "00:00:00",
+            from: "default",
+            to: "default",
+            direction: "Others",
+            call_type: "Others",
+            customer_details_id: 2,
+            actual_customer_details_id: 2,
+            is_customer_active: 0,
+            customer_name: "default",
+            street_address: "default",
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            country: "default",
+            zip: "default",
+            latitude: 0.0,
+            longitude: 0.0,
+            customer_import_id: "default",
+            customer_type: "Others",
+            campaign_id: 2,
+            campaign_category: "default",
+            campaign_source: "default",
+            campaign_medium: "default",
+            campaign_dnis: "default",
+            campaign_name: "default",
+            campaign_createdOn: "1999-01-01T00:00:00.00Z",
+            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
+            is_campaign_active: 0,
+            agent_id: 2,
+            agent_externalId: 2,
+            agent_name: "default",
+            business_unit_id: 2,
+            actual_business_unit_id: 2,
+            business_unit_active: 0,
+            business_unit_name: "default",
+            business_unit_official_name: "default",
+            type_id: 2,
+            type_name: "default",
+            type_modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+
+          final_data_pool.push({
+            lead_call_id: 3,
+            id: 3,
+            instance_id: 3,
+            job_number: "default",
+            status: "Not Known",
+            project_id: 1,
+            actual_project_id: 3,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            duration: "00:00:00",
+            from: "default",
+            to: "default",
+            direction: "Others",
+            call_type: "Others",
+            customer_details_id: 3,
+            actual_customer_details_id: 3,
+            is_customer_active: 0,
+            customer_name: "default",
+            street_address: "default",
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            country: "default",
+            zip: "default",
+            latitude: 0.0,
+            longitude: 0.0,
+            customer_import_id: "default",
+            customer_type: "Others",
+            campaign_id: 3,
+            campaign_category: "default",
+            campaign_source: "default",
+            campaign_medium: "default",
+            campaign_dnis: "default",
+            campaign_name: "default",
+            campaign_createdOn: "1999-01-01T00:00:00.00Z",
+            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
+            is_campaign_active: 0,
+            agent_id: 3,
+            agent_externalId: 3,
+            agent_name: "default",
+            business_unit_id: 3,
+            actual_business_unit_id: 3,
+            business_unit_active: 0,
+            business_unit_name: "default",
+            business_unit_official_name: "default",
+            type_id: 3,
+            type_name: "default",
+            type_modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+        }
+
+        let lead_call_status = {};
+
+        Object.keys(appointments_data_pool).map((record_id) => {
+          const record = appointments_data_pool[record_id];
+
+          if (record["jobId"]) {
+            lead_call_status[record["jobId"]] = record["status"];
+          }
+        });
+
+        Object.keys(telecom_calls_data_pool).map((record_id) => {
+          const record = telecom_calls_data_pool[record_id];
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["createdOn"]) {
+            if (
+              new Date(record["leadCall"]["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["leadCall"]["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["modifiedOn"]) {
+            if (
+              new Date(record["leadCall"]["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["leadCall"]["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let receivedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["leadCall"]["receivedOn"]) {
+            if (
+              new Date(record["leadCall"]["receivedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              receivedOn = record["leadCall"]["receivedOn"];
+            }
+          } else {
+            receivedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (projects_data_pool[record["projectId"]]) {
+            project_id = record["projectId"];
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          let business_unit_active = 0;
+          let business_unit_name = "default";
+          let business_unit_official_name = "default";
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            business_unit_active = record["businessUnit"]["active"] ? 1 : 0;
+            business_unit_name = record["businessUnit"]["name"]
+              ? record["businessUnit"]["name"]
+              : "default";
+            business_unit_official_name = record["businessUnit"]["officialName"]
+              ? record["businessUnit"]["officialName"]
+              : "default";
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["instance_id"];
+          let customer_name = "default";
+          let is_customer_active = 0;
+          let street_address = "default";
+          let street = "default";
+          let unit = "default";
+          let city = "default";
+          let state = "default";
+          let country = "default";
+          let zip = "default";
+          let latitude = 0.0;
+          let longitude = 0.0;
+          let customer_import_id = "default";
+          let customer_type = "Others";
+          if (record["leadCall"]["customer"]) {
+            actual_customer_details_id = record["leadCall"]["customer"]["id"];
+            customer_name = record["leadCall"]["customer"]["name"]
+              ? record["leadCall"]["customer"]["name"]
+              : "default";
+            is_customer_active = record["leadCall"]["customer"]["active"]
+              ? 1
+              : 0;
+
+            if (record["leadCall"]["customer"]["address"]) {
+              street_address = record["leadCall"]["customer"]["address"][
+                "streetAddress"
+              ]
+                ? record["leadCall"]["customer"]["address"]["streetAddress"]
+                : "default";
+              street = record["leadCall"]["customer"]["address"]["street"]
+                ? record["leadCall"]["customer"]["address"]["street"]
+                : "default";
+              unit = record["leadCall"]["customer"]["address"]["unit"]
+                ? record["leadCall"]["customer"]["address"]["unit"]
+                : "default";
+              city = record["leadCall"]["customer"]["address"]["city"]
+                ? record["leadCall"]["customer"]["address"]["city"]
+                : "default";
+              state = record["leadCall"]["customer"]["address"]["state"]
+                ? record["leadCall"]["customer"]["address"]["state"]
+                : "default";
+              country = record["leadCall"]["customer"]["address"]["country"]
+                ? record["leadCall"]["customer"]["address"]["country"]
+                : "default";
+              zip = record["leadCall"]["customer"]["address"]["zip"]
+                ? record["leadCall"]["customer"]["address"]["zip"]
+                : "default";
+              latitude = record["leadCall"]["customer"]["address"]["latitude"]
+                ? record["leadCall"]["customer"]["address"]["latitude"]
+                : 0.0;
+              longitude = record["leadCall"]["customer"]["address"]["longitude"]
+                ? record["leadCall"]["customer"]["address"]["longitude"]
+                : 0.0;
+            }
+
+            customer_import_id = record["leadCall"]["customer"]["importId"]
+              ? record["leadCall"]["customer"]["importId"]
+              : "default";
+            customer_type = record["leadCall"]["customer"]["type"]
+              ? record["leadCall"]["customer"]["type"]
+              : "Others";
+
+            if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
+              customer_details_id = record["leadCall"]["customer"]["id"];
+            }
+          }
+
+          let campaign_id = 0;
+          let campaign_category = "default";
+          let campaign_source = "default";
+          let campaign_medium = "default";
+          let campaign_dnis = "default";
+          let campaign_name = "default";
+          let campaign_createdOn = "2000-01-01T00:00:00.00Z";
+          let campaign_modifiedOn = "2000-01-01T00:00:00.00Z";
+          let is_campaign_active = 0;
+          if (record["leadCall"]["campaign"]) {
+            if (record["leadCall"]["campaign"]["createdOn"]) {
+              if (
+                new Date(record["leadCall"]["campaign"]["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                campaign_createdOn =
+                  record["leadCall"]["campaign"]["createdOn"];
+              }
+            } else {
+              campaign_createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            if (record["leadCall"]["campaign"]["modifiedOn"]) {
+              if (
+                new Date(record["leadCall"]["campaign"]["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                campaign_modifiedOn =
+                  record["leadCall"]["campaign"]["modifiedOn"];
+              }
+            } else {
+              campaign_modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            campaign_id = record["leadCall"]["campaign"]["id"]
+              ? record["leadCall"]["campaign"]["id"]
+              : 0;
+
+            if (record["leadCall"]["campaign"]["category"]) {
+              campaign_category = record["leadCall"]["campaign"]["category"][
+                "name"
+              ]
+                ? record["leadCall"]["campaign"]["category"]["name"]
+                : "default";
+            }
+
+            campaign_source = record["leadCall"]["campaign"]["source"]
+              ? record["leadCall"]["campaign"]["source"]
+              : "default";
+            campaign_medium = record["leadCall"]["campaign"]["medium"]
+              ? record["leadCall"]["campaign"]["medium"]
+              : "default";
+            campaign_dnis = record["leadCall"]["campaign"]["dnis"]
+              ? record["leadCall"]["campaign"]["dnis"]
+              : "default";
+            campaign_name = record["leadCall"]["campaign"]["name"]
+              ? record["leadCall"]["campaign"]["name"]
+              : "default";
+            is_campaign_active = record["leadCall"]["campaign"]["active"]
+              ? 1
+              : 0;
+          }
+
+          let agent_id = 0;
+          let agent_externalId = 0;
+          let agent_name = "default";
+          if (record["leadCall"]["agent"]) {
+            agent_id = record["leadCall"]["agent"]["id"]
+              ? record["leadCall"]["agent"]["id"]
+              : 0;
+            agent_externalId = record["leadCall"]["agent"]["externalId"]
+              ? record["leadCall"]["agent"]["externalId"]
+              : 0;
+            agent_name = record["leadCall"]["agent"]["name"]
+              ? record["leadCall"]["agent"]["name"]
+              : "default";
+          }
+
+          let type_id = 0;
+          let type_name = "default";
+          let type_modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["type"]) {
+            type_id = record["type"]["id"] ? record["type"]["id"] : 0;
+            type_name = record["type"]["name"]
+              ? record["type"]["name"]
+              : "default";
+            if (record["type"]["modifiedOn"]) {
+              if (
+                new Date(record["type"]["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                type_modifiedOn = record["type"]["modifiedOn"];
+              }
+            } else {
+              type_modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+          }
+
+          let status = "Not Known";
+          if (lead_call_status[record["jobNumber"]]) {
+            status = lead_call_status[record["jobNumber"]];
+          }
+
+          final_data_pool.push({
+            lead_call_id: record["leadCall"]["id"],
+            id: record["id"],
+            instance_id: record["instance_id"],
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            status: status,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            receivedOn: receivedOn,
+            duration: record["leadCall"]["duration"]
+              ? record["leadCall"]["duration"]
+              : "00:00:00",
+            from: record["leadCall"]["from"]
+              ? record["leadCall"]["from"]
+              : "default",
+            to: record["leadCall"]["to"] ? record["leadCall"]["to"] : "default",
+            direction: record["leadCall"]["direction"]
+              ? record["leadCall"]["direction"]
+              : "Others",
+            call_type: record["leadCall"]["callType"]
+              ? record["leadCall"]["callType"]
+              : "Others",
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+            is_customer_active: is_customer_active,
+            customer_name: customer_name,
+            street_address: street_address,
+            street: street,
+            unit: unit,
+            city: city,
+            state: state,
+            country: country,
+            zip: zip,
+            latitude: latitude,
+            longitude: longitude,
+            customer_import_id: customer_import_id,
+            customer_type: customer_type,
+            campaign_id: campaign_id,
+            campaign_category: campaign_category,
+            campaign_source: campaign_source,
+            campaign_medium: campaign_medium,
+            campaign_dnis: campaign_dnis,
+            campaign_name: campaign_name,
+            campaign_createdOn: campaign_createdOn,
+            campaign_modifiedOn: campaign_modifiedOn,
+            is_campaign_active: is_campaign_active,
+            agent_id: agent_id,
+            agent_externalId: agent_externalId,
+            agent_name: agent_name,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            business_unit_active: business_unit_active,
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            type_id: type_id,
+            type_name: type_name,
+            type_modifiedOn: type_modifiedOn,
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   Object.keys(header_data),
+        //   table_name
+        // );
+
+        console.log("telecom_calls data: ", final_data_pool.length);
+        // console.log("telecom_calls data: ", final_data_pool);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["call_details"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["call_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
+      case "sales_details": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+        const business_unit_data_pool =
+          data_lake["business_unit"]["settings__business-units"]["data_pool"];
+        const jobs_data_pool =
+          data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        const customer_data_pool =
+          data_lake["customer_details"]["crm__customers"]["data_pool"];
+        const location_data_pool =
+          data_lake["location"]["crm__locations"]["data_pool"];
+        const projects_data_pool =
+          data_lake["projects"]["jpm__projects"]["data_pool"];
+
+        let final_data_pool = [];
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (projects_data_pool[record["projectId"]]) {
+            project_id = record["projectId"];
+          }
+
+          let business_unit_id = record["instance_id"];
+          let acutal_business_unit_id = record["instance_id"];
+          let businessUnitName = record["businessUnitName"]
+            ? record["businessUnitName"]
+            : "default";
+          if (business_unit_data_pool[record["businessUnitId"]]) {
+            acutal_business_unit_id = record["businessUnitId"];
+            business_unit_id = record["businessUnitId"];
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+
+          let location_id = record["instance_id"];
+          let actual_location_id = record["instance_id"];
+          if (location_data_pool[record["locationId"]]) {
+            location_id = record["locationId"];
+            actual_location_id = record["locationId"];
+          }
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["customerId"]
+            ? record["customerId"]
+            : record["instance_id"];
+          if (customer_data_pool[record["customerId"]]) {
+            customer_details_id = record["customerId"];
+          }
+
+          let soldOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["soldOn"]) {
+            if (
+              new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              soldOn = record["soldOn"];
+            }
+          } else {
+            soldOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let status_value = 0;
+          let status_name = "default";
+          if (record["status"]) {
+            status_value = record["status"]["value"]
+              ? record["status"]["value"]
+              : 0;
+            status_name = record["status"]["name"]
+              ? record["status"]["name"]
+              : "default";
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            name: record["name"] ? record["name"] : "default",
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            soldOn: soldOn,
+            soldBy: record["soldBy"] ? record["soldBy"] : 0,
+            is_active: record["active"] ? 1 : 0,
+            subtotal: record["subtotal"] ? record["subtotal"] : 0,
+            status_value: status_value,
+            status_name: status_name,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            business_unit_id: business_unit_id,
+            acutal_business_unit_id: acutal_business_unit_id,
+            businessUnitName: businessUnitName,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+          });
+        });
+
+        console.log("sales_details data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["sales_details"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["sales_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[table_name]["sales__estimates"];
 
         break;
       }
