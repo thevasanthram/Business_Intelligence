@@ -3194,7 +3194,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (po_record["invoiceId"] != null) {
               if (!invoice_po_and_gpi_data[po_record["invoiceId"]]) {
                 invoice_po_and_gpi_data[po_record["invoiceId"]] = {
-                  po_total: 0,
+                  po_cost: 0,
                   labor_cost: 0,
                   labor_hours: 0,
                   burden: 0,
@@ -3205,7 +3205,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
                   po_record["total"];
               } else {
-                invoice_po_and_gpi_data[po_record["invoiceId"]]["po_total"] +=
+                invoice_po_and_gpi_data[po_record["invoiceId"]]["po_cost"] +=
                   po_record["total"];
               }
             } else {
@@ -3217,7 +3217,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (po_record["projectId"] != null) {
               if (!projects_po_and_gpi_data[po_record["projectId"]]) {
                 projects_po_and_gpi_data[po_record["projectId"]] = {
-                  po_total: 0,
+                  po_cost: 0,
                   labor_cost: 0,
                   labor_hours: 0,
                   burden: 0,
@@ -3228,7 +3228,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 project_dummy_values["po_cost"][po_record["instance_id"]] +=
                   po_record["total"];
               } else {
-                projects_po_and_gpi_data[po_record["projectId"]]["po_total"] +=
+                projects_po_and_gpi_data[po_record["projectId"]]["po_cost"] +=
                   po_record["total"];
               }
             } else {
@@ -3246,7 +3246,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           if (gpi_record["invoiceId"] != null) {
             if (!invoice_po_and_gpi_data[gpi_record["invoiceId"]]) {
               invoice_po_and_gpi_data[gpi_record["invoiceId"]] = {
-                po_total: 0,
+                po_cost: 0,
                 labor_cost: 0,
                 labor_hours: 0,
                 burden: 0,
@@ -3308,7 +3308,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           if (gpi_record["projectId"] != null) {
             if (!projects_po_and_gpi_data[gpi_record["projectId"]]) {
               projects_po_and_gpi_data[gpi_record["projectId"]] = {
-                po_total: 0,
+                po_cost: 0,
                 labor_cost: 0,
                 labor_hours: 0,
                 burden: 0,
@@ -3623,8 +3623,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           let burden = 0;
 
           if (invoice_po_and_gpi_data[record["id"]]) {
-            po_cost = invoice_po_and_gpi_data[record["id"]]["po_total"]
-              ? invoice_po_and_gpi_data[record["id"]]["po_total"]
+            po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
+              ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
               : 0;
             labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
               ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
