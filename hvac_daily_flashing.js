@@ -777,6 +777,20 @@ const hvac_tables = {
       },
     },
   },
+  project_job_details: {
+    project_id: {
+      data_type: "INT",
+      constraint: { primary: true, nullable: false },
+    },
+    job_details_id: {
+      data_type: "INT",
+      constraint: { nullable: false },
+    },
+    actual_job_details_id: {
+      data_type: "INT",
+      constraint: { nullable: true },
+    },
+  },
   sales_details: {
     columns: {
       id: {
@@ -1653,6 +1667,9 @@ const hvac_tables_responses = {
   job_details: {
     status: "",
   },
+  project_job_details: {
+    status: "",
+  },
   appointments: {
     status: "",
   },
@@ -2141,6 +2158,7 @@ async function azure_sql_operations(data_lake, table_list) {
 
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
+  let project_cache = {};
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
@@ -4096,6 +4114,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
+        let project_job_details_data_pool = [];
+
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
@@ -4179,6 +4199,24 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
+          // preparing data_pool for project_jobs_details table
+          let jobIds = [];
+          if (record["jobIds"]) {
+            jobIds = record["jobIds"];
+          }
+          jobIds.map((job_id) => {
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = job_id ? job_id : record["instance_id"];
+            if (jobs_data_pool[job_id]) {
+              job_details_id = job_id;
+            }
+            project_job_details_data_pool.push({
+              project_id: record["id"],
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+            });
+          });
+
           let billed_amount = 0;
           let po_cost = 0;
           let equipment_cost = 0;
@@ -4240,6 +4278,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
           });
         });
+
+        project_cache["project_job_details_data_pool"] =
+          project_job_details_data_pool;
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -4834,6 +4875,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["bookings"]["crm__bookings"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
+        const project_job_details_header_data =
+          hvac_tables["project_job_details"]["columns"];
 
         let final_data_pool = [];
 
@@ -5065,6 +5108,33 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET job_details = '${hvac_tables_responses["job_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        console.log("project_job_details data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["project_job_details"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                project_cache["project_job_details_data_pool"],
+                project_job_details_header_data,
+                "project_job_details"
+              );
+          } while (
+            hvac_tables_responses["project_job_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_job_details = '${hvac_tables_responses["project_job_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
@@ -6211,6 +6281,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        invoice_cache = {};
 
         break;
       }
