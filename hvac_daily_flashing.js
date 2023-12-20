@@ -3589,13 +3589,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_dummy_values["billed_amount"][record["instance_id"]] +=
                 parseFloat(record["total"]);
             } else {
-              if (record["projectId"] == 71584441) {
-                console.log(record_id, ": ", record["total"]);
-                console.log(
-                  "summing value: ",
-                  project_total_data[record["projectId"]]["billed_amount"]
-                );
-              }
               project_total_data[record["projectId"]]["billed_amount"] +=
                 parseFloat(record["total"]);
             }
