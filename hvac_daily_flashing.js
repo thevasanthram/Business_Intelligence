@@ -3203,14 +3203,14 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               if (!invoice_data_pool[po_record["invoiceId"]]) {
                 invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
-                  po_record["total"];
+                  parseFloat(po_record["total"]);
               } else {
                 invoice_po_and_gpi_data[po_record["invoiceId"]]["po_cost"] +=
-                  po_record["total"];
+                  parseFloat(po_record["total"]);
               }
             } else {
               invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
-                po_record["total"];
+                parseFloat(po_record["total"]);
             }
 
             // data accumulation for projects table
@@ -3226,14 +3226,14 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               if (!data_pool[po_record["projectId"]]) {
                 project_dummy_values["po_cost"][po_record["instance_id"]] +=
-                  po_record["total"];
+                  parseFloat(po_record["total"]);
               } else {
                 projects_po_and_gpi_data[po_record["projectId"]]["po_cost"] +=
-                  po_record["total"];
+                  parseFloat(po_record["total"]);
               }
             } else {
               project_dummy_values["po_cost"][po_record["instance_id"]] +=
-                po_record["total"];
+                parseFloat(po_record["total"]);
             }
           }
         });
@@ -3255,52 +3255,58 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             if (!invoice_data_pool[gpi_record["invoiceId"]]) {
               invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
+                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
               invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
                 gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0;
 
               invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
                 (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0) *
                 (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? parseFloat(
+                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                    )
                   : 0);
             } else {
               invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
+                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
               invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
                 gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0;
 
               invoice_po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
                 (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0) *
                 (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? parseFloat(
+                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                    )
                   : 0);
             }
           } else {
             invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? gpi_record["amount"] : 0;
+              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
             invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
               gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
+                ? parseFloat(gpi_record["paidDurationHours"])
                 : 0;
 
             invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
               (gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
+                ? parseFloat(gpi_record["paidDurationHours"])
                 : 0) *
               (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? parseFloat(
+                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  )
                 : 0);
           }
 
@@ -3317,53 +3323,59 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             if (!data_pool[gpi_record["projectId"]]) {
               project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
+                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
               project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
                 gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0;
 
               project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
                 (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0) *
                 (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? parseFloat(
+                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                    )
                   : 0);
             } else {
               projects_po_and_gpi_data[gpi_record["projectId"]]["labor_cost"] +=
-                gpi_record["amount"] ? gpi_record["amount"] : 0;
+                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
               projects_po_and_gpi_data[gpi_record["projectId"]][
                 "labor_hours"
               ] += gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
+                ? parseFloat(gpi_record["paidDurationHours"])
                 : 0;
 
               projects_po_and_gpi_data[gpi_record["projectId"]]["burden"] +=
                 (gpi_record["paidDurationHours"]
-                  ? gpi_record["paidDurationHours"]
+                  ? parseFloat(gpi_record["paidDurationHours"])
                   : 0) *
                 (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  ? parseFloat(
+                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                    )
                   : 0);
             }
           } else {
             project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? gpi_record["amount"] : 0;
+              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
 
             project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
               gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
+                ? parseFloat(gpi_record["paidDurationHours"])
                 : 0;
 
             project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
               (gpi_record["paidDurationHours"]
-                ? gpi_record["paidDurationHours"]
+                ? parseFloat(gpi_record["paidDurationHours"])
                 : 0) *
               (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                ? parseFloat(
+                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
+                  )
                 : 0);
           }
         });
@@ -3575,7 +3587,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             // calculating billed amount
             if (!data_pool[record["projectId"]]) {
               project_dummy_values["billed_amount"][record["instance_id"]] +=
-                record["total"];
+                parseFloat(record["total"]);
             } else {
               if (record["projectId"] == 71584441) {
                 console.log(record_id, ": ", record["total"]);
@@ -3585,11 +3597,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                 );
               }
               project_total_data[record["projectId"]]["billed_amount"] +=
-                record["total"];
+                parseFloat(record["total"]);
             }
           } else {
             project_dummy_values["billed_amount"][record["instance_id"]] +=
-              record["total"];
+              parseFloat(record["total"]);
           }
 
           invoice_final_data_pool.push({
