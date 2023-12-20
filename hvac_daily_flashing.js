@@ -5154,7 +5154,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        console.log("project_job_details data: ", final_data_pool.length);
+        console.log(
+          "project_job_details data: ",
+          project_cache["project_job_details_data_pool"].length
+        );
 
         if (final_data_pool.length > 0) {
           do {
