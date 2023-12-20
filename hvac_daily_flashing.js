@@ -4096,7 +4096,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        Object.keys(projects_data_pool).map((record_id) => {
+        Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
           let customer_details_id = record["instance_id"];
