@@ -4231,21 +4231,48 @@ async function data_processor(data_lake, sql_request, table_list) {
           let membership_liability = 0;
 
           try {
-            billed_amount = project_total_data[record["id"]]["billed_amount"];
-            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"];
-            equipment_cost = project_total_data[record["id"]]["equipment_cost"];
-            material_cost = project_total_data[record["id"]]["material_cost"];
-            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"];
-            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"];
-            burden = projects_po_and_gpi_data[record["id"]]["burden"];
-            accounts_receivable =
-              project_total_data[record["id"]]["accounts_receivable"];
-            expense = project_total_data[record["id"]]["expense"];
-            income = project_total_data[record["id"]]["income"];
-            current_liability =
-              project_total_data[record["id"]]["current_liability"];
-            membership_liability =
-              project_total_data[record["id"]]["membership_liability"];
+            billed_amount = project_total_data[record["id"]]["billed_amount"]
+              ? project_total_data[record["id"]]["billed_amount"]
+              : 0;
+            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
+              ? projects_po_and_gpi_data[record["id"]]["po_cost"]
+              : 0;
+            equipment_cost = project_total_data[record["id"]]["equipment_cost"]
+              ? project_total_data[record["id"]]["equipment_cost"]
+              : 0;
+            material_cost = project_total_data[record["id"]]["material_cost"]
+              ? project_total_data[record["id"]]["material_cost"]
+              : 0;
+            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
+              ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
+              : 0;
+            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"]
+              ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
+              : 0;
+            burden = projects_po_and_gpi_data[record["id"]]["burden"]
+              ? projects_po_and_gpi_data[record["id"]]["burden"]
+              : 0;
+            accounts_receivable = project_total_data[record["id"]][
+              "accounts_receivable"
+            ]
+              ? project_total_data[record["id"]]["accounts_receivable"]
+              : 0;
+            expense = project_total_data[record["id"]]["expense"]
+              ? project_total_data[record["id"]]["expense"]
+              : 0;
+            income = project_total_data[record["id"]]["income"]
+              ? project_total_data[record["id"]]["income"]
+              : 0;
+            current_liability = project_total_data[record["id"]][
+              "current_liability"
+            ]
+              ? project_total_data[record["id"]]["current_liability"]
+              : 0;
+            membership_liability = project_total_data[record["id"]][
+              "membership_liability"
+            ]
+              ? project_total_data[record["id"]]["membership_liability"]
+              : 0;
           } catch (err) {
             // console.log("job_details_id: ", job_details_id);
           }
