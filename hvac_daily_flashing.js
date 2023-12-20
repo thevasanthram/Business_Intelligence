@@ -3065,6 +3065,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
           ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
         };
+        const invoice_data_pool =
+          data_lake["invoice"]["accounting__invoices"]["data_pool"];
 
         let final_data_pool = [];
 
