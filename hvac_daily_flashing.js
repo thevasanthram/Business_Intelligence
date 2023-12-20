@@ -778,17 +778,19 @@ const hvac_tables = {
     },
   },
   project_job_details: {
-    project_id: {
-      data_type: "INT",
-      constraint: { primary: true, nullable: false },
-    },
-    job_details_id: {
-      data_type: "INT",
-      constraint: { nullable: false },
-    },
-    actual_job_details_id: {
-      data_type: "INT",
-      constraint: { nullable: true },
+    columns: {
+      project_id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
     },
   },
   sales_details: {
@@ -3620,13 +3622,19 @@ async function data_processor(data_lake, sql_request, table_list) {
           let labor_hours = 0;
           let burden = 0;
 
-          try {
-            po_cost = invoice_po_and_gpi_data[record["id"]]["po_total"];
-            labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"];
-            labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"];
-            burden = invoice_po_and_gpi_data[record["id"]]["burden"];
-          } catch (err) {
-            // console.log("job_details_id: ", job_details_id);
+          if (invoice_po_and_gpi_data[record["id"]]) {
+            po_cost = invoice_po_and_gpi_data[record["id"]]["po_total"]
+              ? invoice_po_and_gpi_data[record["id"]]["po_total"]
+              : 0;
+            labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
+              ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
+              : 0;
+            labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"]
+              ? invoice_po_and_gpi_data[record["id"]]["labor_hours"]
+              : 0;
+            burden = invoice_po_and_gpi_data[record["id"]]["burden"]
+              ? invoice_po_and_gpi_data[record["id"]]["burden"]
+              : 0;
           }
 
           let material_cost = 0;
@@ -4230,27 +4238,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           let current_liability = 0;
           let membership_liability = 0;
 
-          try {
+          if (project_total_data[record["id"]]) {
             billed_amount = project_total_data[record["id"]]["billed_amount"]
               ? project_total_data[record["id"]]["billed_amount"]
-              : 0;
-            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["po_cost"]
               : 0;
             equipment_cost = project_total_data[record["id"]]["equipment_cost"]
               ? project_total_data[record["id"]]["equipment_cost"]
               : 0;
             material_cost = project_total_data[record["id"]]["material_cost"]
               ? project_total_data[record["id"]]["material_cost"]
-              : 0;
-            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              : 0;
-            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              : 0;
-            burden = projects_po_and_gpi_data[record["id"]]["burden"]
-              ? projects_po_and_gpi_data[record["id"]]["burden"]
               : 0;
             accounts_receivable = project_total_data[record["id"]][
               "accounts_receivable"
@@ -4273,8 +4269,22 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
               ? project_total_data[record["id"]]["membership_liability"]
               : 0;
-          } catch (err) {
-            // console.log("job_details_id: ", job_details_id);
+          }
+
+          if (projects_po_and_gpi_data[record["id"]]) {
+            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
+              ? projects_po_and_gpi_data[record["id"]]["po_cost"]
+              : 0;
+
+            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
+              ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
+              : 0;
+            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"]
+              ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
+              : 0;
+            burden = projects_po_and_gpi_data[record["id"]]["burden"]
+              ? projects_po_and_gpi_data[record["id"]]["burden"]
+              : 0;
           }
 
           final_data_pool.push({
