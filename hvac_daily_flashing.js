@@ -3073,9 +3073,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        const invoice_po_and_gpi_data = {};
+        let invoice_po_and_gpi_data = {};
 
-        const invoice_dummy_values = {
+        let invoice_dummy_values = {
           po_cost: {
             1: 0,
             2: 0,
@@ -3098,9 +3098,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           },
         };
 
-        const projects_po_and_gpi_data = {};
+        let projects_po_and_gpi_data = {};
 
-        const project_total_data = {};
+        let project_total_data = {};
 
         const project_dummy_values = {
           po_cost: {
