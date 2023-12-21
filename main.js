@@ -394,7 +394,7 @@ const hvac_tables = [
 
 const params_header = {
   createdOnOrAfter: "",
-  createdBefore: "", // 2023-10-04T00:00:00.00Z
+  createdBefore: "2023-12-21T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
   active: "any",
