@@ -3224,14 +3224,34 @@ async function data_processor(data_lake, sql_request, table_list) {
                 };
               }
 
+              if (po_record["projectId"] == 38900554) {
+                console.log("=========================");
+                console.log("invoice id: ", po_record["invoiceId"]);
+              }
+
               if (!data_pool[po_record["projectId"]]) {
                 project_dummy_values["po_cost"][po_record["instance_id"]] +=
                   parseFloat(po_record["total"]);
               } else {
+                if (po_record["projectId"] == 38900554) {
+                  console.log("entering");
+                  console.log("po_cost: ", parseFloat(po_record["total"]));
+                }
                 projects_po_and_gpi_data[po_record["projectId"]]["po_cost"] +=
                   parseFloat(po_record["total"]);
+                if (po_record["projectId"] == 38900554) {
+                  console.log(
+                    "added_vlaue: ",
+                    projects_po_and_gpi_data[po_record["projectId"]]["po_cost"]
+                  );
+                  console.log("=========================");
+                }
               }
             } else {
+              if (po_record["projectId"] == 38900554) {
+                console.log('"not entering"');
+                console.log("=========================");
+              }
               project_dummy_values["po_cost"][po_record["instance_id"]] +=
                 parseFloat(po_record["total"]);
             }

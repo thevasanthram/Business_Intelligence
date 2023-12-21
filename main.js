@@ -19,11 +19,11 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 // Service Titan's API parameters
 
 const api_collection = [
-  // {
-  //   api_group: "accounting",
-  //   api_name: "invoices",
-  //   mode: "items",
-  // },
+  {
+    api_group: "accounting",
+    api_name: "invoices",
+    mode: "items",
+  },
   // {
   //   api_group: "inventory",
   //   api_name: "adjustments",
@@ -34,10 +34,10 @@ const api_collection = [
   //   api_name: "transfers",
   //   mode: "items",
   // },
-  // {
-  //   api_group: "accounting",
-  //   api_name: "invoices",
-  // },
+  {
+    api_group: "accounting",
+    api_name: "invoices",
+  },
   // {
   //   api_group: "accounting",
   //   api_name: "inventory-bills",
@@ -118,10 +118,10 @@ const api_collection = [
   //   api_group: "inventory",
   //   api_name: "transfers",
   // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-orders",
-  // },
+  {
+    api_group: "inventory",
+    api_name: "purchase-orders",
+  },
   // {
   //   api_group: "inventory",
   //   api_name: "receipts",
@@ -166,10 +166,10 @@ const api_collection = [
   //   api_group: "jpm",
   //   api_name: "jobs",
   // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "projects",
-  // },
+  {
+    api_group: "jpm",
+    api_name: "projects",
+  },
   // {
   //   api_group: "jpm",
   //   api_name: "job-cancel-reasons",
@@ -226,18 +226,18 @@ const api_collection = [
   //   api_group: "memberships",
   //   api_name: "membership-types",
   // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "payrolls",
-  // },
+  {
+    api_group: "payroll",
+    api_name: "payrolls",
+  },
   // {
   //   api_group: "payroll",
   //   api_name: "payroll-adjustments",
   // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "gross-pay-items",
-  // },
+  {
+    api_group: "payroll",
+    api_name: "gross-pay-items",
+  },
   // {
   //   api_group: "payroll",
   //   api_name: "jobs/splits",
@@ -294,10 +294,10 @@ const api_collection = [
   //   api_group: "reporting",
   //   api_name: "report-categories",
   // },
-  // {
-  //   api_group: "sales",
-  //   api_name: "estimates",
-  // },
+  {
+    api_group: "sales",
+    api_name: "estimates",
+  },
   // {
   //   api_group: "sales",
   //   api_name: "estimates/export",
@@ -310,10 +310,10 @@ const api_collection = [
   //   api_group: "service-agreements",
   //   api_name: "service-agreements",
   // },
-  {
-    api_group: "settings",
-    api_name: "business-units",
-  },
+  // {
+  //   api_group: "settings",
+  //   api_name: "business-units",
+  // },
   // {
   //   api_group: "settings",
   //   api_name: "employees",
