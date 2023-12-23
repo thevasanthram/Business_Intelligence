@@ -3380,22 +3380,327 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         });
 
-        // caching for invoice table.. (optimized calculation)
-        invoice_cache["po_and_gpi_data"] = JSON.parse(
-          JSON.stringify(invoice_po_and_gpi_data)
-        );
-        invoice_cache["dummy_values"] = JSON.parse(
-          JSON.stringify(invoice_dummy_values)
-        );
-
-        invoice_po_and_gpi_data = {};
-        invoice_dummy_values = {};
-
         let invoice_final_data_pool = [];
         let cogs_material_final_data_pool = [];
         let cogs_equipment_final_data_pool = [];
         let cogs_services_final_data_pool = [];
         let gross_profit_final_data_pool = [];
+
+        if (initial_execute) {
+          invoice_final_data_pool.push({
+            id: 1,
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: 0,
+            invoice_type_name: "default_invoice",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            business_unit_id: 1,
+            actual_business_unit_id: 1,
+            location_id: 1,
+            actual_location_id: 1,
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: "default",
+            address: "default",
+            customer_id: 1,
+            actual_customer_id: 1,
+            customer_name: "default",
+          });
+          invoice_final_data_pool.push({
+            id: 2,
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: 0,
+            invoice_type_name: "default_invoice",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            business_unit_id: 2,
+            actual_business_unit_id: 2,
+            location_id: 2,
+            actual_location_id: 2,
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: "default",
+            address: "default",
+            customer_id: 2,
+            actual_customer_id: 2,
+            customer_name: "default",
+          });
+          invoice_final_data_pool.push({
+            id: 3,
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: 0,
+            invoice_type_name: "default_invoice",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            business_unit_id: 3,
+            actual_business_unit_id: 3,
+            location_id: 3,
+            actual_location_id: 3,
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: "default",
+            address: "default",
+            customer_id: 3,
+            actual_customer_id: 3,
+            customer_name: "default",
+          });
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            sku_details_id: 1,
+            actual_sku_details_id: 1,
+          });
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            sku_details_id: 2,
+            actual_sku_details_id: 2,
+          });
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            sku_details_id: 3,
+            actual_sku_details_id: 3,
+          });
+
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: invoice_dummy_values["po_cost"][1], // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: invoice_dummy_values["labor_cost"][1], // cogs_labor burden cost, labor cost, paid duration
+            burden: invoice_dummy_values["burden_cost"][1], // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: invoice_dummy_values["labor_hours"][1], // cogs_labor paid duration
+            invoice_id: 1,
+          });
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: invoice_dummy_values["po_cost"][2], // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: invoice_dummy_values["labor_cost"][2], // cogs_labor burden cost, labor cost, paid duration
+            burden: invoice_dummy_values["burden_cost"][2], // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: invoice_dummy_values["labor_hours"][2], // cogs_labor paid duration
+            invoice_id: 2,
+          });
+          gross_profit_final_data_pool.push({
+            accounts_receivable: 0,
+            expense: 0,
+            income: 0,
+            current_liability: 0,
+            membership_liability: 0,
+            default: 0,
+            total: 0,
+            po_cost: invoice_dummy_values["po_cost"][3], // purchase orders
+            equipment_cost: 0, //
+            material_cost: 0, //
+            labor_cost: invoice_dummy_values["labor_cost"][3], // cogs_labor burden cost, labor cost, paid duration
+            burden: invoice_dummy_values["burden_cost"][3], // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: invoice_dummy_values["labor_hours"][3], // cogs_labor paid duration
+            invoice_id: 3,
+          });
+        }
 
         Object.keys(invoice_data_pool).map((record_id) => {
           const record = invoice_data_pool[record_id];
@@ -4034,6 +4339,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             });
           }
         });
+
+        invoice_po_and_gpi_data = {};
+        invoice_dummy_values = {};
 
         invoice_cache["invoice_final_data_pool"] = invoice_final_data_pool;
         invoice_cache["cogs_material_final_data_pool"] =
