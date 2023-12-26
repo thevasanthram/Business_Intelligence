@@ -129,6 +129,7 @@ CREATE TABLE projects(
   [name] NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
   billed_amount DECIMAL(10, 2) NULL,
+  contract_value DECIMAL(10, 2) NULL,
   po_cost DECIMAL(10, 2) NULL,
   equipment_cost DECIMAL(10, 2) NULL,
   material_cost DECIMAL(10, 2) NULL,

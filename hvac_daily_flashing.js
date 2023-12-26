@@ -398,6 +398,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -4411,6 +4415,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][1],
+            contract_value: project_dummy_values["contract_value"][1],
             po_cost: project_dummy_values["po_cost"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
             material_cost: project_dummy_values["material_cost"][1],
@@ -4440,6 +4445,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][2],
+            contract_value: project_dummy_values["contract_value"][2],
             po_cost: project_dummy_values["po_cost"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
             material_cost: project_dummy_values["material_cost"][2],
@@ -4469,6 +4475,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][3],
+            contract_value: project_dummy_values["contract_value"][3],
             po_cost: project_dummy_values["po_cost"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
             material_cost: project_dummy_values["material_cost"][3],
@@ -4597,6 +4604,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           let billed_amount = 0;
+          let contract_value = 0;
           let po_cost = 0;
           let equipment_cost = 0;
           let material_cost = 0;
@@ -4642,6 +4650,14 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
           }
 
+          if (project_contract_value[record["id"]]) {
+            contract_value = project_contract_value[record["id"]][
+              "contract_value"
+            ]
+              ? project_contract_value[record["id"]]["contract_value"]
+              : 0;
+          }
+
           if (projects_po_and_gpi_data[record["id"]]) {
             po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
               ? projects_po_and_gpi_data[record["id"]]["po_cost"]
@@ -4664,6 +4680,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: record["name"] ? record["name"] : "default",
             status: record["status"] ? record["status"] : "default",
             billed_amount: billed_amount,
+            project_contract_value: project_contract_value,
             po_cost: po_cost,
             equipment_cost: equipment_cost,
             material_cost: material_cost,
