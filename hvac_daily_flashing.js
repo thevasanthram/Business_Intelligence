@@ -4680,7 +4680,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: record["name"] ? record["name"] : "default",
             status: record["status"] ? record["status"] : "default",
             billed_amount: billed_amount,
-            project_contract_value: project_contract_value,
+            contract_value: contract_value,
             po_cost: po_cost,
             equipment_cost: equipment_cost,
             material_cost: material_cost,
