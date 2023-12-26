@@ -3082,7 +3082,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
 
         const sales_data_pool = JSON.parse(
-          JSON.stringify(data_lake[api_name]["sales__estimates"]["data_pool"])
+          JSON.stringify(
+            data_lake["sales_details"]["sales__estimates"]["data_pool"]
+          )
         );
 
         const sku_details_data_pool = {
