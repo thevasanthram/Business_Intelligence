@@ -4656,6 +4656,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
               ? project_contract_value[record["id"]]["contract_value"]
               : 0;
+            console.log("contract_value: ", contract_value);
           }
 
           if (projects_po_and_gpi_data[record["id"]]) {
