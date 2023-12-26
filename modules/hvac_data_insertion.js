@@ -64,7 +64,7 @@ async function hvac_data_insertion(
     // table.rows.add(1, "Expert Heating and Cooling");
 
     await Promise.all(
-      data_pool.map(async (currentObj, index) => {
+      data_pool.slice(0, 3).map(async (currentObj, index) => {
         table.rows.add(
           ...Object.values(currentObj).map((value) => {
             if (typeof value == "string") {
