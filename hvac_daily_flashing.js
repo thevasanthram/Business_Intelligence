@@ -4658,7 +4658,10 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
           }
 
-          console.log("contract_value: ", contract_value);
+          if (isNaN(contract_value) || typeof contract_value !== "number") {
+            console.log("====================");
+            console.log("contract_value: ", contract_value);
+          }
 
           if (projects_po_and_gpi_data[record["id"]]) {
             po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]

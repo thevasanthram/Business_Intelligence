@@ -1,3 +1,3 @@
-let obj = "48095-2859";
+let obj = '1.54';
 
 console.log(isNaN(obj));
