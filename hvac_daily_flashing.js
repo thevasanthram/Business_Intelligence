@@ -4408,19 +4408,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        console.log(
-          'project_dummy_values["contract_value"][1]: ',
-          project_dummy_values["contract_value"][1]
-        );
-        console.log(
-          'project_dummy_values["contract_value"][2]: ',
-          project_dummy_values["contract_value"][2]
-        );
-        console.log(
-          'project_dummy_values["contract_value"][3]: ',
-          project_dummy_values["contract_value"][3]
-        );
-
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
@@ -4669,8 +4656,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
               ? project_contract_value[record["id"]]["contract_value"]
               : 0;
-            // console.log("contract_value: ", contract_value);
           }
+
+          console.log("contract_value: ", contract_value);
 
           if (projects_po_and_gpi_data[record["id"]]) {
             po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
