@@ -47,7 +47,7 @@ async function hvac_data_insertion(
       } else if (data_type === "DECIMAL") {
         table.columns.add(
           column,
-          mssql.Decimal(18, 10),
+          mssql.Decimal(18, 8),
           constraint ? constraint : {}
         );
       } else if (data_type === "DECIMAL96") {
