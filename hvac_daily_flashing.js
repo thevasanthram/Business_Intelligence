@@ -2161,7 +2161,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (let api_count = 7; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
 
@@ -3080,6 +3080,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
           )
         );
+
+        const sales_data_pool = JSON.parse(
+          JSON.stringify(data_lake[api_name]["sales__estimates"]["data_pool"])
+        );
+
         const sku_details_data_pool = {
           ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
           ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
@@ -3179,6 +3184,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             3: 0,
           },
           membership_liability: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          contract_value: {
             1: 0,
             2: 0,
             3: 0,
@@ -3377,6 +3387,32 @@ async function data_processor(data_lake, sql_request, table_list) {
                     payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
                   )
                 : 0);
+          }
+        });
+
+        // calculating contract value from sales estimates for projects table
+        let project_contract_value = {};
+
+        Object.keys(sales_data_pool).map((record_id) => {
+          const record = sales_data_pool[record_id];
+
+          if (record["projectId"] != null) {
+            if (!project_contract_value[record["projectId"]]) {
+              project_contract_value[record["projectId"]] = {
+                contract_value: 0,
+              };
+            }
+
+            if (!data_pool[record["projectId"]]) {
+              project_dummy_values["contract_value"][record["instance_id"]] +=
+                parseFloat(record["subtotal"]);
+            } else {
+              project_contract_value[record["projectId"]]["contract_value"] +=
+                parseFloat(record["subtotal"]);
+            }
+          } else {
+            project_dummy_values["contract_value"][record["instance_id"]] +=
+              parseFloat(record["subtotal"]);
           }
         });
 
