@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  createdBefore: "2023-12-25T00:00:00.00Z", //createdBeforeTime.toISOString()
+  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2165,7 +2165,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 7; api_count < table_list.length; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
 
