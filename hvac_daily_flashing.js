@@ -398,6 +398,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       contract_value: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -2165,7 +2169,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (let api_count = 7; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     const api_name = table_list[api_count];
 
@@ -3199,6 +3203,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             2: 0,
             3: 0,
           },
+          balance: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
         };
 
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
@@ -3941,6 +3950,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 income: 0,
                 current_liability: 0,
                 membership_liability: 0,
+                balance: 0,
               };
             }
 
@@ -3948,13 +3958,20 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (!data_pool[record["projectId"]]) {
               project_dummy_values["billed_amount"][record["instance_id"]] +=
                 parseFloat(record["total"]);
+              project_dummy_values["balance"][record["instance_id"]] +=
+                parseFloat(record["balance"]);
             } else {
               project_total_data[record["projectId"]]["billed_amount"] +=
                 parseFloat(record["total"]);
+              project_total_data[record["projectId"]]["balance"] += parseFloat(
+                record["balance"]
+              );
             }
           } else {
             project_dummy_values["billed_amount"][record["instance_id"]] +=
               parseFloat(record["total"]);
+            project_dummy_values["balance"][record["instance_id"]] +=
+              parseFloat(record["balance"]);
           }
 
           invoice_final_data_pool.push({
@@ -4415,6 +4432,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][1],
+            balance: project_dummy_values["balance"][1],
             contract_value: project_dummy_values["contract_value"][1],
             po_cost: project_dummy_values["po_cost"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
@@ -4445,6 +4463,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][2],
+            balance: project_dummy_values["balance"][2],
             contract_value: project_dummy_values["contract_value"][2],
             po_cost: project_dummy_values["po_cost"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
@@ -4475,6 +4494,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: "default",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][3],
+            balance: project_dummy_values["balance"][3],
             contract_value: project_dummy_values["contract_value"][3],
             po_cost: project_dummy_values["po_cost"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
@@ -4604,6 +4624,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           let billed_amount = 0;
+          let balance = 0;
           let contract_value = 0;
           let po_cost = 0;
           let equipment_cost = 0;
@@ -4620,6 +4641,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           if (project_total_data[record["id"]]) {
             billed_amount = project_total_data[record["id"]]["billed_amount"]
               ? project_total_data[record["id"]]["billed_amount"]
+              : 0;
+            balance = project_total_data[record["id"]]["balance"]
+              ? project_total_data[record["id"]]["balance"]
               : 0;
             equipment_cost = project_total_data[record["id"]]["equipment_cost"]
               ? project_total_data[record["id"]]["equipment_cost"]
@@ -4685,6 +4709,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             name: record["name"] ? record["name"] : "default",
             status: record["status"] ? record["status"] : "default",
             billed_amount: billed_amount,
+            balance: balance,
             contract_value: contract_value,
             po_cost: po_cost,
             equipment_cost: equipment_cost,
