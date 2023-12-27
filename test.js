@@ -1,3 +1,6 @@
-let obj = '1.54';
+let obj = {
+    1: 'a',
+    '1': 2
+};
 
-console.log(isNaN(obj));
+console.log(obj['1']);

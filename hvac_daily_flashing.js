@@ -402,6 +402,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      paid_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       contract_value: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -1779,6 +1783,11 @@ const main_api_list = {
       api_name: "projects",
       table_name: "projects",
     },
+    {
+      api_group: "accounting",
+      api_name: "payments",
+      table_name: "projects",
+    },
   ],
   call_details: [
     {
@@ -3088,6 +3097,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
           )
         );
+        const payments_data_pool = JSON.parse(
+          JSON.stringify(
+            data_lake["projects"]["accounting__payments"]["data_pool"]
+          )
+        );
 
         const sales_data_pool = JSON.parse(
           JSON.stringify(
@@ -3204,6 +3218,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             3: 0,
           },
           balance: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          paid_amount: {
             1: 0,
             2: 0,
             3: 0,
@@ -3428,6 +3447,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           } else {
             project_dummy_values["contract_value"][record["instance_id"]] +=
               parseFloat(record["subtotal"]);
+          }
+        });
+
+        let payment_reference_value = {};
+        // calculating payments based on reference number and projects
+        Object.keys(payments_data_pool).map((record_id) => {
+          const record = payments_data_pool[record_id];
+
+          if (record["referenceNumber"]) {
+            if (!payment_reference_value[record["referenceNumber"]]) {
+              payment_reference_value[record["referenceNumber"]] = 0;
+            }
+
+            payment_reference_value[record["referenceNumber"]] +=
+              record["total"];
           }
         });
 
@@ -3951,6 +3985,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 current_liability: 0,
                 membership_liability: 0,
                 balance: 0,
+                paid_amount: 0,
               };
             }
 
@@ -3960,18 +3995,45 @@ async function data_processor(data_lake, sql_request, table_list) {
                 parseFloat(record["total"]);
               project_dummy_values["balance"][record["instance_id"]] +=
                 parseFloat(record["balance"]);
+
+              if (record["referenceNumber"]) {
+                if (payment_reference_value[record["referenceNumber"]]) {
+                  project_dummy_values["paid_amount"][record["instance_id"]] +=
+                    parseFloat(
+                      payment_reference_value[record["referenceNumber"]]
+                    );
+                }
+              }
             } else {
               project_total_data[record["projectId"]]["billed_amount"] +=
                 parseFloat(record["total"]);
               project_total_data[record["projectId"]]["balance"] += parseFloat(
                 record["balance"]
               );
+
+              if (record["referenceNumber"]) {
+                if (payment_reference_value[record["referenceNumber"]]) {
+                  project_total_data[record["projectId"]]["paid_amount"] +=
+                    parseFloat(
+                      payment_reference_value[record["referenceNumber"]]
+                    );
+                }
+              }
             }
           } else {
             project_dummy_values["billed_amount"][record["instance_id"]] +=
               parseFloat(record["total"]);
             project_dummy_values["balance"][record["instance_id"]] +=
               parseFloat(record["balance"]);
+
+            if (record["referenceNumber"]) {
+              if (payment_reference_value[record["referenceNumber"]]) {
+                project_dummy_values["paid_amount"][record["instance_id"]] +=
+                  parseFloat(
+                    payment_reference_value[record["referenceNumber"]]
+                  );
+              }
+            }
           }
 
           invoice_final_data_pool.push({
@@ -4428,11 +4490,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
-            number: "default",
-            name: "default",
+            number: "1",
+            name: "1",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][1],
             balance: project_dummy_values["balance"][1],
+            paid_amount: project_dummy_values["paid_amount"][1],
             contract_value: project_dummy_values["contract_value"][1],
             po_cost: project_dummy_values["po_cost"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
@@ -4459,11 +4522,12 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: 2,
-            number: "default",
-            name: "default",
+            number: "2",
+            name: "2",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][2],
             balance: project_dummy_values["balance"][2],
+            paid_amount: project_dummy_values["paid_amount"][2],
             contract_value: project_dummy_values["contract_value"][2],
             po_cost: project_dummy_values["po_cost"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
@@ -4490,11 +4554,12 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: 3,
-            number: "default",
-            name: "default",
+            number: "3",
+            name: "3",
             status: "default",
             billed_amount: project_dummy_values["billed_amount"][3],
             balance: project_dummy_values["balance"][3],
+            paid_amount: project_dummy_values["paid_amount"][3],
             contract_value: project_dummy_values["contract_value"][3],
             po_cost: project_dummy_values["po_cost"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
@@ -4625,6 +4690,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           let billed_amount = 0;
           let balance = 0;
+          let paid_amount = 0;
           let contract_value = 0;
           let po_cost = 0;
           let equipment_cost = 0;
@@ -4644,6 +4710,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
             balance = project_total_data[record["id"]]["balance"]
               ? project_total_data[record["id"]]["balance"]
+              : 0;
+            paid_amount = project_total_data[record["id"]]["paid_amount"]
+              ? project_total_data[record["id"]]["paid_amount"]
               : 0;
             equipment_cost = project_total_data[record["id"]]["equipment_cost"]
               ? project_total_data[record["id"]]["equipment_cost"]
@@ -4682,11 +4751,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
           }
 
-          if (isNaN(contract_value) || typeof contract_value !== "number") {
-            console.log("====================");
-            console.log("contract_value: ", contract_value);
-          }
-
           if (projects_po_and_gpi_data[record["id"]]) {
             po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
               ? projects_po_and_gpi_data[record["id"]]["po_cost"]
@@ -4706,10 +4770,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             number: record["number"] ? record["number"] : "default",
-            name: record["name"] ? record["name"] : "default",
+            name: record["name"] ? record["name"] : `${record["id"]}`,
             status: record["status"] ? record["status"] : "default",
             billed_amount: billed_amount,
             balance: balance,
+            paid_amount: paid_amount,
             contract_value: contract_value,
             po_cost: po_cost,
             equipment_cost: equipment_cost,
