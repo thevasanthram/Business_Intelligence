@@ -143,6 +143,8 @@ CREATE TABLE projects(
   income DECIMAL(18, 8) NULL,
   current_liability DECIMAL(18, 8) NULL,
   membership_liability DECIMAL(18, 8) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
   location_id INT NOT NULL,
@@ -152,6 +154,7 @@ CREATE TABLE projects(
   actualCompletionDate DATETIME2 NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
 )

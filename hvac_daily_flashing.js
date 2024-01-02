@@ -454,7 +454,14 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
-
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       customer_details_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -3986,6 +3993,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 membership_liability: 0,
                 balance: 0,
                 paid_amount: 0,
+                business_unit_id: business_unit_id,
+                actual_business_unit_id: actual_business_unit_id,
               };
             }
 
@@ -4509,6 +4518,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             current_liability: project_dummy_values["current_liability"][1],
             membership_liability:
               project_dummy_values["membership_liability"][1],
+            business_unit_id: 1,
+            actual_business_unit_id: 1,
             customer_details_id: 1,
             actual_customer_details_id: 1,
             location_id: 1,
@@ -4541,6 +4552,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             current_liability: project_dummy_values["current_liability"][2],
             membership_liability:
               project_dummy_values["membership_liability"][2],
+            business_unit_id: 2,
+            actual_business_unit_id: 2,
             customer_details_id: 2,
             actual_customer_details_id: 2,
             location_id: 2,
@@ -4573,6 +4586,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             current_liability: project_dummy_values["current_liability"][3],
             membership_liability:
               project_dummy_values["membership_liability"][3],
+            business_unit_id: 3,
+            actual_business_unit_id: 3,
             customer_details_id: 3,
             actual_customer_details_id: 3,
             location_id: 3,
@@ -4703,6 +4718,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           let income = 0;
           let current_liability = 0;
           let membership_liability = 0;
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
 
           if (project_total_data[record["id"]]) {
             billed_amount = project_total_data[record["id"]]["billed_amount"]
@@ -4741,6 +4758,18 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]
               ? project_total_data[record["id"]]["membership_liability"]
               : 0;
+
+            business_unit_id = project_total_data[record["id"]][
+              "business_unit_id"
+            ]
+              ? project_total_data[record["id"]]["business_unit_id"]
+              : record["instance_id"];
+
+            actual_business_unit_id = project_total_data[record["id"]][
+              "actual_business_unit_id"
+            ]
+              ? project_total_data[record["id"]]["actual_business_unit_id"]
+              : record["instance_id"];
           }
 
           if (project_contract_value[record["id"]]) {
@@ -4787,6 +4816,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             income: income,
             current_liability: current_liability,
             membership_liability: membership_liability,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
             customer_details_id: customer_details_id,
             actual_customer_details_id: actual_customer_details_id,
             location_id: location_id,

@@ -12,7 +12,7 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
-const kpi_data = require("./modules/business_units_details");
+const kpi_data = require("./modules/updated_business_unit_details");
 const { compose } = require("async");
 
 // Service Titan's API parameters
@@ -64,7 +64,7 @@ createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
 const params_header = {
-  createdOnOrAfter: "2023-06-01T00:00:00.00Z", // 2023-08-01T00:00:00.00Z
+  createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
   createdBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
@@ -188,46 +188,51 @@ async function starter() {
   const data_lake = {};
   main_api_list = {
     bookings: [
-      {
-        api_group: "jpm",
-        api_name: "jobs",
-        table_name: "invoices",
-      },
-      {
-        api_group: "sales",
-        api_name: "estimates",
-        table_name: "jobs",
-      },
-      {
-        api_group: "jpm",
-        api_name: "appointments",
-        table_name: "invoices",
-      },
-      {
-        api_group: "dispatch",
-        api_name: "appointment-assignments",
-        table_name: "invoices",
-      },
-      {
-        api_group: "dispatch",
-        api_name: "non-job-appointments",
-        table_name: "invoices",
-      },
+      // {
+      //   api_group: "jpm",
+      //   api_name: "jobs",
+      //   table_name: "invoices",
+      // },
+      // {
+      //   api_group: "sales",
+      //   api_name: "estimates",
+      //   table_name: "jobs",
+      // },
+      // {
+      //   api_group: "jpm",
+      //   api_name: "appointments",
+      //   table_name: "invoices",
+      // },
+      // {
+      //   api_group: "dispatch",
+      //   api_name: "appointment-assignments",
+      //   table_name: "invoices",
+      // },
+      // {
+      //   api_group: "dispatch",
+      //   api_name: "non-job-appointments",
+      //   table_name: "invoices",
+      // },
       {
         api_group: "accounting",
         api_name: "invoices",
         table_name: "invoices",
       },
       {
-        api_group: "crm",
-        api_name: "bookings",
-        table_name: "bookings",
+        api_group: "jpm",
+        api_name: "projects",
+        table_name: "projects",
       },
-      {
-        api_group: "telecom",
-        api_name: "calls",
-        table_name: "bookings",
-      },
+      // {
+      //   api_group: "crm",
+      //   api_name: "bookings",
+      //   table_name: "bookings",
+      // },
+      // {
+      //   api_group: "telecom",
+      //   api_name: "calls",
+      //   table_name: "bookings",
+      // },
     ],
   };
   const hvac_tables = [];
@@ -238,33 +243,40 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table = data_lake["bookings"]["telecom__calls"]["data_pool"];
-  const comparing_table1 = data_lake["bookings"]["jpm__jobs"]["data_pool"];
-  const comparing_table2 =
-    data_lake["bookings"]["sales__estimates"]["data_pool"];
-  const comparing_table3 =
-    data_lake["bookings"]["jpm__appointments"]["data_pool"];
-  const comparing_table4 =
-    data_lake["bookings"]["dispatch__appointment-assignments"]["data_pool"];
-  const comparing_table5 =
-    data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
-  const comparing_table6 =
+  const first_table =
+    data_lake["bookings"]["jpm__projects"]["data_pool"];
+  const comparing_table1 =
     data_lake["bookings"]["accounting__invoices"]["data_pool"];
-  const comparing_table7 = data_lake["bookings"]["crm__bookings"]["data_pool"];
-  const comparing_table8 = data_lake["bookings"]["telecom__calls"]["data_pool"];
+  // const comparing_table2 =
+  //   data_lake["bookings"]["sales__estimates"]["data_pool"];
+  // const comparing_table3 =
+  //   data_lake["bookings"]["jpm__appointments"]["data_pool"];
+  // const comparing_table4 =
+  //   data_lake["bookings"]["dispatch__appointment-assignments"]["data_pool"];
+  // const comparing_table5 =
+  //   data_lake["bookings"]["dispatch__non-job-appointments"]["data_pool"];
+  // const comparing_table6 =
+  //   data_lake["bookings"]["accounting__invoices"]["data_pool"];
+  // const comparing_table7 = data_lake["bookings"]["crm__bookings"]["data_pool"];
+  // const comparing_table8 = data_lake["bookings"]["telecom__calls"]["data_pool"];
+
+  let self_non_null_count = 0;
+  let comparing1_non_null_count = 0;
 
   const unique_job_id = [
     ...new Set(
       Object.keys(first_table).map((record_id) => {
         const record = first_table[record_id];
 
-        if (record["jobNumber"]) {
-          return record["jobNumber"];
+        if (record["id"]) {
+          self_non_null_count = self_non_null_count + 1;
+          return record["id"];
         }
       })
     ),
   ];
-  console.log("self job_ids count: ", unique_job_id.length);
+  console.log("self job_ids non null count: ", self_non_null_count);
+  console.log("self job_ids unique count: ", unique_job_id.length);
 
   // comparison ==================================
   const new_job_id1 = {};
@@ -272,8 +284,9 @@ async function starter() {
   Object.keys(comparing_table1).map((record_id) => {
     const record = comparing_table1[record_id];
 
-    if (record["id"]) {
-      new_job_id1[record["id"]] = "something";
+    if (record["projectId"]) {
+      comparing1_non_null_count = comparing1_non_null_count + 1;
+      new_job_id1[record["projectId"]] = "something";
     }
   });
 
@@ -284,147 +297,148 @@ async function starter() {
     }
   });
 
+  console.log("comparing job_ids non null count: ", comparing1_non_null_count);
   console.log("jpm__jobs", count1);
 
   // comparison ==================================
-  const new_job_id2 = {};
+  // const new_job_id2 = {};
 
-  Object.keys(comparing_table2).map((record_id) => {
-    const record = comparing_table2[record_id];
+  // Object.keys(comparing_table2).map((record_id) => {
+  //   const record = comparing_table2[record_id];
 
-    if (record["jobId"]) {
-      new_job_id2[record["jobId"]] = "something";
-    }
-  });
+  //   if (record["jobId"]) {
+  //     new_job_id2[record["jobId"]] = "something";
+  //   }
+  // });
 
-  let count2 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id2[job_id]) {
-      count2 = count2 + 1;
-    }
-  });
+  // let count2 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id2[job_id]) {
+  //     count2 = count2 + 1;
+  //   }
+  // });
 
-  console.log("sales__estimates", count2);
+  // console.log("sales__estimates", count2);
 
-  // comparison ==================================
-  const new_job_id3 = {};
+  // // comparison ==================================
+  // const new_job_id3 = {};
 
-  Object.keys(comparing_table3).map((record_id) => {
-    const record = comparing_table3[record_id];
+  // Object.keys(comparing_table3).map((record_id) => {
+  //   const record = comparing_table3[record_id];
 
-    if (record["jobId"]) {
-      new_job_id3[record["jobId"]] = "something";
-    }
-  });
+  //   if (record["jobId"]) {
+  //     new_job_id3[record["jobId"]] = "something";
+  //   }
+  // });
 
-  let count3 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id3[job_id]) {
-      count3 = count3 + 1;
-    }
-  });
+  // let count3 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id3[job_id]) {
+  //     count3 = count3 + 1;
+  //   }
+  // });
 
-  console.log("jpm__appointments", count3);
+  // console.log("jpm__appointments", count3);
 
-  // comparison ==================================
-  const new_job_id4 = {};
+  // // comparison ==================================
+  // const new_job_id4 = {};
 
-  Object.keys(comparing_table4).map((record_id) => {
-    const record = comparing_table4[record_id];
+  // Object.keys(comparing_table4).map((record_id) => {
+  //   const record = comparing_table4[record_id];
 
-    if (record["jobId"]) {
-      new_job_id4[record["jobId"]] = "something";
-    }
-  });
+  //   if (record["jobId"]) {
+  //     new_job_id4[record["jobId"]] = "something";
+  //   }
+  // });
 
-  let count4 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id4[job_id]) {
-      count4 = count4 + 1;
-    }
-  });
+  // let count4 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id4[job_id]) {
+  //     count4 = count4 + 1;
+  //   }
+  // });
 
-  console.log("dispatch__appointment-assignments", count4);
+  // console.log("dispatch__appointment-assignments", count4);
 
-  // comparison ==================================
-  const new_job_id5 = {};
+  // // comparison ==================================
+  // const new_job_id5 = {};
 
-  Object.keys(comparing_table5).map((record_id) => {
-    const record = comparing_table5[record_id];
+  // Object.keys(comparing_table5).map((record_id) => {
+  //   const record = comparing_table5[record_id];
 
-    if (record["id"]) {
-      new_job_id5[record["id"]] = "something";
-    }
-  });
+  //   if (record["id"]) {
+  //     new_job_id5[record["id"]] = "something";
+  //   }
+  // });
 
-  let count5 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id5[job_id]) {
-      count5 = count5 + 1;
-    }
-  });
+  // let count5 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id5[job_id]) {
+  //     count5 = count5 + 1;
+  //   }
+  // });
 
-  console.log("dispatch__non-job-appointments", count5);
+  // console.log("dispatch__non-job-appointments", count5);
 
-  // comparison ==================================
-  const new_job_id6 = {};
+  // // comparison ==================================
+  // const new_job_id6 = {};
 
-  Object.keys(comparing_table6).map((record_id) => {
-    const record = comparing_table6[record_id];
+  // Object.keys(comparing_table6).map((record_id) => {
+  //   const record = comparing_table6[record_id];
 
-    if (record["job"]) {
-      new_job_id6[record["job"]["id"]] = "something";
-    }
-  });
+  //   if (record["job"]) {
+  //     new_job_id6[record["job"]["id"]] = "something";
+  //   }
+  // });
 
-  let count6 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id6[job_id]) {
-      count6 = count6 + 1;
-    }
-  });
+  // let count6 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id6[job_id]) {
+  //     count6 = count6 + 1;
+  //   }
+  // });
 
-  console.log("accounting__invoices", count6);
+  // console.log("accounting__invoices", count6);
 
-  // comparison ==================================
-  const new_job_id7 = {};
+  // // comparison ==================================
+  // const new_job_id7 = {};
 
-  Object.keys(comparing_table7).map((record_id) => {
-    const record = comparing_table7[record_id];
+  // Object.keys(comparing_table7).map((record_id) => {
+  //   const record = comparing_table7[record_id];
 
-    if (record["jobId"]) {
-      new_job_id7[record["jobId"]] = "something";
-    }
-  });
+  //   if (record["jobId"]) {
+  //     new_job_id7[record["jobId"]] = "something";
+  //   }
+  // });
 
-  let count7 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id7[job_id]) {
-      count7 = count7 + 1;
-    }
-  });
+  // let count7 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id7[job_id]) {
+  //     count7 = count7 + 1;
+  //   }
+  // });
 
-  console.log("crm_bookings", count7);
+  // console.log("crm_bookings", count7);
 
-  // comparison ==================================
-  const new_job_id8 = {};
+  // // comparison ==================================
+  // const new_job_id8 = {};
 
-  Object.keys(comparing_table8).map((record_id) => {
-    const record = comparing_table8[record_id];
+  // Object.keys(comparing_table8).map((record_id) => {
+  //   const record = comparing_table8[record_id];
 
-    if (record["jobNumber"]) {
-      new_job_id8[record["jobNumber"]] = "something";
-    }
-  });
+  //   if (record["jobNumber"]) {
+  //     new_job_id8[record["jobNumber"]] = "something";
+  //   }
+  // });
 
-  let count8 = 0;
-  unique_job_id.map((job_id) => {
-    if (new_job_id8[job_id]) {
-      count8 = count8 + 1;
-    }
-  });
+  // let count8 = 0;
+  // unique_job_id.map((job_id) => {
+  //   if (new_job_id8[job_id]) {
+  //     count8 = count8 + 1;
+  //   }
+  // });
 
-  console.log("telecom__calls", count8);
+  // console.log("telecom__calls", count8);
 }
 
 starter();
