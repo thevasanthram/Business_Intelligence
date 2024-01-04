@@ -93,7 +93,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'customer_details')
 BEGIN
 CREATE TABLE customer_details (
   id INT PRIMARY KEY,
-  name NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   type NVARCHAR(MAX) NULL,
   creation_date DATETIME2 NULL,
@@ -278,7 +278,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
 BEGIN
 CREATE TABLE sales_details (
   id INT PRIMARY KEY,
-  name NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
   project_id INT NOT NULL,
   actual_project_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
@@ -334,7 +334,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'vendor')
 BEGIN
 CREATE TABLE vendor (
   id INT PRIMARY KEY,
-  name NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL
 );
 END;
@@ -344,7 +344,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'technician')
 BEGIN
 CREATE TABLE technician (
   id INT PRIMARY KEY,
-  name NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
   business_unit_id INT NOT NULL,
   actual_business_unit_id INT NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)
@@ -381,7 +381,7 @@ CREATE TABLE non_job_appointments (
   technician_id INT NOT NULL,
   actual_technician_id INT NULL,
   [start] DATETIME2 NULL,
-  name NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
   duration NVARCHAR(MAX) NULL,
   timesheetCodeId INT NULL,
   clearDispatchBoard TINYINT NULL,
@@ -582,7 +582,7 @@ BEGIN
 END;
 
 -- gross_profit
-IF NOT EXISTS (SELECT * FROM sys.tables WHERElo name = 'gross_profit')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
   id INT IDENTITY(1,1) PRIMARY KEY,
