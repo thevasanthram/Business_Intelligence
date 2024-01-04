@@ -2229,6 +2229,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
+        delete data_lake[api_name];
+
         break;
       }
 
@@ -5868,7 +5870,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake[table_name]["sales__estimates"];
-        data_lake["projects"]["jpm__projects"];
+        delete data_lake["projects"]["jpm__projects"];
+        delete data_lake["location"]["crm__locations"];
+
         break;
       }
 
@@ -6069,6 +6073,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        delete data_lake["customer_details"]["crm__customers"];
 
         break;
       }
@@ -7080,6 +7086,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
+        delete data_lake["vendor"]["inventory__vendors"];
+        delete data_lake[api_name]["inventory__purchase-orders"];
+
         break;
       }
 
@@ -7334,8 +7343,6 @@ async function start_pipeline() {
   console.log("data_lake: ", data_lake);
 
   console.log("Time taken for fetching data: ", stop1());
-
-  // console.log("data_lake: ", data_lake['customer_details']['crm__customers']['data_pool']);
 
   // await find_total_length(data_lake);
 
