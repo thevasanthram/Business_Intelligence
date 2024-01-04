@@ -114,9 +114,14 @@ CREATE TABLE location (
   unit NVARCHAR(MAX) NULL,
   city NVARCHAR(MAX) NULL,
   state NVARCHAR(MAX) NULL,
-  zip NVARCHAR(MAX) NULL,
+  country NVARCHAR(MAX) NULL,
+  address_zip INT NOT NULL,
+  acutal_address_zip NVARCHAR(MAX) NULL,
+  latitude NVARCHAR(MAX) NULL,
+  longitude NVARCHAR(MAX) NULL,
   taxzone INT NULL,
-  zone_id INT NULL
+  zone_id INT NULL,
+  FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
 );
 END;
 
@@ -577,7 +582,7 @@ BEGIN
 END;
 
 -- gross_profit
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERElo name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
   id INT IDENTITY(1,1) PRIMARY KEY,

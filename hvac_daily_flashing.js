@@ -61,7 +61,7 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  createdOnOrAfter: "2023-12-25T00:00:00.00Z", // 2023-12-25T00:00:00.00Z
+  createdOnOrAfter: "", // 2023-12-25T00:00:00.00Z
   createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
@@ -362,8 +362,24 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      zip: {
+      country: {
         data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      acutal_address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      latitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "DECIMAL96",
         constraint: { nullable: true },
       },
       taxzone: {
@@ -2985,33 +3001,45 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
+            street: "",
+            unit: "",
+            city: "",
+            state: "",
+            country: "",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            latitude: 0.0,
+            longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
           });
 
           final_data_pool.push({
             id: 2,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
+            street: "",
+            unit: "",
+            city: "",
+            state: "",
+            country: "",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            latitude: 0.0,
+            longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
           });
 
           final_data_pool.push({
             id: 3,
-            street: "default",
-            unit: "default",
-            city: "default",
-            state: "default",
-            zip: "default",
+            street: "",
+            unit: "",
+            city: "",
+            state: "",
+            country: "",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            latitude: 0.0,
+            longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
           });
@@ -3019,23 +3047,78 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
+
+          let address_street = "";
+          let address_unit = "";
+          let address_city = "";
+          let address_state = "";
+          let address_zip = 57483;
+          let acutal_address_zip = "";
+          let address_country = "";
+          let latitude = 0.0;
+          let longitude = 0.0;
+          let city = "Mexico";
+          if (record["address"]) {
+            address_street = record["address"]["street"]
+              ? record["address"]["street"]
+              : "";
+            address_unit = record["address"]["unit"]
+              ? record["address"]["unit"]
+              : "";
+            address_city = record["address"]["city"]
+              ? record["address"]["city"]
+              : "";
+            address_state = record["address"]["state"]
+              ? record["address"]["state"]
+              : "";
+            address_country = record["address"]["country"]
+              ? record["address"]["country"]
+              : "";
+            acutal_address_zip = record["address"]["zip"]
+              ? record["address"]["zip"]
+              : "";
+
+            address_zip = record["address"]["zip"]
+              ? record["address"]["zip"]
+              : 57483;
+
+            latitude = record["address"]["latitude"]
+              ? record["address"]["latitude"]
+              : 0.0;
+
+            longitude = record["address"]["longitude"]
+              ? record["address"]["longitude"]
+              : 0.0;
+
+            if (typeof address_zip == "string") {
+              const numericValue = Number(address_zip.split("-")[0]);
+              if (!isNaN(numericValue)) {
+                // If the conversion is successful and numericValue is not NaN, update address_zip
+                address_zip = numericValue;
+              } else {
+                // Handle the case where the conversion fails
+                address_zip = 57483;
+              }
+            }
+
+            if (!unique_us_zip_codes[String(address_zip)]) {
+              address_zip = 57483;
+            } else {
+              city = unique_us_zip_codes[String(address_zip)]["city"];
+            }
+          }
+
           final_data_pool.push({
             id: record["id"],
-            street: record["address"]["street"]
-              ? record["address"]["street"]
-              : "default",
-            unit: record["address"]["unit"]
-              ? record["address"]["unit"]
-              : "default",
-            city: record["address"]["city"]
-              ? record["address"]["city"]
-              : "default",
-            state: record["address"]["state"]
-              ? record["address"]["state"]
-              : "default",
-            zip: record["address"]["zip"]
-              ? record["address"]["zip"]
-              : "default",
+            street: address_street,
+            unit: address_unit,
+            city: address_city,
+            state: address_state,
+            country: address_country,
+            address_zip: address_zip,
+            acutal_address_zip: acutal_address_zip,
+            latitude: latitude,
+            longitude: longitude,
             taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
             zone_id: record["zoneId"] ? record["zoneId"] : 0,
           });
