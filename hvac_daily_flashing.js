@@ -3,7 +3,6 @@ const fs = require("fs");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
-const create_sql_pool = require("./modules/create_sql_pool");
 const getAccessToken = require("./modules/get_access_token");
 const getAPIWholeData = require("./modules/get_api_whole_data");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
@@ -2117,11 +2116,6 @@ async function azure_sql_operations(data_lake, table_list) {
   do {
     sql_request = await create_sql_connection();
   } while (!sql_request);
-
-  let sql_pool = "";
-  do {
-    sql_pool = await create_sql_pool();
-  } while (!sql_pool);
 
   let create_hvac_schema_status = false;
   do {
