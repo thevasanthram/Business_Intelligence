@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   createdOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  createdBefore: "2024-01-04T00:00:00.00Z", //createdBeforeTime.toISOString()
+  createdBefore: "2024-01-03T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
