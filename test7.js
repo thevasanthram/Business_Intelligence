@@ -50,7 +50,7 @@ async function dataFetcher() {
   console.log("Time Taken for fetching all data: ", pushing_time());
   await sql.close();
 
-  console.log("response: ", response);
+  console.log("response: ", response['output']);
 }
 
 dataFetcher();

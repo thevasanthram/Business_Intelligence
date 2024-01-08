@@ -6,6 +6,7 @@ const create_sql_connection = require("./modules/create_sql_connection");
 const getAccessToken = require("./modules/get_access_token");
 const getAPIWholeData = require("./modules/get_api_whole_data");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
+const hvac_merge_insertion = require("./modules/hvac_merge_insertion");
 const hvac_flat_data_insertion = require("./modules/hvac_flat_data_insertion");
 const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
@@ -60,8 +61,8 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  createdOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  createdBefore: "2024-01-01T00:00:00.00Z", //createdBeforeTime.toISOString()
+  modifiedOnOrAfter: "", // 2023-12-25T00:00:00.00Z
+  modifiedBefore: "2000-01-01T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2165,7 +2166,7 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["createdBefore"]
+        params_header["modifiedBefore"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
@@ -2217,7 +2218,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           do {
             hvac_tables_responses["legal_entity"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 Object.values(data_pool),
                 header_data,
@@ -2230,7 +2231,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
-
             await sql_request.query(auto_update_query);
 
             console.log("Auto_Update log created ");
@@ -2268,7 +2268,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           do {
             hvac_tables_responses["us_cities"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 Object.values(data_pool),
                 header_data,
@@ -2434,7 +2434,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["business_unit"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -2596,7 +2596,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["campaigns"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -2821,7 +2821,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["bookings"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -2957,7 +2957,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["customer_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3133,7 +3133,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["location"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -4927,7 +4927,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["projects"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -5461,7 +5461,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["call_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -5727,7 +5727,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["job_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -5755,7 +5755,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["project_job_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 project_cache["project_job_details_data_pool"],
                 project_job_details_header_data,
@@ -5924,7 +5924,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["sales_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6129,7 +6129,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["appointments"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6211,7 +6211,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["vendor"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6310,7 +6310,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["technician"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6422,7 +6422,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["appointment_assignments"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6542,7 +6542,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["non_job_appointments"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6738,7 +6738,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["sku_details"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6786,7 +6786,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (invoice_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["invoice"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 invoice_final_data_pool,
                 invoice_header_data,
@@ -6813,7 +6813,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_material_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["cogs_material"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 cogs_material_final_data_pool,
                 cogs_material_header_data,
@@ -6842,7 +6842,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_equipment_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["cogs_equipment"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 cogs_equipment_final_data_pool,
                 cogs_equipment_header_data,
@@ -6871,7 +6871,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_services_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["cogs_service"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 cogs_services_final_data_pool,
                 cogs_service_header_data,
@@ -6897,7 +6897,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (gross_profit_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["gross_profit"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 gross_profit_final_data_pool,
                 gross_profit_header_data,
@@ -7141,7 +7141,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["purchase_order"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7309,7 +7309,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7390,12 +7390,13 @@ async function post_insertion(sql_request) {
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
+    initial_execute = false;
 
     console.log("==================================");
     console.log("goint to enter auto_update");
     console.log("==================================");
 
-    await auto_update();
+    // await auto_update();
   }
 }
 
@@ -7436,10 +7437,10 @@ async function auto_update() {
   console.log("auto_update callingg");
 
   // Get the current date and time // Calculate the next hour
-  const previous_batch_next_day = new Date(params_header["createdBefore"]);
+  const previous_batch_next_day = new Date(params_header["modifiedBefore"]);
   previous_batch_next_day.setDate(previous_batch_next_day.getDate() + 1);
 
-  console.log("finished batch: ", params_header["createdBefore"]);
+  console.log("finished batch: ", params_header["modifiedBefore"]);
   console.log("next batch: ", previous_batch_next_day);
 
   const now = new Date();
@@ -7457,37 +7458,68 @@ async function auto_update() {
   } else {
     console.log("next batch initiated");
 
-    // setting createdBefore time to current hour
+    // setting modifiedBefore time to current hour
     // now.setMinutes(0);
     // now.setSeconds(0);
     // now.setMilliseconds(0);
 
     now.setUTCHours(7, 0, 0, 0);
 
-    params_header["createdBefore"] = now.toISOString();
+    params_header["modifiedBefore"] = now.toISOString();
     console.log("params_header: ", params_header);
 
     should_auto_update = true;
   }
 }
 
-// start_pipeline().then(() => {
-//   console.log("should auto update ????");
-//   if (should_auto_update) {
-//     start_pipeline();
-//   }
-// });
-
 async function orchestrate() {
+  await flush_data_pool(!should_auto_update);
+
   do {
-    console.log("===========================================");
-    console.log("===========================================");
-    console.log("starting pipeline");
-    console.log("should_auto_update: before", should_auto_update);
-    await flush_data_pool(!should_auto_update);
+    const now = new Date();
+    now.setUTCHours(7, 0, 0, 0);
+
+    // Step 1: Call start_pipeline
     await start_pipeline();
-    console.log("should_auto_update: after", should_auto_update);
+
+    // Step 2: Check year difference
+    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+    const next_initial_batch_time = new Date(params_header["modifiedBefore"]);
+
+    const yearDifference =
+      next_initial_batch_time.getFullYear() - now.getFullYear();
+
+    if (yearDifference >= 24) {
+      // If the difference is 24 years or more, add 24 years to modifiedOnOrAfter
+      next_initial_batch_time.setFullYear(
+        next_initial_batch_time.getFullYear() + 24
+      );
+      params_header["modifiedBefore"] = next_initial_batch_time.toISOString();
+      should_auto_update = true;
+    } else {
+      // If the difference is less than 24 years, set modifiedOnOrAfter to the current date and time
+      params_header["modifiedBefore"] = now.toISOString();
+
+      // Check if next_initial_batch_time is greater than the next day at 7:00 AM UTC
+      const nextDay = new Date(now);
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setUTCHours(7, 0, 0, 0);
+
+      if (next_initial_batch_time > nextDay) {
+        // Wait until the next day at 7:00 AM UTC
+        const timeUntilNextDay = nextDay - now;
+        console.log("Waiting until the next day at 7:00 AM UTC...");
+        await new Promise((resolve) => setTimeout(resolve, timeUntilNextDay));
+      }
+
+      // Proceed with the next iteration immediately
+      continue;
+    }
+
+    // Step 3: Call start_pipeline again
   } while (should_auto_update);
+
+  should_auto_update = true;
 }
 
 orchestrate();
