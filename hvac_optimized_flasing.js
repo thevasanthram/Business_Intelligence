@@ -8097,7 +8097,7 @@ async function orchestrate() {
     // Step 1: Call start_pipeline
     await start_pipeline();
 
-    break;
+    // break;
 
     // Step 2: Check year difference
     params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
