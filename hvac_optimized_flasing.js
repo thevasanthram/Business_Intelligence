@@ -6449,6 +6449,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
+        console.log("batch done");
+
         // Object.keys(data_pool).map((record_id) => {
         //   const record = data_pool[record_id];
 
