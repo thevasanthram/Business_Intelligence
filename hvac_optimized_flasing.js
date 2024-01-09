@@ -6325,6 +6325,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
+        console.log("startd =======");
         const batchSize = 1000; // Set your desired batch size
         const totalRecords = Object.keys(data_pool).length;
 
