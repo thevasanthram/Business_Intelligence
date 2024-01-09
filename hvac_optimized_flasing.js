@@ -2168,6 +2168,15 @@ async function azure_sql_operations(data_lake, table_list) {
   }
 
   const pushing_time = startStopwatch("pushing data");
+
+  // console.log(
+  //   "*************************************************CHECK MEM**********************************************************************"
+  // );
+  // await new Promise((resolve) => setTimeout(resolve, 300000));
+  // console.log(
+  //   "***********************************************************************************************************************"
+  // );
+
   await data_processor(data_lake, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
 
@@ -2178,10 +2187,14 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 11; api_count < 17; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
+
+    // if(api_count <= 17){
+    //   continue
+    // }
 
     console.log("table_name: ", api_name);
 
@@ -6331,242 +6344,242 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        console.log("startd =======");
-        const batchSize = 1000; // Set your desired batch size
-        const totalRecords = Object.keys(data_pool).length;
+        // console.log("startd =======");
+        // const batchSize = 1000; // Set your desired batch size
+        // const totalRecords = Object.keys(data_pool).length;
 
-        console.log("total records in appointments: ", totalRecords.length);
+        // console.log("total records in appointments: ", totalRecords.length);
 
-        console.log("batch started..");
-        for (let i = 0; i < totalRecords; i += batchSize) {
-          const currentBatch = Object.keys(data_pool).slice(i, i + batchSize);
+        // console.log("batch started..");
+        // for (let i = 0; i < totalRecords; i += batchSize) {
+        //   const currentBatch = Object.keys(data_pool).slice(i, i + batchSize);
 
-          console.log("currentBatch: ", i + batchSize);
+        //   console.log("currentBatch: ", i + batchSize);
 
-          currentBatch.map((record_id) => {
-            const record = data_pool[record_id];
+        //   currentBatch.map((record_id) => {
+        //     const record = data_pool[record_id];
 
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"];
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
-            }
-
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["customerId"]
-              ? record["customerId"]
-              : record["instance_id"];
-
-            if (customer_data_pool[record["customerId"]]) {
-              customer_details_id = record["customerId"];
-            }
-
-            let start = "2000-01-01T00:00:00.00Z";
-
-            if (record["start"]) {
-              if (
-                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                start = record["start"];
-              }
-            } else {
-              start = "2001-01-01T00:00:00.00Z";
-            }
-
-            let end = "2000-01-01T00:00:00.00Z";
-            if (record["end"]) {
-              if (
-                new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                end = record["end"];
-              }
-            } else {
-              end = "2001-01-01T00:00:00.00Z";
-            }
-
-            let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
-
-            if (record["arrivalWindowStart"]) {
-              if (
-                new Date(record["arrivalWindowStart"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                arrivalWindowStart = record["arrivalWindowStart"];
-              }
-            } else {
-              arrivalWindowStart = "2001-01-01T00:00:00.00Z";
-            }
-
-            let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
-            if (record["arrivalWindowEnd"]) {
-              if (
-                new Date(record["arrivalWindowEnd"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                arrivalWindowEnd = record["arrivalWindowEnd"];
-              }
-            } else {
-              arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
-            }
-
-            let createdOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            final_data_pool.push({
-              id: record["id"],
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              appointmentNumber: record["appointmentNumber"]
-                ? record["appointmentNumber"]
-                : "default",
-              start: start,
-              end: end,
-              arrivalWindowStart: arrivalWindowStart,
-              arrivalWindowEnd: arrivalWindowEnd,
-              status: record["status"] ? record["status"] : "Not Known",
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-            });
-          });
-        }
-
-        console.log("batch done");
-
-        // Object.keys(data_pool).map((record_id) => {
-        //   const record = data_pool[record_id];
-
-        //   let job_details_id = record["instance_id"];
-        //   let actual_job_details_id = record["jobId"]
-        //     ? record["jobId"]
-        //     : record["instance_id"];
-        //   if (jobs_data_pool[record["jobId"]]) {
-        //     job_details_id = record["jobId"];
-        //   }
-
-        //   let customer_details_id = record["instance_id"];
-        //   let actual_customer_details_id = record["customerId"]
-        //     ? record["customerId"]
-        //     : record["instance_id"];
-
-        //   if (customer_data_pool[record["customerId"]]) {
-        //     customer_details_id = record["customerId"];
-        //   }
-
-        //   let start = "2000-01-01T00:00:00.00Z";
-
-        //   if (record["start"]) {
-        //     if (
-        //       new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       start = record["start"];
+        //     let job_details_id = record["instance_id"];
+        //     let actual_job_details_id = record["jobId"]
+        //       ? record["jobId"]
+        //       : record["instance_id"];
+        //     if (jobs_data_pool[record["jobId"]]) {
+        //       job_details_id = record["jobId"];
         //     }
-        //   } else {
-        //     start = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   let end = "2000-01-01T00:00:00.00Z";
-        //   if (record["end"]) {
-        //     if (new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")) {
-        //       end = record["end"];
+        //     let customer_details_id = record["instance_id"];
+        //     let actual_customer_details_id = record["customerId"]
+        //       ? record["customerId"]
+        //       : record["instance_id"];
+
+        //     if (customer_data_pool[record["customerId"]]) {
+        //       customer_details_id = record["customerId"];
         //     }
-        //   } else {
-        //     end = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
+        //     let start = "2000-01-01T00:00:00.00Z";
 
-        //   if (record["arrivalWindowStart"]) {
-        //     if (
-        //       new Date(record["arrivalWindowStart"]) >
-        //       new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       arrivalWindowStart = record["arrivalWindowStart"];
+        //     if (record["start"]) {
+        //       if (
+        //         new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         start = record["start"];
+        //       }
+        //     } else {
+        //       start = "2001-01-01T00:00:00.00Z";
         //     }
-        //   } else {
-        //     arrivalWindowStart = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
-        //   if (record["arrivalWindowEnd"]) {
-        //     if (
-        //       new Date(record["arrivalWindowEnd"]) >
-        //       new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       arrivalWindowEnd = record["arrivalWindowEnd"];
+        //     let end = "2000-01-01T00:00:00.00Z";
+        //     if (record["end"]) {
+        //       if (
+        //         new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         end = record["end"];
+        //       }
+        //     } else {
+        //       end = "2001-01-01T00:00:00.00Z";
         //     }
-        //   } else {
-        //     arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   let createdOn = "2000-01-01T00:00:00.00Z";
+        //     let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
 
-        //   if (record["createdOn"]) {
-        //     if (
-        //       new Date(record["createdOn"]) >
-        //       new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       createdOn = record["createdOn"];
+        //     if (record["arrivalWindowStart"]) {
+        //       if (
+        //         new Date(record["arrivalWindowStart"]) >
+        //         new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         arrivalWindowStart = record["arrivalWindowStart"];
+        //       }
+        //     } else {
+        //       arrivalWindowStart = "2001-01-01T00:00:00.00Z";
         //     }
-        //   } else {
-        //     createdOn = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   let modifiedOn = "2000-01-01T00:00:00.00Z";
-        //   if (record["modifiedOn"]) {
-        //     if (
-        //       new Date(record["modifiedOn"]) >
-        //       new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       modifiedOn = record["modifiedOn"];
+        //     let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
+        //     if (record["arrivalWindowEnd"]) {
+        //       if (
+        //         new Date(record["arrivalWindowEnd"]) >
+        //         new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         arrivalWindowEnd = record["arrivalWindowEnd"];
+        //       }
+        //     } else {
+        //       arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
         //     }
-        //   } else {
-        //     modifiedOn = "2001-01-01T00:00:00.00Z";
-        //   }
 
-        //   final_data_pool.push({
-        //     id: record["id"],
-        //     job_details_id: job_details_id,
-        //     actual_job_details_id: actual_job_details_id,
-        //     appointmentNumber: record["appointmentNumber"]
-        //       ? record["appointmentNumber"]
-        //       : "default",
-        //     start: start,
-        //     end: end,
-        //     arrivalWindowStart: arrivalWindowStart,
-        //     arrivalWindowEnd: arrivalWindowEnd,
-        //     status: record["status"] ? record["status"] : "Not Known",
-        //     createdOn: createdOn,
-        //     modifiedOn: modifiedOn,
-        //     customer_details_id: customer_details_id,
-        //     actual_customer_details_id: actual_customer_details_id,
+        //     let createdOn = "2000-01-01T00:00:00.00Z";
+
+        //     if (record["createdOn"]) {
+        //       if (
+        //         new Date(record["createdOn"]) >
+        //         new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         createdOn = record["createdOn"];
+        //       }
+        //     } else {
+        //       createdOn = "2001-01-01T00:00:00.00Z";
+        //     }
+
+        //     let modifiedOn = "2000-01-01T00:00:00.00Z";
+        //     if (record["modifiedOn"]) {
+        //       if (
+        //         new Date(record["modifiedOn"]) >
+        //         new Date("2000-01-01T00:00:00.00Z")
+        //       ) {
+        //         modifiedOn = record["modifiedOn"];
+        //       }
+        //     } else {
+        //       modifiedOn = "2001-01-01T00:00:00.00Z";
+        //     }
+
+        //     final_data_pool.push({
+        //       id: record["id"],
+        //       job_details_id: job_details_id,
+        //       actual_job_details_id: actual_job_details_id,
+        //       appointmentNumber: record["appointmentNumber"]
+        //         ? record["appointmentNumber"]
+        //         : "default",
+        //       start: start,
+        //       end: end,
+        //       arrivalWindowStart: arrivalWindowStart,
+        //       arrivalWindowEnd: arrivalWindowEnd,
+        //       status: record["status"] ? record["status"] : "Not Known",
+        //       createdOn: createdOn,
+        //       modifiedOn: modifiedOn,
+        //       customer_details_id: customer_details_id,
+        //       actual_customer_details_id: actual_customer_details_id,
+        //     });
         //   });
-        // });
+        // }
+
+        // console.log("batch done");
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (jobs_data_pool[record["jobId"]]) {
+            job_details_id = record["jobId"];
+          }
+
+          let customer_details_id = record["instance_id"];
+          let actual_customer_details_id = record["customerId"]
+            ? record["customerId"]
+            : record["instance_id"];
+
+          if (customer_data_pool[record["customerId"]]) {
+            customer_details_id = record["customerId"];
+          }
+
+          let start = "2000-01-01T00:00:00.00Z";
+
+          if (record["start"]) {
+            if (
+              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              start = record["start"];
+            }
+          } else {
+            start = "2001-01-01T00:00:00.00Z";
+          }
+
+          let end = "2000-01-01T00:00:00.00Z";
+          if (record["end"]) {
+            if (new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")) {
+              end = record["end"];
+            }
+          } else {
+            end = "2001-01-01T00:00:00.00Z";
+          }
+
+          let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
+
+          if (record["arrivalWindowStart"]) {
+            if (
+              new Date(record["arrivalWindowStart"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              arrivalWindowStart = record["arrivalWindowStart"];
+            }
+          } else {
+            arrivalWindowStart = "2001-01-01T00:00:00.00Z";
+          }
+
+          let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
+          if (record["arrivalWindowEnd"]) {
+            if (
+              new Date(record["arrivalWindowEnd"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              arrivalWindowEnd = record["arrivalWindowEnd"];
+            }
+          } else {
+            arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            appointmentNumber: record["appointmentNumber"]
+              ? record["appointmentNumber"]
+              : "default",
+            start: start,
+            end: end,
+            arrivalWindowStart: arrivalWindowStart,
+            arrivalWindowEnd: arrivalWindowEnd,
+            status: record["status"] ? record["status"] : "Not Known",
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+          });
+        });
 
         console.log("appointments data: ", final_data_pool.length);
 
@@ -8075,7 +8088,7 @@ async function auto_update() {
 }
 
 async function orchestrate() {
-  // await flush_data_pool(!should_auto_update);
+  await flush_data_pool(!should_auto_update);
 
   do {
     const now = new Date();
@@ -8083,6 +8096,8 @@ async function orchestrate() {
 
     // Step 1: Call start_pipeline
     await start_pipeline();
+
+    break;
 
     // Step 2: Check year difference
     params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
