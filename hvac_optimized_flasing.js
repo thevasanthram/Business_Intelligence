@@ -6243,6 +6243,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["jpm__appointments"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
+        console.log("entering -== ");
+
         // fetching customers data from db
         // ----------------
         const customers_response = await sql_request.query(
@@ -6258,6 +6260,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
+        console.log("fetched customers");
+
         // fetching job_details data from db
         // ----------------
         const jobs_response = await sql_request.query(
@@ -6272,6 +6276,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           jobs_data_pool[current_record["id"]] = current_record;
         });
         // ----------------
+
+        console.log("fetched job_details");
 
         let final_data_pool = [];
 
