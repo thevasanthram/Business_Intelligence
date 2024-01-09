@@ -46,11 +46,11 @@ async function dataFetcher() {
   const sql_request = await create_sql_connection();
 
   const pushing_time = startStopwatch("fetching data");
-  const response = await sql_request.query("SELECT * FROM job_details");
+  const response = await sql_request.query("SELECT * FROM business_unit");
   console.log("Time Taken for fetching all data: ", pushing_time());
   await sql.close();
 
-  console.log("response: ", response['output']);
+  console.log("response: ", response["recordset"]);
 }
 
 dataFetcher();

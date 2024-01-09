@@ -17,9 +17,14 @@ async function hvac_merge_insertion(
     const table = new mssql.Table(tempTableName);
     table.create = true; // Create the table if it doesn't exist
 
-    // update query
+    // // update query
+    // const updation_query = Object.keys(header_data)
+    //   .map((column) => `Target.${column} = Source.${column}`)
+    //   .join(",\n");
+
+    // Update query
     const updation_query = Object.keys(header_data)
-      .map((column) => `Target.${column} = Source.${column}`)
+      .map((column) => `Target.[${column}] = Source.[${column}]`)
       .join(",\n");
 
     // Define the columns based on the header_data
@@ -92,11 +97,17 @@ async function hvac_merge_insertion(
         UPDATE SET
             ${updation_query}
         WHEN NOT MATCHED THEN
-        INSERT (${Object.keys(header_data).join(", ")})
+        INSERT (${Object.keys(header_data)
+          .map((column) => `[${column}]`)
+          .join(", ")}
+        )
         VALUES (${Object.keys(header_data)
-          .map((column) => `Source.${column}`)
-          .join(", ")});
+          .map((column) => `[Source].[${column}]`)
+          .join(", ")}
+        );
     `;
+
+    // console.log("mergeQuery: ", mergeQuery);
 
     // Execute the MERGE query
     const mergeResult = await sql_pool.query(mergeQuery);

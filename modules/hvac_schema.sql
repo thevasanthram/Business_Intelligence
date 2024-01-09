@@ -11,7 +11,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'us_cities')
 BEGIN
 CREATE TABLE us_cities (
-  zip_code INT PRIMARY KEY,
+  id INT PRIMARY KEY,
   -- latitude DECIMAL(9, 6) NULL,
   -- longitude DECIMAL(9, 6) NULL,
   latitude NVARCHAR(MAX) NULL,
@@ -121,7 +121,7 @@ CREATE TABLE location (
   longitude NVARCHAR(MAX) NULL,
   taxzone INT NULL,
   zone_id INT NULL,
-  FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
+  FOREIGN KEY (address_zip) REFERENCES us_cities (id)
 );
 END;
 
@@ -169,8 +169,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
 BEGIN
 CREATE TABLE call_details (
-  lead_call_id INT PRIMARY KEY,
-  id INT NULL,
+  id INT PRIMARY KEY,
   instance_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
@@ -241,6 +240,8 @@ CREATE TABLE job_details (
   actual_location_id INT NULL,
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   campaign_id INT NOT NULL,
   actual_campaign_id INT NULL,
   createdOn DATETIME2 NULL,
@@ -254,24 +255,12 @@ CREATE TABLE job_details (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
-  FOREIGN KEY (lead_call_id) REFERENCES call_details (lead_call_id),
+  FOREIGN KEY (lead_call_id) REFERENCES call_details (id),
   FOREIGN KEY (campaign_id) REFERENCES campaigns (id),
-  FOREIGN KEY (booking_id) REFERENCES bookings (id)
+  FOREIGN KEY (booking_id) REFERENCES bookings (id),
+  FOREIGN KEY (project_id) REFERENCES projects (id),
 );
 END;
-
---project_job_details
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='project_job_details')
-BEGIN
-CREATE TABLE project_job_details(
-  project_id INT NOT NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  FOREIGN KEY (project_id) REFERENCES projects (id),
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-)
-END;
-
 
 -- sales_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
@@ -446,7 +435,7 @@ CREATE TABLE invoice (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_id) REFERENCES customer_details (id),
-  FOREIGN KEY (address_zip) REFERENCES us_cities (zip_code)
+  FOREIGN KEY (address_zip) REFERENCES us_cities (id)
 );
 END;
 
@@ -585,7 +574,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
-  id INT IDENTITY(1,1) PRIMARY KEY,
+  id INT PRIMARY KEY,
   accounts_receivable DECIMAL(18, 8) NULL,
   expense DECIMAL(18, 8) NULL,
   income DECIMAL(18, 8) NULL,
@@ -600,8 +589,6 @@ CREATE TABLE gross_profit (
   burden DECIMAL(18, 8) NULL,
   units INT NULL,
   labor_hours DECIMAL(18, 8) NULL,
-  invoice_id INT NOT NULL,
-  FOREIGN KEY (invoice_id) REFERENCES invoice (id)
 );
 END;
 
@@ -622,7 +609,6 @@ CREATE TABLE auto_update (
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
-  project_job_details NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
   appointments NVARCHAR(MAX) NULL,

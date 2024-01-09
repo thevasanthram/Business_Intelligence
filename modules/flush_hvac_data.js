@@ -15,7 +15,6 @@ async function flush_hvac_data(sql_request) {
     DELETE FROM invoice
     DELETE FROM appointments
     DELETE FROM sales_details
-    DELETE FROM project_job_details
     DELETE FROM job_details
     DELETE FROM call_details
     DELETE FROM projects

@@ -7467,7 +7467,7 @@ async function auto_update() {
     params_header["createdBefore"] = now.toISOString();
     console.log("params_header: ", params_header);
 
-    should_auto_update = false;
+    should_auto_update = true;
   }
 }
 
