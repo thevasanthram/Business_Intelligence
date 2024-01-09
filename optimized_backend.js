@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   modifiedOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  modifiedBefore: "2024-01-09T00:00:00.00Z", //createdBeforeTime.toISOString()
+  modifiedBefore: "2024-01-9T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2169,13 +2169,13 @@ async function azure_sql_operations(data_lake, table_list) {
 
   const pushing_time = startStopwatch("pushing data");
 
-  console.log(
-    "*************************************************CHECK MEM**********************************************************************"
-  );
-  await new Promise((resolve) => setTimeout(resolve, 15000));
-  console.log(
-    "***********************************************************************************************************************"
-  );
+  // console.log(
+  //   "*************************************************CHECK MEM**********************************************************************"
+  // );
+  // await new Promise((resolve) => setTimeout(resolve, 300000));
+  // console.log(
+  //   "***********************************************************************************************************************"
+  // );
 
   await data_processor(data_lake, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
@@ -2187,7 +2187,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 18; api_count < table_list.length; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -7469,18 +7469,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!ntering purchase order"
-        );
-
         // fetching job_details data from db
         // ----------------
         const jobs_response = await sql_request.query(
           "SELECT * FROM job_details"
-        );
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!fetched job_detals"
         );
 
         const jobs_data = jobs_response.recordset;
@@ -7492,10 +7484,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!map done"
-        );
-
         // fetching vendor data from db
         // ----------------
         const vendor_response = await sql_request.query("SELECT * FROM vendor");
@@ -7503,26 +7491,16 @@ async function data_processor(data_lake, sql_request, table_list) {
         const vendor_data = vendor_response.recordset;
 
         const vendors_data_pool = {};
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor1"
-        );
 
         vendor_data.map((current_record) => {
           vendors_data_pool[current_record["id"]] = current_record;
         });
         // ----------------
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor2"
-        );
-
         // fetching invoice data from db
         // ----------------
         const invoice_response = await sql_request.query(
           "SELECT * FROM invoice"
-        );
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice1"
         );
 
         const invoice_data = invoice_response.recordset;
@@ -7533,9 +7511,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           invoice_data_pool[current_record["id"]] = current_record;
         });
         // ----------------
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice2"
-        );
 
         let final_data_pool = [];
 
@@ -7600,9 +7575,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_vendor_id: 3,
           });
         }
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!dummy done"
-        );
 
         Object.keys(purchase_order_data_pool).map((record_id) => {
           const record = purchase_order_data_pool[record_id];
@@ -8119,52 +8091,48 @@ async function orchestrate() {
   await flush_data_pool(!should_auto_update);
 
   do {
-    const now = new Date();
-    now.setUTCHours(7, 0, 0, 0);
-
-    // Step 1: Call start_pipeline
-    await start_pipeline();
-
-    // break;
-
     // Step 2: Check year difference
     params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
-    const next_initial_batch_time = new Date(params_header["modifiedBefore"]);
 
-    const yearDifference =
-      next_initial_batch_time.getFullYear() - now.getFullYear();
+    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-    if (yearDifference >= 24) {
-      // If the difference is 24 years or more, add 24 years to modifiedOnOrAfter
-      next_initial_batch_time.setFullYear(
-        next_initial_batch_time.getFullYear() + 24
-      );
-      params_header["modifiedBefore"] = next_initial_batch_time.toISOString();
-      should_auto_update = true;
+    next_batch_time.setDate(next_batch_time.getDate() + 1);
+
+    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+    console.log("next batch: ", next_batch_time);
+
+    // const now = new Date();
+    // now.setUTCHours(7, 0, 0, 0);
+
+    const now = new Date();
+    // now.setHours(now.getHours() + timezoneOffsetHours);
+
+    // Check if it's the next hour
+    if (now < next_batch_time) {
+      // Schedule the next call after an hour
+      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next hour
+      console.log("timer funtion entering", timeUntilNextBatch);
+
+      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
     } else {
-      // If the difference is less than 24 years, set modifiedOnOrAfter to the current date and time
+      console.log("next batch initiated");
+
+      // setting modifiedBefore time to current hour
+      // now.setMinutes(0);
+      // now.setSeconds(0);
+      // now.setMilliseconds(0);
+
+      now.setUTCHours(7, 0, 0, 0);
+
       params_header["modifiedBefore"] = now.toISOString();
+      console.log("params_header: ", params_header);
 
-      // Check if next_initial_batch_time is greater than the next day at 7:00 AM UTC
-      const nextDay = new Date(now);
-      nextDay.setDate(nextDay.getDate() + 1);
-      nextDay.setUTCHours(7, 0, 0, 0);
-
-      if (next_initial_batch_time > nextDay) {
-        // Wait until the next day at 7:00 AM UTC
-        const timeUntilNextDay = nextDay - now;
-        console.log("Waiting until the next day at 7:00 AM UTC...");
-        await new Promise((resolve) => setTimeout(resolve, timeUntilNextDay));
-      }
-
-      // Proceed with the next iteration immediately
-      continue;
+      // Step 1: Call start_pipeline
+      await start_pipeline();
     }
 
-    // Step 3: Call start_pipeline again
+    should_auto_update = true;
   } while (should_auto_update);
-
-  should_auto_update = true;
 }
 
 orchestrate();
