@@ -125,6 +125,29 @@ CREATE TABLE location (
 );
 END;
 
+--
+-- gross_pay_items
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_pay_items')
+BEGIN
+CREATE TABLE gross_pay_items (
+  id INT NULL,
+  payrollId INT NULL,
+  amount DECIMAL(18, 8) NULL,
+  paidDurationHours DECIMAL(18, 8) NULL,
+  projectId INT NULL,
+  invoiceId INT NULL,
+);
+END;
+
+-- payrolls
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'payrolls')
+BEGIN
+CREATE TABLE payrolls (
+  id INT PRIMARY KEY,
+  burdenRate DECIMAL(18, 8) NULL,
+);
+END;
+
 -- projects
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
 BEGIN
@@ -135,7 +158,6 @@ CREATE TABLE projects(
   [status] NVARCHAR(MAX) NULL,
   billed_amount DECIMAL(18, 8) NULL,
   balance DECIMAL(18, 8) NULL,
-  paid_amount DECIMAL(18, 8) NULL,
   contract_value DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
   equipment_cost DECIMAL(18, 8) NULL,
@@ -608,6 +630,8 @@ CREATE TABLE auto_update (
   bookings NVARCHAR(MAX) NULL,  
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
+  gross_pay_items NVARCHAR(MAX) NULL,
+  payrolls NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,

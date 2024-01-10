@@ -77,6 +77,34 @@ let data_lake = {};
 let should_auto_update = false;
 
 const hvac_tables = {
+  gross_pay_items: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      payrollId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      paidDurationHours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      projectId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      invoiceId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   legal_entity: {
     // manual entry
     columns: {
@@ -392,6 +420,19 @@ const hvac_tables = {
       },
     },
   },
+
+  payrolls: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      burdenRate: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+    },
+  },
   projects: {
     columns: {
       id: {
@@ -415,10 +456,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       balance: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      paid_amount: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -1685,6 +1722,12 @@ const hvac_tables_responses = {
   location: {
     status: "",
   },
+  gross_pay_items: {
+    status: "",
+  },
+  payrolls: {
+    status: "",
+  },
   projects: {
     status: "",
   },
@@ -1788,11 +1831,6 @@ const main_api_list = {
     {
       api_group: "jpm",
       api_name: "projects",
-      table_name: "projects",
-    },
-    {
-      api_group: "accounting",
-      api_name: "payments",
       table_name: "projects",
     },
   ],
@@ -2129,6 +2167,7 @@ async function azure_sql_operations(data_lake, table_list) {
       customer_details,
       call_details,
       [location],
+      payrolls,
       projects,
       job_details,
       appointments,
@@ -2149,7 +2188,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3196,6 +3235,132 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "gross_pay_items": {
+        const table_name = "gross_pay_items";
+        const data_pool =
+          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          final_data_pool.push({
+            id: record["id"],
+            payrollId: record["payrollId"],
+            amount: record["amount"],
+            paidDurationHours: record["paidDurationHours"],
+            projectId: record["projectId"],
+            invoiceId: record["invoiceId"],
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log("gross_pay_items data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["gross_pay_items"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["gross_pay_items"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET gross_pay_items = '${hvac_tables_responses["gross_pay_items"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
+
+        break;
+      }
+
+      case "payrolls": {
+        const table_name = "payrolls";
+        const data_pool =
+          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          final_data_pool.push({
+            id: record["id"],
+            burdenRate: record["burdenRate"] ? record["burdenRate"] : 0,
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log("payrolls data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["payrolls"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["payrolls"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET payrolls = '${hvac_tables_responses["payrolls"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake["cogs_labor"]["payroll__payrolls"];
+
+        break;
+      }
+
       case "projects": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
@@ -3210,7 +3375,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let gross_pay_items_data_pool = {};
         let payrolls_data_pool = {};
-        let payments_data_pool = {};
 
         if (initial_execute) {
           jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
@@ -3222,8 +3386,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             data_lake["purchase_order"]["inventory__purchase-orders"][
               "data_pool"
             ];
-          payments_data_pool =
-            data_lake["projects"]["accounting__payments"]["data_pool"];
           sales_data_pool =
             data_lake["sales_details"]["sales__estimates"]["data_pool"];
         } else {
@@ -3425,11 +3587,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             3: 0,
           },
           balance: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          paid_amount: {
             1: 0,
             2: 0,
             3: 0,
@@ -3654,21 +3811,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           } else {
             project_dummy_values["contract_value"][record["instance_id"]] +=
               parseFloat(record["subtotal"]);
-          }
-        });
-
-        let payment_reference_value = {};
-        // calculating payments based on reference number and projects
-        Object.keys(payments_data_pool).map((record_id) => {
-          const record = payments_data_pool[record_id];
-
-          if (record["referenceNumber"]) {
-            if (!payment_reference_value[record["referenceNumber"]]) {
-              payment_reference_value[record["referenceNumber"]] = 0;
-            }
-
-            payment_reference_value[record["referenceNumber"]] +=
-              record["total"];
           }
         });
 
@@ -4192,7 +4334,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 current_liability: 0,
                 membership_liability: 0,
                 balance: 0,
-                paid_amount: 0,
                 business_unit_id: business_unit_id,
                 actual_business_unit_id: actual_business_unit_id,
               };
@@ -4204,45 +4345,18 @@ async function data_processor(data_lake, sql_request, table_list) {
                 parseFloat(record["total"]);
               project_dummy_values["balance"][record["instance_id"]] +=
                 parseFloat(record["balance"]);
-
-              if (record["referenceNumber"]) {
-                if (payment_reference_value[record["referenceNumber"]]) {
-                  project_dummy_values["paid_amount"][record["instance_id"]] +=
-                    parseFloat(
-                      payment_reference_value[record["referenceNumber"]]
-                    );
-                }
-              }
             } else {
               project_total_data[record["projectId"]]["billed_amount"] +=
                 parseFloat(record["total"]);
               project_total_data[record["projectId"]]["balance"] += parseFloat(
                 record["balance"]
               );
-
-              if (record["referenceNumber"]) {
-                if (payment_reference_value[record["referenceNumber"]]) {
-                  project_total_data[record["projectId"]]["paid_amount"] +=
-                    parseFloat(
-                      payment_reference_value[record["referenceNumber"]]
-                    );
-                }
-              }
             }
           } else {
             project_dummy_values["billed_amount"][record["instance_id"]] +=
               parseFloat(record["total"]);
             project_dummy_values["balance"][record["instance_id"]] +=
               parseFloat(record["balance"]);
-
-            if (record["referenceNumber"]) {
-              if (payment_reference_value[record["referenceNumber"]]) {
-                project_dummy_values["paid_amount"][record["instance_id"]] +=
-                  parseFloat(
-                    payment_reference_value[record["referenceNumber"]]
-                  );
-              }
-            }
           }
 
           invoice_final_data_pool.push({
@@ -4704,7 +4818,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "No Status",
             billed_amount: project_dummy_values["billed_amount"][1],
             balance: project_dummy_values["balance"][1],
-            paid_amount: project_dummy_values["paid_amount"][1],
             contract_value: project_dummy_values["contract_value"][1],
             po_cost: project_dummy_values["po_cost"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
@@ -4738,7 +4851,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "No Status",
             billed_amount: project_dummy_values["billed_amount"][2],
             balance: project_dummy_values["balance"][2],
-            paid_amount: project_dummy_values["paid_amount"][2],
             contract_value: project_dummy_values["contract_value"][2],
             po_cost: project_dummy_values["po_cost"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
@@ -4772,7 +4884,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "No Status",
             billed_amount: project_dummy_values["billed_amount"][3],
             balance: project_dummy_values["balance"][3],
-            paid_amount: project_dummy_values["paid_amount"][3],
             contract_value: project_dummy_values["contract_value"][3],
             po_cost: project_dummy_values["po_cost"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
@@ -4885,7 +4996,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           let billed_amount = 0;
           let balance = 0;
-          let paid_amount = 0;
           let contract_value = 0;
           let po_cost = 0;
           let equipment_cost = 0;
@@ -4907,9 +5017,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
             balance = project_total_data[record["id"]]["balance"]
               ? project_total_data[record["id"]]["balance"]
-              : 0;
-            paid_amount = project_total_data[record["id"]]["paid_amount"]
-              ? project_total_data[record["id"]]["paid_amount"]
               : 0;
             equipment_cost = project_total_data[record["id"]]["equipment_cost"]
               ? project_total_data[record["id"]]["equipment_cost"]
@@ -4983,7 +5090,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: record["status"] ? record["status"] : "No Status",
             billed_amount: billed_amount,
             balance: balance,
-            paid_amount: paid_amount,
             contract_value: contract_value,
             po_cost: po_cost,
             equipment_cost: equipment_cost,
@@ -8067,7 +8173,7 @@ async function start_pipeline() {
 
   // await find_total_length(data_lake);
 
-  await azure_sql_operations(data_lake, Object.keys(data_lake));
+  await azure_sql_operations(data_lake, Object.keys(hvac_tables));
 }
 
 async function flush_data_pool(is_initial_execute) {
