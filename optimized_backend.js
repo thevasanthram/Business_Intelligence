@@ -70,7 +70,6 @@ const params_header = {
 
 console.log("params_header: ", params_header);
 
-let initial_execute = true;
 let lastInsertedId = 0;
 
 let data_lake = {};
@@ -2166,6 +2165,7 @@ async function azure_sql_operations(data_lake, table_list) {
       customer_details,
       call_details,
       [location],
+      gross_pay_items,
       payrolls,
       projects,
       job_details,
@@ -2187,7 +2187,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2237,95 +2237,6 @@ async function data_processor(data_lake, sql_request, table_list) {
     console.log("table_name: ", api_name);
 
     switch (api_name) {
-      case "legal_entity": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   Object.values(data_pool),
-        //   header_data,
-        //   table_name
-        // );
-
-        if (initial_execute) {
-          do {
-            hvac_tables_responses["legal_entity"]["status"] =
-              await hvac_merge_insertion(
-                sql_request,
-                Object.values(data_pool),
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["legal_entity"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[api_name];
-
-        break;
-      }
-
-      case "us_cities": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["zip_codes"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   Object.values(data_pool),
-        //   Object.keys(header_data),
-        //   table_name
-        // );
-
-        if (initial_execute) {
-          data_pool[57483] = {
-            id: 57483,
-            latitude: "19.432608",
-            longitude: "-99.133209",
-            city: "Mexico",
-            state: "Mexico",
-            county: "Mexico",
-          };
-
-          do {
-            hvac_tables_responses["us_cities"]["status"] =
-              await hvac_merge_insertion(
-                sql_request,
-                Object.values(data_pool),
-                header_data,
-                table_name
-              );
-          } while (hvac_tables_responses["us_cities"]["status"] != "success");
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET us_cities = '${hvac_tables_responses["us_cities"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[api_name];
-
-        break;
-      }
 
       case "business_unit": {
         const table_name = main_api_list[api_name][0]["table_name"];
@@ -2334,79 +2245,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         const header_data = hvac_tables[table_name]["columns"];
 
         let final_data_pool = [];
-
-        if (initial_execute) {
-          final_data_pool.push({
-            id: 1,
-            business_unit_name: "default_business_1",
-            business_unit_official_name: "default_business_1",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
-            is_active: 0,
-            legal_entity_id: 1,
-          });
-
-          final_data_pool.push({
-            id: 2,
-            business_unit_name: "default_business_2",
-            business_unit_official_name: "default_business_2",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
-            is_active: 0,
-            legal_entity_id: 2,
-          });
-
-          final_data_pool.push({
-            id: 3,
-            business_unit_name: "default_business_3",
-            business_unit_official_name: "default_business_3",
-            trade_type: "OTHER",
-            segment_type: "OTHER",
-            revenue_type: "OTHER",
-            business: "OTHER",
-            is_active: 0,
-            legal_entity_id: 3,
-          });
-
-          // MANUAL ENTRY
-
-          // final_data_pool.push({
-          //   id: 108709,
-          //   business_unit_name: "Imported Default Businessunit",
-          //   business_unit_official_name:
-          //     "Expert Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 1,
-          // });
-
-          // final_data_pool.push({
-          //   id: 1000004,
-          //   business_unit_name: "Imported Businessunit",
-          //   business_unit_official_name:
-          //     "Expert Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 1,
-          // });
-
-          // final_data_pool.push({
-          //   id: 166181,
-          //   business_unit_name: "Imported Default Businessunit",
-          //   business_unit_official_name:
-          //     "Family Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 3,
-          // });
-        }
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
