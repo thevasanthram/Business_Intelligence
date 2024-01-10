@@ -3295,7 +3295,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
+        // delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
 
         break;
       }
@@ -3355,7 +3355,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake["cogs_labor"]["payroll__payrolls"];
+        // delete data_lake["cogs_labor"]["payroll__payrolls"];
 
         break;
       }
@@ -8076,6 +8076,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
+
+        delete data_lake[api_name];
 
         break;
       }
