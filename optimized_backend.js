@@ -61,8 +61,8 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  modifiedBefore: "2024-01-10T00:00:00.00Z", //createdBeforeTime.toISOString()
+  modifiedOnOrAfter: "2024-01-09T07:00:00.00Z", // 2023-12-25T00:00:00.00Z
+  modifiedBefore: "2024-01-10T07:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -1175,6 +1175,126 @@ const hvac_tables = {
       },
     },
   },
+  invoice: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      syncStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      dueDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      depositedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      invoice_type_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      invoice_type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      address_street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      acutal_address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      customer_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
   cogs_material: {
     columns: {
       quantity: {
@@ -1381,13 +1501,49 @@ const hvac_tables = {
       },
     },
   },
-  cogs_labor: {
+  gross_profit: {
     columns: {
-      paid_duration: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      accounts_receivable: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
-      burden_rate: {
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      default: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      equipment_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      material_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -1395,40 +1551,24 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
-      burden_cost: {
+      burden: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
-      activity: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      paid_time_type: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
+      // gross_profit: {
+      //   data_type: "DECIMAL",
+      //   constraint: { nullable: true },
+      // },
+      // gross_margin: {
+      //   data_type: "DECIMAL",
+      //   constraint: { nullable: true },
+      // },
+      units: {
         data_type: "INT",
         constraint: { nullable: true },
       },
-      invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      technician_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_technician_id: {
-        data_type: "INT",
+      labor_hours: {
+        data_type: "DECIMAL",
         constraint: { nullable: true },
       },
     },
@@ -1501,57 +1641,29 @@ const hvac_tables = {
       },
     },
   },
-  invoice: {
+  cogs_labor: {
     columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
+      paid_duration: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
       },
-      syncStatus: {
+      burden_rate: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      burden_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      activity: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
-      date: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      dueDate: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      subtotal: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      tax: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      total: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      balance: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      depositedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      invoice_type_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      invoice_type_name: {
+      paid_time_type: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -1563,132 +1675,20 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-      business_unit_id: {
+      invoice_id: {
         data_type: "INT",
         constraint: { nullable: false },
       },
-      actual_business_unit_id: {
+      actual_invoice_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
-      location_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_location_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      address_street: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      address_unit: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      address_city: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      address_state: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      address_country: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      address_zip: {
+      technician_id: {
         data_type: "INT",
         constraint: { nullable: false },
       },
-      acutal_address_zip: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      customer_id: {
+      actual_technician_id: {
         data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_customer_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      customer_name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  gross_profit: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      accounts_receivable: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      expense: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      income: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      current_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      membership_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      default: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      total: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      equipment_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      material_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      labor_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      burden: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      // gross_profit: {
-      //   data_type: "DECIMAL",
-      //   constraint: { nullable: true },
-      // },
-      // gross_margin: {
-      //   data_type: "DECIMAL",
-      //   constraint: { nullable: true },
-      // },
-      units: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      labor_hours: {
-        data_type: "DECIMAL",
         constraint: { nullable: true },
       },
     },
@@ -2230,9 +2230,9 @@ async function data_processor(data_lake, sql_request, table_list) {
     // table_list.length
     const api_name = table_list[api_count];
 
-    // if(api_count <= 17){
-    //   continue
-    // }
+    if (api_count >= 20 && api_count <= 23) {
+      continue;
+    }
 
     console.log("table_name: ", api_name);
 
@@ -5341,8 +5341,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["jpm__appointments"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log("entering -== ");
-
         // fetching customers data from db
         // ----------------
         const customers_response = await sql_request.query(
@@ -6873,7 +6871,20 @@ async function start_pipeline() {
 
   // await find_total_length(data_lake);
 
-  await azure_sql_operations(data_lake, Object.keys(hvac_tables));
+  Object.keys(data_lake).map((header) => {
+    Object.keys(data_lake[header]).map((inner_header) => {
+      const data_pool = data_lake[header][inner_header]["data_pool"];
+      if (inner_header == "payroll__gross-pay-items") {
+        console.log(inner_header, data_pool.length);
+      } else {
+        if (data_pool) {
+          console.log(inner_header, Object.keys(data_pool).length);
+        }
+      }
+    });
+  });
+
+  // await azure_sql_operations(data_lake, Object.keys(hvac_tables));
 }
 
 async function flush_data_pool(is_initial_execute) {
@@ -6922,50 +6933,45 @@ async function auto_update() {
 }
 
 async function orchestrate() {
-  do {
-    // Step 2: Check year difference
-    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+  // Step 1: Call start_pipeline
+  await start_pipeline();
 
-    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+  // do {
+  //   // finding the next batch time
+  //   params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
-    next_batch_time.setDate(next_batch_time.getDate() + 1);
-    next_batch_time.setUTCHours(7, 0, 0, 0);
+  //   const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
-    console.log("next batch: ", next_batch_time);
+  //   next_batch_time.setDate(next_batch_time.getDate() + 1);
+  //   next_batch_time.setUTCHours(7, 0, 0, 0);
 
-    // const now = new Date();
-    // now.setUTCHours(7, 0, 0, 0);
+  //   console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+  //   console.log("next batch: ", next_batch_time);
 
-    const now = new Date();
-    // now.setHours(now.getHours() + timezoneOffsetHours);
+  //   const now = new Date();
 
-    // Check if it's the next hour
-    if (now < next_batch_time) {
-      // Schedule the next call after an hour
-      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next hour
-      console.log("timer funtion entering", timeUntilNextBatch);
+  //   // Check if it's the next day
+  //   // now < next_batch_time
+  //   if (now < next_batch_time) {
+  //     // Schedule the next call after an day
+  //     const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
+  //     console.log("timer funtion entering", timeUntilNextBatch);
 
-      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
-    } else {
-      console.log("next batch initiated");
+  //     await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+  //   } else {
+  //     console.log("next batch initiated");
 
-      // setting modifiedBefore time to current hour
-      // now.setMinutes(0);
-      // now.setSeconds(0);
-      // now.setMilliseconds(0);
+  //     now.setUTCHours(7, 0, 0, 0);
 
-      now.setUTCHours(7, 0, 0, 0);
+  //     params_header["modifiedBefore"] = now.toISOString();
+  //     console.log("params_header: ", params_header);
 
-      params_header["modifiedBefore"] = now.toISOString();
-      console.log("params_header: ", params_header);
+  //     // Step 1: Call start_pipeline
+  //     await start_pipeline();
+  //   }
 
-      // Step 1: Call start_pipeline
-      // await start_pipeline();
-    }
-
-    should_auto_update = true;
-  } while (should_auto_update);
+  //   should_auto_update = true;
+  // } while (should_auto_update);
 }
 
 orchestrate();
