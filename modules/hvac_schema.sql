@@ -252,7 +252,6 @@ BEGIN
 CREATE TABLE job_details (
   id INT PRIMARY KEY,
   job_type_id INT NULL,
-  job_type_name NVARCHAR(MAX) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
   job_completion_time DATETIME2 NULL,

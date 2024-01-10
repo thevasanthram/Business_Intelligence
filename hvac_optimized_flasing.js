@@ -762,10 +762,7 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-      job_type_name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
+
       job_number: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -5868,7 +5865,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: 1,
             job_type_id: 1,
-            job_type_name: "default_job_1",
             job_number: "1",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -5895,7 +5891,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: 2,
             job_type_id: 2,
-            job_type_name: "default_job_2",
             job_number: "2",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -5922,7 +5917,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: 3,
             job_type_id: 3,
-            job_type_name: "default_job_3",
             job_number: "3",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -5967,7 +5961,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_location_id = record["locationId"]
             ? record["locationId"]
             : record["instance_id"];
-          let job_type_name = "default";
           let lead_call_id = record["instance_id"];
           let actual_lead_call_id = record["leadCallId"]
             ? record["leadCallId"]
@@ -6015,10 +6008,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             booking_id = record["bookingId"];
           }
 
-          if (job_types_data_pool[record["jobTypeId"]]) {
-            job_type_name = job_types_data_pool[record["jobTypeId"]]["name"];
-          }
-
           let createdOn = "2000-01-01T00:00:00.00Z";
 
           if (record["createdOn"]) {
@@ -6060,7 +6049,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
-            job_type_name: job_type_name ? job_type_name : "default_job",
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
             job_completion_time: job_completion_time,

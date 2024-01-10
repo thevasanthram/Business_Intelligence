@@ -761,10 +761,6 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
-      job_type_name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
       job_number: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -2372,86 +2368,81 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const final_data_pool = [];
 
-        // fetching business units from db
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-
         // processing campaingns data for pushing into db
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-          let createdOn = "2000-01-01T00:00:00.00Z";
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
+            let createdOn = "2000-01-01T00:00:00.00Z";
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
 
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let category_id = 0;
-          let category_name = "default";
-          let is_category_active = 0;
-          if (record["category"]) {
-            category_id = record["category"]["id"]
-              ? record["category"]["id"]
-              : 0;
-            category_name = record["category"]["name"]
-              ? record["category"]["name"]
-              : "default";
-            is_category_active = record["category"]["active"] ? 1 : 0;
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"]
-              ? record["businessUnit"]["id"]
-              : record["instance_id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
+            let category_id = 0;
+            let category_name = "default";
+            let is_category_active = 0;
+            if (record["category"]) {
+              category_id = record["category"]["id"]
+                ? record["category"]["id"]
+                : 0;
+              category_name = record["category"]["name"]
+                ? record["category"]["name"]
+                : "default";
+              is_category_active = record["category"]["active"] ? 1 : 0;
             }
-          }
 
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            is_active: record["active"] ? 1 : 0,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            category_id: category_id,
-            category_name: category_name,
-            is_category_active: is_category_active,
-            source: record["source"] ? record["source"] : "default",
-            medium: record["medium"] ? record["medium"] : "default",
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-          });
-        });
+            let business_unit_id = record["instance_id"];
+            let actual_business_unit_id = record["instance_id"];
+            if (record["businessUnit"]) {
+              actual_business_unit_id = record["businessUnit"]["id"]
+                ? record["businessUnit"]["id"]
+                : record["instance_id"];
+
+              // checking business unit availlable or not for mapping
+              const is_business_unit_available = await sql_request.query(
+                `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+              );
+
+              if (is_business_unit_available["recordset"].length > 0) {
+                business_unit_id = record["businessUnit"]["id"];
+              }
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              name: record["name"] ? record["name"] : "default",
+              is_active: record["active"] ? 1 : 0,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              category_id: category_id,
+              category_name: category_name,
+              is_category_active: is_category_active,
+              source: record["source"] ? record["source"] : "default",
+              medium: record["medium"] ? record["medium"] : "default",
+              business_unit_id: business_unit_id,
+              actual_business_unit_id: actual_business_unit_id,
+            });
+          })
+        );
 
         console.log("campaigns data: ", final_data_pool.length);
 
@@ -2498,145 +2489,133 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        // fetching business units from db
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
+
+            let start = "2000-01-01T00:00:00.00Z";
+
+            if (record["start"]) {
+              if (
+                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                start = record["start"];
+              }
+            } else {
+              start = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let address_street = "default";
+            let address_unit = "default";
+            let address_city = "default";
+            let address_state = "default";
+            let address_zip = "default";
+            let address_country = "default";
+            if (record["address"]) {
+              address_street = record["address"]["street"]
+                ? record["address"]["street"]
+                : "default";
+              address_unit = record["address"]["unit"]
+                ? record["address"]["unit"]
+                : "default";
+              address_city = record["address"]["city"]
+                ? record["address"]["city"]
+                : "default";
+              address_state = record["address"]["state"]
+                ? record["address"]["state"]
+                : "default";
+              address_zip = record["address"]["zip"]
+                ? record["address"]["zip"]
+                : "default";
+              address_country = record["address"]["country"]
+                ? record["address"]["country"]
+                : "default";
+            }
+
+            let business_unit_id = record["instance_id"];
+            let actual_business_unit_id = record["businessUnitId"]
+              ? record["businessUnitId"]
+              : record["instance_id"];
+
+            // checking business unit availlable or not for mapping
+            const is_business_unit_available = await sql_request.query(
+              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+            );
+
+            if (is_business_unit_available["recordset"].length > 0) {
+              business_unit_id = record["businessUnitId"];
+            }
+
+            let campaign_id = record["instance_id"];
+            let actual_campaign_id = record["campaignId"]
+              ? record["campaignId"]
+              : record["campaignId"];
+
+            // checking campaignId availlable or not for mapping
+            const is_campaigns_available = await sql_request.query(
+              `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
+            );
+
+            if (is_campaigns_available["recordset"].length > 0) {
+              campaign_id = record["campaignId"];
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              name: record["name"] ? record["name"] : "default",
+              source: record["source"] ? record["source"] : "default",
+              status: record["status"] ? record["status"] : "default",
+              customer_type: record["customerType"]
+                ? record["customerType"]
+                : "default",
+              start: start,
+              bookingProviderId: record["bookingProviderId"]
+                ? record["bookingProviderId"]
+                : record["instance_id"],
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              address_street: address_street,
+              address_unit: address_unit,
+              address_city: address_city,
+              address_state: address_state,
+              address_zip: address_zip,
+              address_country: address_country,
+              business_unit_id: business_unit_id,
+              actual_business_unit_id: actual_business_unit_id,
+              campaign_id: campaign_id,
+              actual_campaign_id: actual_campaign_id,
+              job_details_id: record["jobId"]
+                ? record["jobId"]
+                : record["instance_id"],
+            });
+          })
         );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-
-        // fetching campaigns units from db
-        const campaingns_response = await sql_request.query(
-          "SELECT * FROM campaigns"
-        );
-
-        const campaingns_data = campaingns_response.recordset;
-
-        const campaigns_data_pool = {};
-
-        campaingns_data.map((current_record) => {
-          campaigns_data_pool[current_record["id"]] = current_record;
-        });
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let start = "2000-01-01T00:00:00.00Z";
-
-          if (record["start"]) {
-            if (
-              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              start = record["start"];
-            }
-          } else {
-            start = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let address_street = "default";
-          let address_unit = "default";
-          let address_city = "default";
-          let address_state = "default";
-          let address_zip = "default";
-          let address_country = "default";
-          if (record["address"]) {
-            address_street = record["address"]["street"]
-              ? record["address"]["street"]
-              : "default";
-            address_unit = record["address"]["unit"]
-              ? record["address"]["unit"]
-              : "default";
-            address_city = record["address"]["city"]
-              ? record["address"]["city"]
-              : "default";
-            address_state = record["address"]["state"]
-              ? record["address"]["state"]
-              : "default";
-            address_zip = record["address"]["zip"]
-              ? record["address"]["zip"]
-              : "default";
-            address_country = record["address"]["country"]
-              ? record["address"]["country"]
-              : "default";
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["businessUnitId"]
-            ? record["businessUnitId"]
-            : record["instance_id"];
-          if (business_unit_data_pool[record["businessUnitId"]]) {
-            business_unit_id = record["businessUnitId"];
-          }
-
-          let campaign_id = record["instance_id"];
-          let actual_campaign_id = record["campaignId"]
-            ? record["campaignId"]
-            : record["campaignId"];
-          if (campaigns_data_pool[record["campaignId"]]) {
-            campaign_id = record["campaignId"];
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            source: record["source"] ? record["source"] : "default",
-            status: record["status"] ? record["status"] : "default",
-            customer_type: record["customerType"]
-              ? record["customerType"]
-              : "default",
-            start: start,
-            bookingProviderId: record["bookingProviderId"]
-              ? record["bookingProviderId"]
-              : record["instance_id"],
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            address_street: address_street,
-            address_unit: address_unit,
-            address_city: address_city,
-            address_state: address_state,
-            address_zip: address_zip,
-            address_country: address_country,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            campaign_id: campaign_id,
-            actual_campaign_id: actual_campaign_id,
-            job_details_id: record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"],
-          });
-        });
 
         console.log("bookings data: ", final_data_pool.length);
 
@@ -3037,21 +3016,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         let gross_pay_items_data_pool = {};
         let payrolls_data_pool = {};
 
-        // fetching jobs from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         // fetching purchase_order from db
         // ----------------
         const purchase_order_response = await sql_request.query(
@@ -3079,51 +3043,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         sales_data.map((current_record) => {
           sales_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching customers data from db
-        // ----------------
-        const customers_response = await sql_request.query(
-          "SELECT * FROM customer_details"
-        );
-
-        const customer_data = customers_response.recordset;
-
-        const customer_data_pool = {};
-
-        customer_data.map((current_record) => {
-          customer_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching location data from db
-        // ----------------
-        const location_response = await sql_request.query(
-          "SELECT * FROM location"
-        );
-
-        const location_data = location_response.recordset;
-
-        const location_data_pool = {};
-
-        location_data.map((current_record) => {
-          location_data_pool[current_record["id"]] = current_record;
         });
         // ----------------
 
@@ -3467,653 +3386,690 @@ async function data_processor(data_lake, sql_request, table_list) {
         let cogs_services_final_data_pool = [];
         let gross_profit_final_data_pool = [];
 
-        Object.keys(invoice_data_pool).map((record_id) => {
-          const record = invoice_data_pool[record_id];
+        await Promise.all(
+          Object.keys(invoice_data_pool).map0(async (record_id) => {
+            const record = invoice_data_pool[record_id];
 
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["job"]) {
-            actual_job_details_id = record["job"]["id"];
-            if (jobs_data_pool[record["job"]["id"]]) {
-              job_details_id = record["job"]["id"];
-            }
-          }
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["instance_id"];
+            if (record["job"]) {
+              actual_job_details_id = record["job"]["id"];
 
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
+              // checking jobId availlable or not for mapping
+              const is_jobs_available = await sql_request.query(
+                `SELECT id FROM job_details WHERE id=${record["job"]["id"]}`
+              );
 
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (record["location"]) {
-            actual_location_id = record["location"]["id"];
-            if (location_data_pool[record["location"]["id"]]) {
-              location_id = record["location"]["id"];
-            }
-          }
-
-          let customer_id = record["instance_id"];
-          let actual_customer_id = record["instance_id"];
-          let customer_name = "default";
-          if (record["customer"]) {
-            actual_customer_id = record["customer"]["id"];
-            customer_name = record["customer"]["name"]
-              ? record["customer"]["name"]
-              : "default";
-            if (customer_data_pool[record["customer"]["id"]]) {
-              customer_id = record["customer"]["id"];
-            }
-          }
-
-          let address_street = "";
-          let address_unit = "";
-          let address_city = "";
-          let address_state = "";
-          let address_zip = 57483;
-          let acutal_address_zip = "";
-          let address_country = "";
-          let city = "Mexico";
-          if (record["locationAddress"]) {
-            address_street = record["locationAddress"]["street"]
-              ? record["locationAddress"]["street"]
-              : "";
-            address_unit = record["locationAddress"]["unit"]
-              ? record["locationAddress"]["unit"]
-              : "";
-            address_city = record["locationAddress"]["city"]
-              ? record["locationAddress"]["city"]
-              : "";
-            address_state = record["locationAddress"]["state"]
-              ? record["locationAddress"]["state"]
-              : "";
-            address_country = record["locationAddress"]["country"]
-              ? record["locationAddress"]["country"]
-              : "";
-            acutal_address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : "";
-
-            address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : 57483;
-
-            if (typeof address_zip == "string") {
-              const numericValue = Number(address_zip.split("-")[0]);
-              if (!isNaN(numericValue)) {
-                // If the conversion is successful and numericValue is not NaN, update address_zip
-                address_zip = numericValue;
-              } else {
-                // Handle the case where the conversion fails
-                address_zip = 57483;
+              if (is_jobs_available["recordset"].length > 0) {
+                job_details_id = record["job"]["id"];
               }
             }
 
-            if (!unique_us_zip_codes[String(address_zip)]) {
-              address_zip = 57483;
+            let business_unit_id = record["instance_id"];
+            let actual_business_unit_id = record["instance_id"];
+            if (record["businessUnit"]) {
+              actual_business_unit_id = record["businessUnit"]["id"];
+
+              // checking business unit availlable or not for mapping
+              const is_business_unit_available = await sql_request.query(
+                `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+              );
+
+              if (is_business_unit_available["recordset"].length > 0) {
+                business_unit_id = record["businessUnit"]["id"];
+              }
+            }
+
+            let location_id = record["instance_id"];
+            let actual_location_id = record["instance_id"];
+            if (record["location"]) {
+              actual_location_id = record["location"]["id"];
+
+              // checking location availlable or not for mapping
+              const is_location_available = await sql_request.query(
+                `SELECT id FROM location WHERE id=${record["location"]["id"]}`
+              );
+
+              if (is_location_available["recordset"].length > 0) {
+                location_id = record["location"]["id"];
+              }
+            }
+
+            let customer_id = record["instance_id"];
+            let actual_customer_id = record["instance_id"];
+            let customer_name = "default";
+            if (record["customer"]) {
+              actual_customer_id = record["customer"]["id"];
+              customer_name = record["customer"]["name"]
+                ? record["customer"]["name"]
+                : "default";
+
+              // checking customer availlable or not for mapping
+              const is_customer_available = await sql_request.query(
+                `SELECT id FROM customer_details WHERE id=${record["customer"]["id"]}`
+              );
+
+              if (is_customer_available["recordset"].length > 0) {
+                customer_id = record["customer"]["id"];
+              }
+            }
+
+            let address_street = "";
+            let address_unit = "";
+            let address_city = "";
+            let address_state = "";
+            let address_zip = 57483;
+            let acutal_address_zip = "";
+            let address_country = "";
+            let city = "Mexico";
+            if (record["locationAddress"]) {
+              address_street = record["locationAddress"]["street"]
+                ? record["locationAddress"]["street"]
+                : "";
+              address_unit = record["locationAddress"]["unit"]
+                ? record["locationAddress"]["unit"]
+                : "";
+              address_city = record["locationAddress"]["city"]
+                ? record["locationAddress"]["city"]
+                : "";
+              address_state = record["locationAddress"]["state"]
+                ? record["locationAddress"]["state"]
+                : "";
+              address_country = record["locationAddress"]["country"]
+                ? record["locationAddress"]["country"]
+                : "";
+              acutal_address_zip = record["locationAddress"]["zip"]
+                ? record["locationAddress"]["zip"]
+                : "";
+
+              address_zip = record["locationAddress"]["zip"]
+                ? record["locationAddress"]["zip"]
+                : 57483;
+
+              if (typeof address_zip == "string") {
+                const numericValue = Number(address_zip.split("-")[0]);
+                if (!isNaN(numericValue)) {
+                  // If the conversion is successful and numericValue is not NaN, update address_zip
+                  address_zip = numericValue;
+                } else {
+                  // Handle the case where the conversion fails
+                  address_zip = 57483;
+                }
+              }
+
+              if (!unique_us_zip_codes[String(address_zip)]) {
+                address_zip = 57483;
+              } else {
+                city = unique_us_zip_codes[String(address_zip)]["city"];
+              }
+            }
+
+            let invoice_date = "2000-01-01T00:00:00.00Z";
+
+            if (record["invoiceDate"]) {
+              if (
+                new Date(record["invoiceDate"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                invoice_date = record["invoiceDate"];
+              }
             } else {
-              city = unique_us_zip_codes[String(address_zip)]["city"];
-            }
-          }
-
-          let invoice_date = "2000-01-01T00:00:00.00Z";
-
-          if (record["invoiceDate"]) {
-            if (
-              new Date(record["invoiceDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              invoice_date = record["invoiceDate"];
-            }
-          } else {
-            invoice_date = "2001-01-01T00:00:00.00Z";
-          }
-
-          let dueDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["dueDate"]) {
-            if (
-              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              dueDate = record["dueDate"];
-            }
-          } else {
-            dueDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let depositedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["depositedOn"]) {
-            if (
-              new Date(record["depositedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              depositedOn = record["depositedOn"];
-            }
-          } else {
-            depositedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          const js_date = new Date(invoice_date);
-
-          const current_date = new Date();
-
-          if (js_date > current_date) {
-            invoice_date = "2002-01-01T00:00:00.00Z";
-          }
-
-          let invoice_type_id = 0;
-          let invoice_type_name = "default_invoice";
-          if (record["invoiceType"]) {
-            invoice_type_id = record["invoiceType"]["id"];
-            invoice_type_name = record["invoiceType"]["name"];
-          }
-
-          // data accumulation for projects table
-          if (record["projectId"] != null) {
-            if (!project_total_data[record["projectId"]]) {
-              project_total_data[record["projectId"]] = {
-                billed_amount: 0,
-                equipment_cost: 0,
-                material_cost: 0,
-                accounts_receivable: 0,
-                expense: 0,
-                income: 0,
-                current_liability: 0,
-                membership_liability: 0,
-                balance: 0,
-                business_unit_id: business_unit_id,
-                actual_business_unit_id: actual_business_unit_id,
-              };
+              invoice_date = "2001-01-01T00:00:00.00Z";
             }
 
-            // calculating billed amount
-            if (!data_pool[record["projectId"]]) {
+            let dueDate = "2000-01-01T00:00:00.00Z";
+
+            if (record["dueDate"]) {
+              if (
+                new Date(record["dueDate"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                dueDate = record["dueDate"];
+              }
+            } else {
+              dueDate = "2001-01-01T00:00:00.00Z";
+            }
+
+            let depositedOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["depositedOn"]) {
+              if (
+                new Date(record["depositedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                depositedOn = record["depositedOn"];
+              }
+            } else {
+              depositedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            const js_date = new Date(invoice_date);
+
+            const current_date = new Date();
+
+            if (js_date > current_date) {
+              invoice_date = "2002-01-01T00:00:00.00Z";
+            }
+
+            let invoice_type_id = 0;
+            let invoice_type_name = "default_invoice";
+            if (record["invoiceType"]) {
+              invoice_type_id = record["invoiceType"]["id"];
+              invoice_type_name = record["invoiceType"]["name"];
+            }
+
+            // data accumulation for projects table
+            if (record["projectId"] != null) {
+              if (!project_total_data[record["projectId"]]) {
+                project_total_data[record["projectId"]] = {
+                  billed_amount: 0,
+                  equipment_cost: 0,
+                  material_cost: 0,
+                  accounts_receivable: 0,
+                  expense: 0,
+                  income: 0,
+                  current_liability: 0,
+                  membership_liability: 0,
+                  balance: 0,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                };
+              }
+
+              // calculating billed amount
+              if (!data_pool[record["projectId"]]) {
+                project_dummy_values["billed_amount"][record["instance_id"]] +=
+                  parseFloat(record["total"]);
+                project_dummy_values["balance"][record["instance_id"]] +=
+                  parseFloat(record["balance"]);
+              } else {
+                project_total_data[record["projectId"]]["billed_amount"] +=
+                  parseFloat(record["total"]);
+                project_total_data[record["projectId"]]["balance"] +=
+                  parseFloat(record["balance"]);
+              }
+            } else {
               project_dummy_values["billed_amount"][record["instance_id"]] +=
                 parseFloat(record["total"]);
               project_dummy_values["balance"][record["instance_id"]] +=
                 parseFloat(record["balance"]);
-            } else {
-              project_total_data[record["projectId"]]["billed_amount"] +=
-                parseFloat(record["total"]);
-              project_total_data[record["projectId"]]["balance"] += parseFloat(
-                record["balance"]
-              );
             }
-          } else {
-            project_dummy_values["billed_amount"][record["instance_id"]] +=
-              parseFloat(record["total"]);
-            project_dummy_values["balance"][record["instance_id"]] +=
-              parseFloat(record["balance"]);
-          }
 
-          invoice_final_data_pool.push({
-            id: record["id"],
-            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
-            date: invoice_date,
-            dueDate: dueDate,
-            subtotal: record["subTotal"] ? record["subTotal"] : 0,
-            tax: record["salesTax"] ? record["salesTax"] : 0,
-            total: record["total"] ? record["total"] : 0,
-            balance: record["balance"] ? record["balance"] : 0,
-            depositedOn: depositedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            invoice_type_id: invoice_type_id,
-            invoice_type_name: invoice_type_name,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            address_street: address_street,
-            address_unit: address_unit,
-            address_city: address_city,
-            address_state: address_state,
-            address_country: address_country,
-            address_zip: address_zip,
-            acutal_address_zip: acutal_address_zip,
-            customer_id: customer_id,
-            actual_customer_id: actual_customer_id,
-            customer_name: customer_name,
-          });
+            invoice_final_data_pool.push({
+              id: record["id"],
+              syncStatus: record["syncStatus"]
+                ? record["syncStatus"]
+                : "default",
+              date: invoice_date,
+              dueDate: dueDate,
+              subtotal: record["subTotal"] ? record["subTotal"] : 0,
+              tax: record["salesTax"] ? record["salesTax"] : 0,
+              total: record["total"] ? record["total"] : 0,
+              balance: record["balance"] ? record["balance"] : 0,
+              depositedOn: depositedOn,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              invoice_type_id: invoice_type_id,
+              invoice_type_name: invoice_type_name,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              business_unit_id: business_unit_id,
+              actual_business_unit_id: actual_business_unit_id,
+              location_id: location_id,
+              actual_location_id: actual_location_id,
+              address_street: address_street,
+              address_unit: address_unit,
+              address_city: address_city,
+              address_state: address_state,
+              address_country: address_country,
+              address_zip: address_zip,
+              acutal_address_zip: acutal_address_zip,
+              customer_id: customer_id,
+              actual_customer_id: actual_customer_id,
+              customer_name: customer_name,
+            });
 
-          let po_cost = 0;
-          let labor_cost = 0;
-          let labor_hours = 0;
-          let burden = 0;
+            let po_cost = 0;
+            let labor_cost = 0;
+            let labor_hours = 0;
+            let burden = 0;
 
-          if (invoice_po_and_gpi_data[record["id"]]) {
-            po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
-              ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
-              : 0;
-            labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-              ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-              : 0;
-            labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-              ? invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-              : 0;
-            burden = invoice_po_and_gpi_data[record["id"]]["burden"]
-              ? invoice_po_and_gpi_data[record["id"]]["burden"]
-              : 0;
-          }
+            if (invoice_po_and_gpi_data[record["id"]]) {
+              po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
+                ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
+                : 0;
+              labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
+                ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
+                : 0;
+              labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"]
+                ? invoice_po_and_gpi_data[record["id"]]["labor_hours"]
+                : 0;
+              burden = invoice_po_and_gpi_data[record["id"]]["burden"]
+                ? invoice_po_and_gpi_data[record["id"]]["burden"]
+                : 0;
+            }
 
-          let material_cost = 0;
-          let equipment_cost = 0;
+            let material_cost = 0;
+            let equipment_cost = 0;
 
-          let accounts_receivable = 0;
-          let expense = 0;
-          let income = 0;
-          let current_liability = 0;
-          let membership_liability = 0;
-          let default_val = 0;
+            let accounts_receivable = 0;
+            let expense = 0;
+            let income = 0;
+            let current_liability = 0;
+            let membership_liability = 0;
+            let default_val = 0;
 
-          if (record["items"]) {
-            record["items"].map((items_record) => {
-              let generalLedgerAccountid = 0;
-              let generalLedgerAccountname = "default";
-              let generalLedgerAccountnumber = 0;
-              let generalLedgerAccounttype = "default";
-              let generalLedgerAccountdetailType = "default";
+            if (record["items"]) {
+              record["items"].map((items_record) => {
+                let generalLedgerAccountid = 0;
+                let generalLedgerAccountname = "default";
+                let generalLedgerAccountnumber = 0;
+                let generalLedgerAccounttype = "default";
+                let generalLedgerAccountdetailType = "default";
 
-              if (items_record["generalLedgerAccount"]) {
-                generalLedgerAccountid =
-                  items_record["generalLedgerAccount"]["id"];
-                generalLedgerAccountname =
-                  items_record["generalLedgerAccount"]["name"];
-                generalLedgerAccountnumber =
-                  items_record["generalLedgerAccount"]["number"];
-                generalLedgerAccounttype =
-                  items_record["generalLedgerAccount"]["type"];
-                generalLedgerAccountdetailType =
-                  items_record["generalLedgerAccount"]["detailType"];
-              }
+                if (items_record["generalLedgerAccount"]) {
+                  generalLedgerAccountid =
+                    items_record["generalLedgerAccount"]["id"];
+                  generalLedgerAccountname =
+                    items_record["generalLedgerAccount"]["name"];
+                  generalLedgerAccountnumber =
+                    items_record["generalLedgerAccount"]["number"];
+                  generalLedgerAccounttype =
+                    items_record["generalLedgerAccount"]["type"];
+                  generalLedgerAccountdetailType =
+                    items_record["generalLedgerAccount"]["detailType"];
+                }
 
-              if (items_record["type"] == "Material") {
-                material_cost =
-                  material_cost + parseFloat(items_record["totalCost"]);
+                if (items_record["type"] == "Material") {
+                  material_cost =
+                    material_cost + parseFloat(items_record["totalCost"]);
 
-                // for projects table
-                if (record["projectId"] != null) {
-                  // calculating material cost
-                  if (!data_pool[record["projectId"]]) {
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating material cost
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["material_cost"][
+                        record["instance_id"]
+                      ] += parseFloat(items_record["totalCost"]);
+                    } else {
+                      project_total_data[record["projectId"]][
+                        "material_cost"
+                      ] += parseFloat(items_record["totalCost"]);
+                    }
+                  } else {
                     project_dummy_values["material_cost"][
                       record["instance_id"]
                     ] += parseFloat(items_record["totalCost"]);
-                  } else {
-                    project_total_data[record["projectId"]]["material_cost"] +=
-                      parseFloat(items_record["totalCost"]);
                   }
-                } else {
-                  project_dummy_values["material_cost"][
-                    record["instance_id"]
-                  ] += parseFloat(items_record["totalCost"]);
+
+                  let sku_details_id = record["instance_id"];
+                  let actual_sku_details_id = items_record["skuId"]
+                    ? items_record["skuId"]
+                    : record["instance_id"];
+                  if (sku_details_data_pool[items_record["skuId"]]) {
+                    sku_details_id = items_record["skuId"];
+                  }
+
+                  cogs_material_final_data_pool.push({
+                    quantity: items_record["quantity"]
+                      ? items_record["quantity"]
+                      : 0,
+                    cost: items_record["cost"] ? items_record["cost"] : 0,
+                    total_cost: items_record["totalCost"]
+                      ? items_record["totalCost"]
+                      : 0,
+                    price: items_record["price"] ? items_record["price"] : 0,
+                    sku_name: items_record["skuName"]
+                      ? items_record["skuName"]
+                      : "default",
+                    sku_total: items_record["total"]
+                      ? items_record["total"]
+                      : 0,
+                    generalLedgerAccountid: generalLedgerAccountid,
+                    generalLedgerAccountname: generalLedgerAccountname,
+                    generalLedgerAccountnumber: generalLedgerAccountnumber,
+                    generalLedgerAccounttype: generalLedgerAccounttype,
+                    generalLedgerAccountdetailType:
+                      generalLedgerAccountdetailType,
+                    job_details_id: job_details_id,
+                    actual_job_details_id: actual_job_details_id,
+                    invoice_id: record["id"],
+                    sku_details_id: sku_details_id,
+                    actual_sku_details_id: actual_sku_details_id,
+                  });
                 }
 
-                let sku_details_id = record["instance_id"];
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
+                if (items_record["type"] == "Equipment") {
+                  equipment_cost =
+                    equipment_cost + parseFloat(items_record["totalCost"]);
 
-                cogs_material_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              if (items_record["type"] == "Equipment") {
-                equipment_cost =
-                  equipment_cost + parseFloat(items_record["totalCost"]);
-
-                // for projects table
-                if (record["projectId"] != null) {
-                  // calculating equipment cost
-                  if (!data_pool[record["projectId"]]) {
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating equipment cost
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["equipment_cost"][
+                        record["instance_id"]
+                      ] += parseFloat(items_record["totalCost"]);
+                    } else {
+                      project_total_data[record["projectId"]][
+                        "equipment_cost"
+                      ] += parseFloat(items_record["totalCost"]);
+                    }
+                  } else {
                     project_dummy_values["equipment_cost"][
                       record["instance_id"]
                     ] += parseFloat(items_record["totalCost"]);
-                  } else {
-                    project_total_data[record["projectId"]]["equipment_cost"] +=
-                      parseFloat(items_record["totalCost"]);
                   }
-                } else {
-                  project_dummy_values["equipment_cost"][
-                    record["instance_id"]
-                  ] += parseFloat(items_record["totalCost"]);
+
+                  let sku_details_id = record["instance_id"] + 3;
+                  let actual_sku_details_id = items_record["skuId"]
+                    ? items_record["skuId"]
+                    : record["instance_id"];
+                  if (sku_details_data_pool[items_record["skuId"]]) {
+                    sku_details_id = items_record["skuId"];
+                  }
+
+                  cogs_equipment_final_data_pool.push({
+                    quantity: items_record["quantity"]
+                      ? items_record["quantity"]
+                      : 0,
+                    cost: items_record["cost"] ? items_record["cost"] : 0,
+                    total_cost: items_record["totalCost"]
+                      ? items_record["totalCost"]
+                      : 0,
+                    price: items_record["price"] ? items_record["price"] : 0,
+                    sku_name: items_record["skuName"]
+                      ? items_record["skuName"]
+                      : "default",
+                    sku_total: items_record["total"]
+                      ? items_record["total"]
+                      : 0,
+                    generalLedgerAccountid: generalLedgerAccountid,
+                    generalLedgerAccountname: generalLedgerAccountname,
+                    generalLedgerAccountnumber: generalLedgerAccountnumber,
+                    generalLedgerAccounttype: generalLedgerAccounttype,
+                    generalLedgerAccountdetailType:
+                      generalLedgerAccountdetailType,
+                    job_details_id: job_details_id,
+                    actual_job_details_id: actual_job_details_id,
+                    invoice_id: record["id"],
+                    sku_details_id: sku_details_id,
+                    actual_sku_details_id: actual_sku_details_id,
+                  });
                 }
 
-                let sku_details_id = record["instance_id"] + 3;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
+                if (items_record["type"] == "Service") {
+                  let sku_details_id = record["instance_id"] + 6;
+                  let actual_sku_details_id = items_record["skuId"]
+                    ? items_record["skuId"]
+                    : record["instance_id"];
+                  if (sku_details_data_pool[items_record["skuId"]]) {
+                    sku_details_id = items_record["skuId"];
+                  }
 
-                cogs_equipment_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
+                  // for gross profit
+                  switch (generalLedgerAccounttype) {
+                    case "Accounts Receivable": {
+                      accounts_receivable += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
 
-              if (items_record["type"] == "Service") {
-                let sku_details_id = record["instance_id"] + 6;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                // for gross profit
-                switch (generalLedgerAccounttype) {
-                  case "Accounts Receivable": {
-                    accounts_receivable += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating accounts_receivable
-                      if (!data_pool[record["projectId"]]) {
+                      // for projects table
+                      if (record["projectId"] != null) {
+                        // calculating accounts_receivable
+                        if (!data_pool[record["projectId"]]) {
+                          project_dummy_values["accounts_receivable"][
+                            record["instance_id"]
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        } else {
+                          project_total_data[record["projectId"]][
+                            "accounts_receivable"
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        }
+                      } else {
                         project_dummy_values["accounts_receivable"][
                           record["instance_id"]
                         ] += items_record["total"]
                           ? parseFloat(items_record["total"])
                           : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "accounts_receivable"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
                       }
-                    } else {
-                      project_dummy_values["accounts_receivable"][
-                        record["instance_id"]
-                      ] += items_record["total"]
+
+                      break;
+                    }
+                    case "Current Liability": {
+                      current_liability += items_record["total"]
                         ? parseFloat(items_record["total"])
                         : 0;
-                    }
 
-                    break;
-                  }
-                  case "Current Liability": {
-                    current_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating current_liability
-                      if (!data_pool[record["projectId"]]) {
+                      // for projects table
+                      if (record["projectId"] != null) {
+                        // calculating current_liability
+                        if (!data_pool[record["projectId"]]) {
+                          project_dummy_values["current_liability"][
+                            record["instance_id"]
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        } else {
+                          project_total_data[record["projectId"]][
+                            "current_liability"
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        }
+                      } else {
                         project_dummy_values["current_liability"][
                           record["instance_id"]
                         ] += items_record["total"]
                           ? parseFloat(items_record["total"])
                           : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "current_liability"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
                       }
-                    } else {
-                      project_dummy_values["current_liability"][
-                        record["instance_id"]
-                      ] += items_record["total"]
+
+                      break;
+                    }
+                    case "Membership Liability": {
+                      membership_liability += items_record["total"]
                         ? parseFloat(items_record["total"])
                         : 0;
-                    }
 
-                    break;
-                  }
-                  case "Membership Liability": {
-                    membership_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating membership_liability
-                      if (!data_pool[record["projectId"]]) {
+                      // for projects table
+                      if (record["projectId"] != null) {
+                        // calculating membership_liability
+                        if (!data_pool[record["projectId"]]) {
+                          project_dummy_values["membership_liability"][
+                            record["instance_id"]
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        } else {
+                          project_total_data[record["projectId"]][
+                            "membership_liability"
+                          ] += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                        }
+                      } else {
                         project_dummy_values["membership_liability"][
                           record["instance_id"]
                         ] += items_record["total"]
                           ? parseFloat(items_record["total"])
                           : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "membership_liability"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
                       }
-                    } else {
-                      project_dummy_values["membership_liability"][
-                        record["instance_id"]
-                      ] += items_record["total"]
+
+                      break;
+                    }
+                    case "default": {
+                      default_val += items_record["total"]
                         ? parseFloat(items_record["total"])
                         : 0;
-                    }
 
-                    break;
+                      break;
+                    }
                   }
-                  case "default": {
-                    default_val += items_record["total"]
+
+                  cogs_services_final_data_pool.push({
+                    quantity: items_record["quantity"]
+                      ? items_record["quantity"]
+                      : 0,
+                    cost: items_record["cost"] ? items_record["cost"] : 0,
+                    total_cost: items_record["totalCost"]
+                      ? items_record["totalCost"]
+                      : 0,
+                    price: items_record["price"] ? items_record["price"] : 0,
+                    sku_name: items_record["skuName"]
+                      ? items_record["skuName"]
+                      : "default",
+                    sku_total: items_record["total"]
+                      ? items_record["total"]
+                      : 0,
+                    generalLedgerAccountid: generalLedgerAccountid,
+                    generalLedgerAccountname: generalLedgerAccountname,
+                    generalLedgerAccountnumber: generalLedgerAccountnumber,
+                    generalLedgerAccounttype: generalLedgerAccounttype,
+                    generalLedgerAccountdetailType:
+                      generalLedgerAccountdetailType,
+                    job_details_id: job_details_id,
+                    actual_job_details_id: actual_job_details_id,
+                    invoice_id: record["id"],
+                    sku_details_id: sku_details_id,
+                    actual_sku_details_id: actual_sku_details_id,
+                  });
+                }
+
+                // for gross profit
+                switch (generalLedgerAccounttype) {
+                  case "Expense": {
+                    expense += items_record["total"]
                       ? parseFloat(items_record["total"])
                       : 0;
 
-                    break;
-                  }
-                }
-
-                cogs_services_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              // for gross profit
-              switch (generalLedgerAccounttype) {
-                case "Expense": {
-                  expense += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  // for projects table
-                  if (record["projectId"] != null) {
-                    // calculating expense
-                    if (!data_pool[record["projectId"]]) {
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating expense
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["expense"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]]["expense"] +=
+                          items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                      }
+                    } else {
                       project_dummy_values["expense"][record["instance_id"]] +=
                         items_record["total"]
                           ? parseFloat(items_record["total"])
                           : 0;
-                    } else {
-                      project_total_data[record["projectId"]]["expense"] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
                     }
-                  } else {
-                    project_dummy_values["expense"][record["instance_id"]] +=
-                      items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
+
+                    break;
                   }
+                  case "Income": {
+                    income += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
 
-                  break;
-                }
-                case "Income": {
-                  income += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  // for projects table
-                  if (record["projectId"] != null) {
-                    // calculating income
-                    if (!data_pool[record["projectId"]]) {
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating income
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["income"][record["instance_id"]] +=
+                          items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                      } else {
+                        project_total_data[record["projectId"]]["income"] +=
+                          items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+                      }
+                    } else {
                       project_dummy_values["income"][record["instance_id"]] +=
                         items_record["total"]
                           ? parseFloat(items_record["total"])
                           : 0;
-                    } else {
-                      project_total_data[record["projectId"]]["income"] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
                     }
-                  } else {
-                    project_dummy_values["income"][record["instance_id"]] +=
-                      items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
+
+                    break;
                   }
-
-                  break;
                 }
-              }
-            });
-          }
+              });
+            }
 
-          let revenue = parseFloat(record["total"])
-            ? parseFloat(record["total"])
-            : 0;
+            let revenue = parseFloat(record["total"])
+              ? parseFloat(record["total"])
+              : 0;
 
-          // let gross_profit =
-          //   revenue -
-          //   po_cost -
-          //   equipment_cost -
-          //   material_cost -
-          //   labor_cost -
-          //   burden;
+            // let gross_profit =
+            //   revenue -
+            //   po_cost -
+            //   equipment_cost -
+            //   material_cost -
+            //   labor_cost -
+            //   burden;
 
-          // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
+            // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
 
-          // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
-          //   gross_margin = 0;
-          // }
+            // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
+            //   gross_margin = 0;
+            // }
 
-          if (js_date <= current_date) {
-            gross_profit_final_data_pool.push({
-              id: record["id"],
-              accounts_receivable: accounts_receivable,
-              expense: expense,
-              income: income,
-              current_liability: current_liability,
-              membership_liability: membership_liability,
-              default: default_val,
-              total: record["total"] ? parseFloat(record["total"]) : 0,
-              po_cost: po_cost, // purchase orders
-              equipment_cost: equipment_cost, //
-              material_cost: material_cost, //
-              labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-              burden: burden, // cogs_labor
-              // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-              // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-              units: 1, //  currently for 1
-              labor_hours: labor_hours, // cogs_labor paid duration
-            });
-          }
-        });
+            if (js_date <= current_date) {
+              gross_profit_final_data_pool.push({
+                id: record["id"],
+                accounts_receivable: accounts_receivable,
+                expense: expense,
+                income: income,
+                current_liability: current_liability,
+                membership_liability: membership_liability,
+                default: default_val,
+                total: record["total"] ? parseFloat(record["total"]) : 0,
+                po_cost: po_cost, // purchase orders
+                equipment_cost: equipment_cost, //
+                material_cost: material_cost, //
+                labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+                burden: burden, // cogs_labor
+                // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+                // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+                units: 1, //  currently for 1
+                labor_hours: labor_hours, // cogs_labor paid duration
+              });
+            }
+          })
+        );
 
         invoice_po_and_gpi_data = {};
         invoice_dummy_values = {};
@@ -4128,210 +4084,228 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
 
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["locationId"]
-            ? record["locationId"]
-            : record["instance_id"];
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-          }
-
-          let startDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["startDate"]) {
-            if (
-              new Date(record["startDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              startDate = record["startDate"];
-            }
-          } else {
-            startDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let targetCompletionDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["targetCompletionDate"]) {
-            if (
-              new Date(record["targetCompletionDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              targetCompletionDate = record["targetCompletionDate"];
-            }
-          } else {
-            targetCompletionDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let actualCompletionDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["actualCompletionDate"]) {
-            if (
-              new Date(record["actualCompletionDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              actualCompletionDate = record["actualCompletionDate"];
-            }
-          } else {
-            actualCompletionDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let billed_amount = 0;
-          let balance = 0;
-          let contract_value = 0;
-          let po_cost = 0;
-          let equipment_cost = 0;
-          let material_cost = 0;
-          let labor_cost = 0;
-          let labor_hours = 0;
-          let burden = 0;
-          let accounts_receivable = 0;
-          let expense = 0;
-          let income = 0;
-          let current_liability = 0;
-          let membership_liability = 0;
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-
-          if (project_total_data[record["id"]]) {
-            billed_amount = project_total_data[record["id"]]["billed_amount"]
-              ? project_total_data[record["id"]]["billed_amount"]
-              : 0;
-            balance = project_total_data[record["id"]]["balance"]
-              ? project_total_data[record["id"]]["balance"]
-              : 0;
-            equipment_cost = project_total_data[record["id"]]["equipment_cost"]
-              ? project_total_data[record["id"]]["equipment_cost"]
-              : 0;
-            material_cost = project_total_data[record["id"]]["material_cost"]
-              ? project_total_data[record["id"]]["material_cost"]
-              : 0;
-            accounts_receivable = project_total_data[record["id"]][
-              "accounts_receivable"
-            ]
-              ? project_total_data[record["id"]]["accounts_receivable"]
-              : 0;
-            expense = project_total_data[record["id"]]["expense"]
-              ? project_total_data[record["id"]]["expense"]
-              : 0;
-            income = project_total_data[record["id"]]["income"]
-              ? project_total_data[record["id"]]["income"]
-              : 0;
-            current_liability = project_total_data[record["id"]][
-              "current_liability"
-            ]
-              ? project_total_data[record["id"]]["current_liability"]
-              : 0;
-            membership_liability = project_total_data[record["id"]][
-              "membership_liability"
-            ]
-              ? project_total_data[record["id"]]["membership_liability"]
-              : 0;
-
-            business_unit_id = project_total_data[record["id"]][
-              "business_unit_id"
-            ]
-              ? project_total_data[record["id"]]["business_unit_id"]
+            let customer_details_id = record["instance_id"];
+            let actual_customer_details_id = record["customerId"]
+              ? record["customerId"]
               : record["instance_id"];
 
-            actual_business_unit_id = project_total_data[record["id"]][
-              "actual_business_unit_id"
-            ]
-              ? project_total_data[record["id"]]["actual_business_unit_id"]
+            // checking customer availlable or not for mapping
+            const is_customer_available = await sql_request.query(
+              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+            );
+
+            if (is_customer_available["recordset"].length > 0) {
+              customer_details_id = record["customerId"];
+            }
+
+            let location_id = record["instance_id"];
+            let actual_location_id = record["locationId"]
+              ? record["locationId"]
               : record["instance_id"];
-          }
 
-          if (project_contract_value[record["id"]]) {
-            contract_value = project_contract_value[record["id"]][
-              "contract_value"
-            ]
-              ? project_contract_value[record["id"]]["contract_value"]
-              : 0;
-          }
+            // checking location availlable or not for mapping
+            const is_location_available = await sql_request.query(
+              `SELECT id FROM location WHERE id=${record["locationId"]}`
+            );
 
-          if (projects_po_and_gpi_data[record["id"]]) {
-            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["po_cost"]
-              : 0;
+            if (is_location_available["recordset"].length > 0) {
+              location_id = record["locationId"];
+            }
 
-            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              : 0;
-            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              : 0;
-            burden = projects_po_and_gpi_data[record["id"]]["burden"]
-              ? projects_po_and_gpi_data[record["id"]]["burden"]
-              : 0;
-          }
+            let startDate = "2000-01-01T00:00:00.00Z";
 
-          final_data_pool.push({
-            id: record["id"],
-            number: record["number"] ? record["number"] : "default",
-            name: record["name"] ? record["name"] : `${record["id"]}`,
-            status: record["status"] ? record["status"] : "No Status",
-            billed_amount: billed_amount,
-            balance: balance,
-            contract_value: contract_value,
-            po_cost: po_cost,
-            equipment_cost: equipment_cost,
-            material_cost: material_cost,
-            labor_cost: labor_cost,
-            labor_hours: labor_hours,
-            burden: burden,
-            accounts_receivable: accounts_receivable,
-            expense: expense,
-            income: income,
-            current_liability: current_liability,
-            membership_liability: membership_liability,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            startDate: startDate,
-            targetCompletionDate: targetCompletionDate,
-            actualCompletionDate: actualCompletionDate,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-          });
-        });
+            if (record["startDate"]) {
+              if (
+                new Date(record["startDate"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                startDate = record["startDate"];
+              }
+            } else {
+              startDate = "2001-01-01T00:00:00.00Z";
+            }
+
+            let targetCompletionDate = "2000-01-01T00:00:00.00Z";
+
+            if (record["targetCompletionDate"]) {
+              if (
+                new Date(record["targetCompletionDate"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                targetCompletionDate = record["targetCompletionDate"];
+              }
+            } else {
+              targetCompletionDate = "2001-01-01T00:00:00.00Z";
+            }
+
+            let actualCompletionDate = "2000-01-01T00:00:00.00Z";
+
+            if (record["actualCompletionDate"]) {
+              if (
+                new Date(record["actualCompletionDate"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                actualCompletionDate = record["actualCompletionDate"];
+              }
+            } else {
+              actualCompletionDate = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let billed_amount = 0;
+            let balance = 0;
+            let contract_value = 0;
+            let po_cost = 0;
+            let equipment_cost = 0;
+            let material_cost = 0;
+            let labor_cost = 0;
+            let labor_hours = 0;
+            let burden = 0;
+            let accounts_receivable = 0;
+            let expense = 0;
+            let income = 0;
+            let current_liability = 0;
+            let membership_liability = 0;
+            let business_unit_id = record["instance_id"];
+            let actual_business_unit_id = record["instance_id"];
+
+            if (project_total_data[record["id"]]) {
+              billed_amount = project_total_data[record["id"]]["billed_amount"]
+                ? project_total_data[record["id"]]["billed_amount"]
+                : 0;
+              balance = project_total_data[record["id"]]["balance"]
+                ? project_total_data[record["id"]]["balance"]
+                : 0;
+              equipment_cost = project_total_data[record["id"]][
+                "equipment_cost"
+              ]
+                ? project_total_data[record["id"]]["equipment_cost"]
+                : 0;
+              material_cost = project_total_data[record["id"]]["material_cost"]
+                ? project_total_data[record["id"]]["material_cost"]
+                : 0;
+              accounts_receivable = project_total_data[record["id"]][
+                "accounts_receivable"
+              ]
+                ? project_total_data[record["id"]]["accounts_receivable"]
+                : 0;
+              expense = project_total_data[record["id"]]["expense"]
+                ? project_total_data[record["id"]]["expense"]
+                : 0;
+              income = project_total_data[record["id"]]["income"]
+                ? project_total_data[record["id"]]["income"]
+                : 0;
+              current_liability = project_total_data[record["id"]][
+                "current_liability"
+              ]
+                ? project_total_data[record["id"]]["current_liability"]
+                : 0;
+              membership_liability = project_total_data[record["id"]][
+                "membership_liability"
+              ]
+                ? project_total_data[record["id"]]["membership_liability"]
+                : 0;
+
+              business_unit_id = project_total_data[record["id"]][
+                "business_unit_id"
+              ]
+                ? project_total_data[record["id"]]["business_unit_id"]
+                : record["instance_id"];
+
+              actual_business_unit_id = project_total_data[record["id"]][
+                "actual_business_unit_id"
+              ]
+                ? project_total_data[record["id"]]["actual_business_unit_id"]
+                : record["instance_id"];
+            }
+
+            if (project_contract_value[record["id"]]) {
+              contract_value = project_contract_value[record["id"]][
+                "contract_value"
+              ]
+                ? project_contract_value[record["id"]]["contract_value"]
+                : 0;
+            }
+
+            if (projects_po_and_gpi_data[record["id"]]) {
+              po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
+                ? projects_po_and_gpi_data[record["id"]]["po_cost"]
+                : 0;
+
+              labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
+                ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
+                : 0;
+              labor_hours = projects_po_and_gpi_data[record["id"]][
+                "labor_hours"
+              ]
+                ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
+                : 0;
+              burden = projects_po_and_gpi_data[record["id"]]["burden"]
+                ? projects_po_and_gpi_data[record["id"]]["burden"]
+                : 0;
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              number: record["number"] ? record["number"] : "default",
+              name: record["name"] ? record["name"] : `${record["id"]}`,
+              status: record["status"] ? record["status"] : "No Status",
+              billed_amount: billed_amount,
+              balance: balance,
+              contract_value: contract_value,
+              po_cost: po_cost,
+              equipment_cost: equipment_cost,
+              material_cost: material_cost,
+              labor_cost: labor_cost,
+              labor_hours: labor_hours,
+              burden: burden,
+              accounts_receivable: accounts_receivable,
+              expense: expense,
+              income: income,
+              current_liability: current_liability,
+              membership_liability: membership_liability,
+              business_unit_id: business_unit_id,
+              actual_business_unit_id: actual_business_unit_id,
+              customer_details_id: customer_details_id,
+              actual_customer_details_id: actual_customer_details_id,
+              location_id: location_id,
+              actual_location_id: actual_location_id,
+              startDate: startDate,
+              targetCompletionDate: targetCompletionDate,
+              actualCompletionDate: actualCompletionDate,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+            });
+          })
+        );
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -4379,85 +4353,15 @@ async function data_processor(data_lake, sql_request, table_list) {
         const telecom_calls_data_pool =
           data_lake[table_name]["telecom__calls"]["data_pool"];
 
-        let appointments_data_pool = {};
-
         const header_data = hvac_tables[table_name]["columns"];
-        {
-          // appointments data from db,  has to fetched
-          // fetching appointments data from db
-          // ----------------
-          const appointments_response = await sql_request.query(
-            "SELECT * FROM appointments"
-          );
 
-          const appointments_data = appointments_response.recordset;
+        let final_data_pool = [];
 
-          appointments_data.map((current_record) => {
-            appointments_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
+        // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
+        // console.log("header_data: ", header_data);
 
-          // fetching business units from db
-          // ----------------
-          const business_unit_response = await sql_request.query(
-            "SELECT * FROM business_unit"
-          );
-
-          const business_unit_data = business_unit_response.recordset;
-
-          const business_unit_data_pool = {};
-
-          business_unit_data.map((current_record) => {
-            business_unit_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-
-          // fetching customers data from db
-          // ----------------
-          const customers_response = await sql_request.query(
-            "SELECT * FROM customer_details"
-          );
-
-          const customer_data = customers_response.recordset;
-
-          const customer_data_pool = {};
-
-          customer_data.map((current_record) => {
-            customer_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-
-          // fetching projects data from db
-          // ----------------
-          const projects_response = await sql_request.query(
-            "SELECT * FROM projects"
-          );
-
-          const projects_data = projects_response.recordset;
-
-          const projects_data_pool = {};
-
-          projects_data.map((current_record) => {
-            projects_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-
-          let final_data_pool = [];
-
-          // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
-          // console.log("header_data: ", header_data);
-
-          let lead_call_status = {};
-
-          Object.keys(appointments_data_pool).map((record_id) => {
-            const record = appointments_data_pool[record_id];
-
-            if (record["jobId"]) {
-              lead_call_status[record["jobId"]] = record["status"];
-            }
-          });
-
-          Object.keys(telecom_calls_data_pool).map((record_id) => {
+        await Promise.all(
+          Object.keys(telecom_calls_data_pool).map(async (record_id) => {
             const record = telecom_calls_data_pool[record_id];
 
             let createdOn = "2000-01-01T00:00:00.00Z";
@@ -4503,7 +4407,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             let actual_project_id = record["projectId"]
               ? record["projectId"]
               : record["instance_id"];
-            if (projects_data_pool[record["projectId"]]) {
+
+            // checking projects availlable or not for mapping
+            const is_project_available = await sql_request.query(
+              `SELECT id FROM projects WHERE id=${record["projectId"]}`
+            );
+
+            if (is_project_available["recordset"].length > 0) {
               project_id = record["projectId"];
             }
 
@@ -4525,7 +4435,13 @@ async function data_processor(data_lake, sql_request, table_list) {
               ]
                 ? record["businessUnit"]["officialName"]
                 : "default";
-              if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+
+              // checking business unit availlable or not for mapping
+              const is_business_unit_available = await sql_request.query(
+                `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+              );
+
+              if (is_business_unit_available["recordset"].length > 0) {
                 business_unit_id = record["businessUnit"]["id"];
               }
             }
@@ -4595,6 +4511,14 @@ async function data_processor(data_lake, sql_request, table_list) {
                 ? record["leadCall"]["customer"]["type"]
                 : "Others";
 
+              // checking customer availlable or not for mapping
+              const is_customer_available = await sql_request.query(
+                `SELECT id FROM customer_details WHERE id=${record["leadCall"]["customer"]["id"]}`
+              );
+
+              if (is_customer_available["recordset"].length > 0) {
+                customer_details_id = record["leadCall"]["customer"]["id"];
+              }
               if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
                 customer_details_id = record["leadCall"]["customer"]["id"];
               }
@@ -4699,8 +4623,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
 
             let status = "Not Known";
-            if (lead_call_status[record["jobNumber"]]) {
-              status = lead_call_status[record["jobNumber"]];
+
+            // checking customer availlable or not for mapping
+            const is_job_status_available = await sql_request.query(
+              `SELECT status FROM appointments WHERE job_details_id=${record["jobNumber"]}`
+            );
+
+            if (is_job_status_available["recordset"].length > 0) {
+              status = is_job_status_available["recordset"][0]["status"];
             }
 
             final_data_pool.push({
@@ -4764,50 +4694,50 @@ async function data_processor(data_lake, sql_request, table_list) {
               type_name: type_name,
               type_modifiedOn: type_modifiedOn,
             });
-          });
+          })
+        );
 
-          // console.log("final_data_pool: ", final_data_pool);
-          // console.log("header_data: ", header_data);
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
 
-          // await hvac_flat_data_insertion(
-          //   sql_request,
-          //   final_data_pool,
-          //   Object.keys(header_data),
-          //   table_name
-          // );
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   Object.keys(header_data),
+        //   table_name
+        // );
 
-          console.log("telecom_calls data: ", final_data_pool.length);
-          // console.log("telecom_calls data: ", final_data_pool);
+        console.log("telecom_calls data: ", final_data_pool.length);
+        // console.log("telecom_calls data: ", final_data_pool);
 
-          if (final_data_pool.length > 0) {
-            do {
-              hvac_tables_responses["call_details"]["status"] =
-                await hvac_merge_insertion(
-                  sql_request,
-                  final_data_pool,
-                  header_data,
-                  table_name
-                );
-            } while (
-              hvac_tables_responses["call_details"]["status"] != "success"
-            );
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["call_details"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["call_details"]["status"] != "success"
+          );
 
-            // entry into auto_update table
-            try {
-              const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET call_details = '${hvac_tables_responses["call_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
-              await sql_request.query(auto_update_query);
+            await sql_request.query(auto_update_query);
 
-              console.log("Auto_Update log created ");
-            } catch (err) {
-              console.log("Error while inserting into auto_update", err);
-            }
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
           }
-
-          delete data_lake[api_name];
-
-          break;
         }
+
+        delete data_lake[api_name];
+
+        break;
       }
 
       case "job_details": {
@@ -4928,141 +4858,166 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("jobs_data_pool: ", jobs_data_pool);
         // console.log("header_data: ", header_data);
 
-        Object.keys(jobs_data_pool).map((record_id) => {
-          const record = jobs_data_pool[record_id];
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["businessUnitId"]
-            ? record["businessUnitId"]
-            : record["instance_id"];
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
-          let location_id = record["instance_id"];
-          let actual_location_id = record["locationId"]
-            ? record["locationId"]
-            : record["instance_id"];
-          let job_type_name = "default";
-          let lead_call_id = record["instance_id"];
-          let actual_lead_call_id = record["leadCallId"]
-            ? record["leadCallId"]
-            : record["instance_id"];
-          let campaign_id = record["instance_id"];
-          let actual_campaign_id = record["campaignId"]
-            ? record["campaignId"]
-            : record["instance_id"];
-          let booking_id = record["instance_id"];
-          let actual_booking_id = record["bookingId"]
-            ? record["bookingId"]
-            : record["instance_id"];
+        await Promise.all(
+          Object.keys(jobs_data_pool).map(async (record_id) => {
+            const record = jobs_data_pool[record_id];
+            let business_unit_id = record["instance_id"];
+            let actual_business_unit_id = record["businessUnitId"]
+              ? record["businessUnitId"]
+              : record["instance_id"];
+            let customer_details_id = record["instance_id"];
+            let actual_customer_details_id = record["customerId"]
+              ? record["customerId"]
+              : record["instance_id"];
+            let project_id = record["instance_id"];
+            let actual_project_id = record["projectId"]
+              ? record["projectId"]
+              : record["instance_id"];
+            let location_id = record["instance_id"];
+            let actual_location_id = record["locationId"]
+              ? record["locationId"]
+              : record["instance_id"];
+            let lead_call_id = record["instance_id"];
+            let actual_lead_call_id = record["leadCallId"]
+              ? record["leadCallId"]
+              : record["instance_id"];
+            let campaign_id = record["instance_id"];
+            let actual_campaign_id = record["campaignId"]
+              ? record["campaignId"]
+              : record["instance_id"];
+            let booking_id = record["instance_id"];
+            let actual_booking_id = record["bookingId"]
+              ? record["bookingId"]
+              : record["instance_id"];
 
-          if (
-            business_unit_data_pool[record["businessUnitId"]]
-            // ||
-            // record["businessUnitId"] == 108709 ||
-            // record["businessUnitId"] == 1000004 ||
-            // record["businessUnitId"] == 166181
-          ) {
-            business_unit_id = record["businessUnitId"];
-          }
+            // checking business unit availlable or not for mapping
+            const is_business_unit_available = await sql_request.query(
+              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+            );
 
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
-          }
-
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-          }
-
-          if (call_details_data_pool[record["leadCallId"]]) {
-            lead_call_id = record["leadCallId"];
-          }
-
-          if (campaigns_data_pool[record["campaignId"]]) {
-            campaign_id = record["campaignId"];
-          }
-
-          if (bookings_data_pool[record["bookingId"]]) {
-            booking_id = record["bookingId"];
-          }
-
-          if (job_types_data_pool[record["jobTypeId"]]) {
-            job_type_name = job_types_data_pool[record["jobTypeId"]]["name"];
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
+            if (is_business_unit_available["recordset"].length > 0) {
+              business_unit_id = record["businessUnitId"];
             }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
+            // checking customer availlable or not for mapping
+            const is_customer_available = await sql_request.query(
+              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+            );
+
+            if (is_customer_available["recordset"].length > 0) {
+              customer_details_id = record["customerId"];
             }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let job_completion_time = "2000-01-01T00:00:00.00Z";
+            // checking projects availlable or not for mapping
+            const is_project_available = await sql_request.query(
+              `SELECT id FROM projects WHERE id=${record["projectId"]}`
+            );
 
-          if (record["completedOn"]) {
-            if (
-              new Date(record["completedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              job_completion_time = record["completedOn"];
+            if (is_project_available["recordset"].length > 0) {
+              project_id = record["projectId"];
             }
-          } else {
-            job_completion_time = "2001-01-01T00:00:00.00Z";
-          }
 
-          final_data_pool.push({
-            id: record["id"],
-            job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
-            job_type_name: job_type_name ? job_type_name : "default_job",
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            job_status: record["jobStatus"],
-            job_completion_time: job_completion_time,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            campaign_id: campaign_id,
-            actual_campaign_id: actual_campaign_id,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            created_by_id: record["createdById"] ? record["createdById"] : 0,
-            lead_call_id: lead_call_id,
-            actual_lead_call_id: actual_lead_call_id,
-            booking_id: booking_id,
-            actual_booking_id: actual_booking_id,
-            sold_by_id: record["soldById"] ? record["soldById"] : 0,
-          });
-        });
+            // checking location availlable or not for mapping
+            const is_location_available = await sql_request.query(
+              `SELECT id FROM location WHERE id=${record["locationId"]}`
+            );
+
+            if (is_location_available["recordset"].length > 0) {
+              location_id = record["locationId"];
+            }
+
+            // checking call availlable or not for mapping
+            const is_call_available = await sql_request.query(
+              `SELECT id FROM call_details WHERE id=${record["leadCallId"]}`
+            );
+
+            if (is_call_available["recordset"].length > 0) {
+              lead_call_id = record["leadCallId"];
+            }
+
+            // checking campaignId availlable or not for mapping
+            const is_campaigns_available = await sql_request.query(
+              `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
+            );
+
+            if (is_campaigns_available["recordset"].length > 0) {
+              campaign_id = record["campaignId"];
+            }
+
+            // checking bookings id availlable or not for mapping
+            const is_bookings_available = await sql_request.query(
+              `SELECT id FROM bookings WHERE id=${record["bookingId"]}`
+            );
+
+            if (is_bookings_available["recordset"].length > 0) {
+              booking_id = record["bookingId"];
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let job_completion_time = "2000-01-01T00:00:00.00Z";
+
+            if (record["completedOn"]) {
+              if (
+                new Date(record["completedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                job_completion_time = record["completedOn"];
+              }
+            } else {
+              job_completion_time = "2001-01-01T00:00:00.00Z";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
+              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+              job_status: record["jobStatus"],
+              job_completion_time: job_completion_time,
+              business_unit_id: business_unit_id,
+              actual_business_unit_id: actual_business_unit_id,
+              location_id: location_id,
+              actual_location_id: actual_location_id,
+              customer_details_id: customer_details_id,
+              actual_customer_details_id: actual_customer_details_id,
+              project_id: project_id,
+              actual_project_id: actual_project_id,
+              campaign_id: campaign_id,
+              actual_campaign_id: actual_campaign_id,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              created_by_id: record["createdById"] ? record["createdById"] : 0,
+              lead_call_id: lead_call_id,
+              actual_lead_call_id: actual_lead_call_id,
+              booking_id: booking_id,
+              actual_booking_id: actual_booking_id,
+              sold_by_id: record["soldById"] ? record["soldById"] : 0,
+            });
+          })
+        );
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
