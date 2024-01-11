@@ -2,7 +2,6 @@ const sql = require("mssql");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
-const create_sql_pool = require("./modules/create_sql_pool");
 const getAccessToken = require("./modules/get_access_token");
 const getAPIData = require("./modules/get_api_data");
 const getAPIDataItem = require("./modules/get_api_data_item");
@@ -19,11 +18,11 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 // Service Titan's API parameters
 
 const api_collection = [
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-    mode: "items",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  //   mode: "items",
+  // },
   // {
   //   api_group: "inventory",
   //   api_name: "adjustments",
@@ -118,10 +117,10 @@ const api_collection = [
   //   api_group: "inventory",
   //   api_name: "transfers",
   // },
-  {
-    api_group: "inventory",
-    api_name: "purchase-orders",
-  },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "purchase-orders",
+  // },
   // {
   //   api_group: "inventory",
   //   api_name: "receipts",
@@ -166,10 +165,10 @@ const api_collection = [
   //   api_group: "jpm",
   //   api_name: "jobs",
   // },
-  {
-    api_group: "jpm",
-    api_name: "projects",
-  },
+  // {
+  //   api_group: "jpm",
+  //   api_name: "projects",
+  // },
   // {
   //   api_group: "jpm",
   //   api_name: "job-cancel-reasons",
@@ -226,18 +225,18 @@ const api_collection = [
   //   api_group: "memberships",
   //   api_name: "membership-types",
   // },
-  {
-    api_group: "payroll",
-    api_name: "payrolls",
-  },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "payrolls",
+  // },
   // {
   //   api_group: "payroll",
   //   api_name: "payroll-adjustments",
   // },
-  {
-    api_group: "payroll",
-    api_name: "gross-pay-items",
-  },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "gross-pay-items",
+  // },
   // {
   //   api_group: "payroll",
   //   api_name: "jobs/splits",
@@ -294,10 +293,10 @@ const api_collection = [
   //   api_group: "reporting",
   //   api_name: "report-categories",
   // },
-  {
-    api_group: "sales",
-    api_name: "estimates",
-  },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates",
+  // },
   // {
   //   api_group: "sales",
   //   api_name: "estimates/export",
@@ -393,8 +392,8 @@ const hvac_tables = [
 ];
 
 const params_header = {
-  createdOnOrAfter: "",
-  createdBefore: "2023-12-21T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
+  modifiedOnOrAfter: "2024-01-10T00:00:00.00Z",
+  modifiedBefore: "2024-01-11T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
   active: "any",

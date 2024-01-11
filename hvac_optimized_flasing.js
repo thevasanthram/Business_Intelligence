@@ -1629,6 +1629,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       vendor_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -2223,6 +2231,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
+  let purchase_order_cache = {};
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
@@ -3484,6 +3493,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         };
 
         let final_data_pool = [];
+        let purchase_order_final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
@@ -3590,6 +3600,71 @@ async function data_processor(data_lake, sql_request, table_list) {
           },
         };
 
+        if (initial_execute) {
+          purchase_order_final_data_pool.push({
+            id: 1,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            actual_invoice_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
+            vendor_id: 1,
+            actual_vendor_id: 1,
+          });
+
+          purchase_order_final_data_pool.push({
+            id: 2,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            actual_invoice_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
+            vendor_id: 2,
+            actual_vendor_id: 2,
+          });
+
+          purchase_order_final_data_pool.push({
+            id: 3,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            actual_invoice_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
+            vendor_id: 3,
+            actual_vendor_id: 3,
+          });
+        }
+
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
@@ -3641,7 +3716,144 @@ async function data_processor(data_lake, sql_request, table_list) {
                 parseFloat(po_record["total"]);
             }
           }
+
+          let job_details_id = po_record["instance_id"];
+          let actual_job_details_id = po_record["instance_id"];
+          if (po_record["jobId"]) {
+            actual_job_details_id = po_record["jobId"];
+            if (jobs_data_pool[po_record["jobId"]]) {
+              job_details_id = po_record["jobId"];
+            }
+          }
+
+          let invoice_id = po_record["instance_id"];
+          let actual_invoice_id = po_record["instance_id"];
+          if (po_record["invoiceId"]) {
+            actual_invoice_id = po_record["invoiceId"];
+            if (invoice_data_pool[po_record["invoiceId"]]) {
+              invoice_id = po_record["invoiceId"];
+            }
+          }
+
+          let project_id = po_record["instance_id"];
+          let actual_project_id = po_record["instance_id"];
+          if (po_record["projectId"]) {
+            actual_project_id = po_record["projectId"];
+            if (data_pool[po_record["projectId"]]) {
+              project_id = po_record["projectId"];
+            }
+          }
+
+          let vendor_id = po_record["instance_id"];
+          let actual_vendor_id = po_record["instance_id"];
+          if (po_record["vendorId"]) {
+            actual_vendor_id = po_record["vendorId"];
+            if (vendors_data_pool[po_record["vendorId"]]) {
+              vendor_id = po_record["vendorId"];
+            }
+          }
+
+          let date = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["date"]) {
+            if (
+              new Date(po_record["date"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              date = po_record["date"];
+            }
+          } else {
+            date = "2001-01-01T00:00:00.00Z";
+          }
+
+          let requiredOn = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["requiredOn"]) {
+            if (
+              new Date(po_record["requiredOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              requiredOn = po_record["requiredOn"];
+            }
+          } else {
+            requiredOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let sentOn = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["sentOn"]) {
+            if (
+              new Date(po_record["sentOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              sentOn = po_record["sentOn"];
+            }
+          } else {
+            sentOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let receivedOn = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["receivedOn"]) {
+            if (
+              new Date(po_record["receivedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              receivedOn = po_record["receivedOn"];
+            }
+          } else {
+            receivedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["createdOn"]) {
+            if (
+              new Date(po_record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = po_record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (po_record["modifiedOn"]) {
+            if (
+              new Date(po_record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = po_record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          purchase_order_final_data_pool.push({
+            id: po_record["id"],
+            status: po_record["status"] ? po_record["status"] : "default",
+            total: po_record["total"] ? po_record["total"] : 0,
+            tax: po_record["tax"] ? po_record["tax"] : 0,
+            date: date,
+            requiredOn: requiredOn,
+            sentOn: sentOn,
+            receivedOn: receivedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            invoice_id: invoice_id,
+            actual_invoice_id: actual_invoice_id,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            vendor_id: vendor_id,
+            actual_vendor_id: actual_vendor_id,
+          });
         });
+
+        purchase_order_cache["purchase_order_final_data_pool"] =
+          purchase_order_final_data_pool;
 
         // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
 
@@ -7558,271 +7770,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "purchase_order": {
         const table_name = main_api_list[api_name][0]["table_name"];
-        const purchase_order_data_pool =
-          data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!ntering purchase order"
-        );
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!fetched job_detals"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!map done"
-        );
-
-        // fetching vendor data from db
-        // ----------------
-        const vendor_response = await sql_request.query("SELECT * FROM vendor");
-
-        const vendor_data = vendor_response.recordset;
-
-        const vendors_data_pool = {};
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor1"
-        );
-
-        vendor_data.map((current_record) => {
-          vendors_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor2"
-        );
-
-        // fetching invoice data from db
-        // ----------------
-        const invoice_response = await sql_request.query(
-          "SELECT * FROM invoice"
-        );
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice1"
-        );
-
-        const invoice_data = invoice_response.recordset;
-
-        const invoice_data_pool = {};
-
-        invoice_data.map((current_record) => {
-          invoice_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice2"
-        );
-
-        let final_data_pool = [];
-
-        // console.log("purchase_order_data_pool: ", purchase_order_data_pool);
-        // console.log("header_data: ", header_data);
-
-        if (initial_execute) {
-          final_data_pool.push({
-            id: 1,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            actual_invoice_id: 1,
-            vendor_id: 1,
-            actual_vendor_id: 1,
-          });
-
-          final_data_pool.push({
-            id: 2,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            actual_invoice_id: 2,
-            vendor_id: 2,
-            actual_vendor_id: 2,
-          });
-
-          final_data_pool.push({
-            id: 3,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            actual_invoice_id: 3,
-            vendor_id: 3,
-            actual_vendor_id: 3,
-          });
-        }
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!dummy done"
-        );
-
-        Object.keys(purchase_order_data_pool).map((record_id) => {
-          const record = purchase_order_data_pool[record_id];
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["jobId"]) {
-            actual_job_details_id = record["jobId"];
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
-            }
-          }
-
-          let invoice_id = record["instance_id"];
-          let actual_invoice_id = record["instance_id"];
-          if (record["invoiceId"]) {
-            actual_invoice_id = record["invoiceId"];
-            if (invoice_data_pool[record["invoiceId"]]) {
-              invoice_id = record["invoiceId"];
-            }
-          }
-
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-          if (record["vendorId"]) {
-            actual_vendor_id = record["vendorId"];
-            if (vendors_data_pool[record["vendorId"]]) {
-              vendor_id = record["vendorId"];
-            }
-          }
-
-          let date = "2000-01-01T00:00:00.00Z";
-
-          if (record["date"]) {
-            if (
-              new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              date = record["date"];
-            }
-          } else {
-            date = "2001-01-01T00:00:00.00Z";
-          }
-
-          let requiredOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["requiredOn"]) {
-            if (
-              new Date(record["requiredOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              requiredOn = record["requiredOn"];
-            }
-          } else {
-            requiredOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let sentOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["sentOn"]) {
-            if (
-              new Date(record["sentOn"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              sentOn = record["sentOn"];
-            }
-          } else {
-            sentOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let receivedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["receivedOn"]) {
-            if (
-              new Date(record["receivedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              receivedOn = record["receivedOn"];
-            }
-          } else {
-            receivedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            status: record["status"] ? record["status"] : "default",
-            total: record["total"] ? record["total"] : 0,
-            tax: record["tax"] ? record["tax"] : 0,
-            date: date,
-            requiredOn: requiredOn,
-            sentOn: sentOn,
-            receivedOn: receivedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            invoice_id: invoice_id,
-            actual_invoice_id: actual_invoice_id,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-          });
-        });
+        let final_data_pool =
+          purchase_order_cache["purchase_order_final_data_pool"];
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);

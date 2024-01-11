@@ -1627,6 +1627,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       vendor_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -2889,6 +2897,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
+          if (record["projectId"] && record["invoiceId"]) {
+          }
+
           final_data_pool.push({
             id: record["id"],
             payrollId: record["payrollId"],
@@ -3013,8 +3024,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         let purchase_order_data_pool = {};
         let sales_data_pool = {};
 
-        let gross_pay_items_data_pool = {};
-        let payrolls_data_pool = {};
+        let gross_pay_items_data_pool =
+          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
+        let payrolls_data_pool =
+          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
 
         // fetching purchase_order from db
         // ----------------
