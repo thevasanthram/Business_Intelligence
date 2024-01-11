@@ -3849,15 +3849,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               customer_name: customer_name,
             });
 
-            let po_cost = 0;
             let labor_cost = 0;
             let labor_hours = 0;
             let burden = 0;
 
+            // calculating po cost
+            const po_cost_summing_query = await sql_request.query(
+              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
+            );
+
+            const po_cost = parseFloat(
+              po_cost_summing_query["recordset"][0]["totalSum"]
+            );
+
             if (invoice_po_and_gpi_data[record["id"]]) {
-              po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
-                ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
-                : 0;
               labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
                 ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
                 : 0;
@@ -3880,6 +3885,21 @@ async function data_processor(data_lake, sql_request, table_list) {
             let default_val = 0;
 
             if (record["items"]) {
+              // deleting cogs equipment
+              const cogs_equipment_query = await sql_request.query(
+                `DELETE FROM cogs_equipment WHERE invoice_id = ${record["id"]}`
+              );
+
+              // deleting cogs material
+              const cogs_material_query = await sql_request.query(
+                `DELETE FROM cogs_material WHERE invoice_id = ${record["id"]}`
+              );
+
+              // deleting cogs service
+              const cogs_service_query = await sql_request.query(
+                `DELETE FROM cogs_service WHERE invoice_id = ${record["id"]}`
+              );
+
               record["items"].map((items_record) => {
                 let generalLedgerAccountid = 0;
                 let generalLedgerAccountname = "default";
@@ -4377,7 +4397,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             let billed_amount = 0;
             let balance = 0;
             let contract_value = 0;
-            let po_cost = 0;
             let equipment_cost = 0;
             let material_cost = 0;
             let labor_cost = 0;
@@ -4390,6 +4409,15 @@ async function data_processor(data_lake, sql_request, table_list) {
             let membership_liability = 0;
             let business_unit_id = record["instance_id"];
             let actual_business_unit_id = record["instance_id"];
+
+            // calculating po cost
+            const po_cost_summing_query = await sql_request.query(
+              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
+            );
+
+            const po_cost = parseFloat(
+              po_cost_summing_query["recordset"][0]["totalSum"]
+            );
 
             if (project_total_data[record["id"]]) {
               billed_amount = project_total_data[record["id"]]["billed_amount"]

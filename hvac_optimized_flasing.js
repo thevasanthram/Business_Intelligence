@@ -1423,6 +1423,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       invoice_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1492,6 +1500,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       invoice_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1558,6 +1574,14 @@ const hvac_tables = {
         constraint: { nullable: false },
       },
       actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -4162,6 +4186,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 1,
             actual_job_details_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
             invoice_id: 1,
             sku_details_id: 1,
             actual_sku_details_id: 1,
@@ -4181,6 +4207,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 2,
             actual_job_details_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
             invoice_id: 2,
             sku_details_id: 2,
             actual_sku_details_id: 2,
@@ -4200,6 +4228,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 3,
             actual_job_details_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
             invoice_id: 3,
             sku_details_id: 3,
             actual_sku_details_id: 3,
@@ -4219,6 +4249,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 1,
             actual_job_details_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
             invoice_id: 1,
             sku_details_id: 1,
             actual_sku_details_id: 1,
@@ -4238,6 +4270,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 2,
             actual_job_details_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
             invoice_id: 2,
             sku_details_id: 2,
             actual_sku_details_id: 2,
@@ -4257,6 +4291,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 3,
             actual_job_details_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
             invoice_id: 3,
             sku_details_id: 3,
             actual_sku_details_id: 3,
@@ -4276,6 +4312,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 1,
             actual_job_details_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
             invoice_id: 1,
             sku_details_id: 1,
             actual_sku_details_id: 1,
@@ -4295,6 +4333,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 2,
             actual_job_details_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
             invoice_id: 2,
             sku_details_id: 2,
             actual_sku_details_id: 2,
@@ -4314,6 +4354,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             generalLedgerAccountdetailType: "default",
             job_details_id: 3,
             actual_job_details_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
             invoice_id: 3,
             sku_details_id: 3,
             actual_sku_details_id: 3,
@@ -4389,6 +4431,15 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_job_details_id = record["job"]["id"];
             if (jobs_data_pool[record["job"]["id"]]) {
               job_details_id = record["job"]["id"];
+            }
+          }
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["instance_id"];
+          if (record["projectId"]) {
+            actual_project_id = record["projectId"];
+            if (data_pool[record["projectId"]]) {
+              project_id = record["projectId"];
             }
           }
 
@@ -4723,6 +4774,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                     generalLedgerAccountdetailType,
                   job_details_id: job_details_id,
                   actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
                   invoice_id: record["id"],
                   sku_details_id: sku_details_id,
                   actual_sku_details_id: actual_sku_details_id,
@@ -4779,6 +4832,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                     generalLedgerAccountdetailType,
                   job_details_id: job_details_id,
                   actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
                   invoice_id: record["id"],
                   sku_details_id: sku_details_id,
                   actual_sku_details_id: actual_sku_details_id,
@@ -4919,6 +4974,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                     generalLedgerAccountdetailType,
                   job_details_id: job_details_id,
                   actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
                   invoice_id: record["id"],
                   sku_details_id: sku_details_id,
                   actual_sku_details_id: actual_sku_details_id,

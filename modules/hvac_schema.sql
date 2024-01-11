@@ -502,12 +502,14 @@ BEGIN
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
     actual_job_details_id INT NULL,
+    project_id INT NOT NULL,
+    actual_project_id INT NULL,
     invoice_id INT NOT NULL,
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
-    FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
-    FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
+    -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+    -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
 
@@ -528,12 +530,14 @@ BEGIN
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
     job_details_id INT NOT NULL,
     actual_job_details_id INT NULL,
+    project_id INT NOT NULL,
+    actual_project_id INT NULL,
     invoice_id INT NOT NULL,
     sku_details_id INT NOT NULL,
     actual_sku_details_id INT NULL,
-    FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
-    FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
+    -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+    -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
   );
 END;
 
@@ -556,12 +560,14 @@ CREATE TABLE cogs_equipment (
   generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   invoice_id INT NOT NULL,
   sku_details_id INT NOT NULL,
   actual_sku_details_id INT NULL,
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (invoice_id) REFERENCES invoice (id),
-  FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
+  -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+  -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
 );
 END;
 
