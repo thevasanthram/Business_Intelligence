@@ -2230,7 +2230,6 @@ async function azure_sql_operations(data_lake, table_list) {
 
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
-  let project_cache = {};
   let purchase_order_cache = {};
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
@@ -5362,6 +5361,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         delete data_lake[api_name];
         delete data_lake["invoice"];
+        delete data_lake["purchase_order"];
 
         break;
       }
@@ -7812,8 +7812,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
-
-        delete data_lake[api_name];
 
         break;
       }
