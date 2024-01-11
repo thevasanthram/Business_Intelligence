@@ -3371,6 +3371,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake["projects"]["jpm__projects"]["data_pool"];
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
+        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
         let vendors_data_pool =
           data_lake["vendor"]["inventory__vendors"]["data_pool"];
 
