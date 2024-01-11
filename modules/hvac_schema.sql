@@ -438,6 +438,8 @@ CREATE TABLE invoice (
   invoice_type_name NVARCHAR(MAX) NULL,
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   business_unit_id INT NOT NULL,
   actual_business_unit_id INT NULL,
   location_id INT NOT NULL,
@@ -456,7 +458,8 @@ CREATE TABLE invoice (
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_id) REFERENCES customer_details (id),
-  FOREIGN KEY (address_zip) REFERENCES us_cities (id)
+  FOREIGN KEY (address_zip) REFERENCES us_cities (id),
+  FOREIGN KEY (project_id) REFERENCES projects (id),
 );
 END;
 

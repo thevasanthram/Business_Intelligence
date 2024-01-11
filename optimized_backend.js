@@ -1427,6 +1427,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       invoice_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1496,6 +1504,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       invoice_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1562,6 +1578,14 @@ const hvac_tables = {
         constraint: { nullable: false },
       },
       actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -3248,6 +3272,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const cogs_material_header_data =
+          hvac_tables["cogs_material"]["columns"];
+        const cogs_equipment_header_data =
+          hvac_tables["cogs_equipment"]["columns"];
+        const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
 
         // getting data directly from service titan
         let jobs_data_pool = {};
@@ -3597,6 +3626,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               if (is_jobs_available["recordset"].length > 0) {
                 job_details_id = record["job"]["id"];
               }
+            }
+
+            let project_id = record["instance_id"];
+            let actual_project_id = record["projectId"]
+              ? record["projectId"]
+              : record["instance_id"];
+
+            // checking projects availlable or not for mapping
+            const is_project_available = await sql_request.query(
+              `SELECT id FROM projects WHERE id=${record["projectId"]}`
+            );
+
+            if (is_project_available["recordset"].length > 0) {
+              project_id = record["projectId"];
             }
 
             let business_unit_id = record["instance_id"];
@@ -3973,6 +4016,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                       generalLedgerAccountdetailType,
                     job_details_id: job_details_id,
                     actual_job_details_id: actual_job_details_id,
+                    project_id: project_id,
+                    actual_project_id: actual_project_id,
                     invoice_id: record["id"],
                     sku_details_id: sku_details_id,
                     actual_sku_details_id: actual_sku_details_id,
@@ -4032,6 +4077,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                       generalLedgerAccountdetailType,
                     job_details_id: job_details_id,
                     actual_job_details_id: actual_job_details_id,
+                    project_id: project_id,
+                    actual_project_id: actual_project_id,
                     invoice_id: record["id"],
                     sku_details_id: sku_details_id,
                     actual_sku_details_id: actual_sku_details_id,
@@ -4174,6 +4221,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                       generalLedgerAccountdetailType,
                     job_details_id: job_details_id,
                     actual_job_details_id: actual_job_details_id,
+                    project_id: project_id,
+                    actual_project_id: actual_project_id,
                     invoice_id: record["id"],
                     sku_details_id: sku_details_id,
                     actual_sku_details_id: actual_sku_details_id,
@@ -4285,16 +4334,97 @@ async function data_processor(data_lake, sql_request, table_list) {
           })
         );
 
+        console.log(
+          "cogs_material data: ",
+          cogs_material_final_data_pool.length
+        );
+        if (cogs_material_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["cogs_material"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                cogs_material_final_data_pool,
+                cogs_material_header_data,
+                "cogs_material"
+              );
+          } while (
+            hvac_tables_responses["cogs_material"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_material = '${hvac_tables_responses["cogs_material"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        console.log(
+          "cogs_equipment data: ",
+          cogs_equipment_final_data_pool.length
+        );
+        if (cogs_equipment_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["cogs_equipment"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                cogs_equipment_final_data_pool,
+                cogs_equipment_header_data,
+                "cogs_equipment"
+              );
+          } while (
+            hvac_tables_responses["cogs_equipment"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_equipment = '${hvac_tables_responses["cogs_equipment"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        console.log(
+          "cogs_service data: ",
+          cogs_services_final_data_pool.length
+        );
+        if (cogs_services_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["cogs_service"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                cogs_services_final_data_pool,
+                cogs_service_header_data,
+                "cogs_service"
+              );
+          } while (
+            hvac_tables_responses["cogs_service"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_service = '${hvac_tables_responses["cogs_service"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
         invoice_po_and_gpi_data = {};
         invoice_dummy_values = {};
 
         invoice_cache["invoice_final_data_pool"] = invoice_final_data_pool;
-        invoice_cache["cogs_material_final_data_pool"] =
-          cogs_material_final_data_pool;
-        invoice_cache["cogs_equipment_final_data_pool"] =
-          cogs_equipment_final_data_pool;
-        invoice_cache["cogs_services_final_data_pool"] =
-          cogs_services_final_data_pool;
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
@@ -4394,11 +4524,8 @@ async function data_processor(data_lake, sql_request, table_list) {
               modifiedOn = "2001-01-01T00:00:00.00Z";
             }
 
-            let billed_amount = 0;
             let balance = 0;
             let contract_value = 0;
-            let equipment_cost = 0;
-            let material_cost = 0;
             let labor_cost = 0;
             let labor_hours = 0;
             let burden = 0;
@@ -4410,13 +4537,40 @@ async function data_processor(data_lake, sql_request, table_list) {
             let business_unit_id = record["instance_id"];
             let actual_business_unit_id = record["instance_id"];
 
+            // calculating billed_amount
+            const billed_amount_summing_query = await sql_request.query(
+              `SELECT SUM(total) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
+            );
+
+            const billed_amount = parseFloat(
+              billed_amount_summing_query["recordset"][0]["totalSum"]
+            );
+
             // calculating po cost
             const po_cost_summing_query = await sql_request.query(
-              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
+              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
             );
 
             const po_cost = parseFloat(
               po_cost_summing_query["recordset"][0]["totalSum"]
+            );
+
+            // calculating equipment cost
+            const equipment_cost_summing_query = await sql_request.query(
+              `SELECT SUM(total_cost) AS totalSum FROM cogs_equipment WHERE project_id = ${record["id"]}`
+            );
+
+            const equipment_cost = parseFloat(
+              equipment_cost_summing_query["recordset"][0]["totalSum"]
+            );
+
+            // calculating material cost
+            const material_cost_summing_query = await sql_request.query(
+              `SELECT SUM(total_cost) AS totalSum FROM cogs_material WHERE project_id = ${record["id"]}`
+            );
+
+            const material_cost = parseFloat(
+              material_cost_summing_query["recordset"][0]["totalSum"]
             );
 
             if (project_total_data[record["id"]]) {
@@ -6163,20 +6317,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         const table_name = main_api_list[api_name][0]["table_name"];
 
         const invoice_header_data = hvac_tables["invoice"]["columns"];
-        const cogs_material_header_data =
-          hvac_tables["cogs_material"]["columns"];
-        const cogs_equipment_header_data =
-          hvac_tables["cogs_equipment"]["columns"];
-        const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
         const gross_profit_header_data = hvac_tables["gross_profit"]["columns"];
 
         let invoice_final_data_pool = invoice_cache["invoice_final_data_pool"];
-        let cogs_material_final_data_pool =
-          invoice_cache["cogs_material_final_data_pool"];
-        let cogs_equipment_final_data_pool =
-          invoice_cache["cogs_equipment_final_data_pool"];
-        let cogs_services_final_data_pool =
-          invoice_cache["cogs_services_final_data_pool"];
         let gross_profit_final_data_pool =
           invoice_cache["gross_profit_final_data_pool"];
 
@@ -6195,93 +6338,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET invoice = '${hvac_tables_responses["invoice"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        console.log(
-          "cogs_material data: ",
-          cogs_material_final_data_pool.length
-        );
-        if (cogs_material_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_material"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_material_final_data_pool,
-                cogs_material_header_data,
-                "cogs_material"
-              );
-          } while (
-            hvac_tables_responses["cogs_material"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET cogs_material = '${hvac_tables_responses["cogs_material"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        console.log(
-          "cogs_equipment data: ",
-          cogs_equipment_final_data_pool.length
-        );
-        if (cogs_equipment_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_equipment"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_equipment_final_data_pool,
-                cogs_equipment_header_data,
-                "cogs_equipment"
-              );
-          } while (
-            hvac_tables_responses["cogs_equipment"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET cogs_equipment = '${hvac_tables_responses["cogs_equipment"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        console.log(
-          "cogs_service data: ",
-          cogs_services_final_data_pool.length
-        );
-        if (cogs_services_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_service"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                cogs_services_final_data_pool,
-                cogs_service_header_data,
-                "cogs_service"
-              );
-          } while (
-            hvac_tables_responses["cogs_service"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET cogs_service = '${hvac_tables_responses["cogs_service"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
