@@ -843,6 +843,7 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+
       job_number: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -1315,6 +1316,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       business_unit_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -1675,7 +1684,6 @@ const hvac_tables = {
       },
     },
   },
-
   cogs_labor: {
     columns: {
       paid_duration: {
@@ -3876,6 +3884,8 @@ async function data_processor(data_lake, sql_request, table_list) {
               invoice_type_name: invoice_type_name,
               job_details_id: job_details_id,
               actual_job_details_id: actual_job_details_id,
+              project_id: project_id,
+              actual_project_id: actual_project_id,
               business_unit_id: business_unit_id,
               actual_business_unit_id: actual_business_unit_id,
               location_id: location_id,
@@ -4524,7 +4534,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               modifiedOn = "2001-01-01T00:00:00.00Z";
             }
 
-            let balance = 0;
             let contract_value = 0;
             let labor_cost = 0;
             let labor_hours = 0;
@@ -4534,8 +4543,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             let income = 0;
             let current_liability = 0;
             let membership_liability = 0;
-            let business_unit_id = record["instance_id"];
-            let actual_business_unit_id = record["instance_id"];
 
             // calculating billed_amount
             const billed_amount_summing_query = await sql_request.query(
@@ -4544,6 +4551,15 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const billed_amount = parseFloat(
               billed_amount_summing_query["recordset"][0]["totalSum"]
+            );
+
+            // calculating balance
+            const balance_summing_query = await sql_request.query(
+              `SELECT SUM(balance) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
+            );
+
+            const balance = parseFloat(
+              balance_summing_query["recordset"][0]["totalSum"]
             );
 
             // calculating po cost
@@ -4572,6 +4588,17 @@ async function data_processor(data_lake, sql_request, table_list) {
             const material_cost = parseFloat(
               material_cost_summing_query["recordset"][0]["totalSum"]
             );
+
+            // calculating businesss_unit & actual_business_unit_id
+            const businesss_unit_query = await sql_request.query(
+              `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
+            );
+
+            const business_unit_id =
+              businesss_unit_query["recordset"][0]["business_unit_id"];
+
+            const actual_business_unit_id =
+              businesss_unit_query["recordset"][0]["actual_business_unit_id"];
 
             if (project_total_data[record["id"]]) {
               billed_amount = project_total_data[record["id"]]["billed_amount"]
