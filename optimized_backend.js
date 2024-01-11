@@ -4225,11 +4225,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             let labor_cost = 0;
             let labor_hours = 0;
             let burden = 0;
-            let accounts_receivable = 0;
-            let expense = 0;
-            let income = 0;
-            let current_liability = 0;
-            let membership_liability = 0;
 
             // calculating billed_amount
             const billed_amount_summing_query = await sql_request.query(
@@ -4286,82 +4281,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const actual_business_unit_id =
               businesss_unit_query["recordset"][0]["actual_business_unit_id"];
-
-            if (project_total_data[record["id"]]) {
-              billed_amount = project_total_data[record["id"]]["billed_amount"]
-                ? project_total_data[record["id"]]["billed_amount"]
-                : 0;
-              balance = project_total_data[record["id"]]["balance"]
-                ? project_total_data[record["id"]]["balance"]
-                : 0;
-              equipment_cost = project_total_data[record["id"]][
-                "equipment_cost"
-              ]
-                ? project_total_data[record["id"]]["equipment_cost"]
-                : 0;
-              material_cost = project_total_data[record["id"]]["material_cost"]
-                ? project_total_data[record["id"]]["material_cost"]
-                : 0;
-              accounts_receivable = project_total_data[record["id"]][
-                "accounts_receivable"
-              ]
-                ? project_total_data[record["id"]]["accounts_receivable"]
-                : 0;
-              expense = project_total_data[record["id"]]["expense"]
-                ? project_total_data[record["id"]]["expense"]
-                : 0;
-              income = project_total_data[record["id"]]["income"]
-                ? project_total_data[record["id"]]["income"]
-                : 0;
-              current_liability = project_total_data[record["id"]][
-                "current_liability"
-              ]
-                ? project_total_data[record["id"]]["current_liability"]
-                : 0;
-              membership_liability = project_total_data[record["id"]][
-                "membership_liability"
-              ]
-                ? project_total_data[record["id"]]["membership_liability"]
-                : 0;
-
-              business_unit_id = project_total_data[record["id"]][
-                "business_unit_id"
-              ]
-                ? project_total_data[record["id"]]["business_unit_id"]
-                : record["instance_id"];
-
-              actual_business_unit_id = project_total_data[record["id"]][
-                "actual_business_unit_id"
-              ]
-                ? project_total_data[record["id"]]["actual_business_unit_id"]
-                : record["instance_id"];
-            }
-
-            if (project_contract_value[record["id"]]) {
-              contract_value = project_contract_value[record["id"]][
-                "contract_value"
-              ]
-                ? project_contract_value[record["id"]]["contract_value"]
-                : 0;
-            }
-
-            if (projects_po_and_gpi_data[record["id"]]) {
-              po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
-                ? projects_po_and_gpi_data[record["id"]]["po_cost"]
-                : 0;
-
-              labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
-                ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
-                : 0;
-              labor_hours = projects_po_and_gpi_data[record["id"]][
-                "labor_hours"
-              ]
-                ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
-                : 0;
-              burden = projects_po_and_gpi_data[record["id"]]["burden"]
-                ? projects_po_and_gpi_data[record["id"]]["burden"]
-                : 0;
-            }
 
             final_data_pool.push({
               id: record["id"],
