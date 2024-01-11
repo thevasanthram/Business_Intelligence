@@ -3374,71 +3374,20 @@ async function data_processor(data_lake, sql_request, table_list) {
         const header_data = hvac_tables[table_name]["columns"];
 
         // getting data directly from service titan
-        let jobs_data_pool = {};
-        let purchase_order_data_pool = {};
-        let sales_data_pool = {};
 
-        let gross_pay_items_data_pool = {};
-        let payrolls_data_pool = {};
-
-        if (initial_execute) {
-          jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
-          gross_pay_items_data_pool =
-            data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
-          payrolls_data_pool =
-            data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
-          purchase_order_data_pool =
-            data_lake["purchase_order"]["inventory__purchase-orders"][
-              "data_pool"
-            ];
-          sales_data_pool =
-            data_lake["sales_details"]["sales__estimates"]["data_pool"];
-        } else {
-          // fetching jobs from db
-          // ----------------
-          const jobs_response = await sql_request.query(
-            "SELECT * FROM job_details"
-          );
-
-          const jobs_data = jobs_response.recordset;
-
-          jobs_data_pool = {};
-
-          jobs_data.map((current_record) => {
-            jobs_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-
-          // fetching purchase_order from db
-          // ----------------
-          const purchase_order_response = await sql_request.query(
-            "SELECT * FROM purchase_order"
-          );
-
-          const purchase_order_data = purchase_order_response.recordset;
-
-          purchase_order_data_pool = {};
-
-          purchase_order_data.map((current_record) => {
-            purchase_order_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-
-          // fetching sales_details from db
-          // ----------------
-          const sales_response = await sql_request.query(
-            "SELECT * FROM sales_details"
-          );
-
-          const sales_data = sales_response.recordset;
-
-          sales_data_pool = {};
-
-          sales_data.map((current_record) => {
-            sales_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-        }
+        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        let gross_pay_items_data_pool =
+          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
+        let payrolls_data_pool =
+          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+        let purchase_order_data_pool =
+          data_lake["purchase_order"]["inventory__purchase-orders"][
+            "data_pool"
+          ];
+        let sales_data_pool =
+          data_lake["sales_details"]["sales__estimates"]["data_pool"];
+        let vendors_data_pool =
+          data_lake["vendor"]["inventory__vendors"]["data_pool"];
 
         // fetching business units from db
         // ----------------
