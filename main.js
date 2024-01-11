@@ -33,10 +33,10 @@ const api_collection = [
   //   api_name: "transfers",
   //   mode: "items",
   // },
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  // },
   // {
   //   api_group: "accounting",
   //   api_name: "inventory-bills",
@@ -233,10 +233,10 @@ const api_collection = [
   //   api_group: "payroll",
   //   api_name: "payroll-adjustments",
   // },
-  // {
-  //   api_group: "payroll",
-  //   api_name: "gross-pay-items",
-  // },
+  {
+    api_group: "payroll",
+    api_name: "gross-pay-items",
+  },
   // {
   //   api_group: "payroll",
   //   api_name: "jobs/splits",
@@ -392,8 +392,10 @@ const hvac_tables = [
 ];
 
 const params_header = {
-  modifiedOnOrAfter: "2024-01-10T00:00:00.00Z",
-  modifiedBefore: "2024-01-11T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
+  // modifiedOnOrAfter: "2024-01-10T00:00:00.00Z",
+  dateOnOrAfter: "2024-01-10T00:00:00.00Z",
+  dateOnOrBefore: "2024-01-10T00:00:00.00Z",
+  // modifiedBefore: "2024-01-11T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
   active: "any",

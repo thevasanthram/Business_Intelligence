@@ -62,7 +62,7 @@ createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
   modifiedOnOrAfter: "", // 2023-12-25T00:00:00.00Z
-  modifiedBefore: "2024-01-11T00:00:00.00Z", //createdBeforeTime.toISOString()
+  modifiedBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -428,6 +428,82 @@ const hvac_tables = {
       },
       burdenRate: {
         data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  purchase_order: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      requiredOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      sentOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_invoice_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "INT",
         constraint: { nullable: true },
       },
     },
@@ -1567,82 +1643,6 @@ const hvac_tables = {
       },
       labor_hours: {
         data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  purchase_order: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      status: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      total: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      tax: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      date: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      requiredOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      sentOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      receivedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      project_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_project_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      vendor_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_vendor_id: {
-        data_type: "INT",
         constraint: { nullable: true },
       },
     },
@@ -3366,85 +3366,88 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
-      case "projects": {
+      case "purchase_order": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        // getting data directly from service titan
-
-        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
-        let gross_pay_items_data_pool =
-          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
-        let payrolls_data_pool =
-          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
-        let purchase_order_data_pool =
-          data_lake["purchase_order"]["inventory__purchase-orders"][
-            "data_pool"
-          ];
-        let sales_data_pool =
-          data_lake["sales_details"]["sales__estimates"]["data_pool"];
         let vendors_data_pool =
           data_lake["vendor"]["inventory__vendors"]["data_pool"];
 
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
+        const header_data = hvac_tables[table_name]["columns"];
 
-        const business_unit_data = business_unit_response.recordset;
+        const purchase_order_data_pool =
+          data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
 
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching customers data from db
-        // ----------------
-        const customers_response = await sql_request.query(
-          "SELECT * FROM customer_details"
-        );
-
-        const customer_data = customers_response.recordset;
-
-        const customer_data_pool = {};
-
-        customer_data.map((current_record) => {
-          customer_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching location data from db
-        // ----------------
-        const location_response = await sql_request.query(
-          "SELECT * FROM location"
-        );
-
-        const location_data = location_response.recordset;
-
-        const location_data_pool = {};
-
-        location_data.map((current_record) => {
-          location_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        const sku_details_data_pool = {
-          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
-        };
-
-        let final_data_pool = [];
         let purchase_order_final_data_pool = [];
+        // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
 
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
+        if (initial_execute) {
+          purchase_order_final_data_pool.push({
+            id: 1,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 1,
+            actual_job_details_id: 1,
+            invoice_id: 1,
+            actual_invoice_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
+            vendor_id: 1,
+            actual_vendor_id: 1,
+          });
+
+          purchase_order_final_data_pool.push({
+            id: 2,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 2,
+            actual_job_details_id: 2,
+            invoice_id: 2,
+            actual_invoice_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
+            vendor_id: 2,
+            actual_vendor_id: 2,
+          });
+
+          purchase_order_final_data_pool.push({
+            id: 3,
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: 3,
+            actual_job_details_id: 3,
+            invoice_id: 3,
+            actual_invoice_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
+            vendor_id: 3,
+            actual_vendor_id: 3,
+          });
+        }
+
+        // for projects and invoice table
 
         let invoice_po_and_gpi_data = {};
 
@@ -3548,72 +3551,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           },
         };
 
-        if (initial_execute) {
-          purchase_order_final_data_pool.push({
-            id: 1,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            actual_invoice_id: 1,
-            project_id: 1,
-            actual_project_id: 1,
-            vendor_id: 1,
-            actual_vendor_id: 1,
-          });
-
-          purchase_order_final_data_pool.push({
-            id: 2,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            actual_invoice_id: 2,
-            project_id: 2,
-            actual_project_id: 2,
-            vendor_id: 2,
-            actual_vendor_id: 2,
-          });
-
-          purchase_order_final_data_pool.push({
-            id: 3,
-            status: "default",
-            total: 0,
-            tax: 0,
-            date: "1999-01-01T00:00:00.00Z",
-            requiredOn: "1999-01-01T00:00:00.00Z",
-            sentOn: "1999-01-01T00:00:00.00Z",
-            receivedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            actual_invoice_id: 3,
-            project_id: 3,
-            actual_project_id: 3,
-            vendor_id: 3,
-            actual_vendor_id: 3,
-          });
-        }
-
-        // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
 
@@ -3800,8 +3737,144 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         });
 
-        purchase_order_cache["purchase_order_final_data_pool"] =
-          purchase_order_final_data_pool;
+        purchase_order_cache["invoice_po_and_gpi_data"] =
+          invoice_po_and_gpi_data;
+        purchase_order_cache["invoice_dummy_values"] = invoice_dummy_values;
+        purchase_order_cache["projects_po_and_gpi_data"] =
+          projects_po_and_gpi_data;
+        purchase_order_cache["project_total_data"] = project_total_data;
+        purchase_order_cache["project_dummy_values"] = project_dummy_values;
+
+        // console.log("purchase_order_final_data_pool: ", purchase_order_final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   purchase_order_final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log(
+          "purchase order data: ",
+          purchase_order_final_data_pool.length
+        );
+
+        if (purchase_order_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["purchase_order"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                purchase_order_final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["purchase_order"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET purchase_order = '${hvac_tables_responses["purchase_order"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        break;
+      }
+
+      case "projects": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
+        const invoice_data_pool =
+          data_lake["invoice"]["accounting__invoices"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        // getting data directly from service titan
+
+        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+        let gross_pay_items_data_pool =
+          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
+        let payrolls_data_pool =
+          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
+
+        let sales_data_pool =
+          data_lake["sales_details"]["sales__estimates"]["data_pool"];
+
+        // fetching business units from db
+        // ----------------
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching customers data from db
+        // ----------------
+        const customers_response = await sql_request.query(
+          "SELECT * FROM customer_details"
+        );
+
+        const customer_data = customers_response.recordset;
+
+        const customer_data_pool = {};
+
+        customer_data.map((current_record) => {
+          customer_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching location data from db
+        // ----------------
+        const location_response = await sql_request.query(
+          "SELECT * FROM location"
+        );
+
+        const location_data = location_response.recordset;
+
+        const location_data_pool = {};
+
+        location_data.map((current_record) => {
+          location_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        const sku_details_data_pool = {
+          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
+        };
+
+        let final_data_pool = [];
+        let purchase_order_final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        let invoice_po_and_gpi_data =
+          purchase_order_cache["invoice_po_and_gpi_data"];
+
+        let invoice_dummy_values = purchase_order_cache["invoice_dummy_values"];
+
+        let projects_po_and_gpi_data =
+          purchase_order_cache["projects_po_and_gpi_data"];
+
+        let project_total_data = purchase_order_cache["project_total_data"];
+
+        const project_dummy_values =
+          purchase_order_cache["project_dummy_values"];
 
         // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
 
@@ -7713,54 +7786,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         invoice_cache = {};
-
-        break;
-      }
-
-      case "purchase_order": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-
-        const header_data = hvac_tables[table_name]["columns"];
-
-        let final_data_pool =
-          purchase_order_cache["purchase_order_final_data_pool"];
-
-        // console.log("final_data_pool: ", final_data_pool);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        console.log("purchase order data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["purchase_order"]["status"] =
-              await hvac_merge_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["purchase_order"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET purchase_order = '${hvac_tables_responses["purchase_order"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
 
         break;
       }

@@ -40,8 +40,24 @@ async function getAPIWholeData(
       Object.keys(params_header)
         .map((param_name) => {
           if (params_header[param_name] && params_header[param_name] !== "") {
-            return `${param_name}=${params_header[param_name]}`;
+            if (
+              (param_name === "modifiedOnOrAfter" ||
+                param_name === "modifiedBefore") &&
+              api_name === "gross-pay-items"
+            ) {
+              // Handle special cases for modifiedOnOrAfter and modifiedBefore
+              if (param_name === "modifiedOnOrAfter") {
+                return `dateOnOrAfter=${params_header[param_name]}`;
+              } else {
+                return `dateOnOrBefore=${params_header[param_name]}`;
+              }
+            } else {
+              // Handle other cases
+              return `${param_name}=${params_header[param_name]}`;
+            }
           }
+          // Return undefined for cases where the condition is not met
+          return undefined;
         })
         .filter((param) => param !== undefined) // Remove undefined values
         .join("&");

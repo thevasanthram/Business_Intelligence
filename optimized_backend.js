@@ -56,13 +56,19 @@ let timezoneOffsetMinutes = 30; // 0 minutes ahead of UTC
 //   timezoneOffsetHours = 8;
 // }
 
-let createdBeforeTime = new Date();
+let modifiedBeforeTime = new Date();
 
-createdBeforeTime.setUTCHours(7, 0, 0, 0);
+modifiedBeforeTime.setUTCHours(7, 0, 0, 0);
+
+let modifiedOnOrAfterTime = new Date();
+
+modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
+
+modifiedOnOrAfterTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "2024-01-09T07:00:00.00Z", // 2023-12-25T00:00:00.00Z
-  modifiedBefore: "2024-01-10T07:00:00.00Z", //createdBeforeTime.toISOString()
+  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z
+  modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -427,6 +433,82 @@ const hvac_tables = {
       },
       burdenRate: {
         data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  purchase_order: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      requiredOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      sentOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_invoice_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "INT",
         constraint: { nullable: true },
       },
     },
@@ -1569,82 +1651,7 @@ const hvac_tables = {
       },
     },
   },
-  purchase_order: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      status: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      total: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      tax: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      date: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      requiredOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      sentOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      receivedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_invoice_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      project_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_project_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      vendor_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_vendor_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-    },
-  },
+
   cogs_labor: {
     columns: {
       paid_duration: {
@@ -2211,13 +2218,13 @@ async function azure_sql_operations(data_lake, table_list) {
 
   const pushing_time = startStopwatch("pushing data");
 
-  console.log(
-    "*************************************************CHECK MEM**********************************************************************"
-  );
-  await new Promise((resolve) => setTimeout(resolve, 15000));
-  console.log(
-    "***********************************************************************************************************************"
-  );
+  // console.log(
+  //   "*************************************************CHECK MEM**********************************************************************"
+  // );
+  // await new Promise((resolve) => setTimeout(resolve, 15000));
+  // console.log(
+  //   "***********************************************************************************************************************"
+  // );
 
   await data_processor(data_lake, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
@@ -2229,14 +2236,14 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (
+    let api_count = table_list.length - 1;
+    api_count < table_list.length;
+    api_count++
+  ) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
-
-    if (api_count >= 20 && api_count <= 23) {
-      continue;
-    }
 
     console.log("table_name: ", api_name);
 
@@ -4602,342 +4609,367 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
         // console.log("header_data: ", header_data);
 
-        await Promise.all(
-          Object.keys(telecom_calls_data_pool).map(async (record_id) => {
-            const record = telecom_calls_data_pool[record_id];
+        const batchSize = 50; // Set your desired batch size
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["leadCall"]["createdOn"]) {
-              if (
-                new Date(record["leadCall"]["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["leadCall"]["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["leadCall"]["modifiedOn"]) {
-              if (
-                new Date(record["leadCall"]["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["leadCall"]["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let receivedOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["leadCall"]["receivedOn"]) {
-              if (
-                new Date(record["leadCall"]["receivedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                receivedOn = record["leadCall"]["receivedOn"];
-              }
-            } else {
-              receivedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let project_id = record["instance_id"];
-            let actual_project_id = record["projectId"]
-              ? record["projectId"]
-              : record["instance_id"];
-
-            // checking projects availlable or not for mapping
-            const is_project_available = await sql_request.query(
-              `SELECT id FROM projects WHERE id=${record["projectId"]}`
-            );
-
-            if (is_project_available["recordset"].length > 0) {
-              project_id = record["projectId"];
-            }
-
-            let business_unit_id = record["instance_id"];
-            let actual_business_unit_id = record["instance_id"];
-            let business_unit_active = 0;
-            let business_unit_name = "default";
-            let business_unit_official_name = "default";
-            if (record["businessUnit"]) {
-              actual_business_unit_id = record["businessUnit"]["id"]
-                ? record["businessUnit"]["id"]
-                : record["instance_id"];
-              business_unit_active = record["businessUnit"]["active"] ? 1 : 0;
-              business_unit_name = record["businessUnit"]["name"]
-                ? record["businessUnit"]["name"]
-                : "default";
-              business_unit_official_name = record["businessUnit"][
-                "officialName"
-              ]
-                ? record["businessUnit"]["officialName"]
-                : "default";
-
-              // checking business unit availlable or not for mapping
-              const is_business_unit_available = await sql_request.query(
-                `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
-              );
-
-              if (is_business_unit_available["recordset"].length > 0) {
-                business_unit_id = record["businessUnit"]["id"];
-              }
-            }
-
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["instance_id"];
-            let customer_name = "default";
-            let is_customer_active = 0;
-            let street_address = "default";
-            let street = "default";
-            let unit = "default";
-            let city = "default";
-            let state = "default";
-            let country = "default";
-            let zip = "default";
-            let latitude = 0.0;
-            let longitude = 0.0;
-            let customer_import_id = "default";
-            let customer_type = "Others";
-            if (record["leadCall"]["customer"]) {
-              actual_customer_details_id = record["leadCall"]["customer"]["id"];
-              customer_name = record["leadCall"]["customer"]["name"]
-                ? record["leadCall"]["customer"]["name"]
-                : "default";
-              is_customer_active = record["leadCall"]["customer"]["active"]
-                ? 1
-                : 0;
-
-              if (record["leadCall"]["customer"]["address"]) {
-                street_address = record["leadCall"]["customer"]["address"][
-                  "streetAddress"
-                ]
-                  ? record["leadCall"]["customer"]["address"]["streetAddress"]
-                  : "default";
-                street = record["leadCall"]["customer"]["address"]["street"]
-                  ? record["leadCall"]["customer"]["address"]["street"]
-                  : "default";
-                unit = record["leadCall"]["customer"]["address"]["unit"]
-                  ? record["leadCall"]["customer"]["address"]["unit"]
-                  : "default";
-                city = record["leadCall"]["customer"]["address"]["city"]
-                  ? record["leadCall"]["customer"]["address"]["city"]
-                  : "default";
-                state = record["leadCall"]["customer"]["address"]["state"]
-                  ? record["leadCall"]["customer"]["address"]["state"]
-                  : "default";
-                country = record["leadCall"]["customer"]["address"]["country"]
-                  ? record["leadCall"]["customer"]["address"]["country"]
-                  : "default";
-                zip = record["leadCall"]["customer"]["address"]["zip"]
-                  ? record["leadCall"]["customer"]["address"]["zip"]
-                  : "default";
-                latitude = record["leadCall"]["customer"]["address"]["latitude"]
-                  ? record["leadCall"]["customer"]["address"]["latitude"]
-                  : 0.0;
-                longitude = record["leadCall"]["customer"]["address"][
-                  "longitude"
-                ]
-                  ? record["leadCall"]["customer"]["address"]["longitude"]
-                  : 0.0;
-              }
-
-              customer_import_id = record["leadCall"]["customer"]["importId"]
-                ? record["leadCall"]["customer"]["importId"]
-                : "default";
-              customer_type = record["leadCall"]["customer"]["type"]
-                ? record["leadCall"]["customer"]["type"]
-                : "Others";
-
-              // checking customer availlable or not for mapping
-              const is_customer_available = await sql_request.query(
-                `SELECT id FROM customer_details WHERE id=${record["leadCall"]["customer"]["id"]}`
-              );
-
-              if (is_customer_available["recordset"].length > 0) {
-                customer_details_id = record["leadCall"]["customer"]["id"];
-              }
-              if (customer_data_pool[record["leadCall"]["customer"]["id"]]) {
-                customer_details_id = record["leadCall"]["customer"]["id"];
-              }
-            }
-
-            let campaign_id = 0;
-            let campaign_category = "default";
-            let campaign_source = "default";
-            let campaign_medium = "default";
-            let campaign_dnis = "default";
-            let campaign_name = "default";
-            let campaign_createdOn = "2000-01-01T00:00:00.00Z";
-            let campaign_modifiedOn = "2000-01-01T00:00:00.00Z";
-            let is_campaign_active = 0;
-            if (record["leadCall"]["campaign"]) {
-              if (record["leadCall"]["campaign"]["createdOn"]) {
-                if (
-                  new Date(record["leadCall"]["campaign"]["createdOn"]) >
-                  new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  campaign_createdOn =
-                    record["leadCall"]["campaign"]["createdOn"];
-                }
-              } else {
-                campaign_createdOn = "2001-01-01T00:00:00.00Z";
-              }
-
-              if (record["leadCall"]["campaign"]["modifiedOn"]) {
-                if (
-                  new Date(record["leadCall"]["campaign"]["modifiedOn"]) >
-                  new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  campaign_modifiedOn =
-                    record["leadCall"]["campaign"]["modifiedOn"];
-                }
-              } else {
-                campaign_modifiedOn = "2001-01-01T00:00:00.00Z";
-              }
-
-              campaign_id = record["leadCall"]["campaign"]["id"]
-                ? record["leadCall"]["campaign"]["id"]
-                : 0;
-
-              if (record["leadCall"]["campaign"]["category"]) {
-                campaign_category = record["leadCall"]["campaign"]["category"][
-                  "name"
-                ]
-                  ? record["leadCall"]["campaign"]["category"]["name"]
-                  : "default";
-              }
-
-              campaign_source = record["leadCall"]["campaign"]["source"]
-                ? record["leadCall"]["campaign"]["source"]
-                : "default";
-              campaign_medium = record["leadCall"]["campaign"]["medium"]
-                ? record["leadCall"]["campaign"]["medium"]
-                : "default";
-              campaign_dnis = record["leadCall"]["campaign"]["dnis"]
-                ? record["leadCall"]["campaign"]["dnis"]
-                : "default";
-              campaign_name = record["leadCall"]["campaign"]["name"]
-                ? record["leadCall"]["campaign"]["name"]
-                : "default";
-              is_campaign_active = record["leadCall"]["campaign"]["active"]
-                ? 1
-                : 0;
-            }
-
-            let agent_id = 0;
-            let agent_externalId = 0;
-            let agent_name = "default";
-            if (record["leadCall"]["agent"]) {
-              agent_id = record["leadCall"]["agent"]["id"]
-                ? record["leadCall"]["agent"]["id"]
-                : 0;
-              agent_externalId = record["leadCall"]["agent"]["externalId"]
-                ? record["leadCall"]["agent"]["externalId"]
-                : 0;
-              agent_name = record["leadCall"]["agent"]["name"]
-                ? record["leadCall"]["agent"]["name"]
-                : "default";
-            }
-
-            let type_id = 0;
-            let type_name = "default";
-            let type_modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["type"]) {
-              type_id = record["type"]["id"] ? record["type"]["id"] : 0;
-              type_name = record["type"]["name"]
-                ? record["type"]["name"]
-                : "default";
-              if (record["type"]["modifiedOn"]) {
-                if (
-                  new Date(record["type"]["modifiedOn"]) >
-                  new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  type_modifiedOn = record["type"]["modifiedOn"];
-                }
-              } else {
-                type_modifiedOn = "2001-01-01T00:00:00.00Z";
-              }
-            }
-
-            let status = "Not Known";
-
-            // checking customer availlable or not for mapping
-            const is_job_status_available = await sql_request.query(
-              `SELECT status FROM appointments WHERE job_details_id=${record["jobNumber"]}`
-            );
-
-            if (is_job_status_available["recordset"].length > 0) {
-              status = is_job_status_available["recordset"][0]["status"];
-            }
-
-            final_data_pool.push({
-              id: record["leadCall"]["id"],
-              instance_id: record["instance_id"],
-              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-              status: status,
-              project_id: project_id,
-              actual_project_id: actual_project_id,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              receivedOn: receivedOn,
-              duration: record["leadCall"]["duration"]
-                ? record["leadCall"]["duration"]
-                : "00:00:00",
-              from: record["leadCall"]["from"]
-                ? record["leadCall"]["from"]
-                : "default",
-              to: record["leadCall"]["to"]
-                ? record["leadCall"]["to"]
-                : "default",
-              direction: record["leadCall"]["direction"]
-                ? record["leadCall"]["direction"]
-                : "Others",
-              call_type: record["leadCall"]["callType"]
-                ? record["leadCall"]["callType"]
-                : "Others",
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-              is_customer_active: is_customer_active,
-              customer_name: customer_name,
-              street_address: street_address,
-              street: street,
-              unit: unit,
-              city: city,
-              state: state,
-              country: country,
-              zip: zip,
-              latitude: latitude,
-              longitude: longitude,
-              customer_import_id: customer_import_id,
-              customer_type: customer_type,
-              campaign_id: campaign_id,
-              campaign_category: campaign_category,
-              campaign_source: campaign_source,
-              campaign_medium: campaign_medium,
-              campaign_dnis: campaign_dnis,
-              campaign_name: campaign_name,
-              campaign_createdOn: campaign_createdOn,
-              campaign_modifiedOn: campaign_modifiedOn,
-              is_campaign_active: is_campaign_active,
-              agent_id: agent_id,
-              agent_externalId: agent_externalId,
-              agent_name: agent_name,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              business_unit_active: business_unit_active,
-              business_unit_name: business_unit_name,
-              business_unit_official_name: business_unit_official_name,
-              type_id: type_id,
-              type_name: type_name,
-              type_modifiedOn: type_modifiedOn,
-            });
-          })
+        console.log(
+          "Object.keys(telecom_calls_data_pool).length: ",
+          Object.keys(telecom_calls_data_pool).length
         );
+
+        for (
+          let i = 0;
+          i < Object.keys(telecom_calls_data_pool).length;
+          i += batchSize
+        ) {
+          await Promise.all(
+            Object.keys(telecom_calls_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = telecom_calls_data_pool[record_id];
+
+                let createdOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["leadCall"]["createdOn"]) {
+                  if (
+                    new Date(record["leadCall"]["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["leadCall"]["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["leadCall"]["modifiedOn"]) {
+                  if (
+                    new Date(record["leadCall"]["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["leadCall"]["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let receivedOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["leadCall"]["receivedOn"]) {
+                  if (
+                    new Date(record["leadCall"]["receivedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    receivedOn = record["leadCall"]["receivedOn"];
+                  }
+                } else {
+                  receivedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
+
+                // checking projects availlable or not for mapping
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                );
+
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
+
+                let business_unit_id = record["instance_id"];
+                let actual_business_unit_id = record["instance_id"];
+                let business_unit_active = 0;
+                let business_unit_name = "default";
+                let business_unit_official_name = "default";
+                if (record["businessUnit"]) {
+                  actual_business_unit_id = record["businessUnit"]["id"]
+                    ? record["businessUnit"]["id"]
+                    : record["instance_id"];
+                  business_unit_active = record["businessUnit"]["active"]
+                    ? 1
+                    : 0;
+                  business_unit_name = record["businessUnit"]["name"]
+                    ? record["businessUnit"]["name"]
+                    : "default";
+                  business_unit_official_name = record["businessUnit"][
+                    "officialName"
+                  ]
+                    ? record["businessUnit"]["officialName"]
+                    : "default";
+
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+                  );
+
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnit"]["id"];
+                  }
+                }
+
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["instance_id"];
+                let customer_name = "default";
+                let is_customer_active = 0;
+                let street_address = "default";
+                let street = "default";
+                let unit = "default";
+                let city = "default";
+                let state = "default";
+                let country = "default";
+                let zip = "default";
+                let latitude = 0.0;
+                let longitude = 0.0;
+                let customer_import_id = "default";
+                let customer_type = "Others";
+                if (record["leadCall"]["customer"]) {
+                  actual_customer_details_id =
+                    record["leadCall"]["customer"]["id"];
+                  customer_name = record["leadCall"]["customer"]["name"]
+                    ? record["leadCall"]["customer"]["name"]
+                    : "default";
+                  is_customer_active = record["leadCall"]["customer"]["active"]
+                    ? 1
+                    : 0;
+
+                  if (record["leadCall"]["customer"]["address"]) {
+                    street_address = record["leadCall"]["customer"]["address"][
+                      "streetAddress"
+                    ]
+                      ? record["leadCall"]["customer"]["address"][
+                          "streetAddress"
+                        ]
+                      : "default";
+                    street = record["leadCall"]["customer"]["address"]["street"]
+                      ? record["leadCall"]["customer"]["address"]["street"]
+                      : "default";
+                    unit = record["leadCall"]["customer"]["address"]["unit"]
+                      ? record["leadCall"]["customer"]["address"]["unit"]
+                      : "default";
+                    city = record["leadCall"]["customer"]["address"]["city"]
+                      ? record["leadCall"]["customer"]["address"]["city"]
+                      : "default";
+                    state = record["leadCall"]["customer"]["address"]["state"]
+                      ? record["leadCall"]["customer"]["address"]["state"]
+                      : "default";
+                    country = record["leadCall"]["customer"]["address"][
+                      "country"
+                    ]
+                      ? record["leadCall"]["customer"]["address"]["country"]
+                      : "default";
+                    zip = record["leadCall"]["customer"]["address"]["zip"]
+                      ? record["leadCall"]["customer"]["address"]["zip"]
+                      : "default";
+                    latitude = record["leadCall"]["customer"]["address"][
+                      "latitude"
+                    ]
+                      ? record["leadCall"]["customer"]["address"]["latitude"]
+                      : 0.0;
+                    longitude = record["leadCall"]["customer"]["address"][
+                      "longitude"
+                    ]
+                      ? record["leadCall"]["customer"]["address"]["longitude"]
+                      : 0.0;
+                  }
+
+                  customer_import_id = record["leadCall"]["customer"][
+                    "importId"
+                  ]
+                    ? record["leadCall"]["customer"]["importId"]
+                    : "default";
+                  customer_type = record["leadCall"]["customer"]["type"]
+                    ? record["leadCall"]["customer"]["type"]
+                    : "Others";
+
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id=${record["leadCall"]["customer"]["id"]}`
+                  );
+
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["leadCall"]["customer"]["id"];
+                  }
+                }
+
+                let campaign_id = 0;
+                let campaign_category = "default";
+                let campaign_source = "default";
+                let campaign_medium = "default";
+                let campaign_dnis = "default";
+                let campaign_name = "default";
+                let campaign_createdOn = "2000-01-01T00:00:00.00Z";
+                let campaign_modifiedOn = "2000-01-01T00:00:00.00Z";
+                let is_campaign_active = 0;
+                if (record["leadCall"]["campaign"]) {
+                  if (record["leadCall"]["campaign"]["createdOn"]) {
+                    if (
+                      new Date(record["leadCall"]["campaign"]["createdOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      campaign_createdOn =
+                        record["leadCall"]["campaign"]["createdOn"];
+                    }
+                  } else {
+                    campaign_createdOn = "2001-01-01T00:00:00.00Z";
+                  }
+
+                  if (record["leadCall"]["campaign"]["modifiedOn"]) {
+                    if (
+                      new Date(record["leadCall"]["campaign"]["modifiedOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      campaign_modifiedOn =
+                        record["leadCall"]["campaign"]["modifiedOn"];
+                    }
+                  } else {
+                    campaign_modifiedOn = "2001-01-01T00:00:00.00Z";
+                  }
+
+                  campaign_id = record["leadCall"]["campaign"]["id"]
+                    ? record["leadCall"]["campaign"]["id"]
+                    : 0;
+
+                  if (record["leadCall"]["campaign"]["category"]) {
+                    campaign_category = record["leadCall"]["campaign"][
+                      "category"
+                    ]["name"]
+                      ? record["leadCall"]["campaign"]["category"]["name"]
+                      : "default";
+                  }
+
+                  campaign_source = record["leadCall"]["campaign"]["source"]
+                    ? record["leadCall"]["campaign"]["source"]
+                    : "default";
+                  campaign_medium = record["leadCall"]["campaign"]["medium"]
+                    ? record["leadCall"]["campaign"]["medium"]
+                    : "default";
+                  campaign_dnis = record["leadCall"]["campaign"]["dnis"]
+                    ? record["leadCall"]["campaign"]["dnis"]
+                    : "default";
+                  campaign_name = record["leadCall"]["campaign"]["name"]
+                    ? record["leadCall"]["campaign"]["name"]
+                    : "default";
+                  is_campaign_active = record["leadCall"]["campaign"]["active"]
+                    ? 1
+                    : 0;
+                }
+
+                let agent_id = 0;
+                let agent_externalId = 0;
+                let agent_name = "default";
+                if (record["leadCall"]["agent"]) {
+                  agent_id = record["leadCall"]["agent"]["id"]
+                    ? record["leadCall"]["agent"]["id"]
+                    : 0;
+                  agent_externalId = record["leadCall"]["agent"]["externalId"]
+                    ? record["leadCall"]["agent"]["externalId"]
+                    : 0;
+                  agent_name = record["leadCall"]["agent"]["name"]
+                    ? record["leadCall"]["agent"]["name"]
+                    : "default";
+                }
+
+                let type_id = 0;
+                let type_name = "default";
+                let type_modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["type"]) {
+                  type_id = record["type"]["id"] ? record["type"]["id"] : 0;
+                  type_name = record["type"]["name"]
+                    ? record["type"]["name"]
+                    : "default";
+                  if (record["type"]["modifiedOn"]) {
+                    if (
+                      new Date(record["type"]["modifiedOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      type_modifiedOn = record["type"]["modifiedOn"];
+                    }
+                  } else {
+                    type_modifiedOn = "2001-01-01T00:00:00.00Z";
+                  }
+                }
+
+                let status = "Not Known";
+
+                // checking customer availlable or not for mapping
+                const is_job_status_available = await sql_request.query(
+                  `SELECT status FROM appointments WHERE job_details_id=${record["jobNumber"]}`
+                );
+
+                if (is_job_status_available["recordset"].length > 0) {
+                  status = is_job_status_available["recordset"][0]["status"];
+                }
+
+                final_data_pool.push({
+                  id: record["leadCall"]["id"],
+                  instance_id: record["instance_id"],
+                  job_number: record["jobNumber"]
+                    ? record["jobNumber"]
+                    : "default",
+                  status: status,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  receivedOn: receivedOn,
+                  duration: record["leadCall"]["duration"]
+                    ? record["leadCall"]["duration"]
+                    : "00:00:00",
+                  from: record["leadCall"]["from"]
+                    ? record["leadCall"]["from"]
+                    : "default",
+                  to: record["leadCall"]["to"]
+                    ? record["leadCall"]["to"]
+                    : "default",
+                  direction: record["leadCall"]["direction"]
+                    ? record["leadCall"]["direction"]
+                    : "Others",
+                  call_type: record["leadCall"]["callType"]
+                    ? record["leadCall"]["callType"]
+                    : "Others",
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                  is_customer_active: is_customer_active,
+                  customer_name: customer_name,
+                  street_address: street_address,
+                  street: street,
+                  unit: unit,
+                  city: city,
+                  state: state,
+                  country: country,
+                  zip: zip,
+                  latitude: latitude,
+                  longitude: longitude,
+                  customer_import_id: customer_import_id,
+                  customer_type: customer_type,
+                  campaign_id: campaign_id,
+                  campaign_category: campaign_category,
+                  campaign_source: campaign_source,
+                  campaign_medium: campaign_medium,
+                  campaign_dnis: campaign_dnis,
+                  campaign_name: campaign_name,
+                  campaign_createdOn: campaign_createdOn,
+                  campaign_modifiedOn: campaign_modifiedOn,
+                  is_campaign_active: is_campaign_active,
+                  agent_id: agent_id,
+                  agent_externalId: agent_externalId,
+                  agent_name: agent_name,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                  business_unit_active: business_unit_active,
+                  business_unit_name: business_unit_name,
+                  business_unit_official_name: business_unit_official_name,
+                  type_id: type_id,
+                  type_name: type_name,
+                  type_modifiedOn: type_modifiedOn,
+                });
+              })
+          );
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -4995,166 +5027,180 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("jobs_data_pool: ", jobs_data_pool);
         // console.log("header_data: ", header_data);
 
-        await Promise.all(
-          Object.keys(jobs_data_pool).map(async (record_id) => {
-            const record = jobs_data_pool[record_id];
-            let business_unit_id = record["instance_id"];
-            let actual_business_unit_id = record["businessUnitId"]
-              ? record["businessUnitId"]
-              : record["instance_id"];
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["customerId"]
-              ? record["customerId"]
-              : record["instance_id"];
-            let project_id = record["instance_id"];
-            let actual_project_id = record["projectId"]
-              ? record["projectId"]
-              : record["instance_id"];
-            let location_id = record["instance_id"];
-            let actual_location_id = record["locationId"]
-              ? record["locationId"]
-              : record["instance_id"];
-            let lead_call_id = record["instance_id"];
-            let actual_lead_call_id = record["leadCallId"]
-              ? record["leadCallId"]
-              : record["instance_id"];
-            let campaign_id = record["instance_id"];
-            let actual_campaign_id = record["campaignId"]
-              ? record["campaignId"]
-              : record["instance_id"];
-            let booking_id = record["instance_id"];
-            let actual_booking_id = record["bookingId"]
-              ? record["bookingId"]
-              : record["instance_id"];
+        const batchSize = 100;
 
-            // checking business unit availlable or not for mapping
-            const is_business_unit_available = await sql_request.query(
-              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-            );
+        for (
+          let i = 0;
+          i < Object.keys(jobs_data_pool).length;
+          i += batchSize
+        ) {
+          await Promise.all(
+            Object.keys(jobs_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = jobs_data_pool[record_id];
+                let business_unit_id = record["instance_id"];
+                let actual_business_unit_id = record["businessUnitId"]
+                  ? record["businessUnitId"]
+                  : record["instance_id"];
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["customerId"]
+                  ? record["customerId"]
+                  : record["instance_id"];
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
+                let location_id = record["instance_id"];
+                let actual_location_id = record["locationId"]
+                  ? record["locationId"]
+                  : record["instance_id"];
+                let lead_call_id = record["instance_id"];
+                let actual_lead_call_id = record["leadCallId"]
+                  ? record["leadCallId"]
+                  : record["instance_id"];
+                let campaign_id = record["instance_id"];
+                let actual_campaign_id = record["campaignId"]
+                  ? record["campaignId"]
+                  : record["instance_id"];
+                let booking_id = record["instance_id"];
+                let actual_booking_id = record["bookingId"]
+                  ? record["bookingId"]
+                  : record["instance_id"];
 
-            if (is_business_unit_available["recordset"].length > 0) {
-              business_unit_id = record["businessUnitId"];
-            }
+                // checking business unit availlable or not for mapping
+                const is_business_unit_available = await sql_request.query(
+                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                );
 
-            // checking customer availlable or not for mapping
-            const is_customer_available = await sql_request.query(
-              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-            );
+                if (is_business_unit_available["recordset"].length > 0) {
+                  business_unit_id = record["businessUnitId"];
+                }
 
-            if (is_customer_available["recordset"].length > 0) {
-              customer_details_id = record["customerId"];
-            }
+                // checking customer availlable or not for mapping
+                const is_customer_available = await sql_request.query(
+                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                );
 
-            // checking projects availlable or not for mapping
-            const is_project_available = await sql_request.query(
-              `SELECT id FROM projects WHERE id=${record["projectId"]}`
-            );
+                if (is_customer_available["recordset"].length > 0) {
+                  customer_details_id = record["customerId"];
+                }
 
-            if (is_project_available["recordset"].length > 0) {
-              project_id = record["projectId"];
-            }
+                // checking projects availlable or not for mapping
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                );
 
-            // checking location availlable or not for mapping
-            const is_location_available = await sql_request.query(
-              `SELECT id FROM location WHERE id=${record["locationId"]}`
-            );
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
 
-            if (is_location_available["recordset"].length > 0) {
-              location_id = record["locationId"];
-            }
+                // checking location availlable or not for mapping
+                const is_location_available = await sql_request.query(
+                  `SELECT id FROM location WHERE id=${record["locationId"]}`
+                );
 
-            // checking call availlable or not for mapping
-            const is_call_available = await sql_request.query(
-              `SELECT id FROM call_details WHERE id=${record["leadCallId"]}`
-            );
+                if (is_location_available["recordset"].length > 0) {
+                  location_id = record["locationId"];
+                }
 
-            if (is_call_available["recordset"].length > 0) {
-              lead_call_id = record["leadCallId"];
-            }
+                // checking call availlable or not for mapping
+                const is_call_available = await sql_request.query(
+                  `SELECT id FROM call_details WHERE id=${record["leadCallId"]}`
+                );
 
-            // checking campaignId availlable or not for mapping
-            const is_campaigns_available = await sql_request.query(
-              `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
-            );
+                if (is_call_available["recordset"].length > 0) {
+                  lead_call_id = record["leadCallId"];
+                }
 
-            if (is_campaigns_available["recordset"].length > 0) {
-              campaign_id = record["campaignId"];
-            }
+                // checking campaignId availlable or not for mapping
+                const is_campaigns_available = await sql_request.query(
+                  `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
+                );
 
-            // checking bookings id availlable or not for mapping
-            const is_bookings_available = await sql_request.query(
-              `SELECT id FROM bookings WHERE id=${record["bookingId"]}`
-            );
+                if (is_campaigns_available["recordset"].length > 0) {
+                  campaign_id = record["campaignId"];
+                }
 
-            if (is_bookings_available["recordset"].length > 0) {
-              booking_id = record["bookingId"];
-            }
+                // checking bookings id availlable or not for mapping
+                const is_bookings_available = await sql_request.query(
+                  `SELECT id FROM bookings WHERE id=${record["bookingId"]}`
+                );
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                if (is_bookings_available["recordset"].length > 0) {
+                  booking_id = record["bookingId"];
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            let job_completion_time = "2000-01-01T00:00:00.00Z";
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["completedOn"]) {
-              if (
-                new Date(record["completedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                job_completion_time = record["completedOn"];
-              }
-            } else {
-              job_completion_time = "2001-01-01T00:00:00.00Z";
-            }
+                let job_completion_time = "2000-01-01T00:00:00.00Z";
 
-            final_data_pool.push({
-              id: record["id"],
-              job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
-              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-              job_status: record["jobStatus"],
-              job_completion_time: job_completion_time,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-              project_id: project_id,
-              actual_project_id: actual_project_id,
-              campaign_id: campaign_id,
-              actual_campaign_id: actual_campaign_id,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              created_by_id: record["createdById"] ? record["createdById"] : 0,
-              lead_call_id: lead_call_id,
-              actual_lead_call_id: actual_lead_call_id,
-              booking_id: booking_id,
-              actual_booking_id: actual_booking_id,
-              sold_by_id: record["soldById"] ? record["soldById"] : 0,
-            });
-          })
-        );
+                if (record["completedOn"]) {
+                  if (
+                    new Date(record["completedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    job_completion_time = record["completedOn"];
+                  }
+                } else {
+                  job_completion_time = "2001-01-01T00:00:00.00Z";
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
+                  job_number: record["jobNumber"]
+                    ? record["jobNumber"]
+                    : "default",
+                  job_status: record["jobStatus"],
+                  job_completion_time: job_completion_time,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                  location_id: location_id,
+                  actual_location_id: actual_location_id,
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  campaign_id: campaign_id,
+                  actual_campaign_id: actual_campaign_id,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  created_by_id: record["createdById"]
+                    ? record["createdById"]
+                    : 0,
+                  lead_call_id: lead_call_id,
+                  actual_lead_call_id: actual_lead_call_id,
+                  booking_id: booking_id,
+                  actual_booking_id: actual_booking_id,
+                  sold_by_id: record["soldById"] ? record["soldById"] : 0,
+                });
+              })
+          );
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -5203,153 +5249,162 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        const batchSize = 100;
 
-            let project_id = record["instance_id"];
-            let actual_project_id = record["projectId"]
-              ? record["projectId"]
-              : record["instance_id"];
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            // checking projects availlable or not for mapping
-            const is_project_available = await sql_request.query(
-              `SELECT id FROM projects WHERE id=${record["projectId"]}`
-            );
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
 
-            if (is_project_available["recordset"].length > 0) {
-              project_id = record["projectId"];
-            }
+                // checking projects availlable or not for mapping
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                );
 
-            let business_unit_id = record["instance_id"];
-            let acutal_business_unit_id = record["instance_id"];
-            let businessUnitName = record["businessUnitName"]
-              ? record["businessUnitName"]
-              : "default";
-            // checking business unit availlable or not for mapping
-            const is_business_unit_available = await sql_request.query(
-              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-            );
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
 
-            if (is_business_unit_available["recordset"].length > 0) {
-              acutal_business_unit_id = record["businessUnitId"];
-              business_unit_id = record["businessUnitId"];
-            }
+                let business_unit_id = record["instance_id"];
+                let acutal_business_unit_id = record["instance_id"];
+                let businessUnitName = record["businessUnitName"]
+                  ? record["businessUnitName"]
+                  : "default";
+                // checking business unit availlable or not for mapping
+                const is_business_unit_available = await sql_request.query(
+                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                );
 
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"];
+                if (is_business_unit_available["recordset"].length > 0) {
+                  acutal_business_unit_id = record["businessUnitId"];
+                  business_unit_id = record["businessUnitId"];
+                }
 
-            // checking jobId availlable or not for mapping
-            const is_jobs_available = await sql_request.query(
-              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-            );
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["jobId"]
+                  ? record["jobId"]
+                  : record["instance_id"];
 
-            if (is_jobs_available["recordset"].length > 0) {
-              job_details_id = record["jobId"];
-            }
+                // checking jobId availlable or not for mapping
+                const is_jobs_available = await sql_request.query(
+                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                );
 
-            let location_id = record["instance_id"];
-            let actual_location_id = record["instance_id"];
+                if (is_jobs_available["recordset"].length > 0) {
+                  job_details_id = record["jobId"];
+                }
 
-            // checking location availlable or not for mapping
-            const is_location_available = await sql_request.query(
-              `SELECT id FROM location WHERE id=${record["locationId"]}`
-            );
+                let location_id = record["instance_id"];
+                let actual_location_id = record["instance_id"];
 
-            if (is_location_available["recordset"].length > 0) {
-              location_id = record["locationId"];
-              actual_location_id = record["locationId"];
-            }
+                // checking location availlable or not for mapping
+                const is_location_available = await sql_request.query(
+                  `SELECT id FROM location WHERE id=${record["locationId"]}`
+                );
 
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["customerId"]
-              ? record["customerId"]
-              : record["instance_id"];
-            // checking customer availlable or not for mapping
-            const is_customer_available = await sql_request.query(
-              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-            );
+                if (is_location_available["recordset"].length > 0) {
+                  location_id = record["locationId"];
+                  actual_location_id = record["locationId"];
+                }
 
-            if (is_customer_available["recordset"].length > 0) {
-              customer_details_id = record["customerId"];
-            }
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["customerId"]
+                  ? record["customerId"]
+                  : record["instance_id"];
+                // checking customer availlable or not for mapping
+                const is_customer_available = await sql_request.query(
+                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                );
 
-            let soldOn = "2000-01-01T00:00:00.00Z";
+                if (is_customer_available["recordset"].length > 0) {
+                  customer_details_id = record["customerId"];
+                }
 
-            if (record["soldOn"]) {
-              if (
-                new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                soldOn = record["soldOn"];
-              }
-            } else {
-              soldOn = "2001-01-01T00:00:00.00Z";
-            }
+                let soldOn = "2000-01-01T00:00:00.00Z";
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                if (record["soldOn"]) {
+                  if (
+                    new Date(record["soldOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    soldOn = record["soldOn"];
+                  }
+                } else {
+                  soldOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            let status_value = 0;
-            let status_name = "default";
-            if (record["status"]) {
-              status_value = record["status"]["value"]
-                ? record["status"]["value"]
-                : 0;
-              status_name = record["status"]["name"]
-                ? record["status"]["name"]
-                : "default";
-            }
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            final_data_pool.push({
-              id: record["id"],
-              name: record["name"] ? record["name"] : "default",
-              project_id: project_id,
-              actual_project_id: actual_project_id,
-              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-              soldOn: soldOn,
-              soldBy: record["soldBy"] ? record["soldBy"] : 0,
-              is_active: record["active"] ? 1 : 0,
-              subtotal: record["subtotal"] ? record["subtotal"] : 0,
-              status_value: status_value,
-              status_name: status_name,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              business_unit_id: business_unit_id,
-              acutal_business_unit_id: acutal_business_unit_id,
-              businessUnitName: businessUnitName,
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-            });
-          })
-        );
+                let status_value = 0;
+                let status_name = "default";
+                if (record["status"]) {
+                  status_value = record["status"]["value"]
+                    ? record["status"]["value"]
+                    : 0;
+                  status_name = record["status"]["name"]
+                    ? record["status"]["name"]
+                    : "default";
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  name: record["name"] ? record["name"] : "default",
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  job_number: record["jobNumber"]
+                    ? record["jobNumber"]
+                    : "default",
+                  soldOn: soldOn,
+                  soldBy: record["soldBy"] ? record["soldBy"] : 0,
+                  is_active: record["active"] ? 1 : 0,
+                  subtotal: record["subtotal"] ? record["subtotal"] : 0,
+                  status_value: status_value,
+                  status_name: status_name,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  business_unit_id: business_unit_id,
+                  acutal_business_unit_id: acutal_business_unit_id,
+                  businessUnitName: businessUnitName,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  location_id: location_id,
+                  actual_location_id: actual_location_id,
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                });
+              })
+          );
+        }
 
         console.log("sales_details data: ", final_data_pool.length);
 
@@ -5390,129 +5445,137 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        const batchSize = 100;
 
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"];
-            // checking jobId availlable or not for mapping
-            const is_jobs_available = await sql_request.query(
-              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-            );
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            if (is_jobs_available["recordset"].length > 0) {
-              job_details_id = record["jobId"];
-            }
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["jobId"]
+                  ? record["jobId"]
+                  : record["instance_id"];
+                // checking jobId availlable or not for mapping
+                const is_jobs_available = await sql_request.query(
+                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                );
 
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["customerId"]
-              ? record["customerId"]
-              : record["instance_id"];
+                if (is_jobs_available["recordset"].length > 0) {
+                  job_details_id = record["jobId"];
+                }
 
-            // checking customer availlable or not for mapping
-            const is_customer_available = await sql_request.query(
-              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-            );
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["customerId"]
+                  ? record["customerId"]
+                  : record["instance_id"];
 
-            if (is_customer_available["recordset"].length > 0) {
-              customer_details_id = record["customerId"];
-            }
+                // checking customer availlable or not for mapping
+                const is_customer_available = await sql_request.query(
+                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                );
 
-            let start = "2000-01-01T00:00:00.00Z";
+                if (is_customer_available["recordset"].length > 0) {
+                  customer_details_id = record["customerId"];
+                }
 
-            if (record["start"]) {
-              if (
-                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                start = record["start"];
-              }
-            } else {
-              start = "2001-01-01T00:00:00.00Z";
-            }
+                let start = "2000-01-01T00:00:00.00Z";
 
-            let end = "2000-01-01T00:00:00.00Z";
-            if (record["end"]) {
-              if (
-                new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                end = record["end"];
-              }
-            } else {
-              end = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["start"]) {
+                  if (
+                    new Date(record["start"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    start = record["start"];
+                  }
+                } else {
+                  start = "2001-01-01T00:00:00.00Z";
+                }
 
-            let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
+                let end = "2000-01-01T00:00:00.00Z";
+                if (record["end"]) {
+                  if (
+                    new Date(record["end"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    end = record["end"];
+                  }
+                } else {
+                  end = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["arrivalWindowStart"]) {
-              if (
-                new Date(record["arrivalWindowStart"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                arrivalWindowStart = record["arrivalWindowStart"];
-              }
-            } else {
-              arrivalWindowStart = "2001-01-01T00:00:00.00Z";
-            }
+                let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
 
-            let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
-            if (record["arrivalWindowEnd"]) {
-              if (
-                new Date(record["arrivalWindowEnd"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                arrivalWindowEnd = record["arrivalWindowEnd"];
-              }
-            } else {
-              arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["arrivalWindowStart"]) {
+                  if (
+                    new Date(record["arrivalWindowStart"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    arrivalWindowStart = record["arrivalWindowStart"];
+                  }
+                } else {
+                  arrivalWindowStart = "2001-01-01T00:00:00.00Z";
+                }
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
+                if (record["arrivalWindowEnd"]) {
+                  if (
+                    new Date(record["arrivalWindowEnd"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    arrivalWindowEnd = record["arrivalWindowEnd"];
+                  }
+                } else {
+                  arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            final_data_pool.push({
-              id: record["id"],
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              appointmentNumber: record["appointmentNumber"]
-                ? record["appointmentNumber"]
-                : "default",
-              start: start,
-              end: end,
-              arrivalWindowStart: arrivalWindowStart,
-              arrivalWindowEnd: arrivalWindowEnd,
-              status: record["status"] ? record["status"] : "Not Known",
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-            });
-          })
-        );
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  appointmentNumber: record["appointmentNumber"]
+                    ? record["appointmentNumber"]
+                    : "default",
+                  start: start,
+                  end: end,
+                  arrivalWindowStart: arrivalWindowStart,
+                  arrivalWindowEnd: arrivalWindowEnd,
+                  status: record["status"] ? record["status"] : "Not Known",
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                });
+              })
+          );
+        }
 
         console.log("appointments data: ", final_data_pool.length);
 
@@ -5557,14 +5620,22 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default_vendor",
-            is_active: record["active"] ? 1 : 0,
-          });
-        });
+        const batchSize = 100;
+
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map((record_id) => {
+                const record = data_pool[record_id];
+                final_data_pool.push({
+                  id: record["id"],
+                  name: record["name"] ? record["name"] : "default_vendor",
+                  is_active: record["active"] ? 1 : 0,
+                });
+              })
+          );
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -5615,30 +5686,36 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
-            let acutal_business_unit_id = record["instance_id"];
-            let business_unit_id = record["instance_id"];
+        const batchSize = 100;
 
-            // checking business unit availlable or not for mapping
-            const is_business_unit_available = await sql_request.query(
-              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-            );
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
+                let acutal_business_unit_id = record["instance_id"];
+                let business_unit_id = record["instance_id"];
 
-            if (is_business_unit_available["recordset"].length > 0) {
-              business_unit_id = record["businessUnitId"];
-              acutal_business_unit_id = record["businessUnitId"];
-            }
+                // checking business unit availlable or not for mapping
+                const is_business_unit_available = await sql_request.query(
+                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                );
 
-            final_data_pool.push({
-              id: record["id"],
-              name: record["name"] ? record["name"] : "default_technician",
-              business_unit_id: business_unit_id,
-              acutal_business_unit_id: acutal_business_unit_id,
-            });
-          })
-        );
+                if (is_business_unit_available["recordset"].length > 0) {
+                  business_unit_id = record["businessUnitId"];
+                  acutal_business_unit_id = record["businessUnitId"];
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  name: record["name"] ? record["name"] : "default_technician",
+                  business_unit_id: business_unit_id,
+                  acutal_business_unit_id: acutal_business_unit_id,
+                });
+              })
+          );
+        }
 
         console.log("techician data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -5689,85 +5766,91 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        const batchSize = 100;
 
-            let technician_id = record["instance_id"];
-            let actual_technician_id = record["technicianId"]
-              ? record["technicianId"]
-              : record["instance_id"];
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            // checking technician availlable or not for mapping
-            const is_technnician_available = await sql_request.query(
-              `SELECT id FROM technician WHERE id=${record["technicianId"]}`
-            );
+                let technician_id = record["instance_id"];
+                let actual_technician_id = record["technicianId"]
+                  ? record["technicianId"]
+                  : record["instance_id"];
 
-            if (is_technnician_available["recordset"].length > 0) {
-              technician_id = record["technicianId"];
-            }
+                // checking technician availlable or not for mapping
+                const is_technnician_available = await sql_request.query(
+                  `SELECT id FROM technician WHERE id=${record["technicianId"]}`
+                );
 
-            let assignedOn = "2000-01-01T00:00:00.00Z";
+                if (is_technnician_available["recordset"].length > 0) {
+                  technician_id = record["technicianId"];
+                }
 
-            if (record["assignedOn"]) {
-              if (
-                new Date(record["assignedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                assignedOn = record["assignedOn"];
-              }
-            } else {
-              assignedOn = "2001-01-01T00:00:00.00Z";
-            }
+                let assignedOn = "2000-01-01T00:00:00.00Z";
 
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"];
+                if (record["assignedOn"]) {
+                  if (
+                    new Date(record["assignedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    assignedOn = record["assignedOn"];
+                  }
+                } else {
+                  assignedOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            // checking jobId availlable or not for mapping
-            const is_jobs_available = await sql_request.query(
-              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-            );
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["jobId"]
+                  ? record["jobId"]
+                  : record["instance_id"];
 
-            if (is_jobs_available["recordset"].length > 0) {
-              job_details_id = record["jobId"];
-            }
+                // checking jobId availlable or not for mapping
+                const is_jobs_available = await sql_request.query(
+                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                );
 
-            let appointment_id = record["instance_id"];
-            let actual_appointment_id = record["appointmentId"]
-              ? record["appointmentId"]
-              : record["instance_id"];
+                if (is_jobs_available["recordset"].length > 0) {
+                  job_details_id = record["jobId"];
+                }
 
-            // checking appointments availlable or not for mapping
-            const is_appointment_available = await sql_request.query(
-              `SELECT id FROM appointments WHERE id=${record["appointmentId"]}`
-            );
+                let appointment_id = record["instance_id"];
+                let actual_appointment_id = record["appointmentId"]
+                  ? record["appointmentId"]
+                  : record["instance_id"];
 
-            if (is_appointment_available["recordset"].length > 0) {
-              appointment_id = record["appointmentId"];
-            }
+                // checking appointments availlable or not for mapping
+                const is_appointment_available = await sql_request.query(
+                  `SELECT id FROM appointments WHERE id=${record["appointmentId"]}`
+                );
 
-            final_data_pool.push({
-              id: record["id"],
-              technician_id: technician_id,
-              actual_technician_id: actual_technician_id,
-              technician_name: record["technicianName"]
-                ? record["technicianName"]
-                : "default",
-              assigned_by_id: record["assignedById"]
-                ? record["assignedById"]
-                : 0,
-              assignedOn: assignedOn,
-              status: record["status"] ? record["status"] : "default",
-              is_paused: record["isPaused"] ? record["isPaused"] : 0,
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              appointment_id: appointment_id,
-              actual_appointment_id: actual_appointment_id,
-            });
-          })
-        );
+                if (is_appointment_available["recordset"].length > 0) {
+                  appointment_id = record["appointmentId"];
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  technician_id: technician_id,
+                  actual_technician_id: actual_technician_id,
+                  technician_name: record["technicianName"]
+                    ? record["technicianName"]
+                    : "default",
+                  assigned_by_id: record["assignedById"]
+                    ? record["assignedById"]
+                    : 0,
+                  assignedOn: assignedOn,
+                  status: record["status"] ? record["status"] : "default",
+                  is_paused: record["isPaused"] ? record["isPaused"] : 0,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  appointment_id: appointment_id,
+                  actual_appointment_id: actual_appointment_id,
+                });
+              })
+          );
+        }
 
         console.log("appointment_assignments data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -5821,77 +5904,88 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        const batchSize = 100;
 
-            let technician_id = record["instance_id"];
-            let actual_technician_id = record["technicianId"]
-              ? record["technicianId"]
-              : record["instance_id"];
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            // checking technician availlable or not for mapping
-            const is_technnician_available = await sql_request.query(
-              `SELECT id FROM technician WHERE id=${record["technicianId"]}`
-            );
+                let technician_id = record["instance_id"];
+                let actual_technician_id = record["technicianId"]
+                  ? record["technicianId"]
+                  : record["instance_id"];
 
-            if (is_technnician_available["recordset"].length > 0) {
-              technician_id = record["technicianId"];
-            }
+                // checking technician availlable or not for mapping
+                const is_technnician_available = await sql_request.query(
+                  `SELECT id FROM technician WHERE id=${record["technicianId"]}`
+                );
 
-            let start = "2000-01-01T00:00:00.00Z";
+                if (is_technnician_available["recordset"].length > 0) {
+                  technician_id = record["technicianId"];
+                }
 
-            if (record["start"]) {
-              if (
-                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                start = record["start"];
-              }
-            } else {
-              start = "2001-01-01T00:00:00.00Z";
-            }
+                let start = "2000-01-01T00:00:00.00Z";
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                if (record["start"]) {
+                  if (
+                    new Date(record["start"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    start = record["start"];
+                  }
+                } else {
+                  start = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            final_data_pool.push({
-              id: record["id"],
-              technician_id: technician_id,
-              actual_technician_id: actual_technician_id,
-              start: start,
-              name: record["name"] ? record["name"] : "default",
-              duration: record["duration"] ? record["duration"] : "00:00:00",
-              timesheetCodeId: record["timesheetCodeId"]
-                ? record["timesheetCodeId"]
-                : 0,
-              clearDispatchBoard: record["clearDispatchBoard"]
-                ? record["clearDispatchBoard"]
-                : 0,
-              clearTechnicianView: record["clearTechnicianView"]
-                ? record["clearTechnicianView"]
-                : 0,
-              removeTechnicianFromCapacityPlanning: record[
-                "removeTechnicianFromCapacityPlanning"
-              ]
-                ? record["removeTechnicianFromCapacityPlanning"]
-                : 0,
-              is_all_day: record["allDay"] ? record["allDay"] : 0,
-              is_active: record["active"] ? record["active"] : 0,
-              createdOn: createdOn,
-              created_by_id: record["createdById"] ? record["createdById"] : 0,
-            });
-          })
-        );
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  technician_id: technician_id,
+                  actual_technician_id: actual_technician_id,
+                  start: start,
+                  name: record["name"] ? record["name"] : "default",
+                  duration: record["duration"]
+                    ? record["duration"]
+                    : "00:00:00",
+                  timesheetCodeId: record["timesheetCodeId"]
+                    ? record["timesheetCodeId"]
+                    : 0,
+                  clearDispatchBoard: record["clearDispatchBoard"]
+                    ? record["clearDispatchBoard"]
+                    : 0,
+                  clearTechnicianView: record["clearTechnicianView"]
+                    ? record["clearTechnicianView"]
+                    : 0,
+                  removeTechnicianFromCapacityPlanning: record[
+                    "removeTechnicianFromCapacityPlanning"
+                  ]
+                    ? record["removeTechnicianFromCapacityPlanning"]
+                    : 0,
+                  is_all_day: record["allDay"] ? record["allDay"] : 0,
+                  is_active: record["active"] ? record["active"] : 0,
+                  createdOn: createdOn,
+                  created_by_id: record["createdById"]
+                    ? record["createdById"]
+                    : 0,
+                });
+              })
+          );
+        }
 
         console.log("non_job_appointments data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -5950,78 +6044,106 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", equipment_data_pool);
         // console.log("header_data: ", header_data);
 
-        await Promise.all(
-          Object.keys(materials_data_pool).map(async (record_id) => {
-            const record = materials_data_pool[record_id];
-            let vendor_id = record["instance_id"];
-            let actual_vendor_id = record["instance_id"];
-            if (record["primaryVendor"]) {
-              actual_vendor_id = record["primaryVendor"]["vendorId"]
-                ? record["primaryVendor"]["vendorId"]
-                : record["instance_id"];
+        const batchSize = 100;
 
-              // checking vendor availlable or not for mapping
-              const is_vendor_available = await sql_request.query(
-                `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
-              );
+        for (
+          let i = 0;
+          i < Object.keys(materials_data_pool).length;
+          i += batchSize
+        ) {
+          await Promise.all(
+            Object.keys(materials_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = materials_data_pool[record_id];
+                let vendor_id = record["instance_id"];
+                let actual_vendor_id = record["instance_id"];
+                if (record["primaryVendor"]) {
+                  actual_vendor_id = record["primaryVendor"]["vendorId"]
+                    ? record["primaryVendor"]["vendorId"]
+                    : record["instance_id"];
 
-              if (is_vendor_available["recordset"].length > 0) {
-                vendor_id = record["primaryVendor"]["vendorId"];
-              }
-            }
-            final_data_pool.push({
-              id: record["id"],
-              sku_name: record["code"],
-              sku_type: "Material",
-              sku_unit_price: record["cost"] ? parseFloat(record["cost"]) : 0,
-              vendor_id: vendor_id,
-              actual_vendor_id: actual_vendor_id,
+                  // checking vendor availlable or not for mapping
+                  const is_vendor_available = await sql_request.query(
+                    `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
+                  );
+
+                  if (is_vendor_available["recordset"].length > 0) {
+                    vendor_id = record["primaryVendor"]["vendorId"];
+                  }
+                }
+                final_data_pool.push({
+                  id: record["id"],
+                  sku_name: record["code"],
+                  sku_type: "Material",
+                  sku_unit_price: record["cost"]
+                    ? parseFloat(record["cost"])
+                    : 0,
+                  vendor_id: vendor_id,
+                  actual_vendor_id: actual_vendor_id,
+                });
+              })
+          );
+        }
+
+        for (
+          let i = 0;
+          i < Object.keys(equipment_data_pool).length;
+          i += batchSize
+        ) {
+          await Promise.all(
+            Object.keys(equipment_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = equipment_data_pool[record_id];
+                let vendor_id = record["instance_id"];
+                let actual_vendor_id = record["instance_id"];
+                if (record["primaryVendor"]) {
+                  actual_vendor_id = record["primaryVendor"]["vendorId"]
+                    ? record["primaryVendor"]["vendorId"]
+                    : record["instance_id"];
+
+                  // checking vendor availlable or not for mapping
+                  const is_vendor_available = await sql_request.query(
+                    `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
+                  );
+
+                  if (is_vendor_available["recordset"].length > 0) {
+                    vendor_id = record["primaryVendor"]["vendorId"];
+                  }
+                }
+                final_data_pool.push({
+                  id: record["id"],
+                  sku_name: record["code"] ? record["code"] : "default",
+                  sku_type: "Equipment",
+                  sku_unit_price: record["cost"] ? record["cost"] : 0,
+                  vendor_id: vendor_id,
+                  actual_vendor_id: actual_vendor_id,
+                });
+              })
+          );
+        }
+
+        for (
+          let i = 0;
+          i < Object.keys(services_data_pool).length;
+          i += batchSize
+        ) {
+          Object.keys(services_data_pool)
+            .slice(i, i + batchSize)
+            .map((record_id) => {
+              const record = services_data_pool[record_id];
+
+              final_data_pool.push({
+                id: record["id"],
+                sku_name: record["code"] ? record["code"] : "default",
+                sku_type: "Service",
+                sku_unit_price: record["price"] ? record["price"] : 0,
+                vendor_id: record["instance_id"],
+                actual_vendor_id: record["instance_id"],
+              });
             });
-          })
-        );
-
-        await Promise.all(
-          Object.keys(equipment_data_pool).map(async (record_id) => {
-            const record = equipment_data_pool[record_id];
-            let vendor_id = record["instance_id"];
-            let actual_vendor_id = record["instance_id"];
-            if (record["primaryVendor"]) {
-              actual_vendor_id = record["primaryVendor"]["vendorId"]
-                ? record["primaryVendor"]["vendorId"]
-                : record["instance_id"];
-
-              // checking vendor availlable or not for mapping
-              const is_vendor_available = await sql_request.query(
-                `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
-              );
-
-              if (is_vendor_available["recordset"].length > 0) {
-                vendor_id = record["primaryVendor"]["vendorId"];
-              }
-            }
-            final_data_pool.push({
-              id: record["id"],
-              sku_name: record["code"] ? record["code"] : "default",
-              sku_type: "Equipment",
-              sku_unit_price: record["cost"] ? record["cost"] : 0,
-              vendor_id: vendor_id,
-              actual_vendor_id: actual_vendor_id,
-            });
-          })
-        );
-
-        Object.keys(services_data_pool).map((record_id) => {
-          const record = services_data_pool[record_id];
-
-          final_data_pool.push({
-            id: record["id"],
-            sku_name: record["code"] ? record["code"] : "default",
-            sku_type: "Service",
-            sku_unit_price: record["price"] ? record["price"] : 0,
-            vendor_id: record["instance_id"],
-            actual_vendor_id: record["instance_id"],
-          });
-        });
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -6270,7 +6392,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             console.log("Error while inserting into auto_update", err);
           }
         }
-        
+
         break;
       }
 
@@ -6285,81 +6407,97 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        await Promise.all(
-          gross_pay_items_data_pool.map(async (record) => {
-            let burden_rate = payrolls_data_pool[record["payrollId"]][
-              "burdenRate"
-            ]
-              ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
-              : 0.0;
+        const batchSize = 100;
 
-            let burden_cost =
-              (record["paidDurationHours"] ? record["paidDurationHours"] : 0) *
-              burden_rate;
-
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["instance_id"];
-            if (record["jobId"]) {
-              actual_job_details_id = record["jobId"];
-              // checking jobId availlable or not for mapping
-              const is_jobs_available = await sql_request.query(
-                `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-              );
-
-              if (is_jobs_available["recordset"].length > 0) {
-                job_details_id = record["jobId"];
-              }
-            }
-
-            let invoice_id = record["instance_id"];
-            let actual_invoice_id = record["instance_id"];
-            if (record["invoiceId"]) {
-              actual_invoice_id = record["invoiceId"];
-
-              // checking invoice availlable or not for mapping
-              const is_invoice_available = await sql_request.query(
-                `SELECT id FROM invoice WHERE id=${record["invoiceId"]}`
-              );
-
-              if (is_invoice_available["recordset"].length > 0) {
-                invoice_id = record["invoiceId"];
-              }
-            }
-
-            let technician_id = record["instance_id"];
-            let actual_technician_id = record["employeeId"]
-              ? record["employeeId"]
-              : record["instance_id"];
-
-            // checking technician availlable or not for mapping
-            const is_technnician_available = await sql_request.query(
-              `SELECT id FROM technician WHERE id=${record["employeeId"]}`
-            );
-
-            if (is_technnician_available["recordset"].length > 0) {
-              technician_id = record["employeeId"];
-            }
-
-            final_data_pool.push({
-              paid_duration: record["paidDurationHours"]
-                ? record["paidDurationHours"]
-                : 0,
-              burden_rate: burden_rate,
-              labor_cost: record["amount"] ? record["amount"] : 0,
-              burden_cost: burden_cost,
-              activity: record["activity"] ? record["activity"] : "default",
-              paid_time_type: record["paidTimeType"]
-                ? record["paidTimeType"]
-                : "default",
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              invoice_id: invoice_id,
-              actual_invoice_id: actual_invoice_id,
-              technician_id: technician_id,
-              actual_technician_id: actual_technician_id,
-            });
-          })
+        console.log(
+          "cogs_labor: ",
+          Object.keys(gross_pay_items_data_pool).length
         );
+
+        for (
+          let i = 0;
+          i < Object.keys(gross_pay_items_data_pool).length;
+          i += batchSize
+        ) {
+          await Promise.all(
+            gross_pay_items_data_pool
+              .slice(i, i + batchSize)
+              .map(async (record) => {
+                let burden_rate = payrolls_data_pool[record["payrollId"]][
+                  "burdenRate"
+                ]
+                  ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
+                  : 0.0;
+
+                let burden_cost =
+                  (record["paidDurationHours"]
+                    ? record["paidDurationHours"]
+                    : 0) * burden_rate;
+
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["instance_id"];
+                if (record["jobId"]) {
+                  actual_job_details_id = record["jobId"];
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                  );
+
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
+                }
+
+                let invoice_id = record["instance_id"];
+                let actual_invoice_id = record["instance_id"];
+                if (record["invoiceId"]) {
+                  actual_invoice_id = record["invoiceId"];
+
+                  // checking invoice availlable or not for mapping
+                  const is_invoice_available = await sql_request.query(
+                    `SELECT id FROM invoice WHERE id=${record["invoiceId"]}`
+                  );
+
+                  if (is_invoice_available["recordset"].length > 0) {
+                    invoice_id = record["invoiceId"];
+                  }
+                }
+
+                let technician_id = record["instance_id"];
+                let actual_technician_id = record["employeeId"]
+                  ? record["employeeId"]
+                  : record["instance_id"];
+
+                // checking technician availlable or not for mapping
+                const is_technnician_available = await sql_request.query(
+                  `SELECT id FROM technician WHERE id=${record["employeeId"]}`
+                );
+
+                if (is_technnician_available["recordset"].length > 0) {
+                  technician_id = record["employeeId"];
+                }
+
+                final_data_pool.push({
+                  paid_duration: record["paidDurationHours"]
+                    ? record["paidDurationHours"]
+                    : 0,
+                  burden_rate: burden_rate,
+                  labor_cost: record["amount"] ? record["amount"] : 0,
+                  burden_cost: burden_cost,
+                  activity: record["activity"] ? record["activity"] : "default",
+                  paid_time_type: record["paidTimeType"]
+                    ? record["paidTimeType"]
+                    : "default",
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  invoice_id: invoice_id,
+                  actual_invoice_id: actual_invoice_id,
+                  technician_id: technician_id,
+                  actual_technician_id: actual_technician_id,
+                });
+              })
+          );
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -6491,20 +6629,20 @@ async function start_pipeline() {
 
   // await find_total_length(data_lake);
 
-  Object.keys(data_lake).map((header) => {
-    Object.keys(data_lake[header]).map((inner_header) => {
-      const data_pool = data_lake[header][inner_header]["data_pool"];
-      if (inner_header == "payroll__gross-pay-items") {
-        console.log(inner_header, data_pool.length);
-      } else {
-        if (data_pool) {
-          console.log(inner_header, Object.keys(data_pool).length);
-        }
-      }
-    });
-  });
+  // Object.keys(data_lake).map((header) => {
+  //   Object.keys(data_lake[header]).map((inner_header) => {
+  //     const data_pool = data_lake[header][inner_header]["data_pool"];
+  //     if (inner_header == "payroll__gross-pay-items") {
+  //       console.log(inner_header, data_pool.length);
+  //     } else {
+  //       if (data_pool) {
+  //         console.log(inner_header, Object.keys(data_pool).length);
+  //       }
+  //     }
+  //   });
+  // });
 
-  // await azure_sql_operations(data_lake, Object.keys(hvac_tables));
+  await azure_sql_operations(data_lake, Object.keys(hvac_tables));
 }
 
 async function flush_data_pool(is_initial_execute) {

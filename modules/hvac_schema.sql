@@ -587,10 +587,10 @@ BEGIN
     actual_project_id INT NULL,
     vendor_id INT NOT NULL,
     actual_vendor_id INT NULL,
-    FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    FOREIGN KEY (invoice_id) REFERENCES invoice (id),
-    FOREIGN KEY (project_id) REFERENCES projects (id),
-    FOREIGN KEY (vendor_id) REFERENCES vendor (id),
+    -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+    -- FOREIGN KEY (project_id) REFERENCES projects (id),
+    -- FOREIGN KEY (vendor_id) REFERENCES vendor (id),
   );
 END;
 
