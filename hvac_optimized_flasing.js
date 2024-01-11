@@ -2231,7 +2231,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
-  for (let api_count = 9; api_count < 10; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -8137,7 +8137,7 @@ async function auto_update() {
 }
 
 async function orchestrate() {
-  // await flush_data_pool(!should_auto_update);
+  await flush_data_pool(!should_auto_update);
 
   // Step 1: Call start_pipeline
   await start_pipeline();

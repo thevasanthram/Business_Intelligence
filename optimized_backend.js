@@ -3069,13 +3069,15 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 let project_id = po_record["instance_id"];
                 let actual_project_id = po_record["instance_id"];
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["id"]}`
-                );
+                if (po_record["projectId"]) {
+                  // checking projects availlable or not for mapping
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id=${po_record["projectId"]}`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["id"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = po_record["projectId"];
+                  }
                 }
 
                 let vendor_id = po_record["instance_id"];
@@ -3207,6 +3209,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         //   header_data,
         //   table_name
         // );
+
+        console.log("final_data_pool:c", final_data_pool);
 
         console.log("purchase order data: ", final_data_pool.length);
 
