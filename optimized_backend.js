@@ -2976,7 +2976,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["payrolls"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -4748,111 +4748,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching customers data from db
-        // ----------------
-        const customers_response = await sql_request.query(
-          "SELECT * FROM customer_details"
-        );
-
-        const customer_data = customers_response.recordset;
-
-        const customer_data_pool = {};
-
-        customer_data.map((current_record) => {
-          customer_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching location data from db
-        // ----------------
-        const location_response = await sql_request.query(
-          "SELECT * FROM location"
-        );
-
-        const location_data = location_response.recordset;
-
-        const location_data_pool = {};
-
-        location_data.map((current_record) => {
-          location_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching call_details data from db
-        // ----------------
-        const calls_response = await sql_request.query(
-          "SELECT * FROM call_details"
-        );
-
-        const calls_data = calls_response.recordset;
-
-        const call_details_data_pool = {};
-
-        calls_data.map((current_record) => {
-          call_details_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching campaigns data from db
-        // ----------------
-        const campaigns_response = await sql_request.query(
-          "SELECT * FROM campaigns"
-        );
-
-        const campaigns_data = campaigns_response.recordset;
-
-        const campaigns_data_pool = {};
-
-        campaigns_data.map((current_record) => {
-          campaigns_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching projects data from db
-        // ----------------
-        const projects_response = await sql_request.query(
-          "SELECT * FROM projects"
-        );
-
-        const projects_data = projects_response.recordset;
-
-        const projects_data_pool = {};
-
-        projects_data.map((current_record) => {
-          projects_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching bookings data from db
-        // ----------------
-        const bookings_response = await sql_request.query(
-          "SELECT * FROM bookings"
-        );
-
-        const bookings_data = bookings_response.recordset;
-
-        const bookings_data_pool = {};
-
-        bookings_data.map((current_record) => {
-          bookings_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
         // console.log("jobs_data_pool: ", jobs_data_pool);
@@ -5064,200 +4959,155 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching customers data from db
-        // ----------------
-        const customers_response = await sql_request.query(
-          "SELECT * FROM customer_details"
-        );
-
-        const customer_data = customers_response.recordset;
-
-        const customer_data_pool = {};
-
-        customer_data.map((current_record) => {
-          customer_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching location data from db
-        // ----------------
-        const location_response = await sql_request.query(
-          "SELECT * FROM location"
-        );
-
-        const location_data = location_response.recordset;
-
-        const location_data_pool = {};
-
-        location_data.map((current_record) => {
-          location_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching projects data from db
-        // ----------------
-        const projects_response = await sql_request.query(
-          "SELECT * FROM projects"
-        );
-
-        const projects_data = projects_response.recordset;
-
-        const projects_data_pool = {};
-
-        projects_data.map((current_record) => {
-          projects_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
 
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
-          }
+            let project_id = record["instance_id"];
+            let actual_project_id = record["projectId"]
+              ? record["projectId"]
+              : record["instance_id"];
 
-          let business_unit_id = record["instance_id"];
-          let acutal_business_unit_id = record["instance_id"];
-          let businessUnitName = record["businessUnitName"]
-            ? record["businessUnitName"]
-            : "default";
-          if (business_unit_data_pool[record["businessUnitId"]]) {
-            acutal_business_unit_id = record["businessUnitId"];
-            business_unit_id = record["businessUnitId"];
-          }
+            // checking projects availlable or not for mapping
+            const is_project_available = await sql_request.query(
+              `SELECT id FROM projects WHERE id=${record["projectId"]}`
+            );
 
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-            actual_location_id = record["locationId"];
-          }
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let soldOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["soldOn"]) {
-            if (
-              new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              soldOn = record["soldOn"];
+            if (is_project_available["recordset"].length > 0) {
+              project_id = record["projectId"];
             }
-          } else {
-            soldOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let status_value = 0;
-          let status_name = "default";
-          if (record["status"]) {
-            status_value = record["status"]["value"]
-              ? record["status"]["value"]
-              : 0;
-            status_name = record["status"]["name"]
-              ? record["status"]["name"]
+            let business_unit_id = record["instance_id"];
+            let acutal_business_unit_id = record["instance_id"];
+            let businessUnitName = record["businessUnitName"]
+              ? record["businessUnitName"]
               : "default";
-          }
+            // checking business unit availlable or not for mapping
+            const is_business_unit_available = await sql_request.query(
+              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+            );
 
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            soldOn: soldOn,
-            soldBy: record["soldBy"] ? record["soldBy"] : 0,
-            is_active: record["active"] ? 1 : 0,
-            subtotal: record["subtotal"] ? record["subtotal"] : 0,
-            status_value: status_value,
-            status_name: status_name,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            business_unit_id: business_unit_id,
-            acutal_business_unit_id: acutal_business_unit_id,
-            businessUnitName: businessUnitName,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-          });
-        });
+            if (is_business_unit_available["recordset"].length > 0) {
+              acutal_business_unit_id = record["businessUnitId"];
+              business_unit_id = record["businessUnitId"];
+            }
+
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["jobId"]
+              ? record["jobId"]
+              : record["instance_id"];
+
+            // checking jobId availlable or not for mapping
+            const is_jobs_available = await sql_request.query(
+              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+            );
+
+            if (is_jobs_available["recordset"].length > 0) {
+              job_details_id = record["jobId"];
+            }
+
+            let location_id = record["instance_id"];
+            let actual_location_id = record["instance_id"];
+
+            // checking location availlable or not for mapping
+            const is_location_available = await sql_request.query(
+              `SELECT id FROM location WHERE id=${record["locationId"]}`
+            );
+
+            if (is_location_available["recordset"].length > 0) {
+              location_id = record["locationId"];
+              actual_location_id = record["locationId"];
+            }
+
+            let customer_details_id = record["instance_id"];
+            let actual_customer_details_id = record["customerId"]
+              ? record["customerId"]
+              : record["instance_id"];
+            // checking customer availlable or not for mapping
+            const is_customer_available = await sql_request.query(
+              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+            );
+
+            if (is_customer_available["recordset"].length > 0) {
+              customer_details_id = record["customerId"];
+            }
+
+            let soldOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["soldOn"]) {
+              if (
+                new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                soldOn = record["soldOn"];
+              }
+            } else {
+              soldOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let status_value = 0;
+            let status_name = "default";
+            if (record["status"]) {
+              status_value = record["status"]["value"]
+                ? record["status"]["value"]
+                : 0;
+              status_name = record["status"]["name"]
+                ? record["status"]["name"]
+                : "default";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              name: record["name"] ? record["name"] : "default",
+              project_id: project_id,
+              actual_project_id: actual_project_id,
+              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+              soldOn: soldOn,
+              soldBy: record["soldBy"] ? record["soldBy"] : 0,
+              is_active: record["active"] ? 1 : 0,
+              subtotal: record["subtotal"] ? record["subtotal"] : 0,
+              status_value: status_value,
+              status_name: status_name,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              business_unit_id: business_unit_id,
+              acutal_business_unit_id: acutal_business_unit_id,
+              businessUnitName: businessUnitName,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              location_id: location_id,
+              actual_location_id: actual_location_id,
+              customer_details_id: customer_details_id,
+              actual_customer_details_id: actual_customer_details_id,
+            });
+          })
+        );
 
         console.log("sales_details data: ", final_data_pool.length);
 
@@ -5296,278 +5146,131 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["jpm__appointments"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching customers data from db
-        // ----------------
-        const customers_response = await sql_request.query(
-          "SELECT * FROM customer_details"
-        );
-
-        const customer_data = customers_response.recordset;
-
-        const customer_data_pool = {};
-
-        customer_data.map((current_record) => {
-          customer_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log("fetched customers");
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log("fetched job_details");
-
         let final_data_pool = [];
 
-        // console.log("startd =======");
-        // const batchSize = 1000; // Set your desired batch size
-        // const totalRecords = Object.keys(data_pool).length;
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
 
-        // console.log("total records in appointments: ", totalRecords.length);
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["jobId"]
+              ? record["jobId"]
+              : record["instance_id"];
+            // checking jobId availlable or not for mapping
+            const is_jobs_available = await sql_request.query(
+              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+            );
 
-        // console.log("batch started..");
-        // for (let i = 0; i < totalRecords; i += batchSize) {
-        //   const currentBatch = Object.keys(data_pool).slice(i, i + batchSize);
-
-        //   console.log("currentBatch: ", i + batchSize);
-
-        //   currentBatch.map((record_id) => {
-        //     const record = data_pool[record_id];
-
-        //     let job_details_id = record["instance_id"];
-        //     let actual_job_details_id = record["jobId"]
-        //       ? record["jobId"]
-        //       : record["instance_id"];
-        //     if (jobs_data_pool[record["jobId"]]) {
-        //       job_details_id = record["jobId"];
-        //     }
-
-        //     let customer_details_id = record["instance_id"];
-        //     let actual_customer_details_id = record["customerId"]
-        //       ? record["customerId"]
-        //       : record["instance_id"];
-
-        //     if (customer_data_pool[record["customerId"]]) {
-        //       customer_details_id = record["customerId"];
-        //     }
-
-        //     let start = "2000-01-01T00:00:00.00Z";
-
-        //     if (record["start"]) {
-        //       if (
-        //         new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         start = record["start"];
-        //       }
-        //     } else {
-        //       start = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     let end = "2000-01-01T00:00:00.00Z";
-        //     if (record["end"]) {
-        //       if (
-        //         new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         end = record["end"];
-        //       }
-        //     } else {
-        //       end = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
-
-        //     if (record["arrivalWindowStart"]) {
-        //       if (
-        //         new Date(record["arrivalWindowStart"]) >
-        //         new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         arrivalWindowStart = record["arrivalWindowStart"];
-        //       }
-        //     } else {
-        //       arrivalWindowStart = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
-        //     if (record["arrivalWindowEnd"]) {
-        //       if (
-        //         new Date(record["arrivalWindowEnd"]) >
-        //         new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         arrivalWindowEnd = record["arrivalWindowEnd"];
-        //       }
-        //     } else {
-        //       arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     let createdOn = "2000-01-01T00:00:00.00Z";
-
-        //     if (record["createdOn"]) {
-        //       if (
-        //         new Date(record["createdOn"]) >
-        //         new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         createdOn = record["createdOn"];
-        //       }
-        //     } else {
-        //       createdOn = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     let modifiedOn = "2000-01-01T00:00:00.00Z";
-        //     if (record["modifiedOn"]) {
-        //       if (
-        //         new Date(record["modifiedOn"]) >
-        //         new Date("2000-01-01T00:00:00.00Z")
-        //       ) {
-        //         modifiedOn = record["modifiedOn"];
-        //       }
-        //     } else {
-        //       modifiedOn = "2001-01-01T00:00:00.00Z";
-        //     }
-
-        //     final_data_pool.push({
-        //       id: record["id"],
-        //       job_details_id: job_details_id,
-        //       actual_job_details_id: actual_job_details_id,
-        //       appointmentNumber: record["appointmentNumber"]
-        //         ? record["appointmentNumber"]
-        //         : "default",
-        //       start: start,
-        //       end: end,
-        //       arrivalWindowStart: arrivalWindowStart,
-        //       arrivalWindowEnd: arrivalWindowEnd,
-        //       status: record["status"] ? record["status"] : "Not Known",
-        //       createdOn: createdOn,
-        //       modifiedOn: modifiedOn,
-        //       customer_details_id: customer_details_id,
-        //       actual_customer_details_id: actual_customer_details_id,
-        //     });
-        //   });
-        // }
-
-        // console.log("batch done");
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let start = "2000-01-01T00:00:00.00Z";
-
-          if (record["start"]) {
-            if (
-              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              start = record["start"];
+            if (is_jobs_available["recordset"].length > 0) {
+              job_details_id = record["jobId"];
             }
-          } else {
-            start = "2001-01-01T00:00:00.00Z";
-          }
 
-          let end = "2000-01-01T00:00:00.00Z";
-          if (record["end"]) {
-            if (new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")) {
-              end = record["end"];
+            let customer_details_id = record["instance_id"];
+            let actual_customer_details_id = record["customerId"]
+              ? record["customerId"]
+              : record["instance_id"];
+
+            // checking customer availlable or not for mapping
+            const is_customer_available = await sql_request.query(
+              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+            );
+
+            if (is_customer_available["recordset"].length > 0) {
+              customer_details_id = record["customerId"];
             }
-          } else {
-            end = "2001-01-01T00:00:00.00Z";
-          }
 
-          let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
+            let start = "2000-01-01T00:00:00.00Z";
 
-          if (record["arrivalWindowStart"]) {
-            if (
-              new Date(record["arrivalWindowStart"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              arrivalWindowStart = record["arrivalWindowStart"];
+            if (record["start"]) {
+              if (
+                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                start = record["start"];
+              }
+            } else {
+              start = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            arrivalWindowStart = "2001-01-01T00:00:00.00Z";
-          }
 
-          let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
-          if (record["arrivalWindowEnd"]) {
-            if (
-              new Date(record["arrivalWindowEnd"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              arrivalWindowEnd = record["arrivalWindowEnd"];
+            let end = "2000-01-01T00:00:00.00Z";
+            if (record["end"]) {
+              if (
+                new Date(record["end"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                end = record["end"];
+              }
+            } else {
+              end = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
-          }
 
-          let createdOn = "2000-01-01T00:00:00.00Z";
+            let arrivalWindowStart = "2000-01-01T00:00:00.00Z";
 
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
+            if (record["arrivalWindowStart"]) {
+              if (
+                new Date(record["arrivalWindowStart"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                arrivalWindowStart = record["arrivalWindowStart"];
+              }
+            } else {
+              arrivalWindowStart = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
+            let arrivalWindowEnd = "2000-01-01T00:00:00.00Z";
+            if (record["arrivalWindowEnd"]) {
+              if (
+                new Date(record["arrivalWindowEnd"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                arrivalWindowEnd = record["arrivalWindowEnd"];
+              }
+            } else {
+              arrivalWindowEnd = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          final_data_pool.push({
-            id: record["id"],
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            appointmentNumber: record["appointmentNumber"]
-              ? record["appointmentNumber"]
-              : "default",
-            start: start,
-            end: end,
-            arrivalWindowStart: arrivalWindowStart,
-            arrivalWindowEnd: arrivalWindowEnd,
-            status: record["status"] ? record["status"] : "Not Known",
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-          });
-        });
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              appointmentNumber: record["appointmentNumber"]
+                ? record["appointmentNumber"]
+                : "default",
+              start: start,
+              end: end,
+              arrivalWindowStart: arrivalWindowStart,
+              arrivalWindowEnd: arrivalWindowEnd,
+              status: record["status"] ? record["status"] : "Not Known",
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              customer_details_id: customer_details_id,
+              actual_customer_details_id: actual_customer_details_id,
+            });
+          })
+        );
 
         console.log("appointments data: ", final_data_pool.length);
 
@@ -5668,49 +5371,32 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-          let acutal_business_unit_id = record["instance_id"];
-          let business_unit_id = record["instance_id"];
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
+            let acutal_business_unit_id = record["instance_id"];
+            let business_unit_id = record["instance_id"];
 
-          if (
-            business_unit_data_pool[record["businessUnitId"]]
-            //  ||
-            // record["businessUnitId"] == 108709 ||
-            // record["businessUnitId"] == 1000004 ||
-            // record["businessUnitId"] == 166181
-          ) {
-            business_unit_id = record["businessUnitId"];
-            acutal_business_unit_id = record["businessUnitId"];
-          }
+            // checking business unit availlable or not for mapping
+            const is_business_unit_available = await sql_request.query(
+              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+            );
 
-          if (record["businessUnitId"]) {
-            acutal_business_unit_id = record["businessUnitId"];
-          }
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default_technician",
-            business_unit_id: business_unit_id,
-            acutal_business_unit_id: acutal_business_unit_id,
-          });
-        });
+            if (is_business_unit_available["recordset"].length > 0) {
+              business_unit_id = record["businessUnitId"];
+              acutal_business_unit_id = record["businessUnitId"];
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              name: record["name"] ? record["name"] : "default_technician",
+              business_unit_id: business_unit_id,
+              acutal_business_unit_id: acutal_business_unit_id,
+            });
+          })
+        );
 
         console.log("techician data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -5756,113 +5442,90 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake[api_name]["dispatch__appointment-assignments"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching technician data from db
-        // ----------------
-        const technician_response = await sql_request.query(
-          "SELECT * FROM technician"
-        );
-
-        const technician_data = technician_response.recordset;
-
-        const technician_data_pool = {};
-
-        technician_data.map((current_record) => {
-          technician_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching appointments data from db
-        // ----------------
-        const appointments_response = await sql_request.query(
-          "SELECT * FROM appointments"
-        );
-
-        const appointments_data = appointments_response.recordset;
-
-        const appointments_data_pool = {};
-
-        appointments_data.map((current_record) => {
-          appointments_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
 
-          let technician_id = record["instance_id"];
-          let actual_technician_id = record["technicianId"]
-            ? record["technicianId"]
-            : record["instance_id"];
-          if (technician_data_pool[record["technicianId"]]) {
-            technician_id = record["technicianId"];
-          }
+            let technician_id = record["instance_id"];
+            let actual_technician_id = record["technicianId"]
+              ? record["technicianId"]
+              : record["instance_id"];
 
-          let assignedOn = "2000-01-01T00:00:00.00Z";
+            // checking technician availlable or not for mapping
+            const is_technnician_available = await sql_request.query(
+              `SELECT id FROM technician WHERE id=${record["technicianId"]}`
+            );
 
-          if (record["assignedOn"]) {
-            if (
-              new Date(record["assignedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              assignedOn = record["assignedOn"];
+            if (is_technnician_available["recordset"].length > 0) {
+              technician_id = record["technicianId"];
             }
-          } else {
-            assignedOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
+            let assignedOn = "2000-01-01T00:00:00.00Z";
 
-          let appointment_id = record["instance_id"];
-          let actual_appointment_id = record["appointmentId"]
-            ? record["appointmentId"]
-            : record["instance_id"];
-          if (appointments_data_pool[record["appointmentId"]]) {
-            appointment_id = record["appointmentId"];
-          }
+            if (record["assignedOn"]) {
+              if (
+                new Date(record["assignedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                assignedOn = record["assignedOn"];
+              }
+            } else {
+              assignedOn = "2001-01-01T00:00:00.00Z";
+            }
 
-          final_data_pool.push({
-            id: record["id"],
-            technician_id: technician_id,
-            actual_technician_id: actual_technician_id,
-            technician_name: record["technicianName"]
-              ? record["technicianName"]
-              : "default",
-            assigned_by_id: record["assignedById"] ? record["assignedById"] : 0,
-            assignedOn: assignedOn,
-            status: record["status"] ? record["status"] : "default",
-            is_paused: record["isPaused"] ? record["isPaused"] : 0,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            appointment_id: appointment_id,
-            actual_appointment_id: actual_appointment_id,
-          });
-        });
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["jobId"]
+              ? record["jobId"]
+              : record["instance_id"];
+
+            // checking jobId availlable or not for mapping
+            const is_jobs_available = await sql_request.query(
+              `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+            );
+
+            if (is_jobs_available["recordset"].length > 0) {
+              job_details_id = record["jobId"];
+            }
+
+            let appointment_id = record["instance_id"];
+            let actual_appointment_id = record["appointmentId"]
+              ? record["appointmentId"]
+              : record["instance_id"];
+
+            // checking appointments availlable or not for mapping
+            const is_appointment_available = await sql_request.query(
+              `SELECT id FROM appointments WHERE id=${record["appointmentId"]}`
+            );
+
+            if (is_appointment_available["recordset"].length > 0) {
+              appointment_id = record["appointmentId"];
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              technician_id: technician_id,
+              actual_technician_id: actual_technician_id,
+              technician_name: record["technicianName"]
+                ? record["technicianName"]
+                : "default",
+              assigned_by_id: record["assignedById"]
+                ? record["assignedById"]
+                : 0,
+              assignedOn: assignedOn,
+              status: record["status"] ? record["status"] : "default",
+              is_paused: record["isPaused"] ? record["isPaused"] : 0,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              appointment_id: appointment_id,
+              actual_appointment_id: actual_appointment_id,
+            });
+          })
+        );
 
         console.log("appointment_assignments data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -5911,89 +5574,82 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake[api_name]["dispatch__non-job-appointments"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching technician data from db
-        // ----------------
-        const technician_response = await sql_request.query(
-          "SELECT * FROM technician"
-        );
-
-        const technician_data = technician_response.recordset;
-
-        const technician_data_pool = {};
-
-        technician_data.map((current_record) => {
-          technician_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
 
-          let technician_id = record["instance_id"];
-          let actual_technician_id = record["technicianId"]
-            ? record["technicianId"]
-            : record["instance_id"];
-          if (technician_data_pool[record["technicianId"]]) {
-            technician_id = record["technicianId"];
-          }
+            let technician_id = record["instance_id"];
+            let actual_technician_id = record["technicianId"]
+              ? record["technicianId"]
+              : record["instance_id"];
 
-          let start = "2000-01-01T00:00:00.00Z";
+            // checking technician availlable or not for mapping
+            const is_technnician_available = await sql_request.query(
+              `SELECT id FROM technician WHERE id=${record["technicianId"]}`
+            );
 
-          if (record["start"]) {
-            if (
-              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              start = record["start"];
+            if (is_technnician_available["recordset"].length > 0) {
+              technician_id = record["technicianId"];
             }
-          } else {
-            start = "2001-01-01T00:00:00.00Z";
-          }
 
-          let createdOn = "2000-01-01T00:00:00.00Z";
+            let start = "2000-01-01T00:00:00.00Z";
 
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
+            if (record["start"]) {
+              if (
+                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                start = record["start"];
+              }
+            } else {
+              start = "2001-01-01T00:00:00.00Z";
             }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          final_data_pool.push({
-            id: record["id"],
-            technician_id: technician_id,
-            actual_technician_id: actual_technician_id,
-            start: start,
-            name: record["name"] ? record["name"] : "default",
-            duration: record["duration"] ? record["duration"] : "00:00:00",
-            timesheetCodeId: record["timesheetCodeId"]
-              ? record["timesheetCodeId"]
-              : 0,
-            clearDispatchBoard: record["clearDispatchBoard"]
-              ? record["clearDispatchBoard"]
-              : 0,
-            clearTechnicianView: record["clearTechnicianView"]
-              ? record["clearTechnicianView"]
-              : 0,
-            removeTechnicianFromCapacityPlanning: record[
-              "removeTechnicianFromCapacityPlanning"
-            ]
-              ? record["removeTechnicianFromCapacityPlanning"]
-              : 0,
-            is_all_day: record["allDay"] ? record["allDay"] : 0,
-            is_active: record["active"] ? record["active"] : 0,
-            createdOn: createdOn,
-            created_by_id: record["createdById"] ? record["createdById"] : 0,
-          });
-        });
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              technician_id: technician_id,
+              actual_technician_id: actual_technician_id,
+              start: start,
+              name: record["name"] ? record["name"] : "default",
+              duration: record["duration"] ? record["duration"] : "00:00:00",
+              timesheetCodeId: record["timesheetCodeId"]
+                ? record["timesheetCodeId"]
+                : 0,
+              clearDispatchBoard: record["clearDispatchBoard"]
+                ? record["clearDispatchBoard"]
+                : 0,
+              clearTechnicianView: record["clearTechnicianView"]
+                ? record["clearTechnicianView"]
+                : 0,
+              removeTechnicianFromCapacityPlanning: record[
+                "removeTechnicianFromCapacityPlanning"
+              ]
+                ? record["removeTechnicianFromCapacityPlanning"]
+                : 0,
+              is_all_day: record["allDay"] ? record["allDay"] : 0,
+              is_active: record["active"] ? record["active"] : 0,
+              createdOn: createdOn,
+              created_by_id: record["createdById"] ? record["createdById"] : 0,
+            });
+          })
+        );
 
         console.log("non_job_appointments data: ", final_data_pool.length);
         // console.log("header_data: ", header_data);
@@ -6046,68 +5702,71 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching vendor data from db
-        // ----------------
-        const vendor_response = await sql_request.query("SELECT * FROM vendor");
-
-        const vendor_data = vendor_response.recordset;
-
-        const vendors_data_pool = {};
-
-        vendor_data.map((current_record) => {
-          vendors_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
         // console.log("data_pool: ", materials_data_pool);
         // console.log("data_pool: ", equipment_data_pool);
         // console.log("header_data: ", header_data);
 
-        Object.keys(materials_data_pool).map((record_id) => {
-          const record = materials_data_pool[record_id];
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-          if (record["primaryVendor"]) {
-            actual_vendor_id = record["primaryVendor"]["vendorId"]
-              ? record["primaryVendor"]["vendorId"]
-              : record["instance_id"];
-            if (vendors_data_pool[record["primaryVendor"]["vendorId"]]) {
-              vendor_id = record["primaryVendor"]["vendorId"];
-            }
-          }
-          final_data_pool.push({
-            id: record["id"],
-            sku_name: record["code"],
-            sku_type: "Material",
-            sku_unit_price: record["cost"] ? parseFloat(record["cost"]) : 0,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-          });
-        });
+        await Promise.all(
+          Object.keys(materials_data_pool).map(async (record_id) => {
+            const record = materials_data_pool[record_id];
+            let vendor_id = record["instance_id"];
+            let actual_vendor_id = record["instance_id"];
+            if (record["primaryVendor"]) {
+              actual_vendor_id = record["primaryVendor"]["vendorId"]
+                ? record["primaryVendor"]["vendorId"]
+                : record["instance_id"];
 
-        Object.keys(equipment_data_pool).map((record_id) => {
-          const record = equipment_data_pool[record_id];
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-          if (record["primaryVendor"]) {
-            actual_vendor_id = record["primaryVendor"]["vendorId"]
-              ? record["primaryVendor"]["vendorId"]
-              : record["instance_id"];
-            if (vendors_data_pool[record["primaryVendor"]["vendorId"]]) {
-              vendor_id = record["primaryVendor"]["vendorId"];
+              // checking vendor availlable or not for mapping
+              const is_vendor_available = await sql_request.query(
+                `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
+              );
+
+              if (is_vendor_available["recordset"].length > 0) {
+                vendor_id = record["primaryVendor"]["vendorId"];
+              }
             }
-          }
-          final_data_pool.push({
-            id: record["id"],
-            sku_name: record["code"] ? record["code"] : "default",
-            sku_type: "Equipment",
-            sku_unit_price: record["cost"] ? record["cost"] : 0,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-          });
-        });
+            final_data_pool.push({
+              id: record["id"],
+              sku_name: record["code"],
+              sku_type: "Material",
+              sku_unit_price: record["cost"] ? parseFloat(record["cost"]) : 0,
+              vendor_id: vendor_id,
+              actual_vendor_id: actual_vendor_id,
+            });
+          })
+        );
+
+        await Promise.all(
+          Object.keys(equipment_data_pool).map(async (record_id) => {
+            const record = equipment_data_pool[record_id];
+            let vendor_id = record["instance_id"];
+            let actual_vendor_id = record["instance_id"];
+            if (record["primaryVendor"]) {
+              actual_vendor_id = record["primaryVendor"]["vendorId"]
+                ? record["primaryVendor"]["vendorId"]
+                : record["instance_id"];
+
+              // checking vendor availlable or not for mapping
+              const is_vendor_available = await sql_request.query(
+                `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
+              );
+
+              if (is_vendor_available["recordset"].length > 0) {
+                vendor_id = record["primaryVendor"]["vendorId"];
+              }
+            }
+            final_data_pool.push({
+              id: record["id"],
+              sku_name: record["code"] ? record["code"] : "default",
+              sku_type: "Equipment",
+              sku_unit_price: record["cost"] ? record["cost"] : 0,
+              vendor_id: vendor_id,
+              actual_vendor_id: actual_vendor_id,
+            });
+          })
+        );
 
         Object.keys(services_data_pool).map((record_id) => {
           const record = services_data_pool[record_id];
@@ -6332,208 +5991,156 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!ntering purchase order"
-        );
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!fetched job_detals"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!map done"
-        );
-
-        // fetching vendor data from db
-        // ----------------
-        const vendor_response = await sql_request.query("SELECT * FROM vendor");
-
-        const vendor_data = vendor_response.recordset;
-
-        const vendors_data_pool = {};
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor1"
-        );
-
-        vendor_data.map((current_record) => {
-          vendors_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!vendor2"
-        );
-
-        // fetching invoice data from db
-        // ----------------
-        const invoice_response = await sql_request.query(
-          "SELECT * FROM invoice"
-        );
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice1"
-        );
-
-        const invoice_data = invoice_response.recordset;
-
-        const invoice_data_pool = {};
-
-        invoice_data.map((current_record) => {
-          invoice_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!invoice2"
-        );
-
         let final_data_pool = [];
 
-        // console.log("purchase_order_data_pool: ", purchase_order_data_pool);
-        // console.log("header_data: ", header_data);
+        await Promise.all(
+          Object.keys(purchase_order_data_pool).map(async (record_id) => {
+            const record = purchase_order_data_pool[record_id];
 
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!dummy done"
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["instance_id"];
+            if (record["jobId"]) {
+              actual_job_details_id = record["jobId"];
+
+              // checking jobId availlable or not for mapping
+              const is_jobs_available = await sql_request.query(
+                `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+              );
+
+              if (is_jobs_available["recordset"].length > 0) {
+                job_details_id = record["jobId"];
+              }
+            }
+
+            let invoice_id = record["instance_id"];
+            let actual_invoice_id = record["instance_id"];
+            if (record["invoiceId"]) {
+              actual_invoice_id = record["invoiceId"];
+
+              // checking invoice availlable or not for mapping
+              const is_invoice_available = await sql_request.query(
+                `SELECT id FROM invoice WHERE id=${record["invoiceId"]}`
+              );
+
+              if (is_invoice_available["recordset"].length > 0) {
+                invoice_id = record["invoiceId"];
+              }
+            }
+
+            let vendor_id = record["instance_id"];
+            let actual_vendor_id = record["instance_id"];
+            if (record["vendorId"]) {
+              actual_vendor_id = record["vendorId"];
+              // checking vendor availlable or not for mapping
+              const is_vendor_available = await sql_request.query(
+                `SELECT id FROM vendor WHERE id=${record["vendorId"]}`
+              );
+
+              if (is_vendor_available["recordset"].length > 0) {
+                vendor_id = record["vendorId"];
+              }
+
+              if (vendors_data_pool[record["vendorId"]]) {
+                vendor_id = record["vendorId"];
+              }
+            }
+
+            let date = "2000-01-01T00:00:00.00Z";
+
+            if (record["date"]) {
+              if (
+                new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                date = record["date"];
+              }
+            } else {
+              date = "2001-01-01T00:00:00.00Z";
+            }
+
+            let requiredOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["requiredOn"]) {
+              if (
+                new Date(record["requiredOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                requiredOn = record["requiredOn"];
+              }
+            } else {
+              requiredOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let sentOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["sentOn"]) {
+              if (
+                new Date(record["sentOn"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                sentOn = record["sentOn"];
+              }
+            } else {
+              sentOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let receivedOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["receivedOn"]) {
+              if (
+                new Date(record["receivedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                receivedOn = record["receivedOn"];
+              }
+            } else {
+              receivedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              status: record["status"] ? record["status"] : "default",
+              total: record["total"] ? record["total"] : 0,
+              tax: record["tax"] ? record["tax"] : 0,
+              date: date,
+              requiredOn: requiredOn,
+              sentOn: sentOn,
+              receivedOn: receivedOn,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              invoice_id: invoice_id,
+              actual_invoice_id: actual_invoice_id,
+              vendor_id: vendor_id,
+              actual_vendor_id: actual_vendor_id,
+            });
+          })
         );
-
-        Object.keys(purchase_order_data_pool).map((record_id) => {
-          const record = purchase_order_data_pool[record_id];
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["jobId"]) {
-            actual_job_details_id = record["jobId"];
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
-            }
-          }
-
-          let invoice_id = record["instance_id"];
-          let actual_invoice_id = record["instance_id"];
-          if (record["invoiceId"]) {
-            actual_invoice_id = record["invoiceId"];
-            if (invoice_data_pool[record["invoiceId"]]) {
-              invoice_id = record["invoiceId"];
-            }
-          }
-
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-          if (record["vendorId"]) {
-            actual_vendor_id = record["vendorId"];
-            if (vendors_data_pool[record["vendorId"]]) {
-              vendor_id = record["vendorId"];
-            }
-          }
-
-          let date = "2000-01-01T00:00:00.00Z";
-
-          if (record["date"]) {
-            if (
-              new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              date = record["date"];
-            }
-          } else {
-            date = "2001-01-01T00:00:00.00Z";
-          }
-
-          let requiredOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["requiredOn"]) {
-            if (
-              new Date(record["requiredOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              requiredOn = record["requiredOn"];
-            }
-          } else {
-            requiredOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let sentOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["sentOn"]) {
-            if (
-              new Date(record["sentOn"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              sentOn = record["sentOn"];
-            }
-          } else {
-            sentOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let receivedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["receivedOn"]) {
-            if (
-              new Date(record["receivedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              receivedOn = record["receivedOn"];
-            }
-          } else {
-            receivedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            status: record["status"] ? record["status"] : "default",
-            total: record["total"] ? record["total"] : 0,
-            tax: record["tax"] ? record["tax"] : 0,
-            date: date,
-            requiredOn: requiredOn,
-            sentOn: sentOn,
-            receivedOn: receivedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            invoice_id: invoice_id,
-            actual_invoice_id: actual_invoice_id,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-          });
-        });
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
@@ -6586,115 +6193,83 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching technician data from db
-        // ----------------
-        const technician_response = await sql_request.query(
-          "SELECT * FROM technician"
-        );
-
-        const technician_data = technician_response.recordset;
-
-        const technician_data_pool = {};
-
-        technician_data.map((current_record) => {
-          technician_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching invoice data from db
-        // ----------------
-        const invoice_response = await sql_request.query(
-          "SELECT * FROM invoice"
-        );
-
-        const invoice_data = invoice_response.recordset;
-
-        const invoice_data_pool = {};
-
-        invoice_data.map((current_record) => {
-          invoice_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         let final_data_pool = [];
 
-        // console.log("gross_pay_items_data_pool: ", gross_pay_items_data_pool);
-        // console.log("payrolls_data_pool: ", payrolls_data_pool);
-        // console.log("jobs_data_pool: ", jobs_data_pool);
-        // console.log("technician_data_pool: ", technician_data_pool);
-        // console.log("header_data: ", header_data);
+        await Promise.all(
+          gross_pay_items_data_pool.map(async (record) => {
+            let burden_rate = payrolls_data_pool[record["payrollId"]][
+              "burdenRate"
+            ]
+              ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
+              : 0.0;
 
-        gross_pay_items_data_pool.map((record) => {
-          let burden_rate = payrolls_data_pool[record["payrollId"]][
-            "burdenRate"
-          ]
-            ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
-            : 0.0;
+            let burden_cost =
+              (record["paidDurationHours"] ? record["paidDurationHours"] : 0) *
+              burden_rate;
 
-          let burden_cost =
-            (record["paidDurationHours"] ? record["paidDurationHours"] : 0) *
-            burden_rate;
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["instance_id"];
+            if (record["jobId"]) {
+              actual_job_details_id = record["jobId"];
+              // checking jobId availlable or not for mapping
+              const is_jobs_available = await sql_request.query(
+                `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+              );
 
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["jobId"]) {
-            actual_job_details_id = record["jobId"];
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
+              if (is_jobs_available["recordset"].length > 0) {
+                job_details_id = record["jobId"];
+              }
             }
-          }
 
-          let invoice_id = record["instance_id"];
-          let actual_invoice_id = record["instance_id"];
-          if (record["invoiceId"]) {
-            actual_invoice_id = record["invoiceId"];
-            if (invoice_data_pool[record["invoiceId"]]) {
-              invoice_id = record["invoiceId"];
+            let invoice_id = record["instance_id"];
+            let actual_invoice_id = record["instance_id"];
+            if (record["invoiceId"]) {
+              actual_invoice_id = record["invoiceId"];
+
+              // checking invoice availlable or not for mapping
+              const is_invoice_available = await sql_request.query(
+                `SELECT id FROM invoice WHERE id=${record["invoiceId"]}`
+              );
+
+              if (is_invoice_available["recordset"].length > 0) {
+                invoice_id = record["invoiceId"];
+              }
             }
-          }
 
-          let technician_id = record["instance_id"];
-          let actual_technician_id = record["employeeId"]
-            ? record["employeeId"]
-            : record["instance_id"];
-          if (technician_data_pool[record["employeeId"]]) {
-            technician_id = record["employeeId"];
-          }
+            let technician_id = record["instance_id"];
+            let actual_technician_id = record["employeeId"]
+              ? record["employeeId"]
+              : record["instance_id"];
 
-          final_data_pool.push({
-            paid_duration: record["paidDurationHours"]
-              ? record["paidDurationHours"]
-              : 0,
-            burden_rate: burden_rate,
-            labor_cost: record["amount"] ? record["amount"] : 0,
-            burden_cost: burden_cost,
-            activity: record["activity"] ? record["activity"] : "default",
-            paid_time_type: record["paidTimeType"]
-              ? record["paidTimeType"]
-              : "default",
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            invoice_id: invoice_id,
-            actual_invoice_id: actual_invoice_id,
-            technician_id: technician_id,
-            actual_technician_id: actual_technician_id,
-          });
-        });
+            // checking technician availlable or not for mapping
+            const is_technnician_available = await sql_request.query(
+              `SELECT id FROM technician WHERE id=${record["employeeId"]}`
+            );
+
+            if (is_technnician_available["recordset"].length > 0) {
+              technician_id = record["employeeId"];
+            }
+
+            final_data_pool.push({
+              paid_duration: record["paidDurationHours"]
+                ? record["paidDurationHours"]
+                : 0,
+              burden_rate: burden_rate,
+              labor_cost: record["amount"] ? record["amount"] : 0,
+              burden_cost: burden_cost,
+              activity: record["activity"] ? record["activity"] : "default",
+              paid_time_type: record["paidTimeType"]
+                ? record["paidTimeType"]
+                : "default",
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              invoice_id: invoice_id,
+              actual_invoice_id: actual_invoice_id,
+              technician_id: technician_id,
+              actual_technician_id: actual_technician_id,
+            });
+          })
+        );
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);

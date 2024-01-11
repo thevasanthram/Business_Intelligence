@@ -3333,7 +3333,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["payrolls"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
