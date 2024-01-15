@@ -2962,7 +2962,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let has_error_occured = false;
 
                 if (current_payroll_id == 83811219) {
-                  console.log("data_pool_temp: ", data_pool_temp);
+                  console.log(
+                    "data_pool_temp: ==========asdfasdfsd ",
+                    data_pool_temp
+                  );
                 }
 
                 do {
@@ -2991,9 +2994,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                     data_pool_temp
                   );
 
+                  console.log("gross_pay_data: ", gross_pay_data);
+
                   gross_pay_data = [...gross_pay_data, ...data_pool_temp];
 
-                  console.log('gross_pay_data: ', gross_pay_data)
+                  console.log("gross_pay_data: ", gross_pay_data);
                 }
 
                 if (data_pool_temp) {
