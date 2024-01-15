@@ -2925,7 +2925,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               // fetch the particular payroll id's records from service titan
 
-              const gross_pay_data = [];
+              let gross_pay_data = [];
 
               const params_header_temp = JSON.parse(
                 JSON.stringify(params_header)
@@ -2976,6 +2976,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                       page_count
                     ));
                   } while (has_error_occured);
+
+                  console.log('data_pool_temp: ', data_pool_temp)
 
                   gross_pay_data = [...gross_pay_data, ...data_pool_temp];
                 })
