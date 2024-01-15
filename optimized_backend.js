@@ -3105,7 +3105,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "purchase_order": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const purchase_order_data_pool =
-          data_lake[api_name]["inventory__purchase-orders"];
+          data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
