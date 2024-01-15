@@ -2915,6 +2915,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           payroll_ids.push(record["payrollId"]);
         });
 
+        console.log('payroll_ids: ', payroll_ids)
+        console.log('payroll_ids: ', payroll_ids.length)
+
         const unique_payroll_ids = Array.from(new Set(payroll_ids));
 
         for (let i = 0; i < unique_payroll_ids.length; i += batchSize) {
