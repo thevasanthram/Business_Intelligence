@@ -2932,6 +2932,8 @@ async function data_processor(data_lake, sql_request, table_list) {
               );
 
               params_header_temp["payrollIds"] = String(current_payroll_id);
+              params_header_temp["modifiedOnOrAfter"] = "";
+              params_header_temp["modifiedBefore"] = "";
 
               await Promise.all(
                 instance_details.map(async (instance_data) => {
@@ -2977,9 +2979,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ));
                   } while (has_error_occured);
 
-                  console.log('data_pool_temp: ', data_pool_temp)
+                  console.log("data_pool_temp: ", data_pool_temp);
 
-                  console.log('data_pool_object_temp: ', data_pool_object_temp)
+                  console.log("data_pool_object_temp: ", data_pool_object_temp);
 
                   gross_pay_data = [...gross_pay_data, ...data_pool_temp];
                 })
