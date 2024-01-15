@@ -163,7 +163,7 @@ async function getAPIWholeData(
   //   return data_pool_object;
   // }
 
-  if (!params_condition["modifiedOnOrAfter"]) {
+  if (!params_header["modifiedOnOrAfter"]) {
     console.log("data_pool_object: ", data_pool_object);
     console.log("data_pool: ", data_pool);
   }
