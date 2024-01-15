@@ -11,8 +11,7 @@ async function getAPIWholeData(
   params_header,
   data_pool_object,
   data_pool,
-  page_count,
-  testing
+  page_count
 ) {
   // let data_pool_object = {};
   // let data_pool = [];
@@ -164,7 +163,7 @@ async function getAPIWholeData(
   //   return data_pool_object;
   // }
 
-  if ((testing = "testing")) {
+  if (!params_condition["modifiedOnOrAfter"]) {
     console.log("data_pool_object: ", data_pool_object);
     console.log("data_pool: ", data_pool);
   }
