@@ -2993,7 +2993,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
 
                 if (data_pool_temp) {
-                  gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                  gross_pay_data.push(...data_pool_temp);
                 }
               })
             );
