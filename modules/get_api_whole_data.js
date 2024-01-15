@@ -161,11 +161,11 @@ async function getAPIWholeData(
     has_error_occured = true;
   }
 
-  // if (api_name == "gross-pay-items") {
-  //   return data_pool;
-  // } else {
-  //   return data_pool_object;
-  // }
+  if (api_name == "gross-pay-items") {
+    return data_pool;
+  } else {
+    return data_pool_object;
+  }
 
   if (params_header["payrollIds"] == 83811219) {
     console.log("data_pool: *******************", data_pool);
