@@ -2989,6 +2989,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                   console.log('data_pool_temp: after processing ', data_pool_temp)
                 }
 
+                if(!data_pool_temp){
+                  console.log(current_payroll_id)
+                }
+
                 gross_pay_data = [...gross_pay_data, ...data_pool_temp];
               })
             );
