@@ -2919,7 +2919,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         // deleting all records of payroll ids
         const delete_payroll_rows = await sql_request.query(
-          `DELETE FROM gross_pay_items WHERE payrollId IN (${current_payroll_id.join(
+          `DELETE FROM gross_pay_items WHERE payrollId IN (${unique_payroll_ids.join(
             ", "
           )});`
         );
