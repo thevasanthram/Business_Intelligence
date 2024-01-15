@@ -2900,7 +2900,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "gross_pay_items": {
         const table_name = "gross_pay_items";
-        const data_pool =
+        const gross_pay_data_pool =
           data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -2911,7 +2911,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const payroll_ids = [];
 
-        data_pool.map((record) => {
+        gross_pay_data_pool.map((record) => {
           payroll_ids.push(record["payrollId"]);
         });
 
@@ -2961,13 +2961,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let page_count = 0;
                 let has_error_occured = false;
 
-                // if (current_payroll_id == 83811219) {
-                //   console.log(
-                //     "data_pool_temp: ==========asdfasdfsd ",
-                //     data_pool_temp
-                //   );
-                // }
-
                 do {
                   ({
                     data_pool_object_temp,
@@ -2986,20 +2979,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                     data_pool_temp,
                     page_count
                   ));
+
+                  if (data_pool_temp) {
+                    gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                  }
                 } while (has_error_occured);
-
-                // if (current_payroll_id == 83811219) {
-                //   console.log(
-                //     "data_pool_temp: after processing ",
-                //     data_pool_temp
-                //   );
-                // }
-
-                if (data_pool_temp) {
-                  // gross_pay_data = [...gross_pay_data, ...data_pool_temp];
-
-                  gross_pay_data.push(...data_pool_temp)
-                }
               })
             );
 
