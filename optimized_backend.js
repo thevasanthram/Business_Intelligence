@@ -2981,9 +2981,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                   console.log("data_pool_temp: ", data_pool_temp);
 
-                  console.log("data_pool_object_temp: ", data_pool_object_temp);
-
-                  gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                  if (data_pool_temp.length > 0) {
+                    gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                  }
                 })
               );
 
