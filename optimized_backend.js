@@ -3001,6 +3001,8 @@ async function data_processor(data_lake, sql_request, table_list) {
               })
             );
 
+            console.log("gross_pay_data length: ", gross_pay_data.length);
+
             gross_pay_data.map((record) => {
               final_data_pool.push({
                 id: record["id"],
