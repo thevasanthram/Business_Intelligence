@@ -18,6 +18,10 @@ async function getAPIWholeData(
 
   let has_error_occured = false;
 
+  if (!params_header["modifiedOnOrAfter"]) {
+    console.log("data_pool: ", data_pool);
+  }
+
   try {
     // automatic api fetch data code
     let shouldIterate = false;
@@ -162,11 +166,6 @@ async function getAPIWholeData(
   // } else {
   //   return data_pool_object;
   // }
-
-  if (!params_header["modifiedOnOrAfter"]) {
-    console.log("data_pool_object: ", data_pool_object);
-    console.log("data_pool: ", data_pool);
-  }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }

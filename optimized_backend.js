@@ -2121,7 +2121,7 @@ async function fetch_main_data(
                     params_header,
                     data_pool_object,
                     data_pool,
-                    page_count,
+                    page_count
                   ));
                 } while (has_error_occured);
 
@@ -2977,15 +2977,13 @@ async function data_processor(data_lake, sql_request, table_list) {
                     params_header_temp,
                     data_pool_object_temp,
                     data_pool_temp,
-                    page_count,
+                    page_count
                   ));
                 } while (has_error_occured);
 
                 console.log("data_pool_temp: ", data_pool_temp);
 
-                if (data_pool_temp) {
-                  gross_pay_data = [...gross_pay_data, ...data_pool_temp];
-                }
+                gross_pay_data = [...gross_pay_data, ...data_pool_temp];
               })
             );
 
