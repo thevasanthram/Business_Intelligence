@@ -18,9 +18,9 @@ async function getAPIWholeData(
 
   let has_error_occured = false;
 
-  if (params_header["payrollIds"] == 83811219) {
-    console.log("data_pool: ==========", data_pool);
-  }
+  // if (params_header["payrollIds"] == 83811219) {
+  //   console.log("data_pool: ==========", data_pool);
+  // }
 
   try {
     // automatic api fetch data code
@@ -69,9 +69,7 @@ async function getAPIWholeData(
     do {
       const filtering_condition = `${params_condition}&page=${page_count + 1}`;
 
-      if (!params_header["payrollIds"]) {
-        console.log("request url: ", api_url + filtering_condition);
-      }
+      console.log("request url: ", api_url + filtering_condition);
 
       const api_response = await fetch(api_url + filtering_condition, {
         method: "GET",
@@ -102,14 +100,12 @@ async function getAPIWholeData(
 
           data_pool.push(...pusing_item);
 
-          if (!params_header["payrollIds"]) {
-            console.log(
-              data_pool.length,
-              "/",
-              api_data["totalCount"],
-              " records  fetched  successfully"
-            );
-          }
+          console.log(
+            data_pool.length,
+            "/",
+            api_data["totalCount"],
+            " records  fetched  successfully"
+          );
         }
       } catch {
         // if theres a exceptional response in some api
@@ -165,15 +161,15 @@ async function getAPIWholeData(
     has_error_occured = true;
   }
 
-  if (params_header["payrollIds"] == 83811219) {
-    console.log("data_pool: *******************", data_pool);
-    console.log("data: ", {
-      data_pool_object,
-      data_pool,
-      page_count,
-      has_error_occured,
-    });
-  }
+  // if (params_header["payrollIds"] == 83811219) {
+  //   console.log("data_pool: *******************", data_pool);
+  //   console.log("data: ", {
+  //     data_pool_object,
+  //     data_pool,
+  //     page_count,
+  //     has_error_occured,
+  //   });
+  // }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }
