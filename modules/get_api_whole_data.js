@@ -11,7 +11,8 @@ async function getAPIWholeData(
   params_header,
   data_pool_object,
   data_pool,
-  page_count
+  page_count,
+  testing
 ) {
   // let data_pool_object = {};
   // let data_pool = [];
@@ -162,6 +163,11 @@ async function getAPIWholeData(
   // } else {
   //   return data_pool_object;
   // }
+
+  if ((testing = "testing")) {
+    console.log("data_pool_object: ", data_pool_object);
+    console.log("data_pool: ", data_pool);
+  }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }
