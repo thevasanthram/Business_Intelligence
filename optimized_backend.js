@@ -2911,7 +2911,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const payroll_ids = [];
 
-        Object.keys(data_pool).map((record_id) => {
+        data_pool.map((record_id) => {
           payroll_ids.push(record["payrollId"]);
         });
 
