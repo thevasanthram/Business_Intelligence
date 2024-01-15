@@ -3012,32 +3012,32 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("gross_pay_items data: ", final_data_pool.length);
 
-        // if (final_data_pool.length > 0) {
-        //   do {
-        //     hvac_tables_responses["gross_pay_items"]["status"] =
-        //       await hvac_data_insertion(
-        //         sql_request,
-        //         final_data_pool,
-        //         header_data,
-        //         table_name
-        //       );
-        //   } while (
-        //     hvac_tables_responses["gross_pay_items"]["status"] != "success"
-        //   );
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["gross_pay_items"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["gross_pay_items"]["status"] != "success"
+          );
 
-        //   // entry into auto_update table
-        //   try {
-        //     const auto_update_query = `UPDATE auto_update SET gross_pay_items = '${hvac_tables_responses["gross_pay_items"]["status"]}' WHERE id=${lastInsertedId}`;
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET gross_pay_items = '${hvac_tables_responses["gross_pay_items"]["status"]}' WHERE id=${lastInsertedId}`;
 
-        //     await sql_request.query(auto_update_query);
+            await sql_request.query(auto_update_query);
 
-        //     console.log("Auto_Update log created ");
-        //   } catch (err) {
-        //     console.log("Error while inserting into auto_update", err);
-        //   }
-        // }
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
 
-        // delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
+        delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
 
         break;
       }

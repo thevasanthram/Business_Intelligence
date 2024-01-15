@@ -18,10 +18,6 @@ async function getAPIWholeData(
 
   let has_error_occured = false;
 
-  // if (params_header["payrollIds"] == 83811219) {
-  //   console.log("data_pool: ==========", data_pool);
-  // }
-
   try {
     // automatic api fetch data code
     let shouldIterate = false;
@@ -148,28 +144,8 @@ async function getAPIWholeData(
       error
     );
 
-    // data_pool_object = getAPIWholeData(
-    //   access_token,
-    //   app_key,
-    //   instance_name,
-    //   tenant_id,
-    //   api_group,
-    //   api_name,
-    //   params_header
-    // );
-
     has_error_occured = true;
   }
-
-  // if (params_header["payrollIds"] == 83811219) {
-  //   console.log("data_pool: *******************", data_pool);
-  //   console.log("data: ", {
-  //     data_pool_object,
-  //     data_pool,
-  //     page_count,
-  //     has_error_occured,
-  //   });
-  // }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }
