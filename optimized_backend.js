@@ -2985,8 +2985,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               })
             );
 
-            console.log("gross_pay_data length: ", gross_pay_data.length);
-
             gross_pay_data.map((record) => {
               final_data_pool.push({
                 id: record["id"],
@@ -3565,7 +3563,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         let gross_profit_final_data_pool = [];
 
         await Promise.all(
-          Object.keys(invoice_data_pool).map0(async (record_id) => {
+          Object.keys(invoice_data_pool).map(async (record_id) => {
             const record = invoice_data_pool[record_id];
 
             let job_details_id = record["instance_id"];
