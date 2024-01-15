@@ -4048,9 +4048,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         let payrolls_data_pool =
           data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
 
-        let sales_data_pool =
-          data_lake["sales_details"]["sales__estimates"]["data_pool"];
-
         // fetching business units from db
         // ----------------
         const business_unit_response = await sql_request.query(
