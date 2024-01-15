@@ -18,7 +18,7 @@ async function getAPIWholeData(
 
   let has_error_occured = false;
 
-  if (!params_header["modifiedOnOrAfter"]) {
+  if (!params_header["payrollIds"] == 84017589) {
     console.log("data_pool: ", data_pool);
   }
 
@@ -166,6 +166,10 @@ async function getAPIWholeData(
   // } else {
   //   return data_pool_object;
   // }
+
+  if (!params_header["payrollIds"] == 84017589) {
+    console.log("data_pool: ", data_pool);
+  }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }
