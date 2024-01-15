@@ -2121,7 +2121,8 @@ async function fetch_main_data(
                     params_header,
                     data_pool_object,
                     data_pool,
-                    page_count
+                    page_count,
+                    "nooo"
                   ));
                 } while (has_error_occured);
 
@@ -2978,7 +2979,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                     data_pool_object_temp,
                     data_pool_temp,
                     page_count,
-                    'testing'
+                    "testing"
                   ));
                 } while (has_error_occured);
 
