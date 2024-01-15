@@ -18,8 +18,8 @@ async function getAPIWholeData(
 
   let has_error_occured = false;
 
-  if (!params_header["payrollIds"] == 83811219) {
-    console.log("data_pool: ", data_pool);
+  if (params_header["payrollIds"] == 83811219) {
+    console.log("data_pool: ==========", data_pool);
   }
 
   try {
@@ -167,8 +167,8 @@ async function getAPIWholeData(
   //   return data_pool_object;
   // }
 
-  if (!params_header["payrollIds"] == 83811219) {
-    console.log("data_pool: ", data_pool);
+  if (params_header["payrollIds"] == 83811219) {
+    console.log("data_pool: *******************", data_pool);
   }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
