@@ -2994,18 +2994,21 @@ async function data_processor(data_lake, sql_request, table_list) {
                     data_pool_temp
                   );
 
-                  console.log('whole response; 923423840', await getAPIWholeData(
-                    access_token,
-                    app_key,
-                    instance_name,
-                    tenant_id,
-                    "payroll",
-                    "gross-pay-items",
-                    params_header_temp,
-                    data_pool_object_temp,
-                    data_pool_temp,
-                    page_count
-                  ))
+                  console.log(
+                    "whole response; 923423840",
+                    await getAPIWholeData(
+                      access_token,
+                      app_key,
+                      instance_name,
+                      tenant_id,
+                      "payroll",
+                      "gross-pay-items",
+                      params_header_temp,
+                      data_pool_object_temp,
+                      data_pool_temp,
+                      page_count
+                    )
+                  );
 
                   console.log("gross_pay_data: ", gross_pay_data);
 
@@ -3019,8 +3022,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
               })
             );
-
-            console.log("gross_pay_data; ", gross_pay_data.length);
 
             gross_pay_data.map((record) => {
               final_data_pool.push({
