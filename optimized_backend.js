@@ -513,6 +513,98 @@ const hvac_tables = {
       },
     },
   },
+  sales_details: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      soldOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      soldBy: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      status_value: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      status_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      businessUnitName: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   projects: {
     columns: {
       id: {
@@ -905,98 +997,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       sold_by_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  sales_details: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      project_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_project_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      job_number: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      soldOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      soldBy: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      is_active: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      subtotal: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      status_value: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      status_name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      modifiedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      business_unit_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_business_unit_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      businessUnitName: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      location_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_location_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      customer_details_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_customer_details_id: {
         data_type: "INT",
         constraint: { nullable: true },
       },
@@ -2248,7 +2248,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
-  for (let api_count = 9; api_count < 10; api_count++) {
+  for (let api_count = 10; api_count < 11; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -3254,6 +3254,202 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "sales_details": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        const batchSize = 100;
+
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
+
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
+
+                // checking projects availlable or not for mapping
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                );
+
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
+
+                let business_unit_id = record["instance_id"];
+                let acutal_business_unit_id = record["instance_id"];
+                let businessUnitName = record["businessUnitName"]
+                  ? record["businessUnitName"]
+                  : "default";
+                // checking business unit availlable or not for mapping
+                const is_business_unit_available = await sql_request.query(
+                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                );
+
+                if (is_business_unit_available["recordset"].length > 0) {
+                  acutal_business_unit_id = record["businessUnitId"];
+                  business_unit_id = record["businessUnitId"];
+                }
+
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["jobId"]
+                  ? record["jobId"]
+                  : record["instance_id"];
+
+                // checking jobId availlable or not for mapping
+                const is_jobs_available = await sql_request.query(
+                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                );
+
+                if (is_jobs_available["recordset"].length > 0) {
+                  job_details_id = record["jobId"];
+                }
+
+                let location_id = record["instance_id"];
+                let actual_location_id = record["instance_id"];
+
+                // checking location availlable or not for mapping
+                const is_location_available = await sql_request.query(
+                  `SELECT id FROM location WHERE id=${record["locationId"]}`
+                );
+
+                if (is_location_available["recordset"].length > 0) {
+                  location_id = record["locationId"];
+                  actual_location_id = record["locationId"];
+                }
+
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["customerId"]
+                  ? record["customerId"]
+                  : record["instance_id"];
+                // checking customer availlable or not for mapping
+                const is_customer_available = await sql_request.query(
+                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                );
+
+                if (is_customer_available["recordset"].length > 0) {
+                  customer_details_id = record["customerId"];
+                }
+
+                let soldOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["soldOn"]) {
+                  if (
+                    new Date(record["soldOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    soldOn = record["soldOn"];
+                  }
+                } else {
+                  soldOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let createdOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let status_value = 0;
+                let status_name = "default";
+                if (record["status"]) {
+                  status_value = record["status"]["value"]
+                    ? record["status"]["value"]
+                    : 0;
+                  status_name = record["status"]["name"]
+                    ? record["status"]["name"]
+                    : "default";
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  name: record["name"] ? record["name"] : "default",
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  job_number: record["jobNumber"]
+                    ? record["jobNumber"]
+                    : "default",
+                  soldOn: soldOn,
+                  soldBy: record["soldBy"] ? record["soldBy"] : 0,
+                  is_active: record["active"] ? 1 : 0,
+                  subtotal: record["subtotal"] ? record["subtotal"] : 0,
+                  status_value: status_value,
+                  status_name: status_name,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  business_unit_id: business_unit_id,
+                  acutal_business_unit_id: acutal_business_unit_id,
+                  businessUnitName: businessUnitName,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  location_id: location_id,
+                  actual_location_id: actual_location_id,
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                });
+              })
+          );
+        }
+
+        console.log("sales_details data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["sales_details"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["sales_details"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[api_name];
+
+        break;
+      }
+
       case "projects": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
@@ -3266,46 +3462,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           hvac_tables["cogs_equipment"]["columns"];
         const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
 
-        // getting data directly from service titan
-        let jobs_data_pool = {};
-        let purchase_order_data_pool = {};
-        let sales_data_pool = {};
-
-        let gross_pay_items_data_pool =
-          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
-        let payrolls_data_pool =
-          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
-
-        // fetching purchase_order from db
-        // ----------------
-        const purchase_order_response = await sql_request.query(
-          "SELECT * FROM purchase_order"
-        );
-
-        const purchase_order_data = purchase_order_response.recordset;
-
-        purchase_order_data_pool = {};
-
-        purchase_order_data.map((current_record) => {
-          purchase_order_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching sales_details from db
-        // ----------------
-        const sales_response = await sql_request.query(
-          "SELECT * FROM sales_details"
-        );
-
-        const sales_data = sales_response.recordset;
-
-        sales_data_pool = {};
-
-        sales_data.map((current_record) => {
-          sales_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
         const sku_details_data_pool = {
           ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
           ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
@@ -3313,178 +3469,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         };
 
         let final_data_pool = [];
-        let purchase_order_final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
         // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
-
-        Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
-          const gpi_record = gross_pay_items_data_pool[gpi_record_id];
-          // data accumulation for invoice table
-          if (gpi_record["invoiceId"] != null) {
-            if (!invoice_po_and_gpi_data[gpi_record["invoiceId"]]) {
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]] = {
-                po_cost: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (!invoice_data_pool[gpi_record["invoiceId"]]) {
-              invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            } else {
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            }
-          } else {
-            invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-            invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
-              gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-            invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-              (gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? parseFloat(
-                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  )
-                : 0);
-          }
-
-          // data accumulation for projects table
-          if (gpi_record["projectId"] != null) {
-            if (!projects_po_and_gpi_data[gpi_record["projectId"]]) {
-              projects_po_and_gpi_data[gpi_record["projectId"]] = {
-                po_cost: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (!data_pool[gpi_record["projectId"]]) {
-              project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            } else {
-              projects_po_and_gpi_data[gpi_record["projectId"]]["labor_cost"] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              projects_po_and_gpi_data[gpi_record["projectId"]][
-                "labor_hours"
-              ] += gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-              projects_po_and_gpi_data[gpi_record["projectId"]]["burden"] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            }
-          } else {
-            project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-            project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
-              gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-            project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-              (gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? parseFloat(
-                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  )
-                : 0);
-          }
-        });
-
-        // calculating contract value from sales estimates for projects table
-        let project_contract_value = {};
-
-        Object.keys(sales_data_pool).map((record_id) => {
-          const record = sales_data_pool[record_id];
-
-          if (record["projectId"] != null) {
-            if (!project_contract_value[record["projectId"]]) {
-              project_contract_value[record["projectId"]] = {
-                contract_value: 0,
-              };
-            }
-
-            if (!data_pool[record["projectId"]]) {
-              project_dummy_values["contract_value"][record["instance_id"]] +=
-                parseFloat(record["subtotal"]);
-            } else {
-              project_contract_value[record["projectId"]]["contract_value"] +=
-                parseFloat(record["subtotal"]);
-            }
-          } else {
-            project_dummy_values["contract_value"][record["instance_id"]] +=
-              parseFloat(record["subtotal"]);
-          }
-        });
 
         let invoice_final_data_pool = [];
         let cogs_material_final_data_pool = [];
@@ -3740,10 +3729,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               customer_name: customer_name,
             });
 
-            let labor_cost = 0;
-            let labor_hours = 0;
-            let burden = 0;
-
             // calculating po cost
             const po_cost_summing_query = await sql_request.query(
               `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
@@ -3751,19 +3736,49 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const po_cost = parseFloat(
               po_cost_summing_query["recordset"][0]["totalSum"]
+                ? po_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
-            if (invoice_po_and_gpi_data[record["id"]]) {
-              labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-                ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-                : 0;
-              labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-                ? invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-                : 0;
-              burden = invoice_po_and_gpi_data[record["id"]]["burden"]
-                ? invoice_po_and_gpi_data[record["id"]]["burden"]
-                : 0;
-            }
+            // calculating labor_cost
+            const labor_cost_summing_query = await sql_request.query(
+              `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
+            );
+
+            const labor_cost = parseFloat(
+              labor_cost_summing_query["recordset"][0]["totalSum"]
+                ? labor_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            // calculating labor_hours
+            const labor_hours_summing_query = await sql_request.query(
+              `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
+            );
+
+            const labor_hours = parseFloat(
+              labor_hours_summing_query["recordset"][0]["totalSum"]
+                ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            // calculating burdenCost
+            const burden_cost_summing_query = await sql_request.query(
+              `SELECT 
+                SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
+                  FROM
+                    gross_pay_items
+                  JOIN
+                    payrolls ON gross_pay_items.payrollId = payrolls.id
+                  WHERE
+                    gross_pay_items.invoiceId = ${record["id"]};`
+            );
+
+            const burden = parseFloat(
+              burden_cost_summing_query["recordset"][0]["total_sum"]
+                ? burden_cost_summing_query["recordset"][0]["total_sum"]
+                : 0
+            );
 
             let material_cost = 0;
             let equipment_cost = 0;
@@ -4221,11 +4236,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               modifiedOn = "2001-01-01T00:00:00.00Z";
             }
 
-            let contract_value = 0;
-            let labor_cost = 0;
-            let labor_hours = 0;
-            let burden = 0;
-
             // calculating billed_amount
             const billed_amount_summing_query = await sql_request.query(
               `SELECT SUM(total) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
@@ -4233,6 +4243,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const billed_amount = parseFloat(
               billed_amount_summing_query["recordset"][0]["totalSum"]
+                ? billed_amount_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
             // calculating balance
@@ -4242,6 +4254,19 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const balance = parseFloat(
               balance_summing_query["recordset"][0]["totalSum"]
+                ? balance_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            // calculating contract
+            const contract_summing_query = await sql_request.query(
+              `SELECT SUM(subtotal) AS totalSum FROM sales_details WHERE project_id = ${record["id"]}`
+            );
+
+            const contract_value = parseFloat(
+              contract_summing_query["recordset"][0]["totalSum"]
+                ? contract_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
             // calculating po cost
@@ -4251,6 +4276,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const po_cost = parseFloat(
               po_cost_summing_query["recordset"][0]["totalSum"]
+                ? po_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
             // calculating equipment cost
@@ -4260,6 +4287,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const equipment_cost = parseFloat(
               equipment_cost_summing_query["recordset"][0]["totalSum"]
+                ? equipment_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
             // calculating material cost
@@ -4269,6 +4298,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const material_cost = parseFloat(
               material_cost_summing_query["recordset"][0]["totalSum"]
+                ? material_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
             );
 
             // calculating businesss_unit & actual_business_unit_id
@@ -4281,6 +4312,46 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const actual_business_unit_id =
               businesss_unit_query["recordset"][0]["actual_business_unit_id"];
+
+            // calculating labor_cost
+            const labor_cost_summing_query = await sql_request.query(
+              `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
+            );
+
+            const labor_cost = parseFloat(
+              labor_cost_summing_query["recordset"][0]["totalSum"]
+                ? labor_cost_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            // calculating paidDurationHours
+            const labor_hours_summing_query = await sql_request.query(
+              `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
+            );
+
+            const labor_hours = parseFloat(
+              labor_hours_summing_query["recordset"][0]["totalSum"]
+                ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            // calculating burdenCost
+            const burden_cost_summing_query = await sql_request.query(
+              `SELECT 
+                SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
+                  FROM
+                    gross_pay_items
+                  JOIN
+                    payrolls ON gross_pay_items.payrollId = payrolls.id
+                  WHERE
+                    gross_pay_items.projectId = ${record["id"]};`
+            );
+
+            const burden = parseFloat(
+              burden_cost_summing_query["recordset"][0]["total_sum"]
+                ? burden_cost_summing_query["recordset"][0]["total_sum"]
+                : 0
+            );
 
             final_data_pool.push({
               id: record["id"],
@@ -4989,202 +5060,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET job_details = '${hvac_tables_responses["job_details"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[api_name];
-
-        break;
-      }
-
-      case "sales_details": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        let final_data_pool = [];
-
-        const batchSize = 100;
-
-        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
-          await Promise.all(
-            Object.keys(data_pool)
-              .slice(i, i + batchSize)
-              .map(async (record_id) => {
-                const record = data_pool[record_id];
-
-                let project_id = record["instance_id"];
-                let actual_project_id = record["projectId"]
-                  ? record["projectId"]
-                  : record["instance_id"];
-
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
-
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
-                }
-
-                let business_unit_id = record["instance_id"];
-                let acutal_business_unit_id = record["instance_id"];
-                let businessUnitName = record["businessUnitName"]
-                  ? record["businessUnitName"]
-                  : "default";
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
-
-                if (is_business_unit_available["recordset"].length > 0) {
-                  acutal_business_unit_id = record["businessUnitId"];
-                  business_unit_id = record["businessUnitId"];
-                }
-
-                let job_details_id = record["instance_id"];
-                let actual_job_details_id = record["jobId"]
-                  ? record["jobId"]
-                  : record["instance_id"];
-
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-                );
-
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
-                }
-
-                let location_id = record["instance_id"];
-                let actual_location_id = record["instance_id"];
-
-                // checking location availlable or not for mapping
-                const is_location_available = await sql_request.query(
-                  `SELECT id FROM location WHERE id=${record["locationId"]}`
-                );
-
-                if (is_location_available["recordset"].length > 0) {
-                  location_id = record["locationId"];
-                  actual_location_id = record["locationId"];
-                }
-
-                let customer_details_id = record["instance_id"];
-                let actual_customer_details_id = record["customerId"]
-                  ? record["customerId"]
-                  : record["instance_id"];
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
-
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
-                }
-
-                let soldOn = "2000-01-01T00:00:00.00Z";
-
-                if (record["soldOn"]) {
-                  if (
-                    new Date(record["soldOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    soldOn = record["soldOn"];
-                  }
-                } else {
-                  soldOn = "2001-01-01T00:00:00.00Z";
-                }
-
-                let createdOn = "2000-01-01T00:00:00.00Z";
-
-                if (record["createdOn"]) {
-                  if (
-                    new Date(record["createdOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    createdOn = record["createdOn"];
-                  }
-                } else {
-                  createdOn = "2001-01-01T00:00:00.00Z";
-                }
-
-                let modifiedOn = "2000-01-01T00:00:00.00Z";
-                if (record["modifiedOn"]) {
-                  if (
-                    new Date(record["modifiedOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    modifiedOn = record["modifiedOn"];
-                  }
-                } else {
-                  modifiedOn = "2001-01-01T00:00:00.00Z";
-                }
-
-                let status_value = 0;
-                let status_name = "default";
-                if (record["status"]) {
-                  status_value = record["status"]["value"]
-                    ? record["status"]["value"]
-                    : 0;
-                  status_name = record["status"]["name"]
-                    ? record["status"]["name"]
-                    : "default";
-                }
-
-                final_data_pool.push({
-                  id: record["id"],
-                  name: record["name"] ? record["name"] : "default",
-                  project_id: project_id,
-                  actual_project_id: actual_project_id,
-                  job_number: record["jobNumber"]
-                    ? record["jobNumber"]
-                    : "default",
-                  soldOn: soldOn,
-                  soldBy: record["soldBy"] ? record["soldBy"] : 0,
-                  is_active: record["active"] ? 1 : 0,
-                  subtotal: record["subtotal"] ? record["subtotal"] : 0,
-                  status_value: status_value,
-                  status_name: status_name,
-                  createdOn: createdOn,
-                  modifiedOn: modifiedOn,
-                  business_unit_id: business_unit_id,
-                  acutal_business_unit_id: acutal_business_unit_id,
-                  businessUnitName: businessUnitName,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  location_id: location_id,
-                  actual_location_id: actual_location_id,
-                  customer_details_id: customer_details_id,
-                  actual_customer_details_id: actual_customer_details_id,
-                });
-              })
-          );
-        }
-
-        console.log("sales_details data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["sales_details"]["status"] =
-              await hvac_merge_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["sales_details"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 

@@ -304,11 +304,11 @@ CREATE TABLE sales_details (
   actual_location_id INT NULL,
   customer_details_id INT NOT NULL,
   actual_customer_details_id INT NULL,
-  FOREIGN KEY (project_id) REFERENCES projects (id),
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (location_id) REFERENCES location (id),
-  FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+  -- FOREIGN KEY (project_id) REFERENCES projects (id),
+  -- FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  -- FOREIGN KEY (location_id) REFERENCES location (id),
+  -- FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
 );
 END;
 
