@@ -654,6 +654,26 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       business_unit_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -3527,6 +3547,31 @@ async function data_processor(data_lake, sql_request, table_list) {
             2: 0,
             3: 0,
           },
+          accounts_receivable: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          expense: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          income: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          current_liability: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
+          membership_liability: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
           contract_value: {
             1: 0,
             2: 0,
@@ -4808,6 +4853,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                 billed_amount: 0,
                 equipment_cost: 0,
                 material_cost: 0,
+                accounts_receivable: 0,
+                expense: 0,
+                income: 0,
+                current_liability: 0,
+                membership_liability: 0,
                 balance: 0,
                 business_unit_id: business_unit_id,
                 actual_business_unit_id: actual_business_unit_id,
@@ -5051,6 +5101,30 @@ async function data_processor(data_lake, sql_request, table_list) {
                       ? parseFloat(items_record["total"])
                       : 0;
 
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating accounts_receivable
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["accounts_receivable"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "accounts_receivable"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["accounts_receivable"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
+
                     break;
                   }
                   case "Current Liability": {
@@ -5058,12 +5132,60 @@ async function data_processor(data_lake, sql_request, table_list) {
                       ? parseFloat(items_record["total"])
                       : 0;
 
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating current_liability
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["current_liability"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "current_liability"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["current_liability"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
+
                     break;
                   }
                   case "Membership Liability": {
                     membership_liability += items_record["total"]
                       ? parseFloat(items_record["total"])
                       : 0;
+
+                    // for projects table
+                    if (record["projectId"] != null) {
+                      // calculating membership_liability
+                      if (!data_pool[record["projectId"]]) {
+                        project_dummy_values["membership_liability"][
+                          record["instance_id"]
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      } else {
+                        project_total_data[record["projectId"]][
+                          "membership_liability"
+                        ] += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                      }
+                    } else {
+                      project_dummy_values["membership_liability"][
+                        record["instance_id"]
+                      ] += items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                    }
 
                     break;
                   }
@@ -5112,12 +5234,54 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? parseFloat(items_record["total"])
                     : 0;
 
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating expense
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["expense"][record["instance_id"]] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    } else {
+                      project_total_data[record["projectId"]]["expense"] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    }
+                  } else {
+                    project_dummy_values["expense"][record["instance_id"]] +=
+                      items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                  }
+
                   break;
                 }
                 case "Income": {
                   income += items_record["total"]
                     ? parseFloat(items_record["total"])
                     : 0;
+
+                  // for projects table
+                  if (record["projectId"] != null) {
+                    // calculating income
+                    if (!data_pool[record["projectId"]]) {
+                      project_dummy_values["income"][record["instance_id"]] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    } else {
+                      project_total_data[record["projectId"]]["income"] +=
+                        items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+                    }
+                  } else {
+                    project_dummy_values["income"][record["instance_id"]] +=
+                      items_record["total"]
+                        ? parseFloat(items_record["total"])
+                        : 0;
+                  }
 
                   break;
                 }
@@ -5194,6 +5358,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: project_dummy_values["labor_cost"][1],
             labor_hours: project_dummy_values["labor_hours"][1],
             burden: project_dummy_values["burden_cost"][1],
+            accounts_receivable: project_dummy_values["accounts_receivable"][1],
+            expense: project_dummy_values["expense"][1],
+            income: project_dummy_values["income"][1],
+            current_liability: project_dummy_values["current_liability"][1],
+            membership_liability:
+              project_dummy_values["membership_liability"][1],
             business_unit_id: 1,
             actual_business_unit_id: 1,
             customer_details_id: 1,
@@ -5221,6 +5391,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: project_dummy_values["labor_cost"][2],
             labor_hours: project_dummy_values["labor_hours"][2],
             burden: project_dummy_values["burden_cost"][2],
+            accounts_receivable: project_dummy_values["accounts_receivable"][2],
+            expense: project_dummy_values["expense"][2],
+            income: project_dummy_values["income"][2],
+            current_liability: project_dummy_values["current_liability"][2],
+            membership_liability:
+              project_dummy_values["membership_liability"][2],
             business_unit_id: 2,
             actual_business_unit_id: 2,
             customer_details_id: 2,
@@ -5248,6 +5424,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: project_dummy_values["labor_cost"][3],
             labor_hours: project_dummy_values["labor_hours"][3],
             burden: project_dummy_values["burden_cost"][3],
+            accounts_receivable: project_dummy_values["accounts_receivable"][3],
+            expense: project_dummy_values["expense"][3],
+            income: project_dummy_values["income"][3],
+            current_liability: project_dummy_values["current_liability"][3],
+            membership_liability:
+              project_dummy_values["membership_liability"][3],
             business_unit_id: 3,
             actual_business_unit_id: 3,
             customer_details_id: 3,
@@ -5354,6 +5536,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           let labor_cost = 0;
           let labor_hours = 0;
           let burden = 0;
+          let accounts_receivable = 0;
+          let expense = 0;
+          let income = 0;
+          let current_liability = 0;
+          let membership_liability = 0;
           let business_unit_id = record["instance_id"];
           let actual_business_unit_id = record["instance_id"];
 
@@ -5369,6 +5556,28 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
             material_cost = project_total_data[record["id"]]["material_cost"]
               ? project_total_data[record["id"]]["material_cost"]
+              : 0;
+
+            accounts_receivable = project_total_data[record["id"]][
+              "accounts_receivable"
+            ]
+              ? project_total_data[record["id"]]["accounts_receivable"]
+              : 0;
+            expense = project_total_data[record["id"]]["expense"]
+              ? project_total_data[record["id"]]["expense"]
+              : 0;
+            income = project_total_data[record["id"]]["income"]
+              ? project_total_data[record["id"]]["income"]
+              : 0;
+            current_liability = project_total_data[record["id"]][
+              "current_liability"
+            ]
+              ? project_total_data[record["id"]]["current_liability"]
+              : 0;
+            membership_liability = project_total_data[record["id"]][
+              "membership_liability"
+            ]
+              ? project_total_data[record["id"]]["membership_liability"]
               : 0;
 
             business_unit_id = project_total_data[record["id"]][
@@ -5422,6 +5631,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: labor_cost,
             labor_hours: labor_hours,
             burden: burden,
+            accounts_receivable: accounts_receivable,
+            expense: expense,
+            income: income,
+            current_liability: current_liability,
+            membership_liability: membership_liability,
             business_unit_id: business_unit_id,
             actual_business_unit_id: actual_business_unit_id,
             customer_details_id: customer_details_id,
