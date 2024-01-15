@@ -163,6 +163,10 @@ async function getAPIWholeData(
   //   return data_pool_object;
   // }
 
+  console.log("getAPIWholeData: ");
+  console.log("data_pool_object: ", data_pool_object);
+  console.log("data_pool: ", data_pool);
+
   return { data_pool_object, data_pool, page_count, has_error_occured };
 }
 
