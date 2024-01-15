@@ -3113,6 +3113,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const batchSize = 100;
 
+        console.log("purchase_order_data_pool: ", purchase_order_data_pool);
+
         for (
           let i = 0;
           i < Object.keys(purchase_order_data_pool).length;
@@ -3303,7 +3305,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         //   table_name
         // );
 
-        console.log("final_data_pool:c", final_data_pool);
+        console.log("final_data_pool: ", final_data_pool);
 
         console.log("purchase order data: ", final_data_pool.length);
 
