@@ -2961,8 +2961,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let page_count = 0;
                 let has_error_occured = false;
 
-                if(current_payroll_id == 83811219){
-                  console.log('data_pool_temp: ', data_pool_temp)
+                if (current_payroll_id == 83811219) {
+                  console.log("data_pool_temp: ", data_pool_temp);
                 }
 
                 do {
@@ -2985,11 +2985,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ));
                 } while (has_error_occured);
 
-                if(current_payroll_id == 83811219){
-                  console.log('data_pool_temp: after processing ', data_pool_temp)
+                if (current_payroll_id == 83811219) {
+                  console.log(
+                    "data_pool_temp: after processing ",
+                    data_pool_temp
+                  );
                 }
 
-                gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                if (data_pool_temp) {
+                  gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                }
               })
             );
 
