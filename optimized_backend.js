@@ -2956,15 +2956,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                 } while (!access_token);
 
                 // continuously fetching whole api data
-                let data_pool_object_temp = {};
-                let data_pool_temp = [];
+                let data_pool_object = {};
+                let data_pool = [];
                 let page_count = 0;
                 let has_error_occured = false;
 
                 do {
                   ({
-                    data_pool_object_temp,
-                    data_pool_temp,
+                    data_pool_object,
+                    data_pool,
                     page_count,
                     has_error_occured,
                   } = await getAPIWholeData(
@@ -2975,14 +2975,12 @@ async function data_processor(data_lake, sql_request, table_list) {
                     "payroll",
                     "gross-pay-items",
                     params_header_temp,
-                    data_pool_object_temp,
-                    data_pool_temp,
+                    data_pool_object,
+                    data_pool,
                     page_count
                   ));
 
-                  if (data_pool_temp) {
-                    gross_pay_data = [...gross_pay_data, ...data_pool_temp];
-                  }
+                  gross_pay_data = [...gross_pay_data, ...data_pool];
                 } while (has_error_occured);
               })
             );
