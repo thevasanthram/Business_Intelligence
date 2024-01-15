@@ -169,6 +169,7 @@ async function getAPIWholeData(
 
   if (params_header["payrollIds"] == 83811219) {
     console.log("data_pool: *******************", data_pool);
+    console.log("data: ", { data_pool_object, data_pool, page_count, has_error_occured })
   }
 
   return { data_pool_object, data_pool, page_count, has_error_occured };
