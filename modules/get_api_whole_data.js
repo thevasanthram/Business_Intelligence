@@ -69,7 +69,9 @@ async function getAPIWholeData(
     do {
       const filtering_condition = `${params_condition}&page=${page_count + 1}`;
 
-      console.log("request url: ", api_url + filtering_condition);
+      if (!params_header["payrollIds"]) {
+        console.log("request url: ", api_url + filtering_condition);
+      }
 
       const api_response = await fetch(api_url + filtering_condition, {
         method: "GET",
@@ -100,12 +102,14 @@ async function getAPIWholeData(
 
           data_pool.push(...pusing_item);
 
-          console.log(
-            data_pool.length,
-            "/",
-            api_data["totalCount"],
-            " records  fetched  successfully"
-          );
+          if (!params_header["payrollIds"]) {
+            console.log(
+              data_pool.length,
+              "/",
+              api_data["totalCount"],
+              " records  fetched  successfully"
+            );
+          }
         }
       } catch {
         // if theres a exceptional response in some api
