@@ -13,9 +13,6 @@ async function getAPIWholeData(
   data_pool,
   page_count
 ) {
-  // let data_pool_object = {};
-  // let data_pool = [];
-
   let has_error_occured = false;
 
   try {
@@ -65,7 +62,9 @@ async function getAPIWholeData(
     do {
       const filtering_condition = `${params_condition}&page=${page_count + 1}`;
 
-      console.log("request url: ", api_url + filtering_condition);
+      if (!params_header["payrollIds"]) {
+        console.log("request url: ", api_url + filtering_condition);
+      }
 
       const api_response = await fetch(api_url + filtering_condition, {
         method: "GET",
@@ -96,12 +95,14 @@ async function getAPIWholeData(
 
           data_pool.push(...pusing_item);
 
-          console.log(
-            data_pool.length,
-            "/",
-            api_data["totalCount"],
-            " records  fetched  successfully"
-          );
+          if (!params_header["payrollIds"]) {
+            console.log(
+              data_pool.length,
+              "/",
+              api_data["totalCount"],
+              " records  fetched  successfully"
+            );
+          }
         }
       } catch {
         // if theres a exceptional response in some api
@@ -143,6 +144,16 @@ async function getAPIWholeData(
       `Data fetching failed for ${api_group} - ${api_name}. Try Again!:`,
       error
     );
+
+    // data_pool_object = getAPIWholeData(
+    //   access_token,
+    //   app_key,
+    //   instance_name,
+    //   tenant_id,
+    //   api_group,
+    //   api_name,
+    //   params_header
+    // );
 
     has_error_occured = true;
   }
