@@ -2931,7 +2931,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 JSON.stringify(params_header)
               );
 
-              params_header_temp["payrollIds"] = String(current_payroll_id);
+              params_header_temp["payrollIds"] = current_payroll_id;
               params_header_temp["modifiedOnOrAfter"] = "";
               params_header_temp["modifiedBefore"] = "";
 
