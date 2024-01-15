@@ -2904,98 +2904,114 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
-        let final_data_pool = [];
-
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        const batchSize = 100;
+        const batchSize = 50;
 
-        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+        const payroll_ids = [];
+
+        Object.keys(data_pool).map((record_id) => {
+          payroll_ids.push(record["payrollId"]);
+        });
+
+        const unique_payroll_ids = Array.from(new Set(payroll_ids));
+
+        for (let i = 0; i < unique_payroll_ids.length; i += batchSize) {
           await Promise.all(
-            Object.keys(data_pool).map(async (record_id) => {
-              const record = data_pool[record_id];
+            unique_payroll_ids
+              .slice(i, i + batchSize)
+              .map(async (current_payroll_id) => {
+                // delete all rows of current payroll id from db
+                const delete_payroll_rows = await sql_request.query(
+                  `DELETE FROM gross_pay_items WHERE payrollId = ${current_payroll_id};`
+                );
 
-              // delete all rows of current payroll id from db
-              const current_payroll_id = record["payrollId"];
+                // fetch the particular payroll id's records from service titan
+                let final_data_pool = [];
 
-              const delete_payroll_rows = await sql_request.query(
-                `DELETE FROM gross_pay_items WHERE payrollId = ${current_payroll_id};`
-              );
+                let gross_pay_data = [];
 
-              // fetch the particular payroll id's records from service titan
+                const params_header_temp = JSON.parse(
+                  JSON.stringify(params_header)
+                );
 
-              let gross_pay_data = [];
+                params_header_temp["payrollIds"] = String(current_payroll_id);
+                params_header_temp["modifiedOnOrAfter"] = "";
+                params_header_temp["modifiedBefore"] = "";
 
-              const params_header_temp = JSON.parse(
-                JSON.stringify(params_header)
-              );
+                await Promise.all(
+                  instance_details.map(async (instance_data) => {
+                    const instance_name = instance_data["instance_name"];
+                    const tenant_id = instance_data["tenant_id"];
+                    const app_key = instance_data["app_key"];
+                    const client_id = instance_data["client_id"];
+                    const client_secret = instance_data["client_secret"];
 
-              params_header_temp["payrollIds"] = String(current_payroll_id);
-              params_header_temp["modifiedOnOrAfter"] = "";
-              params_header_temp["modifiedBefore"] = "";
+                    // signing a new access token in Service Titan's API
+                    let access_token = "";
 
-              await Promise.all(
-                instance_details.map(async (instance_data) => {
-                  const instance_name = instance_data["instance_name"];
-                  const tenant_id = instance_data["tenant_id"];
-                  const app_key = instance_data["app_key"];
-                  const client_id = instance_data["client_id"];
-                  const client_secret = instance_data["client_secret"];
+                    do {
+                      access_token = await getAccessToken(
+                        client_id,
+                        client_secret
+                      );
+                    } while (!access_token);
 
-                  // signing a new access token in Service Titan's API
-                  let access_token = "";
+                    // continuously fetching whole api data
+                    let data_pool_object_temp = {};
+                    let data_pool_temp = [];
+                    let page_count = 0;
+                    let has_error_occured = false;
 
-                  do {
-                    access_token = await getAccessToken(
-                      client_id,
-                      client_secret
-                    );
-                  } while (!access_token);
+                    do {
+                      ({
+                        data_pool_object_temp,
+                        data_pool_temp,
+                        page_count,
+                        has_error_occured,
+                      } = await getAPIWholeData(
+                        access_token,
+                        app_key,
+                        instance_name,
+                        tenant_id,
+                        "payroll",
+                        "gross-pay-items",
+                        params_header_temp,
+                        data_pool_object_temp,
+                        data_pool_temp,
+                        page_count
+                      ));
+                    } while (has_error_occured);
 
-                  // continuously fetching whole api data
-                  let data_pool_object_temp = {};
-                  let data_pool_temp = [];
-                  let page_count = 0;
-                  let has_error_occured = false;
+                    console.log("data_pool_temp: ", data_pool_temp);
 
-                  do {
-                    ({
-                      data_pool_object_temp,
-                      data_pool_temp,
-                      page_count,
-                      has_error_occured,
-                    } = await getAPIWholeData(
-                      access_token,
-                      app_key,
-                      instance_name,
-                      tenant_id,
-                      "payroll",
-                      "gross-pay-items",
-                      params_header_temp,
-                      data_pool_object_temp,
-                      data_pool_temp,
-                      page_count
-                    ));
-                  } while (has_error_occured);
+                    if (data_pool_temp) {
+                      gross_pay_data = [...gross_pay_data, ...data_pool_temp];
+                    }
+                  })
+                );
 
-                  console.log("data_pool_temp: ", data_pool_temp);
+                gross_pay_data.map((record) => {
+                  final_data_pool.push({
+                    id: record["id"],
+                    payrollId: record["payrollId"],
+                    amount: record["amount"],
+                    paidDurationHours: record["paidDurationHours"],
+                    projectId: record["projectId"],
+                    invoiceId: record["invoiceId"],
+                  });
+                });
 
-                  if (data_pool_temp) {
-                    gross_pay_data = [...gross_pay_data, ...data_pool_temp];
-                  }
-                })
-              );
-
-              final_data_pool.push({
-                id: record["id"],
-                payrollId: record["payrollId"],
-                amount: record["amount"],
-                paidDurationHours: record["paidDurationHours"],
-                projectId: record["projectId"],
-                invoiceId: record["invoiceId"],
-              });
-            })
+                if (final_data_pool.length > 0) {
+                  await hvac_data_insertion(
+                    sql_request,
+                    final_data_pool,
+                    header_data,
+                    table_name
+                  );
+                }
+              })
           );
         }
 
