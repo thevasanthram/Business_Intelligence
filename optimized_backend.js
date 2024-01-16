@@ -3279,12 +3279,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                   modifiedOn = "2001-01-01T00:00:00.00Z";
                 }
 
-                if (!po_record["id"]) {
-                  console.log(
-                    "-==================================================================="
-                  );
-                }
-
                 final_data_pool.push({
                   id: po_record["id"],
                   status: po_record["status"] ? po_record["status"] : "default",
@@ -3319,7 +3313,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         //   table_name
         // );
 
-        console.log("final_data_pool: ", final_data_pool);
+        // console.log("final_data_pool: ", final_data_pool);
 
         console.log("purchase order data: ", final_data_pool.length);
 
