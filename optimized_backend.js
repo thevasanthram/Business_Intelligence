@@ -3572,570 +3572,582 @@ async function data_processor(data_lake, sql_request, table_list) {
         let cogs_services_final_data_pool = [];
         let gross_profit_final_data_pool = [];
 
-        await Promise.all(
-          Object.keys(invoice_data_pool).map(async (record_id) => {
-            const record = invoice_data_pool[record_id];
+        const batchSize = 100;
 
-            let job_details_id = record["instance_id"];
-            let actual_job_details_id = record["instance_id"];
-            if (record["job"]) {
-              actual_job_details_id = record["job"]["id"];
+        for (let i = 0; i < Object.keys(invoice_data_pool).length; i++) {
+          await Promise.all(
+            Object.keys(invoice_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = invoice_data_pool[record_id];
 
-              // checking jobId availlable or not for mapping
-              const is_jobs_available = await sql_request.query(
-                `SELECT id FROM job_details WHERE id=${record["job"]["id"]}`
-              );
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["instance_id"];
+                if (record["job"]) {
+                  actual_job_details_id = record["job"]["id"];
 
-              if (is_jobs_available["recordset"].length > 0) {
-                job_details_id = record["job"]["id"];
-              }
-            }
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id=${record["job"]["id"]}`
+                  );
 
-            let project_id = record["instance_id"];
-            let actual_project_id = record["projectId"]
-              ? record["projectId"]
-              : record["instance_id"];
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["job"]["id"];
+                  }
+                }
 
-            // checking projects availlable or not for mapping
-            const is_project_available = await sql_request.query(
-              `SELECT id FROM projects WHERE id=${record["projectId"]}`
-            );
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
 
-            if (is_project_available["recordset"].length > 0) {
-              project_id = record["projectId"];
-            }
+                // checking projects availlable or not for mapping
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                );
 
-            let business_unit_id = record["instance_id"];
-            let actual_business_unit_id = record["instance_id"];
-            if (record["businessUnit"]) {
-              actual_business_unit_id = record["businessUnit"]["id"];
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
 
-              // checking business unit availlable or not for mapping
-              const is_business_unit_available = await sql_request.query(
-                `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
-              );
+                let business_unit_id = record["instance_id"];
+                let actual_business_unit_id = record["instance_id"];
+                if (record["businessUnit"]) {
+                  actual_business_unit_id = record["businessUnit"]["id"];
 
-              if (is_business_unit_available["recordset"].length > 0) {
-                business_unit_id = record["businessUnit"]["id"];
-              }
-            }
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+                  );
 
-            let location_id = record["instance_id"];
-            let actual_location_id = record["instance_id"];
-            if (record["location"]) {
-              actual_location_id = record["location"]["id"];
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnit"]["id"];
+                  }
+                }
 
-              // checking location availlable or not for mapping
-              const is_location_available = await sql_request.query(
-                `SELECT id FROM location WHERE id=${record["location"]["id"]}`
-              );
+                let location_id = record["instance_id"];
+                let actual_location_id = record["instance_id"];
+                if (record["location"]) {
+                  actual_location_id = record["location"]["id"];
 
-              if (is_location_available["recordset"].length > 0) {
-                location_id = record["location"]["id"];
-              }
-            }
+                  // checking location availlable or not for mapping
+                  const is_location_available = await sql_request.query(
+                    `SELECT id FROM location WHERE id=${record["location"]["id"]}`
+                  );
 
-            let customer_id = record["instance_id"];
-            let actual_customer_id = record["instance_id"];
-            let customer_name = "default";
-            if (record["customer"]) {
-              actual_customer_id = record["customer"]["id"];
-              customer_name = record["customer"]["name"]
-                ? record["customer"]["name"]
-                : "default";
+                  if (is_location_available["recordset"].length > 0) {
+                    location_id = record["location"]["id"];
+                  }
+                }
 
-              // checking customer availlable or not for mapping
-              const is_customer_available = await sql_request.query(
-                `SELECT id FROM customer_details WHERE id=${record["customer"]["id"]}`
-              );
+                let customer_id = record["instance_id"];
+                let actual_customer_id = record["instance_id"];
+                let customer_name = "default";
+                if (record["customer"]) {
+                  actual_customer_id = record["customer"]["id"];
+                  customer_name = record["customer"]["name"]
+                    ? record["customer"]["name"]
+                    : "default";
 
-              if (is_customer_available["recordset"].length > 0) {
-                customer_id = record["customer"]["id"];
-              }
-            }
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id=${record["customer"]["id"]}`
+                  );
 
-            let address_street = "";
-            let address_unit = "";
-            let address_city = "";
-            let address_state = "";
-            let address_zip = 57483;
-            let acutal_address_zip = "";
-            let address_country = "";
-            let city = "Mexico";
-            if (record["locationAddress"]) {
-              address_street = record["locationAddress"]["street"]
-                ? record["locationAddress"]["street"]
-                : "";
-              address_unit = record["locationAddress"]["unit"]
-                ? record["locationAddress"]["unit"]
-                : "";
-              address_city = record["locationAddress"]["city"]
-                ? record["locationAddress"]["city"]
-                : "";
-              address_state = record["locationAddress"]["state"]
-                ? record["locationAddress"]["state"]
-                : "";
-              address_country = record["locationAddress"]["country"]
-                ? record["locationAddress"]["country"]
-                : "";
-              acutal_address_zip = record["locationAddress"]["zip"]
-                ? record["locationAddress"]["zip"]
-                : "";
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_id = record["customer"]["id"];
+                  }
+                }
 
-              address_zip = record["locationAddress"]["zip"]
-                ? record["locationAddress"]["zip"]
-                : 57483;
+                let address_street = "";
+                let address_unit = "";
+                let address_city = "";
+                let address_state = "";
+                let address_zip = 57483;
+                let acutal_address_zip = "";
+                let address_country = "";
+                let city = "Mexico";
+                if (record["locationAddress"]) {
+                  address_street = record["locationAddress"]["street"]
+                    ? record["locationAddress"]["street"]
+                    : "";
+                  address_unit = record["locationAddress"]["unit"]
+                    ? record["locationAddress"]["unit"]
+                    : "";
+                  address_city = record["locationAddress"]["city"]
+                    ? record["locationAddress"]["city"]
+                    : "";
+                  address_state = record["locationAddress"]["state"]
+                    ? record["locationAddress"]["state"]
+                    : "";
+                  address_country = record["locationAddress"]["country"]
+                    ? record["locationAddress"]["country"]
+                    : "";
+                  acutal_address_zip = record["locationAddress"]["zip"]
+                    ? record["locationAddress"]["zip"]
+                    : "";
 
-              if (typeof address_zip == "string") {
-                const numericValue = Number(address_zip.split("-")[0]);
-                if (!isNaN(numericValue)) {
-                  // If the conversion is successful and numericValue is not NaN, update address_zip
-                  address_zip = numericValue;
+                  address_zip = record["locationAddress"]["zip"]
+                    ? record["locationAddress"]["zip"]
+                    : 57483;
+
+                  if (typeof address_zip == "string") {
+                    const numericValue = Number(address_zip.split("-")[0]);
+                    if (!isNaN(numericValue)) {
+                      // If the conversion is successful and numericValue is not NaN, update address_zip
+                      address_zip = numericValue;
+                    } else {
+                      // Handle the case where the conversion fails
+                      address_zip = 57483;
+                    }
+                  }
+
+                  if (!unique_us_zip_codes[String(address_zip)]) {
+                    address_zip = 57483;
+                  } else {
+                    city = unique_us_zip_codes[String(address_zip)]["city"];
+                  }
+                }
+
+                let invoice_date = "2000-01-01T00:00:00.00Z";
+
+                if (record["invoiceDate"]) {
+                  if (
+                    new Date(record["invoiceDate"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    invoice_date = record["invoiceDate"];
+                  }
                 } else {
-                  // Handle the case where the conversion fails
-                  address_zip = 57483;
-                }
-              }
-
-              if (!unique_us_zip_codes[String(address_zip)]) {
-                address_zip = 57483;
-              } else {
-                city = unique_us_zip_codes[String(address_zip)]["city"];
-              }
-            }
-
-            let invoice_date = "2000-01-01T00:00:00.00Z";
-
-            if (record["invoiceDate"]) {
-              if (
-                new Date(record["invoiceDate"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                invoice_date = record["invoiceDate"];
-              }
-            } else {
-              invoice_date = "2001-01-01T00:00:00.00Z";
-            }
-
-            let dueDate = "2000-01-01T00:00:00.00Z";
-
-            if (record["dueDate"]) {
-              if (
-                new Date(record["dueDate"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                dueDate = record["dueDate"];
-              }
-            } else {
-              dueDate = "2001-01-01T00:00:00.00Z";
-            }
-
-            let depositedOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["depositedOn"]) {
-              if (
-                new Date(record["depositedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                depositedOn = record["depositedOn"];
-              }
-            } else {
-              depositedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let createdOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
-
-            const js_date = new Date(invoice_date);
-
-            const current_date = new Date();
-
-            if (js_date > current_date) {
-              invoice_date = "2002-01-01T00:00:00.00Z";
-            }
-
-            let invoice_type_id = 0;
-            let invoice_type_name = "default_invoice";
-            if (record["invoiceType"]) {
-              invoice_type_id = record["invoiceType"]["id"];
-              invoice_type_name = record["invoiceType"]["name"];
-            }
-
-            invoice_final_data_pool.push({
-              id: record["id"],
-              syncStatus: record["syncStatus"]
-                ? record["syncStatus"]
-                : "default",
-              date: invoice_date,
-              dueDate: dueDate,
-              subtotal: record["subTotal"] ? record["subTotal"] : 0,
-              tax: record["salesTax"] ? record["salesTax"] : 0,
-              total: record["total"] ? record["total"] : 0,
-              balance: record["balance"] ? record["balance"] : 0,
-              depositedOn: depositedOn,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              invoice_type_id: invoice_type_id,
-              invoice_type_name: invoice_type_name,
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              project_id: project_id,
-              actual_project_id: actual_project_id,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              address_street: address_street,
-              address_unit: address_unit,
-              address_city: address_city,
-              address_state: address_state,
-              address_country: address_country,
-              address_zip: address_zip,
-              acutal_address_zip: acutal_address_zip,
-              customer_id: customer_id,
-              actual_customer_id: actual_customer_id,
-              customer_name: customer_name,
-            });
-
-            // calculating po cost
-            const po_cost_summing_query = await sql_request.query(
-              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
-            );
-
-            const po_cost = parseFloat(
-              po_cost_summing_query["recordset"][0]["totalSum"]
-                ? po_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
-
-            // calculating labor_cost
-            const labor_cost_summing_query = await sql_request.query(
-              `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
-            );
-
-            const labor_cost = parseFloat(
-              labor_cost_summing_query["recordset"][0]["totalSum"]
-                ? labor_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
-
-            // calculating labor_hours
-            const labor_hours_summing_query = await sql_request.query(
-              `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
-            );
-
-            const labor_hours = parseFloat(
-              labor_hours_summing_query["recordset"][0]["totalSum"]
-                ? labor_hours_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
-
-            // calculating burdenCost
-            const burden_cost_summing_query = await sql_request.query(
-              `SELECT 
-                SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
-                  FROM
-                    gross_pay_items
-                  JOIN
-                    payrolls ON gross_pay_items.payrollId = payrolls.id
-                  WHERE
-                    gross_pay_items.invoiceId = ${record["id"]};`
-            );
-
-            const burden = parseFloat(
-              burden_cost_summing_query["recordset"][0]["total_sum"]
-                ? burden_cost_summing_query["recordset"][0]["total_sum"]
-                : 0
-            );
-
-            let material_cost = 0;
-            let equipment_cost = 0;
-
-            let accounts_receivable = 0;
-            let expense = 0;
-            let income = 0;
-            let current_liability = 0;
-            let membership_liability = 0;
-            let default_val = 0;
-
-            if (record["items"]) {
-              // deleting cogs equipment
-              const cogs_equipment_query = await sql_request.query(
-                `DELETE FROM cogs_equipment WHERE invoice_id = ${record["id"]}`
-              );
-
-              // deleting cogs material
-              const cogs_material_query = await sql_request.query(
-                `DELETE FROM cogs_material WHERE invoice_id = ${record["id"]}`
-              );
-
-              // deleting cogs service
-              const cogs_service_query = await sql_request.query(
-                `DELETE FROM cogs_service WHERE invoice_id = ${record["id"]}`
-              );
-
-              record["items"].map((items_record) => {
-                let generalLedgerAccountid = 0;
-                let generalLedgerAccountname = "default";
-                let generalLedgerAccountnumber = 0;
-                let generalLedgerAccounttype = "default";
-                let generalLedgerAccountdetailType = "default";
-
-                if (items_record["generalLedgerAccount"]) {
-                  generalLedgerAccountid =
-                    items_record["generalLedgerAccount"]["id"];
-                  generalLedgerAccountname =
-                    items_record["generalLedgerAccount"]["name"];
-                  generalLedgerAccountnumber =
-                    items_record["generalLedgerAccount"]["number"];
-                  generalLedgerAccounttype =
-                    items_record["generalLedgerAccount"]["type"];
-                  generalLedgerAccountdetailType =
-                    items_record["generalLedgerAccount"]["detailType"];
+                  invoice_date = "2001-01-01T00:00:00.00Z";
                 }
 
-                if (items_record["type"] == "Material") {
-                  material_cost =
-                    material_cost + parseFloat(items_record["totalCost"]);
+                let dueDate = "2000-01-01T00:00:00.00Z";
 
-                  let sku_details_id = record["instance_id"];
-                  let actual_sku_details_id = items_record["skuId"]
-                    ? items_record["skuId"]
-                    : record["instance_id"];
-                  if (sku_details_data_pool[items_record["skuId"]]) {
-                    sku_details_id = items_record["skuId"];
+                if (record["dueDate"]) {
+                  if (
+                    new Date(record["dueDate"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    dueDate = record["dueDate"];
                   }
+                } else {
+                  dueDate = "2001-01-01T00:00:00.00Z";
+                }
 
-                  cogs_material_final_data_pool.push({
-                    quantity: items_record["quantity"]
-                      ? items_record["quantity"]
-                      : 0,
-                    cost: items_record["cost"] ? items_record["cost"] : 0,
-                    total_cost: items_record["totalCost"]
-                      ? items_record["totalCost"]
-                      : 0,
-                    price: items_record["price"] ? items_record["price"] : 0,
-                    sku_name: items_record["skuName"]
-                      ? items_record["skuName"]
-                      : "default",
-                    sku_total: items_record["total"]
-                      ? items_record["total"]
-                      : 0,
-                    generalLedgerAccountid: generalLedgerAccountid,
-                    generalLedgerAccountname: generalLedgerAccountname,
-                    generalLedgerAccountnumber: generalLedgerAccountnumber,
-                    generalLedgerAccounttype: generalLedgerAccounttype,
-                    generalLedgerAccountdetailType:
-                      generalLedgerAccountdetailType,
-                    job_details_id: job_details_id,
-                    actual_job_details_id: actual_job_details_id,
-                    project_id: project_id,
-                    actual_project_id: actual_project_id,
-                    invoice_id: record["id"],
-                    sku_details_id: sku_details_id,
-                    actual_sku_details_id: actual_sku_details_id,
+                let depositedOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["depositedOn"]) {
+                  if (
+                    new Date(record["depositedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    depositedOn = record["depositedOn"];
+                  }
+                } else {
+                  depositedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let createdOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
+
+                const js_date = new Date(invoice_date);
+
+                const current_date = new Date();
+
+                if (js_date > current_date) {
+                  invoice_date = "2002-01-01T00:00:00.00Z";
+                }
+
+                let invoice_type_id = 0;
+                let invoice_type_name = "default_invoice";
+                if (record["invoiceType"]) {
+                  invoice_type_id = record["invoiceType"]["id"];
+                  invoice_type_name = record["invoiceType"]["name"];
+                }
+
+                invoice_final_data_pool.push({
+                  id: record["id"],
+                  syncStatus: record["syncStatus"]
+                    ? record["syncStatus"]
+                    : "default",
+                  date: invoice_date,
+                  dueDate: dueDate,
+                  subtotal: record["subTotal"] ? record["subTotal"] : 0,
+                  tax: record["salesTax"] ? record["salesTax"] : 0,
+                  total: record["total"] ? record["total"] : 0,
+                  balance: record["balance"] ? record["balance"] : 0,
+                  depositedOn: depositedOn,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  invoice_type_id: invoice_type_id,
+                  invoice_type_name: invoice_type_name,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                  location_id: location_id,
+                  actual_location_id: actual_location_id,
+                  address_street: address_street,
+                  address_unit: address_unit,
+                  address_city: address_city,
+                  address_state: address_state,
+                  address_country: address_country,
+                  address_zip: address_zip,
+                  acutal_address_zip: acutal_address_zip,
+                  customer_id: customer_id,
+                  actual_customer_id: actual_customer_id,
+                  customer_name: customer_name,
+                });
+
+                // calculating po cost
+                const po_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(total) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
+                );
+
+                const po_cost = parseFloat(
+                  po_cost_summing_query["recordset"][0]["totalSum"]
+                    ? po_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                // calculating labor_cost
+                const labor_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
+                );
+
+                const labor_cost = parseFloat(
+                  labor_cost_summing_query["recordset"][0]["totalSum"]
+                    ? labor_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                // calculating labor_hours
+                const labor_hours_summing_query = await sql_request.query(
+                  `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
+                );
+
+                const labor_hours = parseFloat(
+                  labor_hours_summing_query["recordset"][0]["totalSum"]
+                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                // calculating burdenCost
+                const burden_cost_summing_query = await sql_request.query(
+                  `SELECT 
+                  SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
+                    FROM
+                      gross_pay_items
+                    JOIN
+                      payrolls ON gross_pay_items.payrollId = payrolls.id
+                    WHERE
+                      gross_pay_items.invoiceId = ${record["id"]};`
+                );
+
+                const burden = parseFloat(
+                  burden_cost_summing_query["recordset"][0]["total_sum"]
+                    ? burden_cost_summing_query["recordset"][0]["total_sum"]
+                    : 0
+                );
+
+                let material_cost = 0;
+                let equipment_cost = 0;
+
+                let accounts_receivable = 0;
+                let expense = 0;
+                let income = 0;
+                let current_liability = 0;
+                let membership_liability = 0;
+                let default_val = 0;
+
+                if (record["items"]) {
+                  // deleting cogs equipment
+                  const cogs_equipment_query = await sql_request.query(
+                    `DELETE FROM cogs_equipment WHERE invoice_id = ${record["id"]}`
+                  );
+
+                  // deleting cogs material
+                  const cogs_material_query = await sql_request.query(
+                    `DELETE FROM cogs_material WHERE invoice_id = ${record["id"]}`
+                  );
+
+                  // deleting cogs service
+                  const cogs_service_query = await sql_request.query(
+                    `DELETE FROM cogs_service WHERE invoice_id = ${record["id"]}`
+                  );
+
+                  record["items"].map((items_record) => {
+                    let generalLedgerAccountid = 0;
+                    let generalLedgerAccountname = "default";
+                    let generalLedgerAccountnumber = 0;
+                    let generalLedgerAccounttype = "default";
+                    let generalLedgerAccountdetailType = "default";
+
+                    if (items_record["generalLedgerAccount"]) {
+                      generalLedgerAccountid =
+                        items_record["generalLedgerAccount"]["id"];
+                      generalLedgerAccountname =
+                        items_record["generalLedgerAccount"]["name"];
+                      generalLedgerAccountnumber =
+                        items_record["generalLedgerAccount"]["number"];
+                      generalLedgerAccounttype =
+                        items_record["generalLedgerAccount"]["type"];
+                      generalLedgerAccountdetailType =
+                        items_record["generalLedgerAccount"]["detailType"];
+                    }
+
+                    if (items_record["type"] == "Material") {
+                      material_cost =
+                        material_cost + parseFloat(items_record["totalCost"]);
+
+                      let sku_details_id = record["instance_id"];
+                      let actual_sku_details_id = items_record["skuId"]
+                        ? items_record["skuId"]
+                        : record["instance_id"];
+                      if (sku_details_data_pool[items_record["skuId"]]) {
+                        sku_details_id = items_record["skuId"];
+                      }
+
+                      cogs_material_final_data_pool.push({
+                        quantity: items_record["quantity"]
+                          ? items_record["quantity"]
+                          : 0,
+                        cost: items_record["cost"] ? items_record["cost"] : 0,
+                        total_cost: items_record["totalCost"]
+                          ? items_record["totalCost"]
+                          : 0,
+                        price: items_record["price"]
+                          ? items_record["price"]
+                          : 0,
+                        sku_name: items_record["skuName"]
+                          ? items_record["skuName"]
+                          : "default",
+                        sku_total: items_record["total"]
+                          ? items_record["total"]
+                          : 0,
+                        generalLedgerAccountid: generalLedgerAccountid,
+                        generalLedgerAccountname: generalLedgerAccountname,
+                        generalLedgerAccountnumber: generalLedgerAccountnumber,
+                        generalLedgerAccounttype: generalLedgerAccounttype,
+                        generalLedgerAccountdetailType:
+                          generalLedgerAccountdetailType,
+                        job_details_id: job_details_id,
+                        actual_job_details_id: actual_job_details_id,
+                        project_id: project_id,
+                        actual_project_id: actual_project_id,
+                        invoice_id: record["id"],
+                        sku_details_id: sku_details_id,
+                        actual_sku_details_id: actual_sku_details_id,
+                      });
+                    }
+
+                    if (items_record["type"] == "Equipment") {
+                      equipment_cost =
+                        equipment_cost + parseFloat(items_record["totalCost"]);
+
+                      let sku_details_id = record["instance_id"] + 3;
+                      let actual_sku_details_id = items_record["skuId"]
+                        ? items_record["skuId"]
+                        : record["instance_id"];
+                      if (sku_details_data_pool[items_record["skuId"]]) {
+                        sku_details_id = items_record["skuId"];
+                      }
+
+                      cogs_equipment_final_data_pool.push({
+                        quantity: items_record["quantity"]
+                          ? items_record["quantity"]
+                          : 0,
+                        cost: items_record["cost"] ? items_record["cost"] : 0,
+                        total_cost: items_record["totalCost"]
+                          ? items_record["totalCost"]
+                          : 0,
+                        price: items_record["price"]
+                          ? items_record["price"]
+                          : 0,
+                        sku_name: items_record["skuName"]
+                          ? items_record["skuName"]
+                          : "default",
+                        sku_total: items_record["total"]
+                          ? items_record["total"]
+                          : 0,
+                        generalLedgerAccountid: generalLedgerAccountid,
+                        generalLedgerAccountname: generalLedgerAccountname,
+                        generalLedgerAccountnumber: generalLedgerAccountnumber,
+                        generalLedgerAccounttype: generalLedgerAccounttype,
+                        generalLedgerAccountdetailType:
+                          generalLedgerAccountdetailType,
+                        job_details_id: job_details_id,
+                        actual_job_details_id: actual_job_details_id,
+                        project_id: project_id,
+                        actual_project_id: actual_project_id,
+                        invoice_id: record["id"],
+                        sku_details_id: sku_details_id,
+                        actual_sku_details_id: actual_sku_details_id,
+                      });
+                    }
+
+                    if (items_record["type"] == "Service") {
+                      let sku_details_id = record["instance_id"] + 6;
+                      let actual_sku_details_id = items_record["skuId"]
+                        ? items_record["skuId"]
+                        : record["instance_id"];
+                      if (sku_details_data_pool[items_record["skuId"]]) {
+                        sku_details_id = items_record["skuId"];
+                      }
+
+                      // for gross profit
+                      switch (generalLedgerAccounttype) {
+                        case "Accounts Receivable": {
+                          accounts_receivable += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+
+                          break;
+                        }
+                        case "Current Liability": {
+                          current_liability += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+
+                          break;
+                        }
+                        case "Membership Liability": {
+                          membership_liability += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+
+                          break;
+                        }
+                        case "default": {
+                          default_val += items_record["total"]
+                            ? parseFloat(items_record["total"])
+                            : 0;
+
+                          break;
+                        }
+                      }
+
+                      cogs_services_final_data_pool.push({
+                        quantity: items_record["quantity"]
+                          ? items_record["quantity"]
+                          : 0,
+                        cost: items_record["cost"] ? items_record["cost"] : 0,
+                        total_cost: items_record["totalCost"]
+                          ? items_record["totalCost"]
+                          : 0,
+                        price: items_record["price"]
+                          ? items_record["price"]
+                          : 0,
+                        sku_name: items_record["skuName"]
+                          ? items_record["skuName"]
+                          : "default",
+                        sku_total: items_record["total"]
+                          ? items_record["total"]
+                          : 0,
+                        generalLedgerAccountid: generalLedgerAccountid,
+                        generalLedgerAccountname: generalLedgerAccountname,
+                        generalLedgerAccountnumber: generalLedgerAccountnumber,
+                        generalLedgerAccounttype: generalLedgerAccounttype,
+                        generalLedgerAccountdetailType:
+                          generalLedgerAccountdetailType,
+                        job_details_id: job_details_id,
+                        actual_job_details_id: actual_job_details_id,
+                        project_id: project_id,
+                        actual_project_id: actual_project_id,
+                        invoice_id: record["id"],
+                        sku_details_id: sku_details_id,
+                        actual_sku_details_id: actual_sku_details_id,
+                      });
+                    }
+
+                    // for gross profit
+                    switch (generalLedgerAccounttype) {
+                      case "Expense": {
+                        expense += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+
+                        break;
+                      }
+                      case "Income": {
+                        income += items_record["total"]
+                          ? parseFloat(items_record["total"])
+                          : 0;
+
+                        break;
+                      }
+                    }
                   });
                 }
 
-                if (items_record["type"] == "Equipment") {
-                  equipment_cost =
-                    equipment_cost + parseFloat(items_record["totalCost"]);
+                let revenue = parseFloat(record["total"])
+                  ? parseFloat(record["total"])
+                  : 0;
 
-                  let sku_details_id = record["instance_id"] + 3;
-                  let actual_sku_details_id = items_record["skuId"]
-                    ? items_record["skuId"]
-                    : record["instance_id"];
-                  if (sku_details_data_pool[items_record["skuId"]]) {
-                    sku_details_id = items_record["skuId"];
-                  }
+                // let gross_profit =
+                //   revenue -
+                //   po_cost -
+                //   equipment_cost -
+                //   material_cost -
+                //   labor_cost -
+                //   burden;
 
-                  cogs_equipment_final_data_pool.push({
-                    quantity: items_record["quantity"]
-                      ? items_record["quantity"]
-                      : 0,
-                    cost: items_record["cost"] ? items_record["cost"] : 0,
-                    total_cost: items_record["totalCost"]
-                      ? items_record["totalCost"]
-                      : 0,
-                    price: items_record["price"] ? items_record["price"] : 0,
-                    sku_name: items_record["skuName"]
-                      ? items_record["skuName"]
-                      : "default",
-                    sku_total: items_record["total"]
-                      ? items_record["total"]
-                      : 0,
-                    generalLedgerAccountid: generalLedgerAccountid,
-                    generalLedgerAccountname: generalLedgerAccountname,
-                    generalLedgerAccountnumber: generalLedgerAccountnumber,
-                    generalLedgerAccounttype: generalLedgerAccounttype,
-                    generalLedgerAccountdetailType:
-                      generalLedgerAccountdetailType,
-                    job_details_id: job_details_id,
-                    actual_job_details_id: actual_job_details_id,
-                    project_id: project_id,
-                    actual_project_id: actual_project_id,
-                    invoice_id: record["id"],
-                    sku_details_id: sku_details_id,
-                    actual_sku_details_id: actual_sku_details_id,
+                // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
+
+                // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
+                //   gross_margin = 0;
+                // }
+
+                if (js_date <= current_date) {
+                  gross_profit_final_data_pool.push({
+                    id: record["id"],
+                    accounts_receivable: accounts_receivable,
+                    expense: expense,
+                    income: income,
+                    current_liability: current_liability,
+                    membership_liability: membership_liability,
+                    default: default_val,
+                    total: record["total"] ? parseFloat(record["total"]) : 0,
+                    po_cost: po_cost, // purchase orders
+                    equipment_cost: equipment_cost, //
+                    material_cost: material_cost, //
+                    labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+                    burden: burden, // cogs_labor
+                    // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+                    // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+                    units: 1, //  currently for 1
+                    labor_hours: labor_hours, // cogs_labor paid duration
                   });
                 }
-
-                if (items_record["type"] == "Service") {
-                  let sku_details_id = record["instance_id"] + 6;
-                  let actual_sku_details_id = items_record["skuId"]
-                    ? items_record["skuId"]
-                    : record["instance_id"];
-                  if (sku_details_data_pool[items_record["skuId"]]) {
-                    sku_details_id = items_record["skuId"];
-                  }
-
-                  // for gross profit
-                  switch (generalLedgerAccounttype) {
-                    case "Accounts Receivable": {
-                      accounts_receivable += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-
-                      break;
-                    }
-                    case "Current Liability": {
-                      current_liability += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-
-                      break;
-                    }
-                    case "Membership Liability": {
-                      membership_liability += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-
-                      break;
-                    }
-                    case "default": {
-                      default_val += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-
-                      break;
-                    }
-                  }
-
-                  cogs_services_final_data_pool.push({
-                    quantity: items_record["quantity"]
-                      ? items_record["quantity"]
-                      : 0,
-                    cost: items_record["cost"] ? items_record["cost"] : 0,
-                    total_cost: items_record["totalCost"]
-                      ? items_record["totalCost"]
-                      : 0,
-                    price: items_record["price"] ? items_record["price"] : 0,
-                    sku_name: items_record["skuName"]
-                      ? items_record["skuName"]
-                      : "default",
-                    sku_total: items_record["total"]
-                      ? items_record["total"]
-                      : 0,
-                    generalLedgerAccountid: generalLedgerAccountid,
-                    generalLedgerAccountname: generalLedgerAccountname,
-                    generalLedgerAccountnumber: generalLedgerAccountnumber,
-                    generalLedgerAccounttype: generalLedgerAccounttype,
-                    generalLedgerAccountdetailType:
-                      generalLedgerAccountdetailType,
-                    job_details_id: job_details_id,
-                    actual_job_details_id: actual_job_details_id,
-                    project_id: project_id,
-                    actual_project_id: actual_project_id,
-                    invoice_id: record["id"],
-                    sku_details_id: sku_details_id,
-                    actual_sku_details_id: actual_sku_details_id,
-                  });
-                }
-
-                // for gross profit
-                switch (generalLedgerAccounttype) {
-                  case "Expense": {
-                    expense += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Income": {
-                    income += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                }
-              });
-            }
-
-            let revenue = parseFloat(record["total"])
-              ? parseFloat(record["total"])
-              : 0;
-
-            // let gross_profit =
-            //   revenue -
-            //   po_cost -
-            //   equipment_cost -
-            //   material_cost -
-            //   labor_cost -
-            //   burden;
-
-            // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
-
-            // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
-            //   gross_margin = 0;
-            // }
-
-            if (js_date <= current_date) {
-              gross_profit_final_data_pool.push({
-                id: record["id"],
-                accounts_receivable: accounts_receivable,
-                expense: expense,
-                income: income,
-                current_liability: current_liability,
-                membership_liability: membership_liability,
-                default: default_val,
-                total: record["total"] ? parseFloat(record["total"]) : 0,
-                po_cost: po_cost, // purchase orders
-                equipment_cost: equipment_cost, //
-                material_cost: material_cost, //
-                labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-                burden: burden, // cogs_labor
-                // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-                // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-                units: 1, //  currently for 1
-                labor_hours: labor_hours, // cogs_labor paid duration
-              });
-            }
-          })
-        );
+              })
+          );
+        }
 
         console.log(
           "cogs_material data: ",
