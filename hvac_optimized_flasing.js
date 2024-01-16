@@ -3824,6 +3824,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool = data_lake[api_name]["sales__estimates"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
 
+        const projects_data_pool =
+          data_lake[api_name]["jpm__projects"]["data_pool"];
+        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
+
         // fetching business units from db
         // ----------------
         const business_unit_response = await sql_request.query(
@@ -3867,37 +3871,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         location_data.map((current_record) => {
           location_data_pool[current_record["id"]] = current_record;
         });
-        // ----------------
-
-        // fetching projects data from db
-        // ----------------
-        const projects_response = await sql_request.query(
-          "SELECT * FROM projects"
-        );
-
-        const projects_data = projects_response.recordset;
-
-        const projects_data_pool = {};
-
-        projects_data.map((current_record) => {
-          projects_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
+        // ---------------
 
         let final_data_pool = [];
 
