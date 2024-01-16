@@ -4019,6 +4019,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         });
 
+        console.log(
+          'project_cache["project_contract_value"]: ',
+          project_cache["project_contract_value"]
+        );
+
         console.log("sales_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
@@ -4275,9 +4280,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 : 0);
           }
         });
-
-        // calculating contract value from sales estimates for projects table
-        let project_contract_value = project_cache["project_contract_value"];
 
         let invoice_final_data_pool = [];
         let cogs_material_final_data_pool = [];
@@ -5566,12 +5568,18 @@ async function data_processor(data_lake, sql_request, table_list) {
               : record["instance_id"];
           }
 
-          if (project_contract_value[record["id"]]) {
-            contract_value = project_contract_value[record["id"]][
-              "contract_value"
-            ]
-              ? project_contract_value[record["id"]]["contract_value"]
+          if (project_cache["project_contract_value"][record["id"]]) {
+            contract_value = project_cache["project_contract_value"][
+              record["id"]
+            ]["contract_value"]
+              ? project_cache["project_contract_value"][record["id"]][
+                  "contract_value"
+                ]
               : 0;
+            console.log(
+              "enteringhh =================================================",
+              contract_value
+            );
           }
 
           if (projects_po_and_gpi_data[record["id"]]) {
