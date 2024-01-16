@@ -3199,10 +3199,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                   if (is_vendor_available["recordset"].length > 0) {
                     vendor_id = po_record["vendorId"];
                   }
-
-                  if (vendors_data_pool[po_record["vendorId"]]) {
-                    vendor_id = po_record["vendorId"];
-                  }
                 }
 
                 let date = "2000-01-01T00:00:00.00Z";
