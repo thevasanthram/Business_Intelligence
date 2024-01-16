@@ -659,6 +659,26 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       business_unit_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -4431,6 +4451,40 @@ async function data_processor(data_lake, sql_request, table_list) {
             const burden = parseFloat(
               burden_cost_summing_query["recordset"][0]["total_sum"]
                 ? burden_cost_summing_query["recordset"][0]["total_sum"]
+                : 0
+            );
+
+            // calculating accounts_receivable, expense, income, current_liability, membership_liability
+            let income = 0;
+            let expense = 0;
+
+            const accounts_receivable_summing_query = await sql_request.query(
+              `SELECT SUM(accounts_receivable) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Accounts Receivable'`
+            );
+
+            const accounts_receivable = parseFloat(
+              accounts_receivable_summing_query["recordset"][0]["totalSum"]
+                ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            const current_liability_summing_query = await sql_request.query(
+              `SELECT SUM(current_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Current Liability'`
+            );
+
+            const current_liability = parseFloat(
+              current_liability_summing_query["recordset"][0]["totalSum"]
+                ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                : 0
+            );
+
+            const membership_liability_summing_query = await sql_request.query(
+              `SELECT SUM(membership_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Membership Liability'`
+            );
+
+            const membership_liability = parseFloat(
+              membership_liability_summing_query["recordset"][0]["totalSum"]
+                ? labor_hours_summing_query["recordset"][0]["totalSum"]
                 : 0
             );
 
