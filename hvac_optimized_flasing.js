@@ -3825,7 +3825,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const header_data = hvac_tables[table_name]["columns"];
 
         const projects_data_pool =
-          data_lake[api_name]["jpm__projects"]["data_pool"];
+          data_lake["projects"]["jpm__projects"]["data_pool"];
         let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
 
         // fetching business units from db
