@@ -3876,15 +3876,15 @@ async function data_processor(data_lake, sql_request, table_list) {
         let final_data_pool = [];
 
         // calculating contract value from sales estimates for projects table
-        let project_contract_value = {};
+        project_cache["project_contract_value"] = {};
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
           // preparing data for projects table
           if (record["projectId"] != null) {
-            if (!project_contract_value[record["projectId"]]) {
-              project_contract_value[record["projectId"]] = {
+            if (!project_cache["project_contract_value"][record["projectId"]]) {
+              project_cache["project_contract_value"][record["projectId"]] = {
                 contract_value: 0,
               };
             }
@@ -3894,8 +3894,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                 record["instance_id"]
               ] += parseFloat(record["subtotal"]);
             } else {
-              project_contract_value[record["projectId"]]["contract_value"] +=
-                parseFloat(record["subtotal"]);
+              project_cache["project_contract_value"][record["projectId"]][
+                "contract_value"
+              ] += parseFloat(record["subtotal"]);
             }
           } else {
             project_cache["project_dummy_values"]["contract_value"][
@@ -4017,8 +4018,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_customer_details_id: actual_customer_details_id,
           });
         });
-
-        project_cache["project_contract_value"] = project_contract_value;
 
         console.log("sales_details data: ", final_data_pool.length);
 
