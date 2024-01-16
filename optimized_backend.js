@@ -3572,7 +3572,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         let cogs_services_final_data_pool = [];
         let gross_profit_final_data_pool = [];
 
-        const batchSize = 100;
+        let batchSize = 100;
 
         for (let i = 0; i < Object.keys(invoice_data_pool).length; i++) {
           await Promise.all(
@@ -4243,286 +4243,296 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        batchSize = 100;
 
-            let customer_details_id = record["instance_id"];
-            let actual_customer_details_id = record["customerId"]
-              ? record["customerId"]
-              : record["instance_id"];
+        for (let i = 0; i < Object.keys(data_pool).length; i++) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            // checking customer availlable or not for mapping
-            const is_customer_available = await sql_request.query(
-              `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-            );
+                let customer_details_id = record["instance_id"];
+                let actual_customer_details_id = record["customerId"]
+                  ? record["customerId"]
+                  : record["instance_id"];
 
-            if (is_customer_available["recordset"].length > 0) {
-              customer_details_id = record["customerId"];
-            }
+                // checking customer availlable or not for mapping
+                const is_customer_available = await sql_request.query(
+                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                );
 
-            let location_id = record["instance_id"];
-            let actual_location_id = record["locationId"]
-              ? record["locationId"]
-              : record["instance_id"];
+                if (is_customer_available["recordset"].length > 0) {
+                  customer_details_id = record["customerId"];
+                }
 
-            // checking location availlable or not for mapping
-            const is_location_available = await sql_request.query(
-              `SELECT id FROM location WHERE id=${record["locationId"]}`
-            );
+                let location_id = record["instance_id"];
+                let actual_location_id = record["locationId"]
+                  ? record["locationId"]
+                  : record["instance_id"];
 
-            if (is_location_available["recordset"].length > 0) {
-              location_id = record["locationId"];
-            }
+                // checking location availlable or not for mapping
+                const is_location_available = await sql_request.query(
+                  `SELECT id FROM location WHERE id=${record["locationId"]}`
+                );
 
-            let startDate = "2000-01-01T00:00:00.00Z";
+                if (is_location_available["recordset"].length > 0) {
+                  location_id = record["locationId"];
+                }
 
-            if (record["startDate"]) {
-              if (
-                new Date(record["startDate"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                startDate = record["startDate"];
-              }
-            } else {
-              startDate = "2001-01-01T00:00:00.00Z";
-            }
+                let startDate = "2000-01-01T00:00:00.00Z";
 
-            let targetCompletionDate = "2000-01-01T00:00:00.00Z";
+                if (record["startDate"]) {
+                  if (
+                    new Date(record["startDate"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    startDate = record["startDate"];
+                  }
+                } else {
+                  startDate = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["targetCompletionDate"]) {
-              if (
-                new Date(record["targetCompletionDate"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                targetCompletionDate = record["targetCompletionDate"];
-              }
-            } else {
-              targetCompletionDate = "2001-01-01T00:00:00.00Z";
-            }
+                let targetCompletionDate = "2000-01-01T00:00:00.00Z";
 
-            let actualCompletionDate = "2000-01-01T00:00:00.00Z";
+                if (record["targetCompletionDate"]) {
+                  if (
+                    new Date(record["targetCompletionDate"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    targetCompletionDate = record["targetCompletionDate"];
+                  }
+                } else {
+                  targetCompletionDate = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["actualCompletionDate"]) {
-              if (
-                new Date(record["actualCompletionDate"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                actualCompletionDate = record["actualCompletionDate"];
-              }
-            } else {
-              actualCompletionDate = "2001-01-01T00:00:00.00Z";
-            }
+                let actualCompletionDate = "2000-01-01T00:00:00.00Z";
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                if (record["actualCompletionDate"]) {
+                  if (
+                    new Date(record["actualCompletionDate"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    actualCompletionDate = record["actualCompletionDate"];
+                  }
+                } else {
+                  actualCompletionDate = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            // calculating billed_amount
-            const billed_amount_summing_query = await sql_request.query(
-              `SELECT SUM(total) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
-            );
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            const billed_amount = parseFloat(
-              billed_amount_summing_query["recordset"][0]["totalSum"]
-                ? billed_amount_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating billed_amount
+                const billed_amount_summing_query = await sql_request.query(
+                  `SELECT SUM(total) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating balance
-            const balance_summing_query = await sql_request.query(
-              `SELECT SUM(balance) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
-            );
+                const billed_amount = parseFloat(
+                  billed_amount_summing_query["recordset"][0]["totalSum"]
+                    ? billed_amount_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const balance = parseFloat(
-              balance_summing_query["recordset"][0]["totalSum"]
-                ? balance_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating balance
+                const balance_summing_query = await sql_request.query(
+                  `SELECT SUM(balance) AS totalSum FROM invoice WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating contract
-            const contract_summing_query = await sql_request.query(
-              `SELECT SUM(subtotal) AS totalSum FROM sales_details WHERE project_id = ${record["id"]}`
-            );
+                const balance = parseFloat(
+                  balance_summing_query["recordset"][0]["totalSum"]
+                    ? balance_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const contract_value = parseFloat(
-              contract_summing_query["recordset"][0]["totalSum"]
-                ? contract_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating contract
+                const contract_summing_query = await sql_request.query(
+                  `SELECT SUM(subtotal) AS totalSum FROM sales_details WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating po cost
-            const po_cost_summing_query = await sql_request.query(
-              `SELECT SUM(total) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
-            );
+                const contract_value = parseFloat(
+                  contract_summing_query["recordset"][0]["totalSum"]
+                    ? contract_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const po_cost = parseFloat(
-              po_cost_summing_query["recordset"][0]["totalSum"]
-                ? po_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating po cost
+                const po_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(total) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating equipment cost
-            const equipment_cost_summing_query = await sql_request.query(
-              `SELECT SUM(total_cost) AS totalSum FROM cogs_equipment WHERE project_id = ${record["id"]}`
-            );
+                const po_cost = parseFloat(
+                  po_cost_summing_query["recordset"][0]["totalSum"]
+                    ? po_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const equipment_cost = parseFloat(
-              equipment_cost_summing_query["recordset"][0]["totalSum"]
-                ? equipment_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating equipment cost
+                const equipment_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(total_cost) AS totalSum FROM cogs_equipment WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating material cost
-            const material_cost_summing_query = await sql_request.query(
-              `SELECT SUM(total_cost) AS totalSum FROM cogs_material WHERE project_id = ${record["id"]}`
-            );
+                const equipment_cost = parseFloat(
+                  equipment_cost_summing_query["recordset"][0]["totalSum"]
+                    ? equipment_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const material_cost = parseFloat(
-              material_cost_summing_query["recordset"][0]["totalSum"]
-                ? material_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating material cost
+                const material_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(total_cost) AS totalSum FROM cogs_material WHERE project_id = ${record["id"]}`
+                );
 
-            // calculating businesss_unit & actual_business_unit_id
-            const businesss_unit_query = await sql_request.query(
-              `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
-            );
+                const material_cost = parseFloat(
+                  material_cost_summing_query["recordset"][0]["totalSum"]
+                    ? material_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const business_unit_id =
-              businesss_unit_query["recordset"][0]["business_unit_id"];
+                // calculating businesss_unit & actual_business_unit_id
+                const businesss_unit_query = await sql_request.query(
+                  `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
+                );
 
-            const actual_business_unit_id =
-              businesss_unit_query["recordset"][0]["actual_business_unit_id"];
+                const business_unit_id =
+                  businesss_unit_query["recordset"][0]["business_unit_id"];
 
-            // calculating labor_cost
-            const labor_cost_summing_query = await sql_request.query(
-              `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
-            );
+                const actual_business_unit_id =
+                  businesss_unit_query["recordset"][0][
+                    "actual_business_unit_id"
+                  ];
 
-            const labor_cost = parseFloat(
-              labor_cost_summing_query["recordset"][0]["totalSum"]
-                ? labor_cost_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating labor_cost
+                const labor_cost_summing_query = await sql_request.query(
+                  `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
+                );
 
-            // calculating paidDurationHours
-            const labor_hours_summing_query = await sql_request.query(
-              `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
-            );
+                const labor_cost = parseFloat(
+                  labor_cost_summing_query["recordset"][0]["totalSum"]
+                    ? labor_cost_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const labor_hours = parseFloat(
-              labor_hours_summing_query["recordset"][0]["totalSum"]
-                ? labor_hours_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                // calculating paidDurationHours
+                const labor_hours_summing_query = await sql_request.query(
+                  `SELECT SUM(paidDurationHours) AS totalSum FROM gross_pay_items WHERE projectId = ${record["id"]}`
+                );
 
-            // calculating burdenCost
-            const burden_cost_summing_query = await sql_request.query(
-              `SELECT 
-                SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
-                  FROM
-                    gross_pay_items
-                  JOIN
-                    payrolls ON gross_pay_items.payrollId = payrolls.id
-                  WHERE
-                    gross_pay_items.projectId = ${record["id"]};`
-            );
+                const labor_hours = parseFloat(
+                  labor_hours_summing_query["recordset"][0]["totalSum"]
+                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const burden = parseFloat(
-              burden_cost_summing_query["recordset"][0]["total_sum"]
-                ? burden_cost_summing_query["recordset"][0]["total_sum"]
-                : 0
-            );
+                // calculating burdenCost
+                const burden_cost_summing_query = await sql_request.query(
+                  `SELECT 
+                  SUM(gross_pay_items.paidDurationHours * payrolls.burdenRate) AS total_sum 
+                    FROM
+                      gross_pay_items
+                    JOIN
+                      payrolls ON gross_pay_items.payrollId = payrolls.id
+                    WHERE
+                      gross_pay_items.projectId = ${record["id"]};`
+                );
 
-            // calculating accounts_receivable, expense, income, current_liability, membership_liability
-            let income = 0;
-            let expense = 0;
+                const burden = parseFloat(
+                  burden_cost_summing_query["recordset"][0]["total_sum"]
+                    ? burden_cost_summing_query["recordset"][0]["total_sum"]
+                    : 0
+                );
 
-            const accounts_receivable_summing_query = await sql_request.query(
-              `SELECT SUM(accounts_receivable) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Accounts Receivable'`
-            );
+                // calculating accounts_receivable, expense, income, current_liability, membership_liability
+                let income = 0;
+                let expense = 0;
 
-            const accounts_receivable = parseFloat(
-              accounts_receivable_summing_query["recordset"][0]["totalSum"]
-                ? labor_hours_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                const accounts_receivable_summing_query =
+                  await sql_request.query(
+                    `SELECT SUM(accounts_receivable) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Accounts Receivable'`
+                  );
 
-            const current_liability_summing_query = await sql_request.query(
-              `SELECT SUM(current_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Current Liability'`
-            );
+                const accounts_receivable = parseFloat(
+                  accounts_receivable_summing_query["recordset"][0]["totalSum"]
+                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const current_liability = parseFloat(
-              current_liability_summing_query["recordset"][0]["totalSum"]
-                ? labor_hours_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                const current_liability_summing_query = await sql_request.query(
+                  `SELECT SUM(current_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Current Liability'`
+                );
 
-            const membership_liability_summing_query = await sql_request.query(
-              `SELECT SUM(membership_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Membership Liability'`
-            );
+                const current_liability = parseFloat(
+                  current_liability_summing_query["recordset"][0]["totalSum"]
+                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
-            const membership_liability = parseFloat(
-              membership_liability_summing_query["recordset"][0]["totalSum"]
-                ? labor_hours_summing_query["recordset"][0]["totalSum"]
-                : 0
-            );
+                const membership_liability_summing_query =
+                  await sql_request.query(
+                    `SELECT SUM(membership_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Membership Liability'`
+                  );
 
-            final_data_pool.push({
-              id: record["id"],
-              number: record["number"] ? record["number"] : "default",
-              name: record["name"] ? record["name"] : `${record["id"]}`,
-              status: record["status"] ? record["status"] : "No Status",
-              billed_amount: billed_amount,
-              balance: balance,
-              contract_value: contract_value,
-              po_cost: po_cost,
-              equipment_cost: equipment_cost,
-              material_cost: material_cost,
-              labor_cost: labor_cost,
-              labor_hours: labor_hours,
-              burden: burden,
-              accounts_receivable: accounts_receivable,
-              expense: expense,
-              income: income,
-              current_liability: current_liability,
-              membership_liability: membership_liability,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              customer_details_id: customer_details_id,
-              actual_customer_details_id: actual_customer_details_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              startDate: startDate,
-              targetCompletionDate: targetCompletionDate,
-              actualCompletionDate: actualCompletionDate,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-            });
-          })
-        );
+                const membership_liability = parseFloat(
+                  membership_liability_summing_query["recordset"][0]["totalSum"]
+                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                final_data_pool.push({
+                  id: record["id"],
+                  number: record["number"] ? record["number"] : "default",
+                  name: record["name"] ? record["name"] : `${record["id"]}`,
+                  status: record["status"] ? record["status"] : "No Status",
+                  billed_amount: billed_amount,
+                  balance: balance,
+                  contract_value: contract_value,
+                  po_cost: po_cost,
+                  equipment_cost: equipment_cost,
+                  material_cost: material_cost,
+                  labor_cost: labor_cost,
+                  labor_hours: labor_hours,
+                  burden: burden,
+                  accounts_receivable: accounts_receivable,
+                  expense: expense,
+                  income: income,
+                  current_liability: current_liability,
+                  membership_liability: membership_liability,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                  customer_details_id: customer_details_id,
+                  actual_customer_details_id: actual_customer_details_id,
+                  location_id: location_id,
+                  actual_location_id: actual_location_id,
+                  startDate: startDate,
+                  targetCompletionDate: targetCompletionDate,
+                  actualCompletionDate: actualCompletionDate,
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                });
+              })
+          );
+        }
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
