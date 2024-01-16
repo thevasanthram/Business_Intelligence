@@ -3131,7 +3131,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const batchSize = 100;
 
-        console.log("purchase_order_data_pool: ", purchase_order_data_pool);
+        // console.log("purchase_order_data_pool: ", purchase_order_data_pool);
 
         for (
           let i = 0;
