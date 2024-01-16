@@ -3889,7 +3889,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               };
             }
 
-            if (!data_pool[record["projectId"]]) {
+            if (!projects_data_pool[record["projectId"]]) {
               project_cache["project_dummy_values"]["contract_value"][
                 record["instance_id"]
               ] += parseFloat(record["subtotal"]);
