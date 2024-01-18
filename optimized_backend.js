@@ -4525,7 +4525,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                   `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
                 );
 
-                console.log("data: ", businesss_unit_query["recordset"]);
+                console.log(
+                  "data: ",
+                  record["id"],
+                  businesss_unit_query["recordset"]
+                );
 
                 const business_unit_id =
                   businesss_unit_query["recordset"][0]["business_unit_id"];
