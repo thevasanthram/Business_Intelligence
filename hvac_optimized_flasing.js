@@ -2253,13 +2253,13 @@ async function azure_sql_operations(data_lake, table_list) {
 
   const pushing_time = startStopwatch("pushing data");
 
-  console.log(
-    "*************************************************CHECK MEM**********************************************************************"
-  );
-  await new Promise((resolve) => setTimeout(resolve, 15000));
-  console.log(
-    "***********************************************************************************************************************"
-  );
+  // console.log(
+  //   "*************************************************CHECK MEM**********************************************************************"
+  // );
+  // await new Promise((resolve) => setTimeout(resolve, 15000));
+  // console.log(
+  //   "***********************************************************************************************************************"
+  // );
 
   await data_processor(data_lake, sql_request, table_list);
   console.log("Time Taken for pushing all data: ", pushing_time());
@@ -3889,7 +3889,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         let final_data_pool = [];
 
         // calculating contract value from sales estimates for projects table
-        project_cache["project_contract_value"] = {};
+        // project_cache["project_contract_value"] = {};
         console.log('project_cache["project_dummy_values"]: ', project_cache);
 
         Object.keys(data_pool).map((record_id) => {
