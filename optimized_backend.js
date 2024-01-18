@@ -4347,7 +4347,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("projects total data: ", Object.keys(data_pool).length);
 
-        for (let i = 0; i < Object.keys(data_pool).length; i++) {
+        for (let i = 0; i < Object.keys(data_pool).length; i = i + batchSize) {
           await Promise.all(
             Object.keys(data_pool)
               .slice(i, i + batchSize)
