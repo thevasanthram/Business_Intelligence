@@ -148,6 +148,71 @@ CREATE TABLE payrolls (
 );
 END;
 
+-- purchase_order
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
+BEGIN
+  CREATE TABLE purchase_order (
+    id INT PRIMARY KEY,
+    status NVARCHAR(MAX) NULL,
+    total DECIMAL(18, 8) NULL,
+    tax DECIMAL(18, 8) NULL,
+    date DATETIME2 NULL,
+    requiredOn DATETIME2 NULL,
+    sentOn DATETIME2 NULL,
+    receivedOn DATETIME2 NULL,
+    createdOn DATETIME2 NULL,
+    modifiedOn DATETIME2 NULL,
+    job_details_id INT NOT NULL,
+    actual_job_details_id INT NULL,
+    invoice_id INT NOT NULL,
+    actual_invoice_id INT NULL,
+    project_id INT NOT NULL,
+    actual_project_id INT NULL,
+    vendor_id INT NOT NULL,
+    actual_vendor_id INT NULL,
+    -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+    -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+    -- FOREIGN KEY (project_id) REFERENCES projects (id),
+    -- FOREIGN KEY (vendor_id) REFERENCES vendor (id),
+  );
+END;
+
+
+-- sales_details
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
+BEGIN
+CREATE TABLE sales_details (
+  id INT PRIMARY KEY,
+  [name] NVARCHAR(MAX) NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
+  job_number NVARCHAR(MAX) NULL,
+  soldOn DATETIME2 NULL,
+  soldBy INT NULL,
+  is_active TINYINT NULL,
+  subtotal DECIMAL(18, 8) NULL,
+  budget_expense DECIMAL(18, 8) NULL,
+  status_value INT NULL,
+  status_name NVARCHAR(MAX) NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  businessUnitName NVARCHAR(MAX) NULL,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  location_id INT NOT NULL,
+  actual_location_id INT NULL,
+  customer_details_id INT NOT NULL,
+  actual_customer_details_id INT NULL,
+  -- FOREIGN KEY (project_id) REFERENCES projects (id),
+  -- FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+  -- FOREIGN KEY (location_id) REFERENCES location (id),
+  -- FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
+);
+END;
+
 -- projects
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
 BEGIN
@@ -159,6 +224,7 @@ CREATE TABLE projects(
   billed_amount DECIMAL(18, 8) NULL,
   balance DECIMAL(18, 8) NULL,
   contract_value DECIMAL(18, 8) NULL,
+  budget_expense DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
   equipment_cost DECIMAL(18, 8) NULL,
   material_cost DECIMAL(18, 8) NULL,
@@ -283,39 +349,7 @@ CREATE TABLE job_details (
 );
 END;
 
--- sales_details
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
-BEGIN
-CREATE TABLE sales_details (
-  id INT PRIMARY KEY,
-  [name] NVARCHAR(MAX) NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
-  job_number NVARCHAR(MAX) NULL,
-  soldOn DATETIME2 NULL,
-  soldBy INT NULL,
-  is_active TINYINT NULL,
-  subtotal DECIMAL(18, 8) NULL,
-  status_value INT NULL,
-  status_name NVARCHAR(MAX) NULL,
-  createdOn DATETIME2 NULL,
-  modifiedOn DATETIME2 NULL,
-  business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NULL,
-  businessUnitName NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
-  -- FOREIGN KEY (project_id) REFERENCES projects (id),
-  -- FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
-  -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  -- FOREIGN KEY (location_id) REFERENCES location (id),
-  -- FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
-);
-END;
+
 
 -- appointments
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
@@ -574,34 +608,6 @@ CREATE TABLE cogs_equipment (
 );
 END;
 
--- purchase_order
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
-BEGIN
-  CREATE TABLE purchase_order (
-    id INT PRIMARY KEY,
-    status NVARCHAR(MAX) NULL,
-    total DECIMAL(18, 8) NULL,
-    tax DECIMAL(18, 8) NULL,
-    date DATETIME2 NULL,
-    requiredOn DATETIME2 NULL,
-    sentOn DATETIME2 NULL,
-    receivedOn DATETIME2 NULL,
-    createdOn DATETIME2 NULL,
-    modifiedOn DATETIME2 NULL,
-    job_details_id INT NOT NULL,
-    actual_job_details_id INT NULL,
-    invoice_id INT NOT NULL,
-    actual_invoice_id INT NULL,
-    project_id INT NOT NULL,
-    actual_project_id INT NULL,
-    vendor_id INT NOT NULL,
-    actual_vendor_id INT NULL,
-    -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-    -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
-    -- FOREIGN KEY (project_id) REFERENCES projects (id),
-    -- FOREIGN KEY (vendor_id) REFERENCES vendor (id),
-  );
-END;
 
 -- gross_profit
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
