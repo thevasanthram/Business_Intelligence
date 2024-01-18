@@ -4528,7 +4528,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 console.log(
                   "data: ",
                   record["id"],
-                  businesss_unit_query["recordset"]
+                  businesss_unit_query
                 );
 
                 const business_unit_id =
