@@ -3894,10 +3894,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 record["instance_id"]
               ] += parseFloat(record["subtotal"]);
             } else {
-              console.log(
-                "enteirngggg ============, ",
-                parseFloat(record["subtotal"])
-              );
               project_cache["project_contract_value"][record["projectId"]][
                 "contract_value"
               ] += parseFloat(record["subtotal"]);
@@ -4022,11 +4018,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_customer_details_id: actual_customer_details_id,
           });
         });
-
-        console.log(
-          'project_cache["project_contract_value"]: ',
-          project_cache["project_contract_value"]
-        );
 
         console.log("sales_details data: ", final_data_pool.length);
 
@@ -5580,10 +5571,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                   "contract_value"
                 ]
               : 0;
-            console.log(
-              "enteringhh =================================================",
-              contract_value
-            );
           }
 
           if (projects_po_and_gpi_data[record["id"]]) {

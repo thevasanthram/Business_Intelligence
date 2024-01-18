@@ -233,10 +233,10 @@ const api_collection = [
   //   api_group: "payroll",
   //   api_name: "payroll-adjustments",
   // },
-  {
-    api_group: "payroll",
-    api_name: "gross-pay-items",
-  },
+  // {
+  //   api_group: "payroll",
+  //   api_name: "gross-pay-items",
+  // },
   // {
   //   api_group: "payroll",
   //   api_name: "jobs/splits",
@@ -293,18 +293,18 @@ const api_collection = [
   //   api_group: "reporting",
   //   api_name: "report-categories",
   // },
-  // {
-  //   api_group: "sales",
-  //   api_name: "estimates",
-  // },
+  {
+    api_group: "sales",
+    api_name: "estimates",
+  },
   // {
   //   api_group: "sales",
   //   api_name: "estimates/export",
   // },
-  // {
-  //   api_group: "sales",
-  //   api_name: "estimates/items",
-  // },
+  {
+    api_group: "sales",
+    api_name: "estimates/items",
+  },
   // {
   //   api_group: "service-agreements",
   //   api_name: "service-agreements",
