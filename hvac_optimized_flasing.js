@@ -432,6 +432,18 @@ const hvac_tables = {
       },
     },
   },
+  job_types: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      job_type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
   purchase_order: {
     columns: {
       id: {
@@ -936,9 +948,12 @@ const hvac_tables = {
       },
       job_type_id: {
         data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_type_id: {
+        data_type: "INT",
         constraint: { nullable: true },
       },
-
       job_number: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -1772,6 +1787,9 @@ const hvac_tables_responses = {
   payrolls: {
     status: "",
   },
+  job_types: {
+    status: "",
+  },
   projects: {
     status: "",
   },
@@ -2213,6 +2231,7 @@ async function azure_sql_operations(data_lake, table_list) {
       [location],
       gross_pay_items,
       payrolls,
+      job_types,
       projects,
       job_details,
       appointments,
@@ -2233,7 +2252,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3402,6 +3421,83 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         // delete data_lake["cogs_labor"]["payroll__payrolls"];
+
+        break;
+      }
+
+      case "job_types": {
+        const table_name = "job_types";
+        const data_pool =
+          data_lake["job_details"]["jpm__job-types"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        // console.log("data_pool: ", data_pool);
+        // console.log("header_data: ", header_data);
+
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            job_type_name: "default",
+          });
+
+          final_data_pool.push({
+            id: 2,
+            job_type_name: "default",
+          });
+
+          final_data_pool.push({
+            id: 3,
+            job_type_name: "default",
+          });
+        }
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          final_data_pool.push({
+            id: record["id"],
+            job_type_name: record["name"],
+          });
+        });
+
+        // console.log("final_data_pool: ", final_data_pool);
+        // console.log("header_data: ", header_data);
+
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        console.log("job_types data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["job_types"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["job_types"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET job_types = '${hvac_tables_responses["job_types"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake["job_details"]["jpm__job-types"];
 
         break;
       }
@@ -6301,9 +6397,6 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "job_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const jobs_data_pool = data_lake[api_name]["jpm__jobs"]["data_pool"];
-        const job_types_data_pool =
-          data_lake[api_name]["jpm__job-types"]["data_pool"];
-
         const header_data = hvac_tables[table_name]["columns"];
 
         // fetching business units from db
@@ -6411,12 +6504,28 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
+        // fetching job_types data from db
+        // ----------------
+        const job_types_response = await sql_request.query(
+          "SELECT * FROM job_types"
+        );
+
+        const job_types_data = job_types_response.recordset;
+
+        const job_types_data_pool = {};
+
+        job_types_data.map((current_record) => {
+          job_types_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
         let final_data_pool = [];
 
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
             job_type_id: 1,
+            actual_job_type_id: 1,
             job_number: "1",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -6443,6 +6552,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: 2,
             job_type_id: 2,
+            actual_job_type_id: 2,
             job_number: "2",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -6469,6 +6579,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: 3,
             job_type_id: 3,
+            actual_job_type_id: 3,
             job_number: "3",
             job_status: "default",
             job_completion_time: "1999-01-01T00:00:00.00Z",
@@ -6525,6 +6636,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_booking_id = record["bookingId"]
             ? record["bookingId"]
             : record["instance_id"];
+          let job_type_id = record["instance_id"];
+          let actual_job_type_id = record["jobTypeId"]
+            ? record["jobTypeId"]
+            : record["instance_id"];
 
           if (
             business_unit_data_pool[record["businessUnitId"]]
@@ -6558,6 +6673,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           if (bookings_data_pool[record["bookingId"]]) {
             booking_id = record["bookingId"];
+          }
+
+          if (job_types_data_pool[record["jobTypeId"]]) {
+            job_type_id = record["jobTypeId"];
           }
 
           let createdOn = "2000-01-01T00:00:00.00Z";
@@ -6600,7 +6719,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: record["id"],
-            job_type_id: record["jobTypeId"] ? record["jobTypeId"] : 0,
+            job_type_id: job_type_id,
+            actual_job_type_id: actual_job_type_id,
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
             job_status: record["jobStatus"],
             job_completion_time: job_completion_time,

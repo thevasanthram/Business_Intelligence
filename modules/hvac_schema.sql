@@ -148,6 +148,15 @@ CREATE TABLE payrolls (
 );
 END;
 
+-- job_types
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'job_types')
+BEGIN
+CREATE TABLE job_types (
+  id INT PRIMARY KEY,
+  job_type_name NVARCHAR(MAX) NULL,
+);
+END;
+
 -- purchase_order
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
 BEGIN
@@ -317,7 +326,8 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'job_details')
 BEGIN
 CREATE TABLE job_details (
   id INT PRIMARY KEY,
-  job_type_id INT NULL,
+  job_type_id INT NOT NULL,
+  actual_job_type_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
   job_completion_time DATETIME2 NULL,
@@ -346,6 +356,7 @@ CREATE TABLE job_details (
   FOREIGN KEY (campaign_id) REFERENCES campaigns (id),
   FOREIGN KEY (booking_id) REFERENCES bookings (id),
   FOREIGN KEY (project_id) REFERENCES projects (id),
+  FOREIGN KEY (job_type_id) REFERENCES job_types (id),
 );
 END;
 
@@ -649,6 +660,7 @@ CREATE TABLE auto_update (
   [location] NVARCHAR(MAX) NULL,
   gross_pay_items NVARCHAR(MAX) NULL,
   payrolls NVARCHAR(MAX) NULL,
+  job_types NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
