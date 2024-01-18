@@ -4464,8 +4464,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                 );
 
                 // calculating accounts_receivable, expense, income, current_liability, membership_liability
-                let income = 0;
-                let expense = 0;
 
                 const accounts_receivable_summing_query =
                   await sql_request.query(
@@ -4496,6 +4494,42 @@ async function data_processor(data_lake, sql_request, table_list) {
                 const membership_liability = parseFloat(
                   membership_liability_summing_query["recordset"][0]["totalSum"]
                     ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                const expense_summing_query = await sql_request.query(
+                  `SELECT SUM(sku_total) AS totalSum
+                    FROM (
+                      SELECT sku_total FROM cogs_material WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Expense'
+                      UNION ALL
+                      SELECT sku_total FROM cogs_equipment WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Expense'
+                      UNION ALL
+                      SELECT sku_total FROM cogs_service WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Expense'
+                    ) AS combined_data;
+                    `
+                );
+
+                const expense = parseFloat(
+                  expense_summing_query["recordset"][0]["totalSum"]
+                    ? expense_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
+                const income_summing_query = await sql_request.query(
+                  `SELECT SUM(sku_total) AS totalSum
+                    FROM (
+                      SELECT sku_total FROM cogs_material WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Income'
+                      UNION ALL
+                      SELECT sku_total FROM cogs_equipment WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Income'
+                      UNION ALL
+                      SELECT sku_total FROM cogs_service WHERE project_id = ${record["id"]} AND generalLedgerAccounttype = 'Income'
+                    ) AS combined_data;
+                    `
+                );
+
+                const income = parseFloat(
+                  income_summing_query["recordset"][0]["totalSum"]
+                    ? income_summing_query["recordset"][0]["totalSum"]
                     : 0
                 );
 
