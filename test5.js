@@ -66,8 +66,8 @@ const params_header = {
   createdOnOrAfter: "", // 2023-08-01T00:00:00.00Z
   createdBefore: "",
   includeTotal: true,
-  pageSize: 2000,
-  // projectId: 70831251,
+  // pageSize: 2000,
+  projectId: 71182597,
 };
 async function fetch_main_data(
   data_lake,
@@ -188,16 +188,16 @@ async function starter() {
   const data_lake = {};
   main_api_list = {
     bookings: [
-      {
-        api_group: "jpm",
-        api_name: "job-types",
-        table_name: "invoices",
-      },
       // {
-      //   api_group: "sales",
-      //   api_name: "estimates",
-      //   table_name: "jobs",
+      //   api_group: "jpm",
+      //   api_name: "job-types",
+      //   table_name: "invoices",
       // },
+      {
+        api_group: "sales",
+        api_name: "estimates",
+        table_name: "jobs",
+      },
       // {
       //   api_group: "jpm",
       //   api_name: "appointments",
@@ -243,24 +243,22 @@ async function starter() {
     hvac_tables
   );
 
-  const first_table = data_lake["bookings"]["jpm__job-types"]["data_pool"];
+  const first_table = data_lake["bookings"]["sales__estimates"]["data_pool"];
 
   console.log("first_table: ", first_table);
 
-  // const items_accumulated = [];
+  const items_accumulated = [];
 
-  // Object.keys(first_table).map((record_id) => {
-  //   const record = first_table[record_id];
+  Object.keys(first_table).map((record_id) => {
+    const record = first_table[record_id];
 
-  //   delete record['items']
-  //   items_accumulated.push(record);
+    // delete record["items"];
+    record["items"].map((items_record) => {
+      items_accumulated.push(items_record);
+    });
+  });
 
-  //   // record["items"].map((items_record) => {
-
-  //   // });
-  // });
-
-  // console.log(items_accumulated);
+  console.log(items_accumulated);
 
   // const comparing_table1 =
   //   data_lake["bookings"]["accounting__invoices"]["data_pool"];

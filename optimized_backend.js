@@ -4338,6 +4338,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         batchSize = 100;
 
+        console.log("projects total data: ", Object.keys(data_pool).length);
+
         for (let i = 0; i < Object.keys(data_pool).length; i++) {
           await Promise.all(
             Object.keys(data_pool)
