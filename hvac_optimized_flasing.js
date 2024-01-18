@@ -3890,10 +3890,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         // calculating contract value from sales estimates for projects table
         project_cache["project_contract_value"] = {};
-        console.log(
-          'project_cache["project_dummy_values"]: ',
-          project_cache["project_dummy_values"]
-        );
+        console.log('project_cache["project_dummy_values"]: ', project_cache);
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
