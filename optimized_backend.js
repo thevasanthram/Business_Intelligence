@@ -3566,6 +3566,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : "default";
                 }
 
+                let totalCost = 0;
+                record["items"].map((items_record) => {
+                  totalCost = totalCost + parseFloat(items_record["totalCost"]);
+                });
+
                 final_data_pool.push({
                   id: record["id"],
                   name: record["name"] ? record["name"] : "default",
@@ -3578,6 +3583,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   soldBy: record["soldBy"] ? record["soldBy"] : 0,
                   is_active: record["active"] ? 1 : 0,
                   subtotal: record["subtotal"] ? record["subtotal"] : 0,
+                  budget_expense: totalCost,
                   status_value: status_value,
                   status_name: status_name,
                   createdOn: createdOn,
@@ -4464,6 +4470,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0
                 );
 
+                // calculating budget_expense
+                const budget_expense_summing_query = await sql_request.query(
+                  `SELECT SUM(budget_expense) AS totalSum FROM sales_details WHERE project_id = ${record["id"]}`
+                );
+
+                const budget_expense = parseFloat(
+                  budget_expense_summing_query["recordset"][0]["totalSum"]
+                    ? budget_expense_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
                 // calculating po cost
                 const po_cost_summing_query = await sql_request.query(
                   `SELECT SUM(total) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
@@ -4628,6 +4645,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   billed_amount: billed_amount,
                   balance: balance,
                   contract_value: contract_value,
+                  budget_expense: budget_expense,
                   po_cost: po_cost,
                   equipment_cost: equipment_cost,
                   material_cost: material_cost,
