@@ -61,7 +61,7 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "", // 2023-12-25T00:00:00.00Z
+  modifiedOnOrAfter: "2024-01-17T00:00:00.00Z", // 2024-01-17T00:00:00.00Z
   modifiedBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
@@ -3890,6 +3890,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         // calculating contract value from sales estimates for projects table
         project_cache["project_contract_value"] = {};
+        console.log(
+          'project_cache["project_dummy_values"]: ',
+          project_cache["project_dummy_values"]
+        );
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
