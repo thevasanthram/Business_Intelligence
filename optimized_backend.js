@@ -3670,6 +3670,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log('invoice data: ', Object.keys(invoice_data_pool).length)
 
         for (let i = 0; i < Object.keys(invoice_data_pool).length; i++) {
+          console.log(i)
           await Promise.all(
             Object.keys(invoice_data_pool)
               .slice(i, i + batchSize)
