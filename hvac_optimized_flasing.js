@@ -2271,7 +2271,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (let api_count = 10; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -3919,8 +3919,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_cache["project_contract_value"][record["projectId"]][
                 "contract_value"
               ] += parseFloat(record["subtotal"]);
-              project_cache["project_contract_value"]["budget_expense"][
-                record["instance_id"]
+
+              project_cache["project_contract_value"][record["projectId"]][
+                "budget_expense"
               ] += totalCost;
             }
           } else {
@@ -8216,56 +8217,10 @@ async function auto_update() {
 }
 
 async function orchestrate() {
-  await flush_data_pool(!should_auto_update);
+  // await flush_data_pool(!should_auto_update);
 
   // Step 1: Call start_pipeline
   await start_pipeline();
-
-  // do {
-  //   const now = new Date();
-  //   now.setUTCHours(7, 0, 0, 0);
-
-  //   // Step 1: Call start_pipeline
-  //   await start_pipeline();
-
-  //   // break;
-
-  //   // Step 2: Check year difference
-  //   params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
-  //   const next_initial_batch_time = new Date(params_header["modifiedBefore"]);
-
-  //   const yearDifference =
-  //     next_initial_batch_time.getFullYear() - now.getFullYear();
-
-  //   if (yearDifference >= 24) {
-  //     // If the difference is 24 years or more, add 24 years to modifiedOnOrAfter
-  //     next_initial_batch_time.setFullYear(
-  //       next_initial_batch_time.getFullYear() + 24
-  //     );
-  //     params_header["modifiedBefore"] = next_initial_batch_time.toISOString();
-  //     should_auto_update = true;
-  //   } else {
-  //     // If the difference is less than 24 years, set modifiedOnOrAfter to the current date and time
-  //     params_header["modifiedBefore"] = now.toISOString();
-
-  //     // Check if next_initial_batch_time is greater than the next day at 7:00 AM UTC
-  //     const nextDay = new Date(now);
-  //     nextDay.setDate(nextDay.getDate() + 1);
-  //     nextDay.setUTCHours(7, 0, 0, 0);
-
-  //     if (next_initial_batch_time > nextDay) {
-  //       // Wait until the next day at 7:00 AM UTC
-  //       const timeUntilNextDay = nextDay - now;
-  //       console.log("Waiting until the next day at 7:00 AM UTC...");
-  //       await new Promise((resolve) => setTimeout(resolve, timeUntilNextDay));
-  //     }
-
-  //     // Proceed with the next iteration immediately
-  //     continue;
-  //   }
-
-  //   // Step 3: Call start_pipeline again
-  // } while (should_auto_update);
 
   should_auto_update = true;
 }
