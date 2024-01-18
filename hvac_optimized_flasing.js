@@ -61,7 +61,7 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "2024-01-17T00:00:00.00Z", // 2024-01-17T00:00:00.00Z
+  modifiedOnOrAfter: "", // 2024-01-17T00:00:00.00Z
   modifiedBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
