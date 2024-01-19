@@ -14,6 +14,7 @@ const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
+const { parse } = require("path");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -562,6 +563,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       status_value: {
         data_type: "INT",
         constraint: { nullable: true },
@@ -647,6 +652,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -3686,6 +3695,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             2: 0,
             3: 0,
           },
+          budget_hours: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
           balance: {
             1: 0,
             2: 0,
@@ -3991,8 +4005,14 @@ async function data_processor(data_lake, sql_request, table_list) {
           const record = data_pool[record_id];
 
           let totalCost = 0;
+          let budget_hours = 0;
           record["items"].map((items_record) => {
             totalCost = totalCost + parseFloat(items_record["totalCost"]);
+
+            // budget_hours
+            if (items_record["sku"] && items_record["sku"]["name"] == "Labor") {
+              budget_hours += parseFloat(items_record["qty"]);
+            }
           });
 
           // preparing data for projects table
@@ -4001,6 +4021,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_cache["project_contract_value"][record["projectId"]] = {
                 contract_value: 0,
                 budget_expense: 0,
+                budget_hours: 0,
               };
             }
 
@@ -4011,6 +4032,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_cache["project_dummy_values"]["budget_expense"][
                 record["instance_id"]
               ] += totalCost;
+              project_cache["project_dummy_values"]["budget_hours"][
+                record["instance_id"]
+              ] += budget_hours;
             } else {
               project_cache["project_contract_value"][record["projectId"]][
                 "contract_value"
@@ -4019,6 +4043,10 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_cache["project_contract_value"][record["projectId"]][
                 "budget_expense"
               ] += totalCost;
+
+              project_cache["project_contract_value"][record["projectId"]][
+                "budget_hours"
+              ] += budget_hours;
             }
           } else {
             project_cache["project_dummy_values"]["contract_value"][
@@ -4027,6 +4055,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             project_cache["project_dummy_values"]["budget_expense"][
               record["instance_id"]
             ] += totalCost;
+            project_cache["project_dummy_values"]["budget_hours"][
+              record["instance_id"]
+            ] += budget_hours;
           }
 
           let project_id = record["instance_id"];
@@ -4129,6 +4160,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             is_active: record["active"] ? 1 : 0,
             subtotal: record["subtotal"] ? record["subtotal"] : 0,
             budget_expense: totalCost,
+            budget_hours: budget_hours,
             status_value: status_value,
             status_name: status_name,
             createdOn: createdOn,
@@ -5448,6 +5480,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             balance: project_dummy_values["balance"][1],
             contract_value: project_dummy_values["contract_value"][1],
             budget_expense: project_dummy_values["budget_expense"][1],
+            budget_hours: project_dummy_values["budget_hours"][1],
             po_cost: project_dummy_values["po_cost"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
             material_cost: project_dummy_values["material_cost"][1],
@@ -5482,6 +5515,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             balance: project_dummy_values["balance"][2],
             contract_value: project_dummy_values["contract_value"][2],
             budget_expense: project_dummy_values["budget_expense"][2],
+            budget_hours: project_dummy_values["budget_hours"][2],
             po_cost: project_dummy_values["po_cost"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
             material_cost: project_dummy_values["material_cost"][2],
@@ -5516,6 +5550,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             balance: project_dummy_values["balance"][3],
             contract_value: project_dummy_values["contract_value"][3],
             budget_expense: project_dummy_values["budget_expense"][3],
+            budget_hours: project_dummy_values["budget_hours"][3],
             po_cost: project_dummy_values["po_cost"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
             material_cost: project_dummy_values["material_cost"][3],
@@ -5629,6 +5664,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let balance = 0;
           let contract_value = 0;
           let budget_expense = 0;
+          let budget_hours = 0;
           let po_cost = 0;
           let equipment_cost = 0;
           let material_cost = 0;
@@ -5706,6 +5742,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             ]["budget_expense"]
               ? project_cache["project_contract_value"][record["id"]][
                   "budget_expense"
+                ]
+              : 0;
+
+            budget_hours = project_cache["project_contract_value"][
+              record["id"]
+            ]["budget_hours"]
+              ? project_cache["project_contract_value"][record["id"]][
+                  "budget_hours"
                 ]
               : 0;
           }
