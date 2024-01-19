@@ -2299,7 +2299,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
-  for (let api_count = 10; api_count < table_list.length; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -3914,30 +3914,30 @@ async function data_processor(data_lake, sql_request, table_list) {
           purchase_order_final_data_pool.length
         );
 
-        // if (purchase_order_final_data_pool.length > 0) {
-        //   do {
-        //     hvac_tables_responses["purchase_order"]["status"] =
-        //       await hvac_merge_insertion(
-        //         sql_request,
-        //         purchase_order_final_data_pool,
-        //         header_data,
-        //         table_name
-        //       );
-        //   } while (
-        //     hvac_tables_responses["purchase_order"]["status"] != "success"
-        //   );
+        if (purchase_order_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["purchase_order"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                purchase_order_final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["purchase_order"]["status"] != "success"
+          );
 
-        //   // entry into auto_update table
-        //   try {
-        //     const auto_update_query = `UPDATE auto_update SET purchase_order = '${hvac_tables_responses["purchase_order"]["status"]}' WHERE id=${lastInsertedId}`;
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET purchase_order = '${hvac_tables_responses["purchase_order"]["status"]}' WHERE id=${lastInsertedId}`;
 
-        //     await sql_request.query(auto_update_query);
+            await sql_request.query(auto_update_query);
 
-        //     console.log("Auto_Update log created ");
-        //   } catch (err) {
-        //     console.log("Error while inserting into auto_update", err);
-        //   }
-        // }
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
 
         break;
       }
@@ -4179,30 +4179,30 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("sales_details data: ", final_data_pool.length);
 
-        // if (final_data_pool.length > 0) {
-        //   do {
-        //     hvac_tables_responses["sales_details"]["status"] =
-        //       await hvac_merge_insertion(
-        //         sql_request,
-        //         final_data_pool,
-        //         header_data,
-        //         table_name
-        //       );
-        //   } while (
-        //     hvac_tables_responses["sales_details"]["status"] != "success"
-        //   );
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["sales_details"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["sales_details"]["status"] != "success"
+          );
 
-        //   // entry into auto_update table
-        //   try {
-        //     const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sales_details = '${hvac_tables_responses["sales_details"]["status"]}' WHERE id=${lastInsertedId}`;
 
-        //     await sql_request.query(auto_update_query);
+            await sql_request.query(auto_update_query);
 
-        //     console.log("Auto_Update log created ");
-        //   } catch (err) {
-        //     console.log("Error while inserting into auto_update", err);
-        //   }
-        // }
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
 
         delete data_lake[api_name];
 
@@ -8381,7 +8381,7 @@ async function auto_update() {
 }
 
 async function orchestrate() {
-  // await flush_data_pool(!should_auto_update);
+  await flush_data_pool(!should_auto_update);
 
   // Step 1: Call start_pipeline
   await start_pipeline();
