@@ -14,6 +14,7 @@ const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
+const csv_generator = require("./modules/csv_generator");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -2408,6 +2409,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["business_unit"]["status"] =
               await hvac_merge_insertion(
@@ -2533,6 +2540,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["campaigns"]["status"] =
               await hvac_merge_insertion(
@@ -2698,6 +2711,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("bookings data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["bookings"]["status"] =
               await hvac_merge_insertion(
@@ -2795,6 +2814,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("customer details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["customer_details"]["status"] =
               await hvac_merge_insertion(
@@ -2926,6 +2951,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("location data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["location"]["status"] =
               await hvac_merge_insertion(
@@ -3066,6 +3097,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("gross_pay_items data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["gross_pay_items"]["status"] =
               await hvac_data_insertion(
@@ -3128,6 +3165,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("payrolls data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["payrolls"]["status"] =
               await hvac_merge_insertion(
@@ -3188,6 +3231,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job_types data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["job_types"]["status"] =
               await hvac_merge_insertion(
@@ -3413,6 +3462,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("purchase order data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["purchase_order"]["status"] =
               await hvac_merge_insertion(
@@ -3623,6 +3678,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sales_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["sales_details"]["status"] =
               await hvac_merge_insertion(
@@ -4269,6 +4330,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_material_final_data_pool.length
         );
         if (cogs_material_final_data_pool.length > 0) {
+          await csv_generator(
+            cogs_material_final_data_pool,
+            Object.keys(cogs_material_header_data),
+            "cogs_material"
+          );
+
           do {
             hvac_tables_responses["cogs_material"]["status"] =
               await hvac_data_insertion(
@@ -4298,6 +4365,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_equipment_final_data_pool.length
         );
         if (cogs_equipment_final_data_pool.length > 0) {
+          await csv_generator(
+            cogs_equipment_final_data_pool,
+            Object.keys(cogs_equipment_header_data),
+            "cogs_equipment"
+          );
+
           do {
             hvac_tables_responses["cogs_equipment"]["status"] =
               await hvac_data_insertion(
@@ -4327,6 +4400,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_services_final_data_pool.length
         );
         if (cogs_services_final_data_pool.length > 0) {
+          await csv_generator(
+            cogs_services_final_data_pool,
+            Object.keys(cogs_service_header_data),
+            "cogs_service"
+          );
+
           do {
             hvac_tables_responses["cogs_service"]["status"] =
               await hvac_data_insertion(
@@ -4724,6 +4803,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("projects data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["projects"]["status"] =
               await hvac_merge_insertion(
@@ -5141,6 +5226,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("telecom_calls data: ", final_data_pool);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["call_details"]["status"] =
               await hvac_merge_insertion(
@@ -5385,6 +5476,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["job_details"]["status"] =
               await hvac_merge_insertion(
@@ -5554,6 +5651,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("appointments data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["appointments"]["status"] =
               await hvac_merge_insertion(
@@ -5624,6 +5727,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("vendor data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["vendor"]["status"] =
               await hvac_merge_insertion(
@@ -5702,6 +5811,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["technician"]["status"] =
               await hvac_merge_insertion(
@@ -5837,6 +5952,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["appointment_assignments"]["status"] =
               await hvac_merge_insertion(
@@ -5972,6 +6093,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["non_job_appointments"]["status"] =
               await hvac_merge_insertion(
@@ -6132,6 +6259,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sku_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["sku_details"]["status"] =
               await hvac_merge_insertion(
@@ -6171,6 +6304,12 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
+          await csv_generator(
+            invoice_final_data_pool,
+            Object.keys(invoice_header_data),
+            "invoice"
+          );
+
           do {
             hvac_tables_responses["invoice"]["status"] =
               await hvac_merge_insertion(
@@ -6195,6 +6334,12 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("gross_profit data: ", gross_profit_final_data_pool.length);
         if (gross_profit_final_data_pool.length > 0) {
+          await csv_generator(
+            gross_profit_final_data_pool,
+            Object.keys(gross_profit_header_data),
+            "gross_profit"
+          );
+
           do {
             hvac_tables_responses["gross_profit"]["status"] =
               await hvac_merge_insertion(
@@ -6339,6 +6484,12 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
+          await csv_generator(
+            final_data_pool,
+            Object.keys(header_data),
+            table_name
+          );
+
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
               await hvac_data_insertion(
