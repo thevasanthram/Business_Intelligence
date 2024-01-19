@@ -567,6 +567,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       status_value: {
         data_type: "INT",
         constraint: { nullable: true },
@@ -652,6 +656,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -3567,8 +3575,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
 
                 let totalCost = 0;
+                let budget_hours = 0;
                 record["items"].map((items_record) => {
                   totalCost = totalCost + parseFloat(items_record["totalCost"]);
+
+                  // budget_hours
+                  if (
+                    items_record["sku"] &&
+                    items_record["sku"]["name"] == "Labor"
+                  ) {
+                    budget_hours += parseFloat(items_record["qty"]);
+                  }
                 });
 
                 final_data_pool.push({
@@ -3584,6 +3601,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   is_active: record["active"] ? 1 : 0,
                   subtotal: record["subtotal"] ? record["subtotal"] : 0,
                   budget_expense: totalCost,
+                  budget_hours: budget_hours,
                   status_value: status_value,
                   status_name: status_name,
                   createdOn: createdOn,
@@ -4487,6 +4505,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0
                 );
 
+                // calculating budget_hours
+                const budget_hours_summing_query = await sql_request.query(
+                  `SELECT SUM(budget_hours) AS totalSum FROM sales_details WHERE project_id = ${record["id"]}`
+                );
+
+                const budget_hours = parseFloat(
+                  budget_hours_summing_query["recordset"][0]["totalSum"]
+                    ? budget_hours_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
                 // calculating po cost
                 const po_cost_summing_query = await sql_request.query(
                   `SELECT SUM(total) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
@@ -4525,11 +4554,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
                 );
 
-                console.log(
-                  "data: ",
-                  record["id"],
-                  businesss_unit_query
-                );
+                console.log("data: ", record["id"], businesss_unit_query);
 
                 const business_unit_id =
                   businesss_unit_query["recordset"][0]["business_unit_id"];
@@ -4658,6 +4683,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   balance: balance,
                   contract_value: contract_value,
                   budget_expense: budget_expense,
+                  budget_hours: budget_hours,
                   po_cost: po_cost,
                   equipment_cost: equipment_cost,
                   material_cost: material_cost,
