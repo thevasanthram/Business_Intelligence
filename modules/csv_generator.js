@@ -13,7 +13,7 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
 
   csv_file_name = csv_file_name.replace(/-/g, "_").replace("/", "_");
 
-  console.log("csv_generator function");
+  // console.log("csv_generator function");
 
   // Create the folder if it doesn't exist
   if (!fs.existsSync(csv_folder_path)) {
@@ -33,7 +33,6 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
 
   // Function to write the next batch of data
   async function writeNextBatch() {
-    console.log("writeNextBatch functiion");
     const batch = data_pool.slice(index, index + batchSize);
 
     if (batch.length > 0) {

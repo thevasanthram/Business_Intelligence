@@ -2409,11 +2409,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["business_unit"]["status"] =
@@ -2540,11 +2536,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["campaigns"]["status"] =
@@ -2711,11 +2703,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("bookings data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["bookings"]["status"] =
@@ -2814,11 +2802,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("customer details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["customer_details"]["status"] =
@@ -2951,11 +2935,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("location data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["location"]["status"] =
@@ -3097,11 +3077,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("gross_pay_items data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["gross_pay_items"]["status"] =
@@ -3165,11 +3141,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("payrolls data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["payrolls"]["status"] =
@@ -3231,11 +3203,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job_types data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["job_types"]["status"] =
@@ -3462,11 +3430,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("purchase order data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["purchase_order"]["status"] =
@@ -3678,11 +3642,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sales_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["sales_details"]["status"] =
@@ -3744,13 +3704,19 @@ async function data_processor(data_lake, sql_request, table_list) {
         let cogs_services_final_data_pool = [];
         let gross_profit_final_data_pool = [];
 
-        let batchSize = 100;
+        let batchSize = 25;
+
+        console.log(
+          "invoice total data: ",
+          Object.keys(invoice_data_pool).length
+        );
 
         for (
           let i = 0;
           i < Object.keys(invoice_data_pool).length;
           i = i + batchSize
         ) {
+          console.log('i',i )
           await Promise.all(
             Object.keys(invoice_data_pool)
               .slice(i, i + batchSize)
@@ -4325,6 +4291,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           );
         }
 
+        console.log("invoice ended");
+
         console.log(
           "cogs_material data: ",
           cogs_material_final_data_pool.length
@@ -4332,7 +4300,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_material_final_data_pool.length > 0) {
           await csv_generator(
             cogs_material_final_data_pool,
-            Object.keys(cogs_material_header_data),
+            cogs_material_header_data,
             "cogs_material"
           );
 
@@ -4367,7 +4335,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_equipment_final_data_pool.length > 0) {
           await csv_generator(
             cogs_equipment_final_data_pool,
-            Object.keys(cogs_equipment_header_data),
+            cogs_equipment_header_data,
             "cogs_equipment"
           );
 
@@ -4402,7 +4370,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (cogs_services_final_data_pool.length > 0) {
           await csv_generator(
             cogs_services_final_data_pool,
-            Object.keys(cogs_service_header_data),
+            cogs_service_header_data,
             "cogs_service"
           );
 
@@ -4803,11 +4771,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("projects data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["projects"]["status"] =
@@ -5226,11 +5190,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("telecom_calls data: ", final_data_pool);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["call_details"]["status"] =
@@ -5476,11 +5436,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["job_details"]["status"] =
@@ -5651,11 +5607,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("appointments data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["appointments"]["status"] =
@@ -5727,11 +5679,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("vendor data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["vendor"]["status"] =
@@ -5811,11 +5759,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["technician"]["status"] =
@@ -5952,11 +5896,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["appointment_assignments"]["status"] =
@@ -6093,11 +6033,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["non_job_appointments"]["status"] =
@@ -6259,11 +6195,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sku_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["sku_details"]["status"] =
@@ -6306,7 +6238,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (invoice_final_data_pool.length > 0) {
           await csv_generator(
             invoice_final_data_pool,
-            Object.keys(invoice_header_data),
+            invoice_header_data,
             "invoice"
           );
 
@@ -6336,7 +6268,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (gross_profit_final_data_pool.length > 0) {
           await csv_generator(
             gross_profit_final_data_pool,
-            Object.keys(gross_profit_header_data),
+            gross_profit_header_data,
             "gross_profit"
           );
 
@@ -6484,11 +6416,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
-          await csv_generator(
-            final_data_pool,
-            Object.keys(header_data),
-            table_name
-          );
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
