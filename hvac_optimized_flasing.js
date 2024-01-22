@@ -2326,7 +2326,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           do {
             hvac_tables_responses["legal_entity"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 Object.values(data_pool),
                 header_data,
@@ -2376,7 +2376,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           do {
             hvac_tables_responses["us_cities"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 Object.values(data_pool),
                 header_data,
@@ -2542,7 +2542,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["business_unit"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -2719,7 +2719,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["campaigns"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -2967,7 +2967,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["bookings"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3105,7 +3105,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["customer_details"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3283,7 +3283,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["location"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3409,7 +3409,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["payrolls"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3486,7 +3486,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["job_types"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -3917,7 +3917,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (purchase_order_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["purchase_order"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 purchase_order_final_data_pool,
                 header_data,
@@ -4182,7 +4182,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["sales_details"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -5820,7 +5820,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["projects"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6412,7 +6412,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["call_details"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -6805,7 +6805,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["job_details"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7159,7 +7159,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["appointments"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7241,7 +7241,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["vendor"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7353,7 +7353,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["technician"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7505,7 +7505,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["appointment_assignments"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7636,7 +7636,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["non_job_appointments"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7847,7 +7847,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["sku_details"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
@@ -7897,7 +7897,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (invoice_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["invoice"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 invoice_final_data_pool,
                 invoice_header_data,
@@ -8008,7 +8008,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (gross_profit_final_data_pool.length > 0) {
           do {
             hvac_tables_responses["gross_profit"]["status"] =
-              await hvac_merge_insertion(
+              await hvac_data_insertion(
                 sql_request,
                 gross_profit_final_data_pool,
                 gross_profit_header_data,
