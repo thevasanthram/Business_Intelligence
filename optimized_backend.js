@@ -3490,7 +3490,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
 
                 let business_unit_id = record["instance_id"];
-                let acutal_business_unit_id = record["instance_id"];
+                let acutal_business_unit_id = record["businessUnitId"]
+                  ? record["businessUnitId"]
+                  : record["instance_id"];
                 let businessUnitName = record["businessUnitName"]
                   ? record["businessUnitName"]
                   : "default";
@@ -3519,7 +3521,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
 
                 let location_id = record["instance_id"];
-                let actual_location_id = record["instance_id"];
+                let actual_location_id = record["locationId"]
+                  ? record["locationId"]
+                  : record["instance_id"];
 
                 // checking location availlable or not for mapping
                 const is_location_available = await sql_request.query(
@@ -3606,6 +3610,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                     budget_hours += parseFloat(items_record["qty"]);
                   }
                 });
+
+                console.log(totalCost, budget_hours)
 
                 final_data_pool.push({
                   id: record["id"],
@@ -3716,7 +3722,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           i < Object.keys(invoice_data_pool).length;
           i = i + batchSize
         ) {
-          console.log('i',i )
+          console.log("i", i);
           await Promise.all(
             Object.keys(invoice_data_pool)
               .slice(i, i + batchSize)
@@ -3744,12 +3750,14 @@ async function data_processor(data_lake, sql_request, table_list) {
                   : record["instance_id"];
 
                 // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
+                if (record["projectId"]) {
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
+                  }
                 }
 
                 let business_unit_id = record["instance_id"];
@@ -4405,7 +4413,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        batchSize = 100;
+        // batchSize = 50;
 
         console.log("projects total data: ", Object.keys(data_pool).length);
 
@@ -5224,8 +5232,6 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "job_details": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const jobs_data_pool = data_lake[api_name]["jpm__jobs"]["data_pool"];
-        const job_types_data_pool =
-          data_lake[api_name]["jpm__job-types"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -5725,7 +5731,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               .slice(i, i + batchSize)
               .map(async (record_id) => {
                 const record = data_pool[record_id];
-                let acutal_business_unit_id = record["instance_id"];
+                let acutal_business_unit_id = record["businessUnitId"]
+                  ? record["businessUnitId"]
+                  : record["instance_id"];
                 let business_unit_id = record["instance_id"];
 
                 // checking business unit availlable or not for mapping
@@ -5936,12 +5944,18 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        // console.log("data_pool: ", data_pool);
+        // console.log("data_pool: ", Object.keys(data_pool).length);
         // console.log("header_data: ", header_data);
 
-        const batchSize = 100;
+        const batchSize = 500;
 
         for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
+          console.log(
+            "non_job_appointments: ",
+            i,
+            "/",
+            Object.keys(data_pool).length
+          );
           await Promise.all(
             Object.keys(data_pool)
               .slice(i, i + batchSize)
