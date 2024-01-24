@@ -3611,7 +3611,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   }
                 });
 
-                console.log(totalCost, budget_hours)
+                // console.log(totalCost, budget_hours);
 
                 final_data_pool.push({
                   id: record["id"],
@@ -3717,12 +3717,14 @@ async function data_processor(data_lake, sql_request, table_list) {
           Object.keys(invoice_data_pool).length
         );
 
+        const project_bu_id = {};
+
         for (
           let i = 0;
           i < Object.keys(invoice_data_pool).length;
           i = i + batchSize
         ) {
-          console.log("i", i);
+          console.log("invoice", i, "/", Object.keys(invoice_data_pool).length);
           await Promise.all(
             Object.keys(invoice_data_pool)
               .slice(i, i + batchSize)
@@ -3758,6 +3760,13 @@ async function data_processor(data_lake, sql_request, table_list) {
                   if (is_project_available["recordset"].length > 0) {
                     project_id = record["projectId"];
                   }
+
+                  if (!project_bu_id[record["projectId"]]) {
+                    project_bu_id[record["projectId"]] = {
+                      business_unit_id: record["instance_id"],
+                      actual_business_unit_id: record["instance_id"],
+                    };
+                  }
                 }
 
                 let business_unit_id = record["instance_id"];
@@ -3772,6 +3781,14 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                   if (is_business_unit_available["recordset"].length > 0) {
                     business_unit_id = record["businessUnit"]["id"];
+                  }
+
+                  if (record["projectId"]) {
+                    project_bu_id[record["projectId"]]["business_unit_id"] =
+                      business_unit_id;
+                    project_bu_id[record["projectId"]][
+                      "actual_business_unit_id"
+                    ] = actual_business_unit_id;
                   }
                 }
 
@@ -4413,7 +4430,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        // batchSize = 50;
+        batchSize = 10;
 
         console.log("projects total data: ", Object.keys(data_pool).length);
 
@@ -4609,15 +4626,47 @@ async function data_processor(data_lake, sql_request, table_list) {
                   `SELECT business_unit_id, actual_business_unit_id FROM invoice WHERE project_id = ${record["id"]}`
                 );
 
-                console.log("data: ", record["id"], businesss_unit_query);
+                let business_unit_id = record["instance_id"];
+                let actual_business_unit_id = record["instance_id"];
 
-                const business_unit_id =
-                  businesss_unit_query["recordset"][0]["business_unit_id"];
+                try {
+                  business_unit_id =
+                    businesss_unit_query["recordset"][0]["business_unit_id"];
 
-                const actual_business_unit_id =
-                  businesss_unit_query["recordset"][0][
-                    "actual_business_unit_id"
-                  ];
+                  actual_business_unit_id =
+                    businesss_unit_query["recordset"][0][
+                      "actual_business_unit_id"
+                    ];
+                } catch (err_log) {
+                  // new project
+                  const project_id_query = await sql_request.query(
+                    `SELECT * FROM projects WHERE id = ${record["id"]}`
+                  );
+
+                  if (project_id_query["recordset"].length > 0) {
+                    // if project already found , take the existing
+                    business_unit_id =
+                      project_id_query["recordset"][0]["business_unit_id"];
+                    actual_business_unit_id =
+                      project_id_query["recordset"][0][
+                        "actual_business_unit_id"
+                      ];
+                  } else {
+                    // else, take it from data pool
+                    if (project_bu_id[record["id"]]) {
+                      business_unit_id =
+                        project_bu_id[record["id"]]["business_unit_id"];
+                      actual_business_unit_id =
+                        project_bu_id[record["id"]]["actual_business_unit_id"];
+                    }
+                  }
+
+                  // console.log(
+                  //   "=========================================================="
+                  // );
+                  // console.log(err_log);
+                  // console.log("data: ", record["id"], businesss_unit_query);
+                }
 
                 // calculating labor_cost
                 const labor_cost_summing_query = await sql_request.query(
@@ -4663,7 +4712,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 const accounts_receivable_summing_query =
                   await sql_request.query(
-                    `SELECT SUM(accounts_receivable) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Accounts Receivable'`
+                    `SELECT SUM(sku_total) AS totalSum FROM cogs_service WHERE project_id = ${record["id"]} and generalLedgerAccounttype = 'Accounts Receivable'`
                   );
 
                 const accounts_receivable = parseFloat(
@@ -4673,7 +4722,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 );
 
                 const current_liability_summing_query = await sql_request.query(
-                  `SELECT SUM(current_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Current Liability'`
+                  `SELECT SUM(sku_total) AS totalSum FROM cogs_service WHERE project_id = ${record["id"]} and generalLedgerAccounttype = 'Current Liability'`
                 );
 
                 const current_liability = parseFloat(
@@ -4684,7 +4733,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 const membership_liability_summing_query =
                   await sql_request.query(
-                    `SELECT SUM(membership_liability) AS totalSum FROM cogs_service WHERE projectId = ${record["id"]} and generalLedgerAccounttype = 'Membership Liability'`
+                    `SELECT SUM(sku_total) AS totalSum FROM cogs_service WHERE project_id = ${record["id"]} and generalLedgerAccounttype = 'Membership Liability'`
                   );
 
                 const membership_liability = parseFloat(
