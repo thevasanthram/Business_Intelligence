@@ -4430,7 +4430,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         invoice_cache["gross_profit_final_data_pool"] =
           gross_profit_final_data_pool;
 
-        batchSize = 10;
+        batchSize = 5;
 
         console.log("projects total data: ", Object.keys(data_pool).length);
 
@@ -4871,7 +4871,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("telecom_calls_data_pool: ", telecom_calls_data_pool);
         // console.log("header_data: ", header_data);
 
-        const batchSize = 50; // Set your desired batch size
+        const batchSize = 25; // Set your desired batch size
 
         console.log(
           "Object.keys(telecom_calls_data_pool).length: ",
