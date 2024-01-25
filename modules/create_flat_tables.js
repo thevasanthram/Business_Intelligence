@@ -1,4 +1,6 @@
 async function create_flat_tables(sql_request, flattenedObj, table_name) {
+  let create_flat_tables_status = false;
+
   const fomatted_table_name =
     table_name.replace(/-/g, "_").replace(/\//g, "_") + "_table";
 
@@ -29,13 +31,17 @@ async function create_flat_tables(sql_request, flattenedObj, table_name) {
 
       // console.log(fomatted_table_name + " created");
       console.log(fomatted_table_name, "created ");
+      create_flat_tables_status = true;
     } catch (error) {
       console.log(fomatted_table_name, "creation failed. Trying Again!", error);
-      create_flat_tables(sql_request, flattenedObj, table_name);
+      create_flat_tables_status = false;
     }
   } else {
     console.log(fomatted_table_name + " already exists");
+    create_flat_tables_status = true;
   }
+
+  return create_flat_tables_status;
 }
 
 module.exports = create_flat_tables;

@@ -572,47 +572,6 @@ async function find_max_and_write_csv(data_lake) {
   }
 }
 
-async function find_max_and_populate_db(data_lake) {
-  // creating a client for azure sql database operations
-  const sql_request = await create_sql_connection();
-
-  const sql_pool = await create_sql_pool();
-
-  // find max and populate the db
-  await Promise.all(
-    Object.keys(data_lake).map(async (key) => {
-      const current_data_pool = data_lake[key]["data_pool"];
-
-      const [api_group, api_name_and_mode] = key.split("__");
-
-      const [api_name, api_mode] = api_name_and_mode.split("&&");
-
-      // find lengthiest data
-      data_lake[key]["header_data"] = await find_lenghthiest_header(
-        current_data_pool
-      );
-
-      if (api_mode == "normal") {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name
-        );
-      } else {
-        await azure_db_operations(
-          sql_request,
-          sql_pool,
-          current_data_pool,
-          data_lake[key]["header_data"],
-          api_group + "_" + api_name + "_" + api_mode
-        );
-      }
-    })
-  );
-}
-
 async function find_total_records(data_lake) {
   let total_records = 0;
 
@@ -627,11 +586,11 @@ async function find_total_records(data_lake) {
 
 async function find_max_and_bulk_insert(data_lake) {
   // creating a client for azure sql database operations
-  const sql_request = await create_sql_connection();
 
-  const sql_pool = await create_sql_pool();
-
-  // console.log("connection & sql pool", sql_request, sql_pool);
+  let sql_request = "";
+  do {
+    sql_request = await create_sql_connection();
+  } while (!sql_request);
 
   // find max and populate the db
 
@@ -658,7 +617,6 @@ async function find_max_and_bulk_insert(data_lake) {
     if (api_mode == "normal") {
       await azure_db_operations(
         sql_request,
-        sql_pool,
         current_data_pool,
         data_lake[key]["header_data"],
         api_group + "_" + api_name
@@ -666,7 +624,6 @@ async function find_max_and_bulk_insert(data_lake) {
     } else {
       await azure_db_operations(
         sql_request,
-        sql_pool,
         current_data_pool,
         data_lake[key]["header_data"],
         api_group + "_" + api_name + "_" + api_mode
@@ -681,23 +638,32 @@ async function find_max_and_bulk_insert(data_lake) {
 
 async function azure_db_operations(
   sql_request,
-  sql_pool,
   data_pool,
   header_data,
   table_name
 ) {
   // create flat tables in azure sql database
   if (Object.keys(header_data).length > 0) {
-    await create_flat_tables(sql_request, header_data, table_name);
+    let create_flat_tables_status = false;
+    do {
+      create_flat_tables_status = await create_flat_tables(
+        sql_request,
+        header_data,
+        table_name
+      );
+    } while (!create_flat_tables_status);
   }
 
   if (data_pool.length > 0) {
-    await flat_data_bulk_insertion(
-      sql_pool,
-      data_pool,
-      header_data,
-      table_name
-    );
+    let bulk_insert_status = false;
+    do {
+      bulk_insert_status = await flat_data_bulk_insertion(
+        sql_request,
+        data_pool,
+        header_data,
+        table_name
+      );
+    } while (!bulk_insert_status);
   }
 
   // create star schema tables

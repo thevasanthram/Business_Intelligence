@@ -10,6 +10,7 @@ async function flat_data_bulk_insertion(
   header_data,
   table_name
 ) {
+  let bulk_insert_status = false;
   const formatted_table_name =
     table_name.replace(/-/g, "_").replace(/\//g, "_") + "_table";
 
@@ -60,14 +61,19 @@ async function flat_data_bulk_insertion(
       `${formatted_table_name} data insertion completed. Affected no of rows: `,
       bulkResult.rowsAffected
     );
+
+    bulk_insert_status = true;
   } catch (err) {
     console.error(
       formatted_table_name,
       "Bulk insert error: trying again..",
       err
     );
-    flat_data_bulk_insertion(sql_pool, data_pool, header_data, table_name);
+
+    bulk_insert_status = true;
   }
+
+  return bulk_insert_status;
 }
 
 module.exports = flat_data_bulk_insertion;
