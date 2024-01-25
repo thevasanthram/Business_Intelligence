@@ -726,16 +726,16 @@ async function start_pipeline() {
   console.log("Time taken for fetching data: ", stop1());
 
   // Storing Data into Azure SQL Database using bulk insert
-  // const stop2 = startStopwatch("inserting data");
-  // await find_max_and_bulk_insert(data_lake);
-  // console.log("Time taken for inserting data: ", stop2());
+  const stop2 = startStopwatch("inserting data");
+  await find_max_and_bulk_insert(data_lake);
+  console.log("Time taken for inserting data: ", stop2());
 
   // await find_total_length(data_lake);
 
-  {
-    // Creating CSVs
-    await find_max_and_write_csv(data_lake);
-  }
+  // {
+  //   // Creating CSVs
+  //   await find_max_and_write_csv(data_lake);
+  // }
 
   // {
   //   // Storing Data into Azure SQL Database

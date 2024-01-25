@@ -2315,6 +2315,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "legal_entity": {
         // entry into auto_update table
         try {
+          hvac_tables_responses["legal_entity"]["status"] = "success";
           const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
           await sql_request.query(auto_update_query);
 
@@ -2331,6 +2332,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "us_cities": {
         // entry into auto_update table
         try {
+          hvac_tables_responses["us_cities"]["status"] = "success";
           const auto_update_query = `UPDATE auto_update SET us_cities = '${hvac_tables_responses["us_cities"]["status"]}' WHERE id=${lastInsertedId}`;
 
           await sql_request.query(auto_update_query);
@@ -2433,6 +2435,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["business_unit"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -2558,6 +2562,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["campaigns"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -2725,6 +2731,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["bookings"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -2826,6 +2834,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["customer_details"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -2957,6 +2967,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["location"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -3101,6 +3113,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["gross_pay_items"]["status"] = "success";
         }
 
         delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
@@ -3163,6 +3177,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["payrolls"]["status"] = "success";
         }
 
         // delete data_lake["cogs_labor"]["payroll__payrolls"];
@@ -3225,6 +3241,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["job_types"]["status"] = "success";
         }
 
         delete data_lake["job_details"]["jpm__job-types"];
@@ -3454,6 +3472,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["purchase_order"]["status"] = "success";
         }
 
         break;
@@ -3672,6 +3692,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["sales_details"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -4351,6 +4373,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["cogs_material"]["status"] = "success";
         }
 
         console.log(
@@ -4386,6 +4410,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["cogs_equipment"]["status"] = "success";
         }
 
         console.log(
@@ -4421,6 +4447,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["cogs_service"]["status"] = "success";
         }
 
         invoice_po_and_gpi_data = {};
@@ -4850,6 +4878,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["projects"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -4883,6 +4913,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           i < Object.keys(telecom_calls_data_pool).length;
           i += batchSize
         ) {
+          console.log(
+            "call details: ",
+            i,
+            "/",
+            Object.keys(telecom_calls_data_pool).length
+          );
           await Promise.all(
             Object.keys(telecom_calls_data_pool)
               .slice(i, i + batchSize)
@@ -5271,6 +5307,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["call_details"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -5513,6 +5551,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["job_details"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -5686,6 +5726,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["appointments"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -5756,6 +5798,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["vendor"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -5838,6 +5882,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["technician"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -5978,6 +6024,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["appointment_assignments"]["status"] =
+            "success";
         }
 
         delete data_lake[api_name];
@@ -6120,6 +6169,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["non_job_appointments"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -6280,6 +6331,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["sku_details"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -6325,6 +6378,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["invoice"]["status"] = "success";
         }
 
         console.log("gross_profit data: ", gross_profit_final_data_pool.length);
@@ -6357,6 +6412,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["gross_profit"]["status"] = "success";
         }
 
         invoice_cache = {};
@@ -6501,6 +6558,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
+        } else {
+          hvac_tables_responses["cogs_labor"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -6621,85 +6680,85 @@ async function flush_data_pool(is_initial_execute) {
   await sql.close();
 }
 
-async function auto_update() {
-  console.log("auto_update callingg");
+// async function auto_update() {
+//   console.log("auto_update callingg");
 
-  // Get the current date and time // Calculate the next hour
-  const previous_batch_next_day = new Date(params_header["modifiedBefore"]);
-  previous_batch_next_day.setDate(previous_batch_next_day.getDate() + 1);
+//   // Get the current date and time // Calculate the next hour
+//   const previous_batch_next_day = new Date(params_header["modifiedBefore"]);
+//   previous_batch_next_day.setDate(previous_batch_next_day.getDate() + 1);
 
-  console.log("finished batch: ", params_header["modifiedBefore"]);
-  console.log("next batch: ", previous_batch_next_day);
+//   console.log("finished batch: ", params_header["modifiedBefore"]);
+//   console.log("next batch: ", previous_batch_next_day);
 
-  const now = new Date();
-  // now.setHours(now.getHours() + timezoneOffsetHours);
+//   const now = new Date();
+//   // now.setHours(now.getHours() + timezoneOffsetHours);
 
-  // Check if it's the next hour
-  if (now < previous_batch_next_day) {
-    // Schedule the next call after an hour
-    const timeUntilNextBatch = previous_batch_next_day - now; // Calculate milliseconds until the next hour
-    console.log("timer funtion entering", timeUntilNextBatch);
+//   // Check if it's the next hour
+//   if (now < previous_batch_next_day) {
+//     // Schedule the next call after an hour
+//     const timeUntilNextBatch = previous_batch_next_day - now; // Calculate milliseconds until the next hour
+//     console.log("timer funtion entering", timeUntilNextBatch);
 
-    await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+//     await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
 
-    await auto_update();
-  } else {
-    console.log("next batch initiated");
+//     await auto_update();
+//   } else {
+//     console.log("next batch initiated");
 
-    // setting modifiedBefore time to current hour
-    // now.setMinutes(0);
-    // now.setSeconds(0);
-    // now.setMilliseconds(0);
+//     // setting modifiedBefore time to current hour
+//     // now.setMinutes(0);
+//     // now.setSeconds(0);
+//     // now.setMilliseconds(0);
 
-    now.setUTCHours(7, 0, 0, 0);
+//     now.setUTCHours(7, 0, 0, 0);
 
-    params_header["modifiedBefore"] = now.toISOString();
-    console.log("params_header: ", params_header);
+//     params_header["modifiedBefore"] = now.toISOString();
+//     console.log("params_header: ", params_header);
 
-    should_auto_update = true;
-  }
-}
+//     should_auto_update = true;
+//   }
+// }
 
 async function orchestrate() {
   // Step 1: Call start_pipeline
   await start_pipeline();
 
-  // do {
-  //   // finding the next batch time
-  //   params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+  do {
+    // finding the next batch time
+    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
-  //   const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-  //   next_batch_time.setDate(next_batch_time.getDate() + 1);
-  //   next_batch_time.setUTCHours(7, 0, 0, 0);
+    next_batch_time.setDate(next_batch_time.getDate() + 1);
+    next_batch_time.setUTCHours(7, 0, 0, 0);
 
-  //   console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
-  //   console.log("next batch: ", next_batch_time);
+    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+    console.log("next batch: ", next_batch_time);
 
-  //   const now = new Date();
+    const now = new Date();
 
-  //   // Check if it's the next day
-  //   // now < next_batch_time
-  //   if (now < next_batch_time) {
-  //     // Schedule the next call after an day
-  //     const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
-  //     console.log("timer funtion entering", timeUntilNextBatch);
+    // Check if it's the next day
+    // now < next_batch_time
+    if (now < next_batch_time) {
+      // Schedule the next call after an day
+      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
+      console.log("timer funtion entering", timeUntilNextBatch);
 
-  //     await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
-  //   } else {
-  //     console.log("next batch initiated");
+      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+    } else {
+      console.log("next batch initiated");
 
-  //     now.setUTCHours(7, 0, 0, 0);
+      now.setUTCHours(7, 0, 0, 0);
 
-  //     params_header["modifiedBefore"] = now.toISOString();
-  //     console.log("params_header: ", params_header);
+      params_header["modifiedBefore"] = now.toISOString();
+      console.log("params_header: ", params_header);
 
-  //     // Step 1: Call start_pipeline
-  //     await start_pipeline();
-  //   }
+      // Step 1: Call start_pipeline
+      await start_pipeline();
+    }
 
-  //   should_auto_update = true;
-  // } while (should_auto_update);
+    should_auto_update = true;
+  } while (should_auto_update);
 }
 
 orchestrate();
