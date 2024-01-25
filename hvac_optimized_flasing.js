@@ -4004,28 +4004,57 @@ async function data_processor(data_lake, sql_request, table_list) {
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
-          let totalCost = 0;
-          let budget_hours = 0;
-          record["items"].map((items_record) => {
-            totalCost = totalCost + parseFloat(items_record["totalCost"]);
+          if (record["status"] && record["status"]["name"] == "Sold") {
+            let totalCost = 0;
+            let budget_hours = 0;
+            record["items"].map((items_record) => {
+              totalCost = totalCost + parseFloat(items_record["totalCost"]);
 
-            // budget_hours
-            if (items_record["sku"] && items_record["sku"]["name"] == "Labor") {
-              budget_hours += parseFloat(items_record["qty"]);
-            }
-          });
+              // budget_hours
+              if (
+                items_record["sku"] &&
+                items_record["sku"]["name"] == "Labor"
+              ) {
+                budget_hours += parseFloat(items_record["qty"]);
+              }
+            });
 
-          // preparing data for projects table
-          if (record["projectId"] != null) {
-            if (!project_cache["project_contract_value"][record["projectId"]]) {
-              project_cache["project_contract_value"][record["projectId"]] = {
-                contract_value: 0,
-                budget_expense: 0,
-                budget_hours: 0,
-              };
-            }
+            // preparing data for projects table
+            if (record["projectId"] != null) {
+              if (
+                !project_cache["project_contract_value"][record["projectId"]]
+              ) {
+                project_cache["project_contract_value"][record["projectId"]] = {
+                  contract_value: 0,
+                  budget_expense: 0,
+                  budget_hours: 0,
+                };
+              }
 
-            if (!projects_data_pool[record["projectId"]]) {
+              if (!projects_data_pool[record["projectId"]]) {
+                project_cache["project_dummy_values"]["contract_value"][
+                  record["instance_id"]
+                ] += parseFloat(record["subtotal"]);
+                project_cache["project_dummy_values"]["budget_expense"][
+                  record["instance_id"]
+                ] += totalCost;
+                project_cache["project_dummy_values"]["budget_hours"][
+                  record["instance_id"]
+                ] += budget_hours;
+              } else {
+                project_cache["project_contract_value"][record["projectId"]][
+                  "contract_value"
+                ] += parseFloat(record["subtotal"]);
+
+                project_cache["project_contract_value"][record["projectId"]][
+                  "budget_expense"
+                ] += totalCost;
+
+                project_cache["project_contract_value"][record["projectId"]][
+                  "budget_hours"
+                ] += budget_hours;
+              }
+            } else {
               project_cache["project_dummy_values"]["contract_value"][
                 record["instance_id"]
               ] += parseFloat(record["subtotal"]);
@@ -4035,146 +4064,124 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_cache["project_dummy_values"]["budget_hours"][
                 record["instance_id"]
               ] += budget_hours;
-            } else {
-              project_cache["project_contract_value"][record["projectId"]][
-                "contract_value"
-              ] += parseFloat(record["subtotal"]);
-
-              project_cache["project_contract_value"][record["projectId"]][
-                "budget_expense"
-              ] += totalCost;
-
-              project_cache["project_contract_value"][record["projectId"]][
-                "budget_hours"
-              ] += budget_hours;
             }
-          } else {
-            project_cache["project_dummy_values"]["contract_value"][
-              record["instance_id"]
-            ] += parseFloat(record["subtotal"]);
-            project_cache["project_dummy_values"]["budget_expense"][
-              record["instance_id"]
-            ] += totalCost;
-            project_cache["project_dummy_values"]["budget_hours"][
-              record["instance_id"]
-            ] += budget_hours;
-          }
 
-          let project_id = record["instance_id"];
-          let actual_project_id = record["projectId"]
-            ? record["projectId"]
-            : record["instance_id"];
-          if (projects_data_pool[record["projectId"]]) {
-            project_id = record["projectId"];
-          }
-
-          let business_unit_id = record["instance_id"];
-          let acutal_business_unit_id = record["instance_id"];
-          let businessUnitName = record["businessUnitName"]
-            ? record["businessUnitName"]
-            : "default";
-          if (business_unit_data_pool[record["businessUnitId"]]) {
-            acutal_business_unit_id = record["businessUnitId"];
-            business_unit_id = record["businessUnitId"];
-          }
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (location_data_pool[record["locationId"]]) {
-            location_id = record["locationId"];
-            actual_location_id = record["locationId"];
-          }
-
-          let customer_details_id = record["instance_id"];
-          let actual_customer_details_id = record["customerId"]
-            ? record["customerId"]
-            : record["instance_id"];
-          if (customer_data_pool[record["customerId"]]) {
-            customer_details_id = record["customerId"];
-          }
-
-          let soldOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["soldOn"]) {
-            if (
-              new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              soldOn = record["soldOn"];
+            let project_id = record["instance_id"];
+            let actual_project_id = record["projectId"]
+              ? record["projectId"]
+              : record["instance_id"];
+            if (projects_data_pool[record["projectId"]]) {
+              project_id = record["projectId"];
             }
-          } else {
-            soldOn = "2001-01-01T00:00:00.00Z";
-          }
 
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let status_value = 0;
-          let status_name = "default";
-          if (record["status"]) {
-            status_value = record["status"]["value"]
-              ? record["status"]["value"]
-              : 0;
-            status_name = record["status"]["name"]
-              ? record["status"]["name"]
+            let business_unit_id = record["instance_id"];
+            let acutal_business_unit_id = record["instance_id"];
+            let businessUnitName = record["businessUnitName"]
+              ? record["businessUnitName"]
               : "default";
-          }
+            if (business_unit_data_pool[record["businessUnitId"]]) {
+              acutal_business_unit_id = record["businessUnitId"];
+              business_unit_id = record["businessUnitId"];
+            }
 
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            soldOn: soldOn,
-            soldBy: record["soldBy"] ? record["soldBy"] : 0,
-            is_active: record["active"] ? 1 : 0,
-            subtotal: record["subtotal"] ? record["subtotal"] : 0,
-            budget_expense: totalCost,
-            budget_hours: budget_hours,
-            status_value: status_value,
-            status_name: status_name,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            business_unit_id: business_unit_id,
-            acutal_business_unit_id: acutal_business_unit_id,
-            businessUnitName: businessUnitName,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-          });
+            let job_details_id = record["instance_id"];
+            let actual_job_details_id = record["jobId"]
+              ? record["jobId"]
+              : record["instance_id"];
+            if (jobs_data_pool[record["jobId"]]) {
+              job_details_id = record["jobId"];
+            }
+
+            let location_id = record["instance_id"];
+            let actual_location_id = record["instance_id"];
+            if (location_data_pool[record["locationId"]]) {
+              location_id = record["locationId"];
+              actual_location_id = record["locationId"];
+            }
+
+            let customer_details_id = record["instance_id"];
+            let actual_customer_details_id = record["customerId"]
+              ? record["customerId"]
+              : record["instance_id"];
+            if (customer_data_pool[record["customerId"]]) {
+              customer_details_id = record["customerId"];
+            }
+
+            let soldOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["soldOn"]) {
+              if (
+                new Date(record["soldOn"]) > new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                soldOn = record["soldOn"];
+              }
+            } else {
+              soldOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let createdOn = "2000-01-01T00:00:00.00Z";
+
+            if (record["createdOn"]) {
+              if (
+                new Date(record["createdOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                createdOn = record["createdOn"];
+              }
+            } else {
+              createdOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let modifiedOn = "2000-01-01T00:00:00.00Z";
+            if (record["modifiedOn"]) {
+              if (
+                new Date(record["modifiedOn"]) >
+                new Date("2000-01-01T00:00:00.00Z")
+              ) {
+                modifiedOn = record["modifiedOn"];
+              }
+            } else {
+              modifiedOn = "2001-01-01T00:00:00.00Z";
+            }
+
+            let status_value = 0;
+            let status_name = "default";
+            if (record["status"]) {
+              status_value = record["status"]["value"]
+                ? record["status"]["value"]
+                : 0;
+              status_name = record["status"]["name"]
+                ? record["status"]["name"]
+                : "default";
+            }
+
+            final_data_pool.push({
+              id: record["id"],
+              name: record["name"] ? record["name"] : "default",
+              project_id: project_id,
+              actual_project_id: actual_project_id,
+              job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+              soldOn: soldOn,
+              soldBy: record["soldBy"] ? record["soldBy"] : 0,
+              is_active: record["active"] ? 1 : 0,
+              subtotal: record["subtotal"] ? record["subtotal"] : 0,
+              budget_expense: totalCost,
+              budget_hours: budget_hours,
+              status_value: status_value,
+              status_name: status_name,
+              createdOn: createdOn,
+              modifiedOn: modifiedOn,
+              business_unit_id: business_unit_id,
+              acutal_business_unit_id: acutal_business_unit_id,
+              businessUnitName: businessUnitName,
+              job_details_id: job_details_id,
+              actual_job_details_id: actual_job_details_id,
+              location_id: location_id,
+              actual_location_id: actual_location_id,
+              customer_details_id: customer_details_id,
+              actual_customer_details_id: actual_customer_details_id,
+            });
+          }
         });
 
         console.log("sales_details data: ", final_data_pool.length);

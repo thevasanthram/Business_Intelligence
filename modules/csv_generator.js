@@ -49,7 +49,11 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
             if (value && value != "") {
               return String(value).replace(/,/g, "").replace(/\n/g, "");
             } else {
-              return "null";
+              if (value == "") {
+                return "null";
+              } else {
+                return 0;
+              }
             }
           })
           .join(",");

@@ -4658,13 +4658,19 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let actual_business_unit_id = record["instance_id"];
 
                 try {
-                  business_unit_id =
-                    businesss_unit_query["recordset"][0]["business_unit_id"];
+                  business_unit_id = businesss_unit_query["recordset"][0][
+                    "business_unit_id"
+                  ]
+                    ? businesss_unit_query["recordset"][0]["business_unit_id"]
+                    : record["instance_id"];
 
-                  actual_business_unit_id =
-                    businesss_unit_query["recordset"][0][
-                      "actual_business_unit_id"
-                    ];
+                  actual_business_unit_id = businesss_unit_query[
+                    "recordset"
+                  ][0]["actual_business_unit_id"]
+                    ? businesss_unit_query["recordset"][0][
+                        "actual_business_unit_id"
+                      ]
+                    : record["instance_id"];
                 } catch (err_log) {
                   // new project
                   const project_id_query = await sql_request.query(
@@ -4695,6 +4701,12 @@ async function data_processor(data_lake, sql_request, table_list) {
                   // console.log(err_log);
                   // console.log("data: ", record["id"], businesss_unit_query);
                 }
+
+                // console.log("business_unit_id: ", business_unit_id);
+                // console.log(
+                //   "actual_business_unit_id: ",
+                //   actual_business_unit_id
+                // );
 
                 // calculating labor_cost
                 const labor_cost_summing_query = await sql_request.query(
@@ -4745,7 +4757,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 const accounts_receivable = parseFloat(
                   accounts_receivable_summing_query["recordset"][0]["totalSum"]
-                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    ? accounts_receivable_summing_query["recordset"][0][
+                        "totalSum"
+                      ]
                     : 0
                 );
 
@@ -4755,7 +4769,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 const current_liability = parseFloat(
                   current_liability_summing_query["recordset"][0]["totalSum"]
-                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    ? current_liability_summing_query["recordset"][0][
+                        "totalSum"
+                      ]
                     : 0
                 );
 
@@ -4766,7 +4782,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 const membership_liability = parseFloat(
                   membership_liability_summing_query["recordset"][0]["totalSum"]
-                    ? labor_hours_summing_query["recordset"][0]["totalSum"]
+                    ? membership_liability_summing_query["recordset"][0][
+                        "totalSum"
+                      ]
                     : 0
                 );
 
