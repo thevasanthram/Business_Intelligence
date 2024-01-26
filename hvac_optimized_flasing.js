@@ -4023,7 +4023,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
-          if (record["status"] && record["status"]["name"] == "Sold") {
+          if (record["status"] && record["status"]["name"] != "Dismissed") {
             let totalCost = 0;
             let budget_hours = 0;
             record["items"].map((items_record) => {
