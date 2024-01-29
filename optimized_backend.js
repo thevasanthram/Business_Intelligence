@@ -3326,6 +3326,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let project_id = po_record["instance_id"];
                 let actual_project_id = po_record["instance_id"];
                 if (po_record["projectId"]) {
+                  actual_project_id = po_record["projectId"];
                   // checking projects availlable or not for mapping
                   const is_project_available = await sql_request.query(
                     `SELECT id FROM projects WHERE id=${po_record["projectId"]}`
@@ -3545,7 +3546,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                   );
 
                   if (is_business_unit_available["recordset"].length > 0) {
-                    acutal_business_unit_id = record["businessUnitId"];
                     business_unit_id = record["businessUnitId"];
                   }
 
@@ -4116,208 +4116,244 @@ async function data_processor(data_lake, sql_request, table_list) {
                     `DELETE FROM cogs_service WHERE invoice_id = ${record["id"]}`
                   );
 
-                  record["items"].map((items_record) => {
-                    let generalLedgerAccountid = 0;
-                    let generalLedgerAccountname = "default";
-                    let generalLedgerAccountnumber = 0;
-                    let generalLedgerAccounttype = "default";
-                    let generalLedgerAccountdetailType = "default";
+                  await Promise.all(
+                    record["items"].map(async (items_record) => {
+                      let generalLedgerAccountid = 0;
+                      let generalLedgerAccountname = "default";
+                      let generalLedgerAccountnumber = 0;
+                      let generalLedgerAccounttype = "default";
+                      let generalLedgerAccountdetailType = "default";
 
-                    if (items_record["generalLedgerAccount"]) {
-                      generalLedgerAccountid =
-                        items_record["generalLedgerAccount"]["id"];
-                      generalLedgerAccountname =
-                        items_record["generalLedgerAccount"]["name"];
-                      generalLedgerAccountnumber =
-                        items_record["generalLedgerAccount"]["number"];
-                      generalLedgerAccounttype =
-                        items_record["generalLedgerAccount"]["type"];
-                      generalLedgerAccountdetailType =
-                        items_record["generalLedgerAccount"]["detailType"];
-                    }
-
-                    if (items_record["type"] == "Material") {
-                      material_cost =
-                        material_cost + parseFloat(items_record["totalCost"]);
-
-                      let sku_details_id = record["instance_id"];
-                      let actual_sku_details_id = items_record["skuId"]
-                        ? items_record["skuId"]
-                        : record["instance_id"];
-                      if (sku_details_data_pool[items_record["skuId"]]) {
-                        sku_details_id = items_record["skuId"];
+                      if (items_record["generalLedgerAccount"]) {
+                        generalLedgerAccountid =
+                          items_record["generalLedgerAccount"]["id"];
+                        generalLedgerAccountname =
+                          items_record["generalLedgerAccount"]["name"];
+                        generalLedgerAccountnumber =
+                          items_record["generalLedgerAccount"]["number"];
+                        generalLedgerAccounttype =
+                          items_record["generalLedgerAccount"]["type"];
+                        generalLedgerAccountdetailType =
+                          items_record["generalLedgerAccount"]["detailType"];
                       }
 
-                      cogs_material_final_data_pool.push({
-                        quantity: items_record["quantity"]
-                          ? items_record["quantity"]
-                          : 0,
-                        cost: items_record["cost"] ? items_record["cost"] : 0,
-                        total_cost: items_record["totalCost"]
-                          ? items_record["totalCost"]
-                          : 0,
-                        price: items_record["price"]
-                          ? items_record["price"]
-                          : 0,
-                        sku_name: items_record["skuName"]
-                          ? items_record["skuName"]
-                          : "default",
-                        sku_total: items_record["total"]
-                          ? items_record["total"]
-                          : 0,
-                        generalLedgerAccountid: generalLedgerAccountid,
-                        generalLedgerAccountname: generalLedgerAccountname,
-                        generalLedgerAccountnumber: generalLedgerAccountnumber,
-                        generalLedgerAccounttype: generalLedgerAccounttype,
-                        generalLedgerAccountdetailType:
-                          generalLedgerAccountdetailType,
-                        job_details_id: job_details_id,
-                        actual_job_details_id: actual_job_details_id,
-                        project_id: project_id,
-                        actual_project_id: actual_project_id,
-                        invoice_id: record["id"],
-                        sku_details_id: sku_details_id,
-                        actual_sku_details_id: actual_sku_details_id,
-                      });
-                    }
+                      if (items_record["type"] == "Material") {
+                        material_cost =
+                          material_cost + parseFloat(items_record["totalCost"]);
 
-                    if (items_record["type"] == "Equipment") {
-                      equipment_cost =
-                        equipment_cost + parseFloat(items_record["totalCost"]);
+                        let sku_details_id = record["instance_id"];
+                        let actual_sku_details_id = items_record["skuId"]
+                          ? items_record["skuId"]
+                          : record["instance_id"];
 
-                      let sku_details_id = record["instance_id"] + 3;
-                      let actual_sku_details_id = items_record["skuId"]
-                        ? items_record["skuId"]
-                        : record["instance_id"];
-                      if (sku_details_data_pool[items_record["skuId"]]) {
-                        sku_details_id = items_record["skuId"];
+                        if (items_record["skuId"]) {
+                          actual_sku_details_id = items_record["skuId"];
+
+                          // checking sku availlable or not for mapping
+                          const is_sku_available = await sql_request.query(
+                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                          );
+
+                          if (is_sku_available["recordset"].length > 0) {
+                            sku_details_id = items_record["skuId"];
+                          }
+                        }
+
+                        cogs_material_final_data_pool.push({
+                          quantity: items_record["quantity"]
+                            ? items_record["quantity"]
+                            : 0,
+                          cost: items_record["cost"] ? items_record["cost"] : 0,
+                          total_cost: items_record["totalCost"]
+                            ? items_record["totalCost"]
+                            : 0,
+                          price: items_record["price"]
+                            ? items_record["price"]
+                            : 0,
+                          sku_name: items_record["skuName"]
+                            ? items_record["skuName"]
+                            : "default",
+                          sku_total: items_record["total"]
+                            ? items_record["total"]
+                            : 0,
+                          generalLedgerAccountid: generalLedgerAccountid,
+                          generalLedgerAccountname: generalLedgerAccountname,
+                          generalLedgerAccountnumber:
+                            generalLedgerAccountnumber,
+                          generalLedgerAccounttype: generalLedgerAccounttype,
+                          generalLedgerAccountdetailType:
+                            generalLedgerAccountdetailType,
+                          job_details_id: job_details_id,
+                          actual_job_details_id: actual_job_details_id,
+                          project_id: project_id,
+                          actual_project_id: actual_project_id,
+                          invoice_id: record["id"],
+                          sku_details_id: sku_details_id,
+                          actual_sku_details_id: actual_sku_details_id,
+                        });
                       }
 
-                      cogs_equipment_final_data_pool.push({
-                        quantity: items_record["quantity"]
-                          ? items_record["quantity"]
-                          : 0,
-                        cost: items_record["cost"] ? items_record["cost"] : 0,
-                        total_cost: items_record["totalCost"]
-                          ? items_record["totalCost"]
-                          : 0,
-                        price: items_record["price"]
-                          ? items_record["price"]
-                          : 0,
-                        sku_name: items_record["skuName"]
-                          ? items_record["skuName"]
-                          : "default",
-                        sku_total: items_record["total"]
-                          ? items_record["total"]
-                          : 0,
-                        generalLedgerAccountid: generalLedgerAccountid,
-                        generalLedgerAccountname: generalLedgerAccountname,
-                        generalLedgerAccountnumber: generalLedgerAccountnumber,
-                        generalLedgerAccounttype: generalLedgerAccounttype,
-                        generalLedgerAccountdetailType:
-                          generalLedgerAccountdetailType,
-                        job_details_id: job_details_id,
-                        actual_job_details_id: actual_job_details_id,
-                        project_id: project_id,
-                        actual_project_id: actual_project_id,
-                        invoice_id: record["id"],
-                        sku_details_id: sku_details_id,
-                        actual_sku_details_id: actual_sku_details_id,
-                      });
-                    }
+                      if (items_record["type"] == "Equipment") {
+                        equipment_cost =
+                          equipment_cost +
+                          parseFloat(items_record["totalCost"]);
 
-                    if (items_record["type"] == "Service") {
-                      let sku_details_id = record["instance_id"] + 6;
-                      let actual_sku_details_id = items_record["skuId"]
-                        ? items_record["skuId"]
-                        : record["instance_id"];
-                      if (sku_details_data_pool[items_record["skuId"]]) {
-                        sku_details_id = items_record["skuId"];
+                        let sku_details_id = record["instance_id"] + 3;
+                        let actual_sku_details_id = items_record["skuId"]
+                          ? items_record["skuId"]
+                          : record["instance_id"];
+
+                        if (items_record["skuId"]) {
+                          actual_sku_details_id = items_record["skuId"];
+
+                          // checking sku availlable or not for mapping
+                          const is_sku_available = await sql_request.query(
+                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                          );
+
+                          if (is_sku_available["recordset"].length > 0) {
+                            sku_details_id = items_record["skuId"];
+                          }
+                        }
+
+                        cogs_equipment_final_data_pool.push({
+                          quantity: items_record["quantity"]
+                            ? items_record["quantity"]
+                            : 0,
+                          cost: items_record["cost"] ? items_record["cost"] : 0,
+                          total_cost: items_record["totalCost"]
+                            ? items_record["totalCost"]
+                            : 0,
+                          price: items_record["price"]
+                            ? items_record["price"]
+                            : 0,
+                          sku_name: items_record["skuName"]
+                            ? items_record["skuName"]
+                            : "default",
+                          sku_total: items_record["total"]
+                            ? items_record["total"]
+                            : 0,
+                          generalLedgerAccountid: generalLedgerAccountid,
+                          generalLedgerAccountname: generalLedgerAccountname,
+                          generalLedgerAccountnumber:
+                            generalLedgerAccountnumber,
+                          generalLedgerAccounttype: generalLedgerAccounttype,
+                          generalLedgerAccountdetailType:
+                            generalLedgerAccountdetailType,
+                          job_details_id: job_details_id,
+                          actual_job_details_id: actual_job_details_id,
+                          project_id: project_id,
+                          actual_project_id: actual_project_id,
+                          invoice_id: record["id"],
+                          sku_details_id: sku_details_id,
+                          actual_sku_details_id: actual_sku_details_id,
+                        });
+                      }
+
+                      if (items_record["type"] == "Service") {
+                        let sku_details_id = record["instance_id"] + 6;
+                        let actual_sku_details_id = items_record["skuId"]
+                          ? items_record["skuId"]
+                          : record["instance_id"];
+
+                        if (items_record["skuId"]) {
+                          actual_sku_details_id = items_record["skuId"];
+
+                          // checking sku availlable or not for mapping
+                          const is_sku_available = await sql_request.query(
+                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                          );
+
+                          if (is_sku_available["recordset"].length > 0) {
+                            sku_details_id = items_record["skuId"];
+                          }
+                        }
+
+                        // for gross profit
+                        switch (generalLedgerAccounttype) {
+                          case "Accounts Receivable": {
+                            accounts_receivable += items_record["total"]
+                              ? parseFloat(items_record["total"])
+                              : 0;
+
+                            break;
+                          }
+                          case "Current Liability": {
+                            current_liability += items_record["total"]
+                              ? parseFloat(items_record["total"])
+                              : 0;
+
+                            break;
+                          }
+                          case "Membership Liability": {
+                            membership_liability += items_record["total"]
+                              ? parseFloat(items_record["total"])
+                              : 0;
+
+                            break;
+                          }
+                          case "default": {
+                            default_val += items_record["total"]
+                              ? parseFloat(items_record["total"])
+                              : 0;
+
+                            break;
+                          }
+                        }
+
+                        cogs_services_final_data_pool.push({
+                          quantity: items_record["quantity"]
+                            ? items_record["quantity"]
+                            : 0,
+                          cost: items_record["cost"] ? items_record["cost"] : 0,
+                          total_cost: items_record["totalCost"]
+                            ? items_record["totalCost"]
+                            : 0,
+                          price: items_record["price"]
+                            ? items_record["price"]
+                            : 0,
+                          sku_name: items_record["skuName"]
+                            ? items_record["skuName"]
+                            : "default",
+                          sku_total: items_record["total"]
+                            ? items_record["total"]
+                            : 0,
+                          generalLedgerAccountid: generalLedgerAccountid,
+                          generalLedgerAccountname: generalLedgerAccountname,
+                          generalLedgerAccountnumber:
+                            generalLedgerAccountnumber,
+                          generalLedgerAccounttype: generalLedgerAccounttype,
+                          generalLedgerAccountdetailType:
+                            generalLedgerAccountdetailType,
+                          job_details_id: job_details_id,
+                          actual_job_details_id: actual_job_details_id,
+                          project_id: project_id,
+                          actual_project_id: actual_project_id,
+                          invoice_id: record["id"],
+                          sku_details_id: sku_details_id,
+                          actual_sku_details_id: actual_sku_details_id,
+                        });
                       }
 
                       // for gross profit
                       switch (generalLedgerAccounttype) {
-                        case "Accounts Receivable": {
-                          accounts_receivable += items_record["total"]
+                        case "Expense": {
+                          expense += items_record["total"]
                             ? parseFloat(items_record["total"])
                             : 0;
 
                           break;
                         }
-                        case "Current Liability": {
-                          current_liability += items_record["total"]
-                            ? parseFloat(items_record["total"])
-                            : 0;
-
-                          break;
-                        }
-                        case "Membership Liability": {
-                          membership_liability += items_record["total"]
-                            ? parseFloat(items_record["total"])
-                            : 0;
-
-                          break;
-                        }
-                        case "default": {
-                          default_val += items_record["total"]
+                        case "Income": {
+                          income += items_record["total"]
                             ? parseFloat(items_record["total"])
                             : 0;
 
                           break;
                         }
                       }
-
-                      cogs_services_final_data_pool.push({
-                        quantity: items_record["quantity"]
-                          ? items_record["quantity"]
-                          : 0,
-                        cost: items_record["cost"] ? items_record["cost"] : 0,
-                        total_cost: items_record["totalCost"]
-                          ? items_record["totalCost"]
-                          : 0,
-                        price: items_record["price"]
-                          ? items_record["price"]
-                          : 0,
-                        sku_name: items_record["skuName"]
-                          ? items_record["skuName"]
-                          : "default",
-                        sku_total: items_record["total"]
-                          ? items_record["total"]
-                          : 0,
-                        generalLedgerAccountid: generalLedgerAccountid,
-                        generalLedgerAccountname: generalLedgerAccountname,
-                        generalLedgerAccountnumber: generalLedgerAccountnumber,
-                        generalLedgerAccounttype: generalLedgerAccounttype,
-                        generalLedgerAccountdetailType:
-                          generalLedgerAccountdetailType,
-                        job_details_id: job_details_id,
-                        actual_job_details_id: actual_job_details_id,
-                        project_id: project_id,
-                        actual_project_id: actual_project_id,
-                        invoice_id: record["id"],
-                        sku_details_id: sku_details_id,
-                        actual_sku_details_id: actual_sku_details_id,
-                      });
-                    }
-
-                    // for gross profit
-                    switch (generalLedgerAccounttype) {
-                      case "Expense": {
-                        expense += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-
-                        break;
-                      }
-                      case "Income": {
-                        income += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-
-                        break;
-                      }
-                    }
-                  });
+                    })
+                  );
                 }
 
                 let revenue = parseFloat(record["total"])
@@ -5879,7 +5915,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 if (is_business_unit_available["recordset"].length > 0) {
                   business_unit_id = record["businessUnitId"];
-                  acutal_business_unit_id = record["businessUnitId"];
                 }
 
                 final_data_pool.push({
