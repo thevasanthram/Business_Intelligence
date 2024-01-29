@@ -4755,19 +4755,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                         project_bu_id[record["id"]]["actual_business_unit_id"];
                     }
                   }
-
-                  // console.log(
-                  //   "=========================================================="
-                  // );
-                  // console.log(err_log);
-                  // console.log("data: ", record["id"], businesss_unit_query);
                 }
-
-                // console.log("business_unit_id: ", business_unit_id);
-                // console.log(
-                //   "actual_business_unit_id: ",
-                //   actual_business_unit_id
-                // );
 
                 // calculating labor_cost
                 const labor_cost_summing_query = await sql_request.query(
@@ -5906,6 +5894,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let acutal_business_unit_id = record["businessUnitId"]
                   ? record["businessUnitId"]
                   : record["instance_id"];
+
                 let business_unit_id = record["instance_id"];
 
                 // checking business unit availlable or not for mapping
@@ -5928,6 +5917,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         console.log("techician data: ", final_data_pool.length);
+        console.log("technician data: ", final_data_pool);
         // console.log("header_data: ", header_data);
 
         // await hvac_flat_data_insertion(
