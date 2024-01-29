@@ -4410,7 +4410,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             cogs_material_final_data_pool,
             cogs_material_header_data,
             "cogs_material"
-          );
+          // );
 
           do {
             hvac_tables_responses["cogs_material"]["status"] =
@@ -4447,7 +4447,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             cogs_equipment_final_data_pool,
             cogs_equipment_header_data,
             "cogs_equipment"
-          );
+          // );
 
           do {
             hvac_tables_responses["cogs_equipment"]["status"] =
@@ -4484,7 +4484,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             cogs_services_final_data_pool,
             cogs_service_header_data,
             "cogs_service"
-          );
+          // );
 
           do {
             hvac_tables_responses["cogs_service"]["status"] =
@@ -6424,7 +6424,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             invoice_final_data_pool,
             invoice_header_data,
             "invoice"
-          );
+          // );
 
           do {
             hvac_tables_responses["invoice"]["status"] =
@@ -6456,7 +6456,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             gross_profit_final_data_pool,
             gross_profit_header_data,
             "gross_profit"
-          );
+          // );
 
           do {
             hvac_tables_responses["gross_profit"]["status"] =
