@@ -1198,66 +1198,66 @@ const hvac_tables = {
       },
     },
   },
-  non_job_appointments: {
-    columns: {
-      id: {
-        data_type: "INT",
-        constraint: { primary: true, nullable: false },
-      },
-      technician_id: {
-        data_type: "INT",
-        constraint: { nullable: false },
-      },
-      actual_technician_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      start: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      duration: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      timesheetCodeId: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      clearDispatchBoard: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      clearTechnicianView: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      removeTechnicianFromCapacityPlanning: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      is_all_day: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      is_active: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      created_by_id: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-    },
-  },
+  // non_job_appointments: {
+  //   columns: {
+  //     id: {
+  //       data_type: "INT",
+  //       constraint: { primary: true, nullable: false },
+  //     },
+  //     technician_id: {
+  //       data_type: "INT",
+  //       constraint: { nullable: false },
+  //     },
+  //     actual_technician_id: {
+  //       data_type: "INT",
+  //       constraint: { nullable: true },
+  //     },
+  //     start: {
+  //       data_type: "DATETIME2",
+  //       constraint: { nullable: true },
+  //     },
+  //     name: {
+  //       data_type: "NVARCHAR",
+  //       constraint: { nullable: true },
+  //     },
+  //     duration: {
+  //       data_type: "NVARCHAR",
+  //       constraint: { nullable: true },
+  //     },
+  //     timesheetCodeId: {
+  //       data_type: "INT",
+  //       constraint: { nullable: true },
+  //     },
+  //     clearDispatchBoard: {
+  //       data_type: "TINYINT",
+  //       constraint: { nullable: true },
+  //     },
+  //     clearTechnicianView: {
+  //       data_type: "TINYINT",
+  //       constraint: { nullable: true },
+  //     },
+  //     removeTechnicianFromCapacityPlanning: {
+  //       data_type: "TINYINT",
+  //       constraint: { nullable: true },
+  //     },
+  //     is_all_day: {
+  //       data_type: "TINYINT",
+  //       constraint: { nullable: true },
+  //     },
+  //     is_active: {
+  //       data_type: "TINYINT",
+  //       constraint: { nullable: true },
+  //     },
+  //     createdOn: {
+  //       data_type: "DATETIME2",
+  //       constraint: { nullable: true },
+  //     },
+  //     created_by_id: {
+  //       data_type: "INT",
+  //       constraint: { nullable: true },
+  //     },
+  //   },
+  // },
   sku_details: {
     columns: {
       id: {
