@@ -2366,7 +2366,15 @@ async function data_processor(data_lake, sql_request, table_list) {
           let business = "DEF";
           let business_unit_official_name = "DEF";
           let business_unit_name = "DEF";
-          try {
+
+          // let legal_entity_id = record["instance_id"];
+          const legal_entity_code = {
+            1: "EXP",
+            2: "PA",
+            3: "NMI",
+          };
+
+          if (kpi_data[record["id"]]) {
             trade_type = kpi_data[record["id"]]["Trade"]
               ? kpi_data[record["id"]]["Trade"]
               : "DEF";
@@ -2376,16 +2384,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             revenue_type = kpi_data[record["id"]]["Type"]
               ? kpi_data[record["id"]]["Type"]
               : "DEF";
-            business = kpi_data[record["id"]]["Business"]
-              ? kpi_data[record["id"]]["Business"]
-              : "DEF";
+            // business = kpi_data[record["id"]]["Business"]
+            //   ? kpi_data[record["id"]]["Business"]
+            //   : "DEF";
             business_unit_official_name = kpi_data[record["id"]]["Name"]
               ? kpi_data[record["id"]]["Name"]
               : "DEF";
             business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
               ? kpi_data[record["id"]]["Invoice Business Unit"]
               : "DEF";
-          } catch (err) {}
+            let legal_entity_group = kpi_data[record["id"]]["Business"]
+              ? kpi_data[record["id"]]["Business"]
+              : "DEF";
+
+            // if (legal_entity_group != "DEF") {
+            //   legal_entity_id = legal_entity_code[legal_entity_group];
+            // } else {
+            //   legal_entity_id = record["instance_id"];
+            // }
+
+            business = legal_entity_code[record["instance_id"]];
+          }
 
           final_data_pool.push({
             id: record["id"],
@@ -3495,172 +3514,178 @@ async function data_processor(data_lake, sql_request, table_list) {
               .map(async (record_id) => {
                 const record = data_pool[record_id];
 
-                let project_id = record["instance_id"];
-                let actual_project_id = record["projectId"]
-                  ? record["projectId"]
-                  : record["instance_id"];
+                if (
+                  record["status"] &&
+                  record["status"]["name"] != "Dismissed"
+                ) {
+                  let project_id = record["instance_id"];
+                  let actual_project_id = record["projectId"]
+                    ? record["projectId"]
+                    : record["instance_id"];
 
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
+                  // checking projects availlable or not for mapping
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
-                }
-
-                let business_unit_id = record["instance_id"];
-                let acutal_business_unit_id = record["businessUnitId"]
-                  ? record["businessUnitId"]
-                  : record["instance_id"];
-                let businessUnitName = record["businessUnitName"]
-                  ? record["businessUnitName"]
-                  : "default";
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
-
-                if (is_business_unit_available["recordset"].length > 0) {
-                  acutal_business_unit_id = record["businessUnitId"];
-                  business_unit_id = record["businessUnitId"];
-                }
-
-                let job_details_id = record["instance_id"];
-                let actual_job_details_id = record["jobId"]
-                  ? record["jobId"]
-                  : record["instance_id"];
-
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-                );
-
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
-                }
-
-                let location_id = record["instance_id"];
-                let actual_location_id = record["locationId"]
-                  ? record["locationId"]
-                  : record["instance_id"];
-
-                // checking location availlable or not for mapping
-                const is_location_available = await sql_request.query(
-                  `SELECT id FROM location WHERE id=${record["locationId"]}`
-                );
-
-                if (is_location_available["recordset"].length > 0) {
-                  location_id = record["locationId"];
-                  actual_location_id = record["locationId"];
-                }
-
-                let customer_details_id = record["instance_id"];
-                let actual_customer_details_id = record["customerId"]
-                  ? record["customerId"]
-                  : record["instance_id"];
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
-
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
-                }
-
-                let soldOn = "2000-01-01T00:00:00.00Z";
-
-                if (record["soldOn"]) {
-                  if (
-                    new Date(record["soldOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    soldOn = record["soldOn"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
                   }
-                } else {
-                  soldOn = "2001-01-01T00:00:00.00Z";
-                }
 
-                let createdOn = "2000-01-01T00:00:00.00Z";
-
-                if (record["createdOn"]) {
-                  if (
-                    new Date(record["createdOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    createdOn = record["createdOn"];
-                  }
-                } else {
-                  createdOn = "2001-01-01T00:00:00.00Z";
-                }
-
-                let modifiedOn = "2000-01-01T00:00:00.00Z";
-                if (record["modifiedOn"]) {
-                  if (
-                    new Date(record["modifiedOn"]) >
-                    new Date("2000-01-01T00:00:00.00Z")
-                  ) {
-                    modifiedOn = record["modifiedOn"];
-                  }
-                } else {
-                  modifiedOn = "2001-01-01T00:00:00.00Z";
-                }
-
-                let status_value = 0;
-                let status_name = "default";
-                if (record["status"]) {
-                  status_value = record["status"]["value"]
-                    ? record["status"]["value"]
-                    : 0;
-                  status_name = record["status"]["name"]
-                    ? record["status"]["name"]
+                  let business_unit_id = record["instance_id"];
+                  let acutal_business_unit_id = record["businessUnitId"]
+                    ? record["businessUnitId"]
+                    : record["instance_id"];
+                  let businessUnitName = record["businessUnitName"]
+                    ? record["businessUnitName"]
                     : "default";
-                }
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                  );
 
-                let totalCost = 0;
-                let budget_hours = 0;
-                record["items"].map((items_record) => {
-                  totalCost = totalCost + parseFloat(items_record["totalCost"]);
-
-                  // budget_hours
-                  if (
-                    items_record["sku"] &&
-                    items_record["sku"]["name"] == "Labor"
-                  ) {
-                    budget_hours += parseFloat(items_record["qty"]);
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    acutal_business_unit_id = record["businessUnitId"];
+                    business_unit_id = record["businessUnitId"];
                   }
-                });
 
-                // console.log(totalCost, budget_hours);
+                  let job_details_id = record["instance_id"];
+                  let actual_job_details_id = record["jobId"]
+                    ? record["jobId"]
+                    : record["instance_id"];
 
-                final_data_pool.push({
-                  id: record["id"],
-                  name: record["name"] ? record["name"] : "default",
-                  project_id: project_id,
-                  actual_project_id: actual_project_id,
-                  job_number: record["jobNumber"]
-                    ? record["jobNumber"]
-                    : "default",
-                  soldOn: soldOn,
-                  soldBy: record["soldBy"] ? record["soldBy"] : 0,
-                  is_active: record["active"] ? 1 : 0,
-                  subtotal: record["subtotal"] ? record["subtotal"] : 0,
-                  budget_expense: totalCost,
-                  budget_hours: budget_hours,
-                  status_value: status_value,
-                  status_name: status_name,
-                  createdOn: createdOn,
-                  modifiedOn: modifiedOn,
-                  business_unit_id: business_unit_id,
-                  acutal_business_unit_id: acutal_business_unit_id,
-                  businessUnitName: businessUnitName,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  location_id: location_id,
-                  actual_location_id: actual_location_id,
-                  customer_details_id: customer_details_id,
-                  actual_customer_details_id: actual_customer_details_id,
-                });
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                  );
+
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
+
+                  let location_id = record["instance_id"];
+                  let actual_location_id = record["locationId"]
+                    ? record["locationId"]
+                    : record["instance_id"];
+
+                  // checking location availlable or not for mapping
+                  const is_location_available = await sql_request.query(
+                    `SELECT id FROM location WHERE id=${record["locationId"]}`
+                  );
+
+                  if (is_location_available["recordset"].length > 0) {
+                    location_id = record["locationId"];
+                    actual_location_id = record["locationId"];
+                  }
+
+                  let customer_details_id = record["instance_id"];
+                  let actual_customer_details_id = record["customerId"]
+                    ? record["customerId"]
+                    : record["instance_id"];
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
+                  );
+
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["customerId"];
+                  }
+
+                  let soldOn = "2000-01-01T00:00:00.00Z";
+
+                  if (record["soldOn"]) {
+                    if (
+                      new Date(record["soldOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      soldOn = record["soldOn"];
+                    }
+                  } else {
+                    soldOn = "2001-01-01T00:00:00.00Z";
+                  }
+
+                  let createdOn = "2000-01-01T00:00:00.00Z";
+
+                  if (record["createdOn"]) {
+                    if (
+                      new Date(record["createdOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      createdOn = record["createdOn"];
+                    }
+                  } else {
+                    createdOn = "2001-01-01T00:00:00.00Z";
+                  }
+
+                  let modifiedOn = "2000-01-01T00:00:00.00Z";
+                  if (record["modifiedOn"]) {
+                    if (
+                      new Date(record["modifiedOn"]) >
+                      new Date("2000-01-01T00:00:00.00Z")
+                    ) {
+                      modifiedOn = record["modifiedOn"];
+                    }
+                  } else {
+                    modifiedOn = "2001-01-01T00:00:00.00Z";
+                  }
+
+                  let status_value = 0;
+                  let status_name = "default";
+                  if (record["status"]) {
+                    status_value = record["status"]["value"]
+                      ? record["status"]["value"]
+                      : 0;
+                    status_name = record["status"]["name"]
+                      ? record["status"]["name"]
+                      : "default";
+                  }
+
+                  let totalCost = 0;
+                  let budget_hours = 0;
+                  record["items"].map((items_record) => {
+                    totalCost =
+                      totalCost + parseFloat(items_record["totalCost"]);
+
+                    // budget_hours
+                    if (
+                      items_record["sku"] &&
+                      items_record["sku"]["name"] == "Labor"
+                    ) {
+                      budget_hours += parseFloat(items_record["qty"]);
+                    }
+                  });
+
+                  // console.log(totalCost, budget_hours);
+
+                  final_data_pool.push({
+                    id: record["id"],
+                    name: record["name"] ? record["name"] : "default",
+                    project_id: project_id,
+                    actual_project_id: actual_project_id,
+                    job_number: record["jobNumber"]
+                      ? record["jobNumber"]
+                      : "default",
+                    soldOn: soldOn,
+                    soldBy: record["soldBy"] ? record["soldBy"] : 0,
+                    is_active: record["active"] ? 1 : 0,
+                    subtotal: record["subtotal"] ? record["subtotal"] : 0,
+                    budget_expense: totalCost,
+                    budget_hours: budget_hours,
+                    status_value: status_value,
+                    status_name: status_name,
+                    createdOn: createdOn,
+                    modifiedOn: modifiedOn,
+                    business_unit_id: business_unit_id,
+                    acutal_business_unit_id: acutal_business_unit_id,
+                    businessUnitName: businessUnitName,
+                    job_details_id: job_details_id,
+                    actual_job_details_id: actual_job_details_id,
+                    location_id: location_id,
+                    actual_location_id: actual_location_id,
+                    customer_details_id: customer_details_id,
+                    actual_customer_details_id: actual_customer_details_id,
+                  });
+                }
               })
           );
         }
