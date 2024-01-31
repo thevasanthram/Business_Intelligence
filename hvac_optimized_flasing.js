@@ -749,6 +749,18 @@ const hvac_tables = {
       },
     },
   },
+  project_managers: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      manager_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+    },
+  },
   call_details: {
     columns: {
       id: {
@@ -1802,6 +1814,9 @@ const hvac_tables_responses = {
   projects: {
     status: "",
   },
+  project_managers: {
+    status: "",
+  },
   job_details: {
     status: "",
   },
@@ -2242,6 +2257,7 @@ async function azure_sql_operations(data_lake, table_list) {
       payrolls,
       job_types,
       projects,
+      project_managers,
       job_details,
       appointments,
       sales_details,
@@ -2261,7 +2277,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -4302,6 +4318,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         };
 
         let final_data_pool = [];
+        let project_managers_final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
@@ -5796,6 +5813,15 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
           }
 
+          // preparing project_managers_final_data_pool
+          const project_managers_ids = record["projectManagerIds"];
+          project_managers_ids.map((manager_id) => {
+            project_managers_final_data_pool.push({
+              id: record["id"],
+              manager_id: manager_id,
+            });
+          });
+
           final_data_pool.push({
             id: record["id"],
             number: record["number"] ? record["number"] : "default",
@@ -5857,6 +5883,31 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET projects = '${hvac_tables_responses["projects"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        if (project_managers_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["project_managers"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                "project_managers"
+              );
+          } while (
+            hvac_tables_responses["project_managers"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_managers = '${hvac_tables_responses["project_managers"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 

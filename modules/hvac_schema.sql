@@ -264,6 +264,15 @@ CREATE TABLE projects(
 )
 END;
 
+-- project_managers
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='project_managers')
+BEGIN
+CREATE TABLE project_managers(
+  id INT NOT NULL,
+  manager_id INT NOT NULL,
+)
+END;
+
 -- call_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
 BEGIN
@@ -664,6 +673,7 @@ CREATE TABLE auto_update (
   payrolls NVARCHAR(MAX) NULL,
   job_types NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
+  project_managers NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
   appointments NVARCHAR(MAX) NULL,
