@@ -2304,7 +2304,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (let api_count = 13; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -4407,9 +4407,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_material_final_data_pool.length > 0) {
           // await csv_generator(
-            cogs_material_final_data_pool,
+          cogs_material_final_data_pool,
             cogs_material_header_data,
-            "cogs_material"
+            "cogs_material";
           // );
 
           do {
@@ -4444,9 +4444,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_equipment_final_data_pool.length > 0) {
           // await csv_generator(
-            cogs_equipment_final_data_pool,
+          cogs_equipment_final_data_pool,
             cogs_equipment_header_data,
-            "cogs_equipment"
+            "cogs_equipment";
           // );
 
           do {
@@ -4481,9 +4481,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_services_final_data_pool.length > 0) {
           // await csv_generator(
-            cogs_services_final_data_pool,
+          cogs_services_final_data_pool,
             cogs_service_header_data,
-            "cogs_service"
+            "cogs_service";
           // );
 
           do {
@@ -6421,9 +6421,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
           // await csv_generator(
-            invoice_final_data_pool,
-            invoice_header_data,
-            "invoice"
+          invoice_final_data_pool, invoice_header_data, "invoice";
           // );
 
           do {
@@ -6453,9 +6451,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("gross_profit data: ", gross_profit_final_data_pool.length);
         if (gross_profit_final_data_pool.length > 0) {
           // await csv_generator(
-            gross_profit_final_data_pool,
+          gross_profit_final_data_pool,
             gross_profit_header_data,
-            "gross_profit"
+            "gross_profit";
           // );
 
           do {

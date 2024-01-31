@@ -4257,6 +4257,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const project_managers_header_data =
+          hvac_tables["project_managers"]["columns"];
 
         // getting data directly from service titan
 
@@ -5897,8 +5899,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             hvac_tables_responses["project_managers"]["status"] =
               await hvac_data_insertion(
                 sql_request,
-                final_data_pool,
-                header_data,
+                project_managers_final_data_pool,
+                project_managers_header_data,
                 "project_managers"
               );
           } while (
