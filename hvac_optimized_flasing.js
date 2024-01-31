@@ -160,6 +160,30 @@ const hvac_tables = {
       },
     },
   },
+  employees: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      role: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   campaigns: {
     columns: {
       id: {
@@ -756,6 +780,10 @@ const hvac_tables = {
         constraint: { nullable: false },
       },
       manager_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_manager_id: {
         data_type: "INT",
         constraint: { nullable: false },
       },
@@ -1787,6 +1815,9 @@ const hvac_tables_responses = {
   business_unit: {
     status: "",
   },
+  employees: {
+    status: "",
+  },
   campaigns: {
     status: "",
   },
@@ -1883,6 +1914,13 @@ const main_api_list = {
       api_group: "settings",
       api_name: "business-units",
       table_name: "business_unit",
+    },
+  ],
+  employees: [
+    {
+      api_group: "settings",
+      api_name: "employees",
+      table_name: "employees",
     },
   ],
   campaigns: [
@@ -2248,6 +2286,7 @@ async function azure_sql_operations(data_lake, table_list) {
       legal_entity,
       us_cities,
       business_unit,
+      employees,
       campaigns,
       bookings,
       customer_details,
@@ -2277,7 +2316,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2590,6 +2629,114 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET business_unit = '${hvac_tables_responses["business_unit"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[api_name];
+
+        break;
+      }
+
+      case "employees": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const data_pool =
+          data_lake[api_name]["settings__employees"]["data_pool"];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        let final_data_pool = [];
+
+        if (initial_execute) {
+          final_data_pool.push({
+            id: 1,
+            name: "default",
+            role: "default",
+            business_unit_id: 1,
+            actual_business_unit_id: 1,
+          });
+
+          final_data_pool.push({
+            id: 2,
+            name: "default",
+            role: "default",
+            business_unit_id: 2,
+            actual_business_unit_id: 2,
+          });
+
+          final_data_pool.push({
+            id: 3,
+            name: "default",
+            role: "default",
+            business_unit_id: 3,
+            actual_business_unit_id: 3,
+          });
+        }
+
+        // fetching business units from db
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            name: record["name"] ? record["name"] : "default",
+            role: record["role"] ? record["role"] : "default",
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+          });
+        });
+
+        console.log("employees data: ", final_data_pool.length);
+
+        // console.log("final data pool", final_data_pool);
+        // await hvac_flat_data_insertion(
+        //   sql_request,
+        //   final_data_pool,
+        //   header_data,
+        //   table_name
+        // );
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["employees"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["employees"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET employees = '${hvac_tables_responses["employees"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
@@ -4319,6 +4466,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
         };
 
+        // fetching business units from db
+        const employees_response = await sql_request.query(
+          "SELECT * FROM employees"
+        );
+
+        const employees_data = employees_response.recordset;
+
+        const employees_data_pool = {};
+
+        employees_data.map((current_record) => {
+          employees_data_pool[current_record["id"]] = current_record;
+        });
+
+        // ----------------
+
         let final_data_pool = [];
         let project_managers_final_data_pool = [];
 
@@ -5818,9 +5980,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           // preparing project_managers_final_data_pool
           const project_managers_ids = record["projectManagerIds"];
           project_managers_ids.map((manager_id) => {
+            let manager_ID = record["instance_id"];
+            let actual_manager_id = manager_id;
+
+            if (employees_data_pool[manager_id]) {
+              manager_ID = manager_id;
+            }
+
             project_managers_final_data_pool.push({
               id: record["id"],
-              manager_id: manager_id,
+              manager_id: manager_ID,
+              actual_manager_id: actual_manager_id,
             });
           });
 

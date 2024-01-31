@@ -754,6 +754,18 @@ const hvac_tables = {
       },
     },
   },
+  project_managers: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      manager_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+    },
+  },
   call_details: {
     columns: {
       id: {
@@ -1198,66 +1210,66 @@ const hvac_tables = {
       },
     },
   },
-  // non_job_appointments: {
-  //   columns: {
-  //     id: {
-  //       data_type: "INT",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     technician_id: {
-  //       data_type: "INT",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_technician_id: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //     start: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     duration: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     timesheetCodeId: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //     clearDispatchBoard: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     clearTechnicianView: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     removeTechnicianFromCapacityPlanning: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_all_day: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     created_by_id: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
+  non_job_appointments: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      technician_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_technician_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      duration: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      timesheetCodeId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      clearDispatchBoard: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      clearTechnicianView: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      removeTechnicianFromCapacityPlanning: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      is_all_day: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      created_by_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+    },
+  },
   sku_details: {
     columns: {
       id: {
@@ -1807,6 +1819,9 @@ const hvac_tables_responses = {
   projects: {
     status: "",
   },
+  project_managers: {
+    status: "",
+  },
   job_details: {
     status: "",
   },
@@ -2247,6 +2262,7 @@ async function azure_sql_operations(data_lake, table_list) {
       payrolls,
       job_types,
       projects,
+      project_managers,
       job_details,
       appointments,
       sales_details,
@@ -2266,7 +2282,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3732,6 +3748,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const project_managers_header_data =
+          hvac_tables["project_managers"]["columns"];
         const cogs_material_header_data =
           hvac_tables["cogs_material"]["columns"];
         const cogs_equipment_header_data =
@@ -3745,6 +3763,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         };
 
         let final_data_pool = [];
+        let project_managers_final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
@@ -4873,6 +4892,19 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0
                 );
 
+                // project_manager id deletion
+                const project_managers_deleting_query = await sql_request.query(
+                  `DELETE FROM project_managers WHERE id = ${record["id"]}`
+                );
+
+                // project_manager id insertion
+                record["projectManagerIds"].map((manager_id) => {
+                  project_managers_final_data_pool.push({
+                    id: record["id"],
+                    manager_id: manager_id,
+                  });
+                });
+
                 final_data_pool.push({
                   id: record["id"],
                   number: record["number"] ? record["number"] : "default",
@@ -4947,6 +4979,33 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["projects"]["status"] = "success";
+        }
+
+        if (project_managers_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["project_managers"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                project_managers_final_data_pool,
+                project_managers_header_data,
+                "project_managers"
+              );
+          } while (
+            hvac_tables_responses["project_managers"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_managers = '${hvac_tables_responses["project_managers"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        } else {
+          hvac_tables_responses["project_managers"]["status"] = "success";
         }
 
         delete data_lake[api_name];

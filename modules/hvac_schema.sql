@@ -39,6 +39,19 @@ CREATE TABLE business_unit (
 );
 END;
 
+-- employees
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='employees')
+BEGIN
+CREATE TABLE employees(
+  id INT PRIMARY KEY,
+  [name] NVARCHAR(MAX) NULL,
+  [role] NVARCHAR(MAX) NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+)
+END;
+
 -- campaigns
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'campaigns')
 BEGIN
@@ -270,6 +283,8 @@ BEGIN
 CREATE TABLE project_managers(
   id INT NOT NULL,
   manager_id INT NOT NULL,
+  actual_manager_id INT NULL,
+  FOREIGN KEY (manager_id) REFERENCES employees (id),
 )
 END;
 
@@ -665,6 +680,7 @@ CREATE TABLE auto_update (
   legal_entity NVARCHAR(MAX) NULL,
   us_cities NVARCHAR(MAX) NULL,
   business_unit NVARCHAR(MAX) NULL,
+  employees NVARCHAR(MAX) NULL,
   campaigns NVARCHAR(MAX) NULL,
   bookings NVARCHAR(MAX) NULL,  
   customer_details NVARCHAR(MAX) NULL,
