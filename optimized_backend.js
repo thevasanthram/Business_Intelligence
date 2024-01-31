@@ -4898,12 +4898,27 @@ async function data_processor(data_lake, sql_request, table_list) {
                 );
 
                 // project_manager id insertion
-                record["projectManagerIds"].map((manager_id) => {
-                  project_managers_final_data_pool.push({
-                    id: record["id"],
-                    manager_id: manager_id,
-                  });
-                });
+                await Promise.all(
+                  record["projectManagerIds"].map(async (manager_id) => {
+                    let manager_ID = record["instance_id"];
+                    let actual_manager_id = manager_id;
+
+                    // checking customer availlable or not for mapping
+                    const is_employee_available = await sql_request.query(
+                      `SELECT id FROM employees WHERE id=${manager_id}`
+                    );
+
+                    if (is_employee_available["recordset"].length > 0) {
+                      manager_ID = manager_id;
+                    }
+
+                    project_managers_final_data_pool.push({
+                      id: record["id"],
+                      manager_id: manager_ID,
+                      actual_manager_id: actual_manager_id,
+                    });
+                  })
+                );
 
                 final_data_pool.push({
                   id: record["id"],

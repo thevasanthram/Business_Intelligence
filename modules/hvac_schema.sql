@@ -247,6 +247,7 @@ CREATE TABLE projects(
   billed_amount DECIMAL(18, 8) NULL,
   balance DECIMAL(18, 8) NULL,
   contract_value DECIMAL(18, 8) NULL,
+  sold_contract_value DECIMAL(18, 8) NULL,
   budget_expense DECIMAL(18, 8) NULL,
   budget_hours DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
