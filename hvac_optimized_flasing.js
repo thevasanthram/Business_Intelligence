@@ -2695,13 +2695,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           let business_unit_id = record["instance_id"];
           let actual_business_unit_id = record["instance_id"];
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"]
-              ? record["businessUnit"]["id"]
-              : record["instance_id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
+          actual_business_unit_id = record["businessUnitId"]
+            ? record["businessUnitId"]
+            : record["instance_id"];
+          if (business_unit_data_pool[record["businessUnitId"]]) {
+            business_unit_id = record["businessUnitId"];
           }
 
           final_data_pool.push({
