@@ -17,12 +17,14 @@ async function flush_hvac_data(sql_request) {
     DELETE FROM sales_details
     DELETE FROM job_details
     DELETE FROM call_details
+    DELETE FROM project_managers
     DELETE FROM projects
     DELETE FROM job_types
     DELETE FROM location
     DELETE FROM customer_details
     DELETE FROM bookings
     DELETE FROM campaigns
+    DELETE FROM employees
     DELETE FROM business_unit
     DELETE FROM us_cities
     DELETE FROM legal_entity`;

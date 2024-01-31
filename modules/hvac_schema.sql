@@ -284,6 +284,7 @@ CREATE TABLE project_managers(
   id INT NOT NULL,
   manager_id INT NOT NULL,
   actual_manager_id INT NULL,
+  FOREIGN KEY (id) REFERENCES projects (id),
   FOREIGN KEY (manager_id) REFERENCES employees (id),
 )
 END;
