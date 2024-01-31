@@ -785,7 +785,7 @@ const hvac_tables = {
       },
       actual_manager_id: {
         data_type: "INT",
-        constraint: { nullable: false },
+        constraint: { nullable: true },
       },
     },
   },
