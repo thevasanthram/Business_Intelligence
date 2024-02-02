@@ -573,6 +573,10 @@ const hvac_tables = {
       },
       soldBy: {
         data_type: "INT",
+        constraint: { nullable: false },
+      },
+      acutal_soldBy: {
+        data_type: "INT",
         constraint: { nullable: true },
       },
       is_active: {
@@ -580,6 +584,14 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      estimates_age: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      estimates_sold_hours: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -4185,6 +4197,20 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ---------------
 
+        const employees_response = await sql_request.query(
+          "SELECT * FROM employees"
+        );
+
+        const employees_data = employees_response.recordset;
+
+        const employees_data_pool = {};
+
+        employees_data.map((current_record) => {
+          employees_data_pool[current_record["id"]] = current_record;
+        });
+
+        // ---------------
+
         let final_data_pool = [];
 
         // calculating contract value from sales estimates for projects table
@@ -4196,15 +4222,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           if (record["status"] && record["status"]["name"] != "Dismissed") {
             let totalCost = 0;
             let budget_hours = 0;
+            let estimates_sold_hours = 0;
             record["items"].map((items_record) => {
               totalCost = totalCost + parseFloat(items_record["totalCost"]);
 
               // budget_hours
-              if (
-                items_record["sku"] &&
-                items_record["sku"]["name"] == "Labor"
-              ) {
-                budget_hours += parseFloat(items_record["qty"]);
+              if (items_record["sku"]) {
+                if (items_record["sku"]["name"] == "Labor") {
+                  budget_hours += parseFloat(items_record["qty"]);
+                }
+
+                estimates_sold_hours += parseFloat(
+                  items_record["sku"]["soldHours"]
+                    ? items_record["sku"]["soldHours"]
+                    : 0
+                );
               }
             });
 
@@ -4264,6 +4296,14 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_id = record["projectId"];
             }
 
+            let soldBy = record["instance_id"];
+            let acutal_soldBy = record["soldBy"]
+              ? record["soldBy"]
+              : record["instance_id"];
+            if (employees_data_pool[record["soldBy"]]) {
+              soldBy = record["soldBy"];
+            }
+
             let business_unit_id = record["instance_id"];
             let acutal_business_unit_id = record["instance_id"];
             let businessUnitName = record["businessUnitName"]
@@ -4311,12 +4351,25 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             let createdOn = "2000-01-01T00:00:00.00Z";
 
+            let estimates_age = 0;
+
             if (record["createdOn"]) {
               if (
                 new Date(record["createdOn"]) >
                 new Date("2000-01-01T00:00:00.00Z")
               ) {
                 createdOn = record["createdOn"];
+
+                const created_on_date = new Date(record["createdOn"]);
+                const today = new Date();
+
+                const timeDifference =
+                  today.getTime() - created_on_date.getTime();
+
+                // Convert the difference to days
+                estimates_age = Math.floor(
+                  timeDifference / (1000 * 60 * 60 * 24)
+                );
               }
             } else {
               createdOn = "2001-01-01T00:00:00.00Z";
@@ -4352,9 +4405,12 @@ async function data_processor(data_lake, sql_request, table_list) {
               actual_project_id: actual_project_id,
               job_number: record["jobNumber"] ? record["jobNumber"] : "default",
               soldOn: soldOn,
-              soldBy: record["soldBy"] ? record["soldBy"] : 0,
+              soldBy: soldBy,
+              acutal_soldBy: acutal_soldBy,
               is_active: record["active"] ? 1 : 0,
               subtotal: record["subtotal"] ? record["subtotal"] : 0,
+              estimates_age: estimates_age,
+              estimates_sold_hours: estimates_sold_hours,
               budget_expense: totalCost,
               budget_hours: budget_hours,
               status_value: status_value,
