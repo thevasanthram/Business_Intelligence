@@ -2363,7 +2363,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
-  for (let api_count = 13; api_count < table_list.length; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
     const api_name = table_list[api_count];
@@ -6334,7 +6334,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", Object.keys(data_pool).length);
         // console.log("header_data: ", header_data);
 
-        const batchSize = 500;
+        const batchSize = 300;
 
         for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
           console.log(
