@@ -8646,7 +8646,7 @@ async function post_insertion(sql_request) {
     initial_execute = false;
 
     console.log("==================================");
-    console.log("goint to enter auto_update");
+    console.log("current batch finished");
     console.log("==================================");
 
     // await auto_update();
@@ -8655,7 +8655,7 @@ async function post_insertion(sql_request) {
 
 // for automatic mass ETL
 async function start_pipeline() {
-  should_auto_update = false;
+  // should_auto_update = false;
 
   start_time = new Date();
 
@@ -8675,7 +8675,7 @@ async function start_pipeline() {
 
   console.log("Time taken for fetching data: ", stop1());
 
-  // await find_total_length(data_lake);
+  await find_total_length(data_lake);
 
   await azure_sql_operations(data_lake, Object.keys(hvac_tables));
 }
@@ -8686,52 +8686,53 @@ async function flush_data_pool(is_initial_execute) {
   await sql.close();
 }
 
-async function auto_update() {
-  console.log("auto_update callingg");
-
-  // Get the current date and time // Calculate the next hour
-  const previous_batch_next_day = new Date(params_header["modifiedBefore"]);
-  previous_batch_next_day.setDate(previous_batch_next_day.getDate() + 1);
-
-  console.log("finished batch: ", params_header["modifiedBefore"]);
-  console.log("next batch: ", previous_batch_next_day);
-
-  const now = new Date();
-  // now.setHours(now.getHours() + timezoneOffsetHours);
-
-  // Check if it's the next hour
-  if (now < previous_batch_next_day) {
-    // Schedule the next call after an hour
-    const timeUntilNextBatch = previous_batch_next_day - now; // Calculate milliseconds until the next hour
-    console.log("timer funtion entering", timeUntilNextBatch);
-
-    await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
-
-    await auto_update();
-  } else {
-    console.log("next batch initiated");
-
-    // setting modifiedBefore time to current hour
-    // now.setMinutes(0);
-    // now.setSeconds(0);
-    // now.setMilliseconds(0);
-
-    now.setUTCHours(7, 0, 0, 0);
-
-    params_header["modifiedBefore"] = now.toISOString();
-    console.log("params_header: ", params_header);
-
-    should_auto_update = true;
-  }
-}
-
 async function orchestrate() {
   await flush_data_pool(!should_auto_update);
+
+  // should_auto_update = true;
 
   // Step 1: Call start_pipeline
   await start_pipeline();
 
-  should_auto_update = true;
+  do {
+    // finding the next batch time
+    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+
+    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+
+    next_batch_time.setDate(next_batch_time.getDate() + 1);
+    next_batch_time.setUTCHours(7, 0, 0, 0);
+
+    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+    console.log("next batch: ", next_batch_time);
+
+    const now = new Date();
+
+    // Check if it's the next day
+    // now < next_batch_time
+    if (now < next_batch_time) {
+      // Schedule the next call after an day
+      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
+      console.log("timer funtion entering", timeUntilNextBatch);
+
+      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+    } else {
+      console.log("next batch initiated");
+
+      // clean db once
+      await flush_data_pool(!should_auto_update);
+
+      now.setUTCHours(7, 0, 0, 0);
+
+      params_header["modifiedBefore"] = now.toISOString();
+      console.log("params_header: ", params_header);
+
+      // Step 1: Call start_pipeline
+      await start_pipeline();
+    }
+
+    should_auto_update = true;
+  } while (should_auto_update);
 }
 
 orchestrate();
