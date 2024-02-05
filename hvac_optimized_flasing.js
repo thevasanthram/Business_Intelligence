@@ -371,6 +371,10 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { primary: true, nullable: false },
       },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       street: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -3341,6 +3345,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
+            name: "default",
             street: "",
             unit: "",
             city: "",
@@ -3356,6 +3361,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: 2,
+            name: "default",
             street: "",
             unit: "",
             city: "",
@@ -3371,6 +3377,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: 3,
+            name: "default",
             street: "",
             unit: "",
             city: "",
@@ -3450,6 +3457,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: record["id"],
+            name: record["name"] ? record["name"] : "default",
             street: address_street,
             unit: address_unit,
             city: address_city,

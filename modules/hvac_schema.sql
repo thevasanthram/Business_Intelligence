@@ -123,6 +123,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'location')
 BEGIN
 CREATE TABLE location (
   id INT PRIMARY KEY,
+  name NVARCHAR(MAX) NULL,
   street NVARCHAR(MAX) NULL,
   unit NVARCHAR(MAX) NULL,
   city NVARCHAR(MAX) NULL,
