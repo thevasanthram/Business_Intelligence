@@ -8675,7 +8675,7 @@ async function start_pipeline() {
 
   console.log("Time taken for fetching data: ", stop1());
 
-  await find_total_length(data_lake);
+  // await find_total_length(data_lake);
 
   await azure_sql_operations(data_lake, Object.keys(hvac_tables));
 }
