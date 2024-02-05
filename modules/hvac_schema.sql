@@ -212,7 +212,7 @@ CREATE TABLE sales_details (
   job_number NVARCHAR(MAX) NULL,
   soldOn DATETIME2 NULL,
   soldBy INT NOT NULL,
-  acutal_soldBy INT NULL,
+  soldBy_name NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   subtotal DECIMAL(18, 8) NULL,
   estimates_age INT NULL,

@@ -579,8 +579,8 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: false },
       },
-      acutal_soldBy: {
-        data_type: "INT",
+      soldBy_name: {
+        data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
       is_active: {
@@ -4304,12 +4304,9 @@ async function data_processor(data_lake, sql_request, table_list) {
               project_id = record["projectId"];
             }
 
-            let soldBy = record["instance_id"];
-            let acutal_soldBy = record["soldBy"]
-              ? record["soldBy"]
-              : record["instance_id"];
+            let soldBy_name = "default";
             if (employees_data_pool[record["soldBy"]]) {
-              soldBy = record["soldBy"];
+              soldBy_name = employees_data_pool[record["soldBy"]]["name"];
             }
 
             let business_unit_id = record["instance_id"];
@@ -4413,8 +4410,10 @@ async function data_processor(data_lake, sql_request, table_list) {
               actual_project_id: actual_project_id,
               job_number: record["jobNumber"] ? record["jobNumber"] : "default",
               soldOn: soldOn,
-              soldBy: soldBy,
-              acutal_soldBy: acutal_soldBy,
+              soldBy: record["soldBy"]
+                ? record["soldBy"]
+                : record["instance_id"],
+              soldBy_name: soldBy_name,
               is_active: record["active"] ? 1 : 0,
               subtotal: record["subtotal"] ? record["subtotal"] : 0,
               estimates_age: estimates_age,
