@@ -8720,6 +8720,7 @@ async function orchestrate() {
       now.setUTCHours(7, 0, 0, 0);
 
       params_header["modifiedBefore"] = now.toISOString();
+      params_header["modifiedOnOrAfter"] = "";
       console.log("params_header: ", params_header);
 
       // Step 1: Call start_pipeline

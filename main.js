@@ -18,97 +18,97 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 // Service Titan's API parameters
 
 const api_collection = [
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  //   mode: "items",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "adjustments",
+  //   mode: "items",
+  // },
+  // {
+  //   api_group: "inventory",
+  //   api_name: "transfers",
+  //   mode: "items",
+  // },
   {
     api_group: "accounting",
     api_name: "invoices",
-    mode: "items",
   },
-  {
-    api_group: "inventory",
-    api_name: "adjustments",
-    mode: "items",
-  },
-  {
-    api_group: "inventory",
-    api_name: "transfers",
-    mode: "items",
-  },
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
-  {
-    api_group: "accounting",
-    api_name: "inventory-bills",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payments",
-  },
-  {
-    api_group: "accounting",
-    api_name: "ap-payments",
-  },
-  {
-    api_group: "accounting",
-    api_name: "journal-entries",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payment-terms",
-  },
-  {
-    api_group: "accounting",
-    api_name: "payment-types",
-  },
-  {
-    api_group: "accounting",
-    api_name: "tax-zones",
-  },
-  {
-    api_group: "crm",
-    api_name: "customers",
-  },
-  {
-    api_group: "crm",
-    api_name: "bookings",
-  },
-  {
-    api_group: "crm",
-    api_name: "locations",
-  },
-  {
-    api_group: "crm",
-    api_name: "booking-provider-tags",
-  },
-  {
-    api_group: "crm",
-    api_name: "leads",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "appointment-assignments",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "zones",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "non-job-appointments",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "teams",
-  },
-  {
-    api_group: "dispatch",
-    api_name: "technician-shifts",
-  },
-  {
-    api_group: "equipmentsystems",
-    api_name: "installed-equipment",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "inventory-bills",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payments",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "ap-payments",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "journal-entries",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payment-terms",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "payment-types",
+  // },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "tax-zones",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "customers",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "bookings",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "locations",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "booking-provider-tags",
+  // },
+  // {
+  //   api_group: "crm",
+  //   api_name: "leads",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "appointment-assignments",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "zones",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "non-job-appointments",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "teams",
+  // },
+  // {
+  //   api_group: "dispatch",
+  //   api_name: "technician-shifts",
+  // },
+  // {
+  //   api_group: "equipmentsystems",
+  //   api_name: "installed-equipment",
+  // },
   // {
   //   api_group: "inventory",
   //   api_name: "adjustments",
@@ -692,15 +692,15 @@ async function start_pipeline() {
   console.log("Time taken for fetching data: ", stop1());
 
   // Storing Data into Azure SQL Database using bulk insert
-  const stop2 = startStopwatch("inserting data");
-  await find_max_and_bulk_insert(data_lake);
-  console.log("Time taken for inserting data: ", stop2());
+  // const stop2 = startStopwatch("inserting data");
+  // await find_max_and_bulk_insert(data_lake);
+  // console.log("Time taken for inserting data: ", stop2());
 
   // await find_total_length(data_lake);
 
   // {
   //   // Creating CSVs
-  //   await find_max_and_write_csv(data_lake);
+    await find_max_and_write_csv(data_lake);
   // }
 
   // {
