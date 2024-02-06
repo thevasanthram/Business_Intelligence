@@ -8689,46 +8689,46 @@ async function orchestrate() {
   // Step 1: Call start_pipeline
   await start_pipeline();
 
-  do {
-    // finding the next batch time
-    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+  // do {
+  //   // finding the next batch time
+  //   params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
-    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+  //   const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-    next_batch_time.setDate(next_batch_time.getDate() + 1);
-    next_batch_time.setUTCHours(7, 0, 0, 0);
+  //   next_batch_time.setDate(next_batch_time.getDate() + 1);
+  //   next_batch_time.setUTCHours(7, 0, 0, 0);
 
-    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
-    console.log("next batch: ", next_batch_time);
+  //   console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+  //   console.log("next batch: ", next_batch_time);
 
-    const now = new Date();
+  //   const now = new Date();
 
-    // Check if it's the next day
-    // now < next_batch_time
-    if (now < next_batch_time) {
-      // Schedule the next call after an day
-      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
-      console.log("timer funtion entering", timeUntilNextBatch);
+  //   // Check if it's the next day
+  //   // now < next_batch_time
+  //   if (now < next_batch_time) {
+  //     // Schedule the next call after an day
+  //     const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
+  //     console.log("timer funtion entering", timeUntilNextBatch);
 
-      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
-    } else {
-      console.log("next batch initiated");
+  //     await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+  //   } else {
+  //     console.log("next batch initiated");
 
-      // clean db once
-      await flush_data_pool(!should_auto_update);
+  //     // clean db once
+  //     await flush_data_pool(!should_auto_update);
 
-      now.setUTCHours(7, 0, 0, 0);
+  //     now.setUTCHours(7, 0, 0, 0);
 
-      params_header["modifiedBefore"] = now.toISOString();
-      params_header["modifiedOnOrAfter"] = "";
-      console.log("params_header: ", params_header);
+  //     params_header["modifiedBefore"] = now.toISOString();
+  //     params_header["modifiedOnOrAfter"] = "";
+  //     console.log("params_header: ", params_header);
 
-      // Step 1: Call start_pipeline
-      await start_pipeline();
-    }
+  //     // Step 1: Call start_pipeline
+  //     await start_pipeline();
+  //   }
 
-    should_auto_update = true;
-  } while (should_auto_update);
+  //   should_auto_update = true;
+  // } while (should_auto_update);
 }
 
 orchestrate();
