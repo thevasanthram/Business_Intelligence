@@ -172,6 +172,19 @@ CREATE TABLE job_types (
 END;
 
 -- purchase_order
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'returns')
+BEGIN
+  CREATE TABLE returns (
+    id INT PRIMARY KEY,
+    status NVARCHAR(MAX) NULL,
+    purchaseOrderId INT NULL,
+    jobId INT NULL,
+    returnAmount DECIMAL(18, 8) NULL,
+    taxAmount DECIMAL(18, 8) NULL,
+  );
+END;
+
+-- purchase_order
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
 BEGIN
   CREATE TABLE purchase_order (
@@ -179,6 +192,7 @@ BEGIN
     status NVARCHAR(MAX) NULL,
     total DECIMAL(18, 8) NULL,
     tax DECIMAL(18, 8) NULL,
+    po_returns DECIMAL(18, 8) NULL,
     date DATETIME2 NULL,
     requiredOn DATETIME2 NULL,
     sentOn DATETIME2 NULL,
@@ -199,7 +213,6 @@ BEGIN
     -- FOREIGN KEY (vendor_id) REFERENCES vendor (id),
   );
 END;
-
 
 -- sales_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
@@ -256,6 +269,7 @@ CREATE TABLE projects(
   budget_expense DECIMAL(18, 8) NULL,
   budget_hours DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
+  po_returns DECIMAL(18, 8) NULL,
   equipment_cost DECIMAL(18, 8) NULL,
   material_cost DECIMAL(18, 8) NULL,
   labor_cost DECIMAL(18, 8) NULL,
@@ -666,6 +680,7 @@ CREATE TABLE gross_profit (
   [default] DECIMAL(18, 8) NULL,
   total DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
+  po_returns DECIMAL(18, 8) NULL,
   equipment_cost DECIMAL(18, 8) NULL,
   material_cost DECIMAL(18, 8) NULL,
   labor_cost DECIMAL(18, 8) NULL,
@@ -711,6 +726,7 @@ CREATE TABLE auto_update (
   cogs_equipment NVARCHAR(MAX) NULL,
   cogs_service NVARCHAR(MAX) NULL,
   cogs_labor NVARCHAR(MAX) NULL,
+  returns NVARCHAR(MAX) NULL, 
   purchase_order NVARCHAR(MAX) NULL,
   gross_profit NVARCHAR(MAX) NULL,
   overall_status NVARCHAR(MAX) NULL

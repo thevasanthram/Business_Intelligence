@@ -3,6 +3,7 @@ async function flush_hvac_data(sql_request) {
     const flushing_query = `
     DELETE FROM gross_profit
     DELETE FROM purchase_order
+    DELETE FROM returns
     DELETE FROM cogs_material
     DELETE FROM cogs_labor
     DELETE FROM non_job_appointments
