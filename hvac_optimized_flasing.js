@@ -3913,7 +3913,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
-            po_returns: purchase_order_returns_cache[1]["returnAmount"],
+            po_returns: purchase_order_returns_cache[2]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
@@ -3935,7 +3935,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
-            po_returns: purchase_order_returns_cache[1]["returnAmount"],
+            po_returns: purchase_order_returns_cache[3]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
@@ -8902,14 +8902,13 @@ async function orchestrate() {
 
   do {
     // finding the next batch time
-    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
-    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+    const next_batch_time = new Date(params_header["modifiedBefore"]);
 
     next_batch_time.setDate(next_batch_time.getDate() + 1);
     next_batch_time.setUTCHours(7, 0, 0, 0);
 
-    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+    console.log("finished batch: ", params_header["modifiedBefore"]);
     console.log("next batch: ", next_batch_time);
 
     const now = new Date();
@@ -8931,7 +8930,6 @@ async function orchestrate() {
       now.setUTCHours(7, 0, 0, 0);
 
       params_header["modifiedBefore"] = now.toISOString();
-      params_header["modifiedOnOrAfter"] = "";
       console.log("params_header: ", params_header);
 
       // Step 1: Call start_pipeline
