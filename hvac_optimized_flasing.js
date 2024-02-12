@@ -8722,7 +8722,7 @@ async function post_insertion(sql_request) {
   } else {
     // free previous batch data lake and call next iteration
     data_lake = {};
-    initial_execute = false;
+    // initial_execute = true;
 
     console.log("==================================");
     console.log("current batch finished");
