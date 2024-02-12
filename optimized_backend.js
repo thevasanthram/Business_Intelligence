@@ -478,6 +478,34 @@ const hvac_tables = {
       },
     },
   },
+  returns: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      purchaseOrderId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      jobId: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      returnAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      taxAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+    },
+  },
   purchase_order: {
     columns: {
       id: {
@@ -493,6 +521,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_returns: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -709,6 +741,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_returns: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -1742,6 +1778,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      po_returns: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       equipment_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -1918,6 +1958,9 @@ const hvac_tables_responses = {
   purchase_order: {
     status: "",
   },
+  returns: {
+    status: "",
+  },
 };
 
 let start_time = "";
@@ -2066,6 +2109,13 @@ const main_api_list = {
       api_group: "accounting",
       api_name: "invoices",
       table_name: "invoices",
+    },
+  ],
+  returns: [
+    {
+      api_group: "inventory",
+      api_name: "returns",
+      table_name: "returns",
     },
   ],
   purchase_order: [
@@ -2335,13 +2385,14 @@ async function azure_sql_operations(data_lake, table_list) {
       cogs_equipment,
       cogs_service,
       cogs_labor,
+      returns,
       purchase_order,
       gross_profit,
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -3434,6 +3485,71 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
+      case "returns": {
+        const table_name = "returns";
+        const data_pool =
+          data_lake["returns"]["inventory__returns"]["data_pool"];
+
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const returns_final_data_pool = [];
+
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
+
+          const returnAmount = record["returnAmount"]
+            ? parseFloat(record["returnAmount"])
+            : 0;
+
+          const taxAmount = record["taxAmount"]
+            ? parseFloat(record["taxAmount"])
+            : 0;
+
+          returns_final_data_pool.push({
+            id: record["id"],
+            status: record["status"] ? record["status"] : "default",
+            purchaseOrderId: record["purchaseOrderId"]
+              ? record["purchaseOrderId"]
+              : record["instance_id"],
+            jobId: record["jobId"] ? record["jobId"] : record["instance_id"],
+            returnAmount: returnAmount,
+            taxAmount: taxAmount,
+          });
+        });
+
+        console.log(
+          "returns_final_data_pool order data: ",
+          returns_final_data_pool.length
+        );
+
+        if (returns_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["returns"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                returns_final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (hvac_tables_responses["returns"]["status"] != "success");
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET returns = '${hvac_tables_responses["returns"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        } else {
+          hvac_tables_responses["returns"]["status"] = "success";
+        }
+
+        break;
+      }
+
       case "purchase_order": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const purchase_order_data_pool =
@@ -3515,6 +3631,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                     vendor_id = po_record["vendorId"];
                   }
                 }
+
+                // calculating po returns
+                const po_returns_summing_query = await sql_request.query(
+                  `SELECT SUM(returnAmount) AS totalSum FROM returns WHERE purchaseOrderId = ${record["id"]}`
+                );
+
+                const po_returns = parseFloat(
+                  po_returns_summing_query["recordset"][0]["totalSum"]
+                    ? po_returns_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
 
                 let date = "2000-01-01T00:00:00.00Z";
 
@@ -3599,6 +3726,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   status: po_record["status"] ? po_record["status"] : "default",
                   total: po_record["total"] ? po_record["total"] : 0,
                   tax: po_record["tax"] ? po_record["tax"] : 0,
+                  po_returns: po_returns,
                   date: date,
                   requiredOn: requiredOn,
                   sentOn: sentOn,
@@ -4250,6 +4378,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0
                 );
 
+                // calculating po returns
+                const po_returns_summing_query = await sql_request.query(
+                  `SELECT SUM(po_returns) AS totalSum FROM purchase_order WHERE invoice_id = ${record["id"]}`
+                );
+
+                const po_returns = parseFloat(
+                  po_returns_summing_query["recordset"][0]["totalSum"]
+                    ? po_returns_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
                 // calculating labor_cost
                 const labor_cost_summing_query = await sql_request.query(
                   `SELECT SUM(amount) AS totalSum FROM gross_pay_items WHERE invoiceId = ${record["id"]}`
@@ -4585,6 +4724,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                     default: default_val,
                     total: record["total"] ? parseFloat(record["total"]) : 0,
                     po_cost: po_cost, // purchase orders
+                    po_returns: po_returns,
                     equipment_cost: equipment_cost, //
                     material_cost: material_cost, //
                     labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
@@ -4902,6 +5042,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0
                 );
 
+                // calculating po returns
+                const po_returns_summing_query = await sql_request.query(
+                  `SELECT SUM(po_returns) AS totalSum FROM purchase_order WHERE project_id = ${record["id"]}`
+                );
+
+                const po_returns = parseFloat(
+                  po_returns_summing_query["recordset"][0]["totalSum"]
+                    ? po_returns_summing_query["recordset"][0]["totalSum"]
+                    : 0
+                );
+
                 // calculating equipment cost
                 const equipment_cost_summing_query = await sql_request.query(
                   `SELECT SUM(total_cost) AS totalSum FROM cogs_equipment WHERE project_id = ${record["id"]}`
@@ -5127,6 +5278,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   budget_expense: budget_expense,
                   budget_hours: budget_hours,
                   po_cost: po_cost,
+                  po_returns: po_returns,
                   equipment_cost: equipment_cost,
                   material_cost: material_cost,
                   labor_cost: labor_cost,
