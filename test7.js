@@ -1,8 +1,4 @@
+const currentDate = new Date();
+const as_of_date = currentDate.toISOString().slice(0, 10);
 
-const a = 'M'
-
-if(a > 0){
-  console.log(true)
-}else{
-  console.log(false)
-}
+console.log(as_of_date);

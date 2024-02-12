@@ -829,6 +829,146 @@ const hvac_tables = {
       },
     },
   },
+  projects_wip_data: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billed_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sold_contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_returns: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      equipment_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      material_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      burden: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      actual_customer_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      actual_location_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      startDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      targetCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      actualCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      as_of_date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+    },
+  },
   project_managers: {
     columns: {
       id: {
@@ -1905,6 +2045,9 @@ const hvac_tables_responses = {
   projects: {
     status: "",
   },
+  projects_wip_data: {
+    status: "",
+  },
   project_managers: {
     status: "",
   },
@@ -2366,6 +2509,7 @@ async function azure_sql_operations(data_lake, table_list) {
       payrolls,
       job_types,
       projects,
+      projects_wip_data,
       project_managers,
       job_details,
       appointments,
@@ -2387,7 +2531,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -4678,6 +4822,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const wip_header_data = hvac_tables["projects_wip_data"]["columns"];
         const project_managers_header_data =
           hvac_tables["project_managers"]["columns"];
 
@@ -4756,6 +4901,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // ----------------
 
         let final_data_pool = [];
+        let wip_final_data_pool = [];
         let project_managers_final_data_pool = [];
 
         // console.log("data_pool: ", data_pool);
@@ -6329,6 +6475,45 @@ async function data_processor(data_lake, sql_request, table_list) {
             createdOn: createdOn,
             modifiedOn: modifiedOn,
           });
+
+          const as_of_date = new Date().toISOString().slice(0, 10);
+
+          wip_final_data_pool.push({
+            id: record["id"],
+            number: record["number"] ? record["number"] : "default",
+            name: record["name"] ? record["name"] : `${record["id"]}`,
+            status: record["status"] ? record["status"] : "No Status",
+            billed_amount: billed_amount,
+            balance: balance,
+            contract_value: contract_value,
+            sold_contract_value: sold_contract_value,
+            budget_expense: budget_expense,
+            budget_hours: budget_hours,
+            po_cost: po_cost,
+            po_returns: po_returns,
+            equipment_cost: equipment_cost,
+            material_cost: material_cost,
+            labor_cost: labor_cost,
+            labor_hours: labor_hours,
+            burden: burden,
+            accounts_receivable: accounts_receivable,
+            expense: expense,
+            income: income,
+            current_liability: current_liability,
+            membership_liability: membership_liability,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            startDate: startDate,
+            targetCompletionDate: targetCompletionDate,
+            actualCompletionDate: actualCompletionDate,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            as_of_date: as_of_date,
+          });
         });
 
         // console.log("final_data_pool: ", final_data_pool);
@@ -6357,6 +6542,31 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET projects = '${hvac_tables_responses["projects"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        if (wip_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["projects_wip_data"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                wip_final_data_pool,
+                wip_header_data,
+                "projects_wip_data"
+              );
+          } while (
+            hvac_tables_responses["projects_wip_data"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 

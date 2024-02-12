@@ -297,6 +297,47 @@ CREATE TABLE projects(
 )
 END;
 
+-- projects_wip_data
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects_wip_data')
+BEGIN
+CREATE TABLE projects_wip_data(
+  id INT NULL,
+  [number] NVARCHAR(MAX) NULL,
+  [name] NVARCHAR(MAX) NULL,
+  [status] NVARCHAR(MAX) NULL,
+  billed_amount DECIMAL(18, 8) NULL,
+  balance DECIMAL(18, 8) NULL,
+  contract_value DECIMAL(18, 8) NULL,
+  sold_contract_value DECIMAL(18, 8) NULL,
+  budget_expense DECIMAL(18, 8) NULL,
+  budget_hours DECIMAL(18, 8) NULL,
+  po_cost DECIMAL(18, 8) NULL,
+  po_returns DECIMAL(18, 8) NULL,
+  equipment_cost DECIMAL(18, 8) NULL,
+  material_cost DECIMAL(18, 8) NULL,
+  labor_cost DECIMAL(18, 8) NULL,
+  labor_hours DECIMAL(18, 8) NULL,
+  burden DECIMAL(18, 8) NULL,
+  accounts_receivable DECIMAL(18, 8) NULL,
+  expense DECIMAL(18, 8) NULL,
+  income DECIMAL(18, 8) NULL,
+  current_liability DECIMAL(18, 8) NULL,
+  membership_liability DECIMAL(18, 8) NULL,
+  business_unit_id INT  NULL,
+  actual_business_unit_id INT NULL,
+  customer_details_id INT  NULL,
+  actual_customer_details_id INT NULL,
+  location_id INT  NULL,
+  actual_location_id INT NULL,
+  startDate DATETIME2 NULL,
+  targetCompletionDate DATETIME2 NULL,
+  actualCompletionDate DATETIME2 NULL,
+  createdOn DATETIME2 NULL,
+  modifiedOn DATETIME2 NULL,
+  as_of_date DATETIME2 NULL,
+)
+END;
+
 -- project_managers
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='project_managers')
 BEGIN
@@ -711,6 +752,7 @@ CREATE TABLE auto_update (
   payrolls NVARCHAR(MAX) NULL,
   job_types NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
+  projects_wip_data NVARCHAR(MAX) NULL,
   project_managers NVARCHAR(MAX) NULL,
   call_details NVARCHAR(MAX) NULL,
   job_details NVARCHAR(MAX) NULL,
