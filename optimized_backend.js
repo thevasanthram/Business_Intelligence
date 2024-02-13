@@ -3634,7 +3634,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 // calculating po returns
                 const po_returns_summing_query = await sql_request.query(
-                  `SELECT SUM(returnAmount) AS totalSum FROM returns WHERE purchaseOrderId = ${record["id"]}`
+                  `SELECT SUM(returnAmount) AS totalSum FROM returns WHERE purchaseOrderId = ${po_record["id"]}`
                 );
 
                 const po_returns = parseFloat(
