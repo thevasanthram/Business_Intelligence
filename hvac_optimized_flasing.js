@@ -6476,7 +6476,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
           });
 
-          const as_of_date = new Date().toISOString().slice(0, 10);
+          const as_of_date = new Date(params_header["modifiedBefore"])
+            .toISOString()
+            .slice(0, 10);
 
           wip_final_data_pool.push({
             id: record["id"],
