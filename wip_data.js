@@ -2113,20 +2113,6 @@ const main_api_list = {
       table_name: "employees",
     },
   ],
-  campaigns: [
-    {
-      api_group: "marketing",
-      api_name: "campaigns",
-      table_name: "campaigns",
-    },
-  ],
-  bookings: [
-    {
-      api_group: "crm",
-      api_name: "bookings",
-      table_name: "bookings",
-    },
-  ],
   customer_details: [
     {
       api_group: "crm",
@@ -2148,65 +2134,11 @@ const main_api_list = {
       table_name: "projects",
     },
   ],
-  call_details: [
-    {
-      api_group: "telecom",
-      api_name: "calls",
-      table_name: "call_details",
-    },
-  ],
-  job_details: [
-    {
-      api_group: "jpm",
-      api_name: "jobs",
-      table_name: "job_details",
-    },
-    {
-      api_group: "jpm",
-      api_name: "job-types",
-      table_name: "job_details",
-    },
-  ],
   sales_details: [
     {
       api_group: "sales",
       api_name: "estimates",
       table_name: "sales_details",
-    },
-  ],
-  appointments: [
-    {
-      api_group: "jpm",
-      api_name: "appointments",
-      table_name: "appointments",
-    },
-  ],
-  vendor: [
-    {
-      api_group: "inventory",
-      api_name: "vendors",
-      table_name: "vendor",
-    },
-  ],
-  technician: [
-    {
-      api_group: "settings",
-      api_name: "technicians",
-      table_name: "technician",
-    },
-  ],
-  appointment_assignments: [
-    {
-      api_group: "dispatch",
-      api_name: "appointment-assignments",
-      table_name: "appointment_assignments",
-    },
-  ],
-  non_job_appointments: [
-    {
-      api_group: "dispatch",
-      api_name: "non-job-appointments",
-      table_name: "non_job_appointments",
     },
   ],
   sku_details: [
