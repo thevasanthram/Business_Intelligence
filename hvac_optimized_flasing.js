@@ -44,19 +44,6 @@ const instance_details = [
 let timezoneOffsetHours = 5; // 0 hours ahead of UTC
 let timezoneOffsetMinutes = 30; // 0 minutes ahead of UTC
 
-// Check if the date is in daylight saving time (PDT)
-// const today = new Date();
-// const daylightSavingStart = new Date(today.getFullYear(), 2, 14); // March 14
-// const daylightSavingEnd = new Date(today.getFullYear(), 10, 7); // November 7
-
-// if (today >= daylightSavingStart && today < daylightSavingEnd) {
-//   // Date is in PDT
-//   timezoneOffsetHours = 7;
-// } else {
-//   // Date is in PST
-//   timezoneOffsetHours = 8;
-// }
-
 let createdBeforeTime = new Date();
 
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
