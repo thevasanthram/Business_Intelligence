@@ -3005,8 +3005,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         project_cache["project_total_data"] = project_total_data;
         project_cache["project_dummy_values"] = project_dummy_values;
 
-        delete purchase_order_returns_cache;
-
         // console.log("purchase_order_final_data_pool: ", purchase_order_final_data_pool);
         // console.log("header_data: ", header_data);
 
@@ -3017,10 +3015,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         //   table_name
         // );
 
-        console.log(
-          "purchase order data: ",
-          purchase_order_final_data_pool.length
-        );
+        // console.log(
+        //   "purchase order data: ",
+        //   purchase_order_final_data_pool.length
+        // );
 
         // if (purchase_order_final_data_pool.length > 0) {
         //   do {
