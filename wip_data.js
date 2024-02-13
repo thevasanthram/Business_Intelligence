@@ -3069,7 +3069,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["location"]["crm__locations"]["data_pool"];
 
         const employees_data_pool =
-          data_lake["location"]["settings__employees"]["data_pool"];
+          data_lake["employees"]["settings__employees"]["data_pool"];
 
         let final_data_pool = [];
 
@@ -3356,7 +3356,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           data_lake["location"]["crm__locations"]["data_pool"];
 
         const employees_data_pool =
-          data_lake["location"]["settings__employees"]["data_pool"];
+          data_lake["employees"]["settings__employees"]["data_pool"];
 
         const sku_details_data_pool = {
           ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
