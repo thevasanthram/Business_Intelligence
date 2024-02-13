@@ -11,8 +11,10 @@ async function hvac_data_insertion(
   let status = "failure";
   try {
     // clearing old records if exists
-    const delete_table_records = `DELETE FROM ${table_name}`;
-    await sql_pool.query(delete_table_records);
+    if (table_name != "projects_wip_data") {
+      const delete_table_records = `DELETE FROM ${table_name}`;
+      await sql_pool.query(delete_table_records);
+    }
 
     // Create a table object with create option set to false
     const table = new mssql.Table(table_name);
