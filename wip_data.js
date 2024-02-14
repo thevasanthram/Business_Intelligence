@@ -2172,6 +2172,18 @@ const main_api_list = {
       table_name: "returns",
     },
   ],
+  job_details: [
+    {
+      api_group: "jpm",
+      api_name: "jobs",
+      table_name: "job_details",
+    },
+    {
+      api_group: "jpm",
+      api_name: "job-types",
+      table_name: "job_details",
+    },
+  ],
   purchase_order: [
     {
       api_group: "inventory",
@@ -2471,34 +2483,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             taxAmount: taxAmount,
           });
         });
-
-        // console.log(
-        //   "returns_final_data_pool order data: ",
-        //   returns_final_data_pool.length
-        // );
-
-        // if (returns_final_data_pool.length > 0) {
-        //   do {
-        //     hvac_tables_responses["returns"]["status"] =
-        //       await hvac_data_insertion(
-        //         sql_request,
-        //         returns_final_data_pool,
-        //         header_data,
-        //         table_name
-        //       );
-        //   } while (hvac_tables_responses["returns"]["status"] != "success");
-
-        //   // entry into auto_update table
-        //   try {
-        //     const auto_update_query = `UPDATE auto_update SET returns = '${hvac_tables_responses["returns"]["status"]}' WHERE id=${lastInsertedId}`;
-
-        //     await sql_request.query(auto_update_query);
-
-        //     console.log("Auto_Update log created ");
-        //   } catch (err) {
-        //     console.log("Error while inserting into auto_update", err);
-        //   }
-        // }
 
         break;
       }
