@@ -33,10 +33,10 @@ const api_collection = [
   //   api_name: "transfers",
   //   mode: "items",
   // },
-  {
-    api_group: "accounting",
-    api_name: "invoices",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "invoices",
+  // },
   // {
   //   api_group: "accounting",
   //   api_name: "inventory-bills",
@@ -165,10 +165,10 @@ const api_collection = [
   //   api_group: "jpm",
   //   api_name: "jobs",
   // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "projects",
-  // },
+  {
+    api_group: "jpm",
+    api_name: "projects",
+  },
   // {
   //   api_group: "jpm",
   //   api_name: "job-cancel-reasons",
@@ -393,9 +393,9 @@ const hvac_tables = [
 
 const params_header = {
   // modifiedOnOrAfter: "2024-01-10T00:00:00.00Z",
-  createdOnOrAfter: "",
-  createdBefore: "",
-  // modifiedBefore: "2024-01-11T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
+  // createdOnOrAfter: "",
+  createdBefore: "2024-02-09T00:00:00.00Z",
+  // modifiedBefore: "2024-02-09T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -700,7 +700,7 @@ async function start_pipeline() {
 
   // {
   //   // Creating CSVs
-    await find_max_and_write_csv(data_lake);
+  await find_max_and_write_csv(data_lake);
   // }
 
   // {

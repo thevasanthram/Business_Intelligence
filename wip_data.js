@@ -50,8 +50,8 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
-  modifiedBefore: "", //createdBeforeTime.toISOString()
+  createdOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
+  createdBefore: "", //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2381,7 +2381,7 @@ async function azure_sql_operations(data_lake, table_list) {
   } while (!sql_request);
 
   console.log("========================================");
-  console.log("CURRENT BATCH DATE: ", params_header["modifiedBefore"]);
+  console.log("CURRENT BATCH DATE: ", params_header["createdBefore"]);
   console.log("========================================");
 
   await data_processor(data_lake, sql_request, table_list);
@@ -4865,7 +4865,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
           });
 
-          const as_of_date = new Date(params_header["modifiedBefore"])
+          const as_of_date = new Date(params_header["createdBefore"])
             .toISOString()
             .slice(0, 10);
 
@@ -4970,17 +4970,17 @@ async function start_pipeline() {
 
 async function wip_data() {
   const start_date = new Date("2024-02-01T07:00:00.00Z");
-  const end_date = new Date("2024-02-09T07:00:00.00Z");
+  const end_date = new Date("2024-02-13T07:00:00.00Z");
 
   let current_batch_date = start_date;
 
   while (current_batch_date <= end_date) {
     data_lake = {};
 
-    params_header["modifiedBefore"] = current_batch_date.toISOString();
+    params_header["createdBefore"] = current_batch_date.toISOString();
 
     console.log("========================================");
-    console.log("CURRENT BATCH DATE: ", params_header["modifiedBefore"]);
+    console.log("CURRENT BATCH DATE: ", params_header["createdBefore"]);
     console.log("========================================");
 
     await start_pipeline();

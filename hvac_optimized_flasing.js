@@ -49,8 +49,8 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
-  modifiedBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
+  createdOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
+  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2517,7 +2517,7 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["modifiedBefore"]
+        params_header["createdBefore"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
@@ -6463,7 +6463,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
           });
 
-          const as_of_date = new Date(params_header["modifiedBefore"])
+          const as_of_date = new Date(params_header["createdBefore"])
             .toISOString()
             .slice(0, 10);
 
@@ -8975,12 +8975,12 @@ async function orchestrate() {
   do {
     // finding the next batch time
 
-    const next_batch_time = new Date(params_header["modifiedBefore"]);
+    const next_batch_time = new Date(params_header["createdBefore"]);
 
     next_batch_time.setDate(next_batch_time.getDate() + 1);
     next_batch_time.setUTCHours(7, 0, 0, 0);
 
-    console.log("finished batch: ", params_header["modifiedBefore"]);
+    console.log("finished batch: ", params_header["createdBefore"]);
     console.log("next batch: ", next_batch_time);
 
     const now = new Date();
@@ -9001,7 +9001,7 @@ async function orchestrate() {
 
       now.setUTCHours(7, 0, 0, 0);
 
-      params_header["modifiedBefore"] = now.toISOString();
+      params_header["createdBefore"] = now.toISOString();
       console.log("params_header: ", params_header);
 
       // Step 1: Call start_pipeline
