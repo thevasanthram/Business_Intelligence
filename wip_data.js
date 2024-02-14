@@ -2184,6 +2184,20 @@ const main_api_list = {
       table_name: "job_details",
     },
   ],
+  vendor: [
+    {
+      api_group: "inventory",
+      api_name: "vendors",
+      table_name: "vendor",
+    },
+  ],
+  technician: [
+    {
+      api_group: "settings",
+      api_name: "technicians",
+      table_name: "technician",
+    },
+  ],
   purchase_order: [
     {
       api_group: "inventory",
