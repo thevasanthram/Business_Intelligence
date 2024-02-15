@@ -14,8 +14,6 @@ const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
-const { parse } = require("path");
-const { start } = require("repl");
 
 // Service Titan's API parameters
 const instance_details = [
