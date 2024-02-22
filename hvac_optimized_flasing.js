@@ -950,7 +950,7 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
-      as_of_date: {
+      UTC_update_date: {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
@@ -6463,7 +6463,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: modifiedOn,
           });
 
-          const as_of_date = new Date(params_header["createdBefore"])
+          const UTC_update_date = new Date(params_header["createdBefore"])
             .toISOString()
             .slice(0, 10);
 
@@ -6501,7 +6501,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             actualCompletionDate: actualCompletionDate,
             createdOn: createdOn,
             modifiedOn: modifiedOn,
-            as_of_date: as_of_date,
+            UTC_update_date: UTC_update_date,
           });
         });
 

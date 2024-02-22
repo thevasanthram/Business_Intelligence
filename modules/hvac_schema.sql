@@ -334,7 +334,7 @@ CREATE TABLE projects_wip_data(
   actualCompletionDate DATETIME2 NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
-  as_of_date DATETIME2 NULL,
+  UTC_update_date DATETIME2 NULL,
 )
 END;
 
