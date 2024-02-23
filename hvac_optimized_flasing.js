@@ -3544,6 +3544,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
+            full_address: "",
           });
 
           final_data_pool.push({
@@ -3560,6 +3561,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
+            full_address: "",
           });
 
           final_data_pool.push({
@@ -3576,6 +3578,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             longitude: 0.0,
             taxzone: 0,
             zone_id: 0,
+            full_address: "",
           });
         }
 
