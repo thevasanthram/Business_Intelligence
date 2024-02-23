@@ -406,6 +406,10 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      full_address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
     },
   },
   gross_pay_items: {
@@ -3638,6 +3642,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
+          const full_address = [
+            address_street,
+            address_city,
+            address_state,
+            address_zip,
+          ]
+            .map((address_data) => {
+              if (address_data) {
+                return address_data;
+              }
+            })
+            .join(" ");
+
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default",
@@ -3652,6 +3669,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             longitude: longitude,
             taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
             zone_id: record["zoneId"] ? record["zoneId"] : 0,
+            full_address: full_address,
           });
         });
 

@@ -135,6 +135,7 @@ CREATE TABLE location (
   longitude NVARCHAR(MAX) NULL,
   taxzone INT NULL,
   zone_id INT NULL,
+  full_address NVARCHAR(MAX) NULL,
   FOREIGN KEY (address_zip) REFERENCES us_cities (id)
 );
 END;

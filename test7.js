@@ -1,4 +1,4 @@
-const currentDate = new Date();
-const as_of_date = currentDate.toISOString().slice(0, 10);
-
-console.log(as_of_date);
+const full_address = ["helo", "", "usa"]
+  .filter((address_data) => address_data)
+  .join(" ");
+console.log(full_address);
