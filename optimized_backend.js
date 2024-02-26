@@ -424,6 +424,10 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      full_address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
     },
   },
   gross_pay_items: {
