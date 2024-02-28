@@ -9,10 +9,9 @@ async function hvac_merge_insertion(
   table_name
 ) {
   let status = "failure";
+  // Generate a temporary table name
+  const tempTableName = `Temp_${table_name}_${Date.now()}`;
   try {
-    // Generate a temporary table name
-    const tempTableName = `Temp_${table_name}_${Date.now()}`;
-
     // Create a table object with create option set to false
     const table = new mssql.Table(tempTableName);
     table.create = true; // Create the table if it doesn't exist
@@ -124,6 +123,10 @@ async function hvac_merge_insertion(
   } catch (err) {
     console.error(table_name, "Bulk insert error: trying again..", err);
     status = "failure";
+
+    await sql_pool.query(`DROP TABLE ${tempTableName}`);
+
+    await swl;
   }
 
   return status;

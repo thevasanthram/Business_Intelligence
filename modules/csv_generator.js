@@ -47,7 +47,11 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
         const csvData = Object.values(filteredObj)
           .map((value) => {
             if (value && value != "") {
-              return String(value).replace(/,/g, "").replace(/\n/g, "");
+              return String(value)
+                .replace(/,/g, "")
+                .replace(/\n/g, "")
+                .replace(/\r\n/g, "")
+                .replace(/\r/g, "");
             } else {
               if (value == "") {
                 return "null";

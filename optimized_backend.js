@@ -2615,14 +2615,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let actual_business_unit_id = record["businessUnitId"]
                   ? record["businessUnitId"]
                   : record["instance_id"];
+                if (record["businessUnit"]) {
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                  );
 
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
-
-                if (is_business_unit_available["recordset"].length > 0) {
-                  business_unit_id = record["businessUnit"];
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnit"];
+                  }
                 }
 
                 final_data_pool.push({
@@ -3889,13 +3890,19 @@ async function data_processor(data_lake, sql_request, table_list) {
                   }
 
                   let soldBy_name = "default";
+                  let soldBy = record["instance_id"];
                   // checking soldBy_name in db
-                  const is_employee_available = await sql_request.query(
-                    `SELECT name FROM employees WHERE id=${record["soldBy"]}`
-                  );
+                  if (record["soldBy"]) {
+                    const is_employee_available = await sql_request.query(
+                      `SELECT name,id FROM employees WHERE id=${record["soldBy"]}`
+                    );
 
-                  if (is_employee_available["recordset"].length > 0) {
-                    soldBy_name = is_employee_available["recordset"][0]["name"];
+                    if (is_employee_available["recordset"].length > 0) {
+                      soldBy_name =
+                        is_employee_available["recordset"][0]["name"];
+
+                      soldBy = is_employee_available["recordset"][0]["id"];
+                    }
                   }
 
                   let soldOn = "2000-01-01T00:00:00.00Z";
@@ -3990,9 +3997,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                       ? record["jobNumber"]
                       : "default",
                     soldOn: soldOn,
-                    soldBy: record["soldBy"]
-                      ? record["soldBy"]
-                      : record["instance_id"],
+                    soldBy: soldBy,
                     soldBy_name: soldBy_name,
                     is_active: record["active"] ? 1 : 0,
                     subtotal: record["subtotal"] ? record["subtotal"] : 0,

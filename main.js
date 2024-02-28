@@ -117,10 +117,10 @@ const api_collection = [
   //   api_group: "inventory",
   //   api_name: "transfers",
   // },
-  // {
-  //   api_group: "inventory",
-  //   api_name: "purchase-orders",
-  // },
+  {
+    api_group: "inventory",
+    api_name: "purchase-orders",
+  },
   // {
   //   api_group: "inventory",
   //   api_name: "receipts",
@@ -394,7 +394,7 @@ const hvac_tables = [
 const params_header = {
   // modifiedOnOrAfter: "2024-01-10T00:00:00.00Z",
   // createdOnOrAfter: "",
-  createdBefore: "2024-02-09T00:00:00.00Z",
+  // createdBefore: "2024-02-28T00:00:00.00Z",
   // modifiedBefore: "2024-02-09T00:00:00.00Z", // 2023-10-04T00:00:00.00Z
   includeTotal: true,
   pageSize: 2000,
