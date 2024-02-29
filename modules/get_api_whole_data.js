@@ -80,12 +80,27 @@ async function getAPIWholeData(
       shouldIterate = api_data["hasMore"];
 
       try {
-        const pusing_item = api_data["data"];
+        let pushing_item = api_data["data"];
 
-        // pushing api_data_objects into data
-        if (pusing_item.length > 0) {
-          pusing_item.map((record) => {
+        if ((api_group = "accounting" && api_name == "inventory-bills")) {
+          pushing_item = api_data;
+        }
+
+        if (pushing_item.length > 0) {
+          // pushing api_data_objects into data
+
+          pushing_item.map((record) => {
             record["instance_id"] = instance_list.indexOf(instance_name) + 1;
+
+            if (
+              record["id"] == 80156645 ||
+              record["purchaseOrderId"] == 76156850
+            ) {
+              console.log("----------------------");
+              console.log("record: ", record["id"]);
+              console.log("record: ", record);
+            }
+
             if (api_name != "calls") {
               data_pool_object[record["id"]] = record;
             } else {
@@ -93,7 +108,7 @@ async function getAPIWholeData(
             }
           });
 
-          data_pool.push(...pusing_item);
+          data_pool.push(...pushing_item);
 
           if (!params_header["payrollIds"]) {
             console.log(
@@ -104,7 +119,7 @@ async function getAPIWholeData(
             );
           }
         }
-      } catch {
+      } catch (inside_err) {
         // if theres a exceptional response in some api
 
         // Create the folder if it doesn't exist

@@ -5600,10 +5600,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           const current_date = new Date();
 
-          if (js_date > current_date) {
-            invoice_date = "2002-01-01T00:00:00.00Z";
-          }
-
           let invoice_type_id = 0;
           let invoice_type_name = "default_invoice";
           if (record["invoiceType"]) {
@@ -6076,28 +6072,26 @@ async function data_processor(data_lake, sql_request, table_list) {
           //   gross_margin = 0;
           // }
 
-          if (js_date <= current_date) {
-            gross_profit_final_data_pool.push({
-              id: record["id"],
-              accounts_receivable: accounts_receivable,
-              expense: expense,
-              income: income,
-              current_liability: current_liability,
-              membership_liability: membership_liability,
-              default: default_val,
-              total: record["total"] ? parseFloat(record["total"]) : 0,
-              po_cost: po_cost, // purchase orders
-              po_returns: po_returns,
-              equipment_cost: equipment_cost, //
-              material_cost: material_cost, //
-              labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-              burden: burden, // cogs_labor
-              // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-              // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-              units: 1, //  currently for 1
-              labor_hours: labor_hours, // cogs_labor paid duration
-            });
-          }
+          gross_profit_final_data_pool.push({
+            id: record["id"],
+            accounts_receivable: accounts_receivable,
+            expense: expense,
+            income: income,
+            current_liability: current_liability,
+            membership_liability: membership_liability,
+            default: default_val,
+            total: record["total"] ? parseFloat(record["total"]) : 0,
+            po_cost: po_cost, // purchase orders
+            po_returns: po_returns,
+            equipment_cost: equipment_cost, //
+            material_cost: material_cost, //
+            labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
+            burden: burden, // cogs_labor
+            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
+            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
+            units: 1, //  currently for 1
+            labor_hours: labor_hours, // cogs_labor paid duration
+          });
         });
 
         invoice_po_and_gpi_data = {};

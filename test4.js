@@ -3,7 +3,7 @@ const fs = require("fs");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
-const create_sql_pool = require("./modules/create_sql_pool");
+// const create_sql_pool = require("./modules/create_sql_pool");
 const getAccessToken = require("./modules/get_access_token");
 const getAPIWholeData = require("./modules/get_api_whole_data");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
@@ -64,13 +64,14 @@ createdBeforeTime.setSeconds(0);
 createdBeforeTime.setMilliseconds(0);
 
 const params_header = {
-  createdOnOrAfter: "2023-12-12T00:00:00.00Z", // 2023-06-01T00:00:00.00Z
-  createdBefore: "2023-12-13T00:00:00.00Z", //createdBeforeTime.toISOString()
+  // createdOnOrAfter: "2023-12-12T00:00:00.00Z", // 2023-06-01T00:00:00.00Z
+  // createdBefore: "2023-12-13T00:00:00.00Z", //createdBeforeTime.toISOString()
   // modifiedOnOrAfter: "2023-12-12T00:00:00.00Z", // 2023-06-01T00:00:00.00Z
   // modifiedBefore: "2023-12-13T00:00:00.00Z", //createdBeforeTime.toISOString()
   includeTotal: true,
-  pageSize: 2000,
-  active: "any",
+  pageSize: 10000,
+  // active: "any",
+  // ids: 80156645,
 };
 
 async function fetch_main_data(
@@ -177,7 +178,7 @@ async function fetch_main_data(
                       api_group_temp + "__" + api_name_temp
                     ]["data_pool"],
                     ...data_pool_object,
-                  }; //;
+                  };
                 }
               })
             );
@@ -193,157 +194,13 @@ async function starter() {
   const data_lake_false = {};
 
   const main_api_list = {
-    // legal_entity: [
-    //   {
-    //     table_name: "legal_entity",
-    //   },
-    // ],
-    // business_unit: [
-    //   {
-    //     api_group: "settings",
-    //     api_name: "business-units",
-    //     table_name: "business_unit",
-    //   },
-    // ],
-    // campaigns: [
-    //   {
-    //     api_group: "marketing",
-    //     api_name: "campaigns",
-    //     table_name: "campaigns",
-    //   },
-    // ],
-    // bookings: [
-    //   {
-    //     api_group: "crm",
-    //     api_name: "bookings",
-    //     table_name: "bookings",
-    //   },
-    // ],
-    // customer_details: [
-    //   {
-    //     api_group: "crm",
-    //     api_name: "customers",
-    //     table_name: "customer_details",
-    //   },
-    // ],
-    // location: [
-    //   {
-    //     api_group: "crm",
-    //     api_name: "locations",
-    //     table_name: "location",
-    //   },
-    // ],
-    // projects: [
-    //   {
-    //     api_group: "jpm",
-    //     api_name: "projects",
-    //     table_name: "projects",
-    //   },
-    // ],
-    // call_details: [
-    //   {
-    //     api_group: "telecom",
-    //     api_name: "calls",
-    //     table_name: "call_details",
-    //   },
-    // ],
-    // job_details: [
-    // {
-    //   api_group: "jpm",
-    //   api_name: "jobs",
-    //   table_name: "job_details",
-    // },
-    // {
-    //   api_group: "jpm",
-    //   api_name: "job-types",
-    //   table_name: "job_details",
-    // },
-    // ],
-    // appointments: [
-    //   {
-    //     api_group: "jpm",
-    //     api_name: "appointments",
-    //     table_name: "appointments",
-    //   },
-    // ],
-    // sales_details: [
-    //   {
-    //     api_group: "sales",
-    //     api_name: "estimates",
-    //     table_name: "sales_details",
-    //   },
-    // ],
-    // vendor: [
-    //   {
-    //     api_group: "inventory",
-    //     api_name: "vendors",
-    //     table_name: "vendor",
-    //   },
-    // ],
-    // technician: [
-    //   {
-    //     api_group: "settings",
-    //     api_name: "technicians",
-    //     table_name: "technician",
-    //   },
-    // ],
-    // appointment_assignments: [
-    //   {
-    //     api_group: "dispatch",
-    //     api_name: "appointment-assignments",
-    //     table_name: "appointment_assignments",
-    //   },
-    // ],
     non_job_appointments: [
       {
-        api_group: "dispatch",
-        api_name: "non-job-appointments",
+        api_group: "accounting",
+        api_name: "inventory-bills",
         table_name: "non_job_appointments",
       },
     ],
-    // sku_details: [
-    //   {
-    //     api_group: "pricebook",
-    //     api_name: "materials",
-    //     table_name: "sku_details",
-    //   },
-    //   {
-    //     api_group: "pricebook",
-    //     api_name: "equipment",
-    //     table_name: "sku_details",
-    //   },
-    //   {
-    //     api_group: "pricebook",
-    //     api_name: "services",
-    //     table_name: "sku_details",
-    //   },
-    // ],
-    // invoice: [
-    //   {
-    //     api_group: "accounting",
-    //     api_name: "invoices",
-    //     table_name: ["business_unit", "cogs_equipment", "cogs_material"],
-    //   },
-    // ],
-    // purchase_order: [
-    //   {
-    //     api_group: "inventory",
-    //     api_name: "purchase-orders",
-    //     table_name: "purchase_order",
-    //   },
-    // ],
-    // cogs_labor: [
-    //   {
-    //     api_group: "payroll",
-    //     api_name: "gross-pay-items",
-    //     table_name: "cogs_labor",
-    //   },
-    //   {
-    //     api_group: "payroll",
-    //     api_name: "payrolls",
-    //     table_name: "cogs_labor",
-    //   },
-    // ],
   };
 
   const hvac_tables = [];
@@ -355,25 +212,31 @@ async function starter() {
   );
 
   const data_pool1 =
-    data_lake_true["non_job_appointments"]["dispatch__non-job-appointments"][
+    data_lake_true["non_job_appointments"]["accounting__inventory-bills"][
       "data_pool"
     ];
 
-  // const data_pool2 =
-  //   data_lake_true["cogs_labor"]["payroll__payrolls"]["data_pool"];
-
-  // const data_pool2 =
-  //   data_lake_true["sku_details"]["pricebook__services"]["data_pool"];
-
-  // console.log("total records count: ", Object.keys(data_pool));
-
   console.log("total records count: ", Object.keys(data_pool1).length);
 
-  // console.log("total records count: ", Object.keys(data_pool2).length);
+  // Object.keys(data_pool1).map((record_id) => {
+  //   const record = data_pool1[record_id];
 
-  // const unique_business_units = [...new Set(Object.keys(first_table))];
+  //   if (record["id"] == 80156645 || record["purchaseOrderId"] == 76156850) {
+  //     console.log("----------------------");
+  //     console.log("record: ", record["id"]);
+  //     console.log("record: ", record);
+  //   }
 
-  // console.log("unique_business_units: ", unique_business_units.length);
+  //   // if (record["items"]) {
+  //   //   record["items"].map((items_record) => {
+  //   //     console.log('items_record["chargeable"]: ', items_record["chargeable"]);
+  //   //     if (items_record["chargeable"]) {
+  //   //       console.log("chargeable trueee =======", record["id"]);
+  //   //     }
+  //   //   });
+  //   //   // console.log("more than one ===========", record["id"]);
+  //   // }
+  // });
 }
 
 starter();
