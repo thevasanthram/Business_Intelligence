@@ -5596,10 +5596,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
-          const js_date = new Date(invoice_date);
-
-          const current_date = new Date();
-
           let invoice_type_id = 0;
           let invoice_type_name = "default_invoice";
           if (record["invoiceType"]) {
