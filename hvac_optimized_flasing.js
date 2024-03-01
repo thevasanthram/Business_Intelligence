@@ -2561,6 +2561,15 @@ async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
   let purchase_order_returns_cache = {};
+
+  // experimenting invoices to have future dates
+  data_lake["invoice"]["accounting__invoices"]["data_pool"][83944291][
+    "invoiceDate"
+  ] = "2024-04-29";
+  data_lake["invoice"]["accounting__invoices"]["data_pool"][80605743][
+    "invoiceDate"
+  ] = "2025-01-01";
+
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
@@ -6551,30 +6560,30 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        if (wip_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["projects_wip_data"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                wip_final_data_pool,
-                wip_header_data,
-                "projects_wip_data"
-              );
-          } while (
-            hvac_tables_responses["projects_wip_data"]["status"] != "success"
-          );
+        // if (wip_final_data_pool.length > 0) {
+        //   do {
+        //     hvac_tables_responses["projects_wip_data"]["status"] =
+        //       await hvac_data_insertion(
+        //         sql_request,
+        //         wip_final_data_pool,
+        //         wip_header_data,
+        //         "projects_wip_data"
+        //       );
+        //   } while (
+        //     hvac_tables_responses["projects_wip_data"]["status"] != "success"
+        //   );
 
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
+        //   // entry into auto_update table
+        //   try {
+        //     const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
 
-            await sql_request.query(auto_update_query);
+        //     await sql_request.query(auto_update_query);
 
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
+        //     console.log("Auto_Update log created ");
+        //   } catch (err) {
+        //     console.log("Error while inserting into auto_update", err);
+        //   }
+        // }
 
         if (project_managers_final_data_pool.length > 0) {
           do {
