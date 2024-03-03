@@ -197,7 +197,7 @@ async function starter() {
     non_job_appointments: [
       {
         api_group: "accounting",
-        api_name: "inventory-bills",
+        api_name: "export/inventory-bills",
         table_name: "non_job_appointments",
       },
     ],
@@ -212,7 +212,7 @@ async function starter() {
   );
 
   const data_pool1 =
-    data_lake_true["non_job_appointments"]["accounting__inventory-bills"][
+    data_lake_true["non_job_appointments"]["accounting__export/inventory-bills"][
       "data_pool"
     ];
 

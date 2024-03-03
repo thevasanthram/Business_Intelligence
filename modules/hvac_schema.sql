@@ -471,7 +471,7 @@ CREATE TABLE inventory_bills(
   job_details_id INT NOT NULL,
   actual_job_details_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
-  FOREIGN KEY (vendor_id) REFERENCES vendor (id)
+  FOREIGN KEY (vendor_id) REFERENCES vendor (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (purchase_order_id) REFERENCES purchase_order (id),
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
