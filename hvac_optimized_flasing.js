@@ -1276,6 +1276,82 @@ const hvac_tables = {
       },
     },
   },
+  inventory_bills: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      purchase_order_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_purchase_order_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      referenceNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      vendorNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      billAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      taxAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      shippingAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      dueDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
   appointments: {
     columns: {
       id: {
@@ -2045,6 +2121,9 @@ const hvac_tables_responses = {
   job_details: {
     status: "",
   },
+  inventory_bills: {
+    status: "",
+  },
   appointments: {
     status: "",
   },
@@ -2172,6 +2251,13 @@ const main_api_list = {
       api_group: "jpm",
       api_name: "job-types",
       table_name: "job_details",
+    },
+  ],
+  inventory_bills: [
+    {
+      api_group: "accounting",
+      api_name: "export/inventory-bills",
+      table_name: "inventory_bills",
     },
   ],
   sales_details: [
@@ -2503,6 +2589,7 @@ async function azure_sql_operations(data_lake, table_list) {
       projects_wip_data,
       project_managers,
       job_details,
+      inventory_bills,
       appointments,
       sales_details,
       vendor,
@@ -2522,7 +2609,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -7586,6 +7673,214 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET job_details = '${hvac_tables_responses["job_details"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        delete data_lake[api_name];
+
+        break;
+      }
+
+      case "inventory_bills": {
+        const table_name = main_api_list[api_name][0]["table_name"];
+        const bills_data_pool =
+          data_lake[api_name]["accounting__export/inventory-bills"][
+            "data_pool"
+          ];
+        const header_data = hvac_tables[table_name]["columns"];
+
+        const final_data_pool = [];
+
+        // fetching purchase_order from db
+        // ----------------
+        const purchase_order_response = await sql_request.query(
+          "SELECT * FROM purchase_order"
+        );
+
+        const purchase_order_data = purchase_order_response.recordset;
+
+        const purchase_order_data_pool = {};
+
+        purchase_order_data.map((current_record) => {
+          purchase_order_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching business units from db
+        // ----------------
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching vendor data from db
+        // ----------------
+        const vendor_response = await sql_request.query("SELECT * FROM vendor");
+
+        const vendor_data = vendor_response.recordset;
+
+        const vendors_data_pool = {};
+
+        vendor_data.map((current_record) => {
+          vendors_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching job_details data from db
+        // ----------------
+        const jobs_response = await sql_request.query(
+          "SELECT * FROM job_details"
+        );
+
+        const jobs_data = jobs_response.recordset;
+
+        const jobs_data_pool = {};
+
+        jobs_data.map((current_record) => {
+          jobs_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // processing bills data pool
+        Object.keys(bills_data_pool).map((record_id) => {
+          const record = bills_data_pool[record_id];
+
+          let purchase_order_id = record["instance_id"];
+          let actual_purchase_order_id = record["purchaseOrderId"]
+            ? record["purchaseOrderId"]
+            : record["instance_id"];
+
+          if (record["purchaseOrderId"]) {
+            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
+              purchase_order_id = record["purchaseOrderId"];
+            }
+          }
+
+          let billDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["billDate"]) {
+            if (
+              new Date(record["billDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              billDate = record["billDate"];
+            }
+          } else {
+            billDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let vendor_id = record["instance_id"];
+          let actual_vendor_id = record["instance_id"];
+
+          if (record["vendor"]) {
+            actual_vendor_id = record["vendor"]["id"]
+              ? record["vendor"]["id"]
+              : record["instance_id"];
+            if (vendors_data_pool[record["vendor"]["id"]]) {
+              vendor_id = record["vendor"]["id"];
+            }
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (record["jobId"]) {
+            if (jobs_data_pool[record["jobId"]]) {
+              job_details_id = record["jobId"];
+            }
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            purchase_order_id: purchase_order_id,
+            actual_purchase_order_id: actual_purchase_order_id,
+            referenceNumber: record["referenceNumber"],
+            vendorNumber: record["vendorNumber"],
+            billDate: billDate,
+            billAmount: parseFloat(record["billAmount"]),
+            taxAmount: parseFloat(record["taxAmount"]),
+            shippingAmount: parseFloat(record["shippingAmount"]),
+            createdOn: createdOn,
+            dueDate: dueDate,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            vendor_id: vendor_id,
+            actual_vendor_id: actual_vendor_id,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            job_number: record["jobNumber"],
+          });
+        });
+
+        console.log("inventory_bills data: ", final_data_pool.length);
+
+        if (final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["inventory_bills"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                header_data,
+                table_name
+              );
+          } while (
+            hvac_tables_responses["inventory_bills"]["status"] != "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET inventory_bills = '${hvac_tables_responses["inventory_bills"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
