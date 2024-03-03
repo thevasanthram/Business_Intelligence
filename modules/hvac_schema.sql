@@ -449,35 +449,6 @@ CREATE TABLE job_details (
 );
 END;
 
--- inventory_bills
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='inventory_bills')
-BEGIN
-CREATE TABLE inventory_bills(
-  id INT NOT NULL,
-  purchase_order_id INT NOT NULL, 
-  actual_purchase_order_id INT NULL,
-  referenceNumber NVARCHAR(MAX) NULL,
-  vendorNumber NVARCHAR(MAX) NULL,
-  billDate DATETIME2 NULL,
-  billAmount DECIMAL(18, 8) NULL,
-  taxAmount DECIMAL(18, 8) NULL,
-  shippingAmount DECIMAL(18, 8) NULL,
-  createdOn DATETIME2 NULL,
-  dueDate DATETIME2 NULL,
-  business_unit_id INT NOT NULL,
-  actual_business_unit_id INT NULL,
-  vendor_id INT NOT NULL,
-  actual_vendor_id INT NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  job_number NVARCHAR(MAX) NULL,
-  FOREIGN KEY (vendor_id) REFERENCES vendor (id),
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
-  FOREIGN KEY (purchase_order_id) REFERENCES purchase_order (id),
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-)
-END;
-
 -- appointments
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
 BEGIN
@@ -508,6 +479,35 @@ CREATE TABLE vendor (
   [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL
 );
+END;
+
+-- inventory_bills
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='inventory_bills')
+BEGIN
+CREATE TABLE inventory_bills(
+  id INT NOT NULL,
+  purchase_order_id INT NOT NULL, 
+  actual_purchase_order_id INT NULL,
+  referenceNumber NVARCHAR(MAX) NULL,
+  vendorNumber NVARCHAR(MAX) NULL,
+  billDate DATETIME2 NULL,
+  billAmount DECIMAL(18, 8) NULL,
+  taxAmount DECIMAL(18, 8) NULL,
+  shippingAmount DECIMAL(18, 8) NULL,
+  createdOn DATETIME2 NULL,
+  dueDate DATETIME2 NULL,
+  business_unit_id INT NOT NULL,
+  actual_business_unit_id INT NULL,
+  vendor_id INT NOT NULL,
+  actual_vendor_id INT NULL,
+  job_details_id INT NOT NULL,
+  actual_job_details_id INT NULL,
+  job_number NVARCHAR(MAX) NULL,
+  FOREIGN KEY (vendor_id) REFERENCES vendor (id),
+  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
+  FOREIGN KEY (purchase_order_id) REFERENCES purchase_order (id),
+  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
+)
 END;
 
 -- technician
@@ -787,6 +787,7 @@ CREATE TABLE auto_update (
   appointments NVARCHAR(MAX) NULL,
   sales_details NVARCHAR(MAX) NULL,
   vendor NVARCHAR(MAX) NULL,
+  inventory_bills NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
   appointment_assignments NVARCHAR(MAX) NULL,
   non_job_appointments NVARCHAR(MAX) NULL,
