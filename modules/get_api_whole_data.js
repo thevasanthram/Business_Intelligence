@@ -92,15 +92,6 @@ async function getAPIWholeData(
           pushing_item.map((record) => {
             record["instance_id"] = instance_list.indexOf(instance_name) + 1;
 
-            if (
-              record["id"] == 80156645 ||
-              record["purchaseOrderId"] == 76156850
-            ) {
-              console.log("----------------------");
-              console.log("record: ", record["id"]);
-              console.log("record: ", record);
-            }
-
             if (api_name != "calls") {
               data_pool_object[record["id"]] = record;
             } else {
@@ -123,6 +114,7 @@ async function getAPIWholeData(
         // if theres a exceptional response in some api
 
         // Create the folder if it doesn't exist
+        console.log('inside_err: ', inside_err)
         const folderPath = "./json_responses";
         if (!fs.existsSync(folderPath)) {
           fs.mkdirSync(folderPath, { recursive: true });
