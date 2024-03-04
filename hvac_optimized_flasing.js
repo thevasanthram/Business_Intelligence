@@ -2485,13 +2485,6 @@ async function fetch_main_data(
                   }
                 }
 
-                // signing a new access token in Service Titan's API
-                let access_token = "";
-
-                do {
-                  access_token = await getAccessToken(client_id, client_secret);
-                } while (!access_token);
-
                 // continuously fetching whole api data
                 let data_pool_object = {};
                 let data_pool = [];
@@ -2499,6 +2492,16 @@ async function fetch_main_data(
                 let has_error_occured = false;
 
                 do {
+                  // signing a new access token in Service Titan's API
+                  let access_token = "";
+
+                  do {
+                    access_token = await getAccessToken(
+                      client_id,
+                      client_secret
+                    );
+                  } while (!access_token);
+
                   ({
                     data_pool_object,
                     data_pool,
