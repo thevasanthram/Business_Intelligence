@@ -11,7 +11,8 @@ async function getAPIWholeData(
   params_header,
   data_pool_object,
   data_pool,
-  page_count
+  page_count,
+  continueFrom
 ) {
   let has_error_occured = false;
 
@@ -60,7 +61,14 @@ async function getAPIWholeData(
         .join("&");
 
     do {
-      const filtering_condition = `${params_condition}&page=${page_count + 1}`;
+      let filtering_condition = "";
+
+      if (api_name != "export/inventory-bills") {
+        filtering_condition = `${params_condition}&page=${page_count + 1}`;
+      } else {
+        // fetching inventory-bills records based on continueFrom property in response
+        filtering_condition = `${params_condition}&from=${continueFrom}`;
+      }
 
       if (!params_header["payrollIds"]) {
         console.log("request url: ", api_url + filtering_condition);
@@ -81,10 +89,6 @@ async function getAPIWholeData(
 
       try {
         let pushing_item = api_data["data"];
-
-        if ((api_group = "accounting" && api_name == "inventory-bills")) {
-          pushing_item = api_data;
-        }
 
         if (pushing_item.length > 0) {
           // pushing api_data_objects into data
@@ -114,7 +118,7 @@ async function getAPIWholeData(
         // if theres a exceptional response in some api
 
         // Create the folder if it doesn't exist
-        console.log('inside_err: ', inside_err)
+        console.log("inside_err: ", inside_err);
         const folderPath = "./json_responses";
         if (!fs.existsSync(folderPath)) {
           fs.mkdirSync(folderPath, { recursive: true });
@@ -142,7 +146,11 @@ async function getAPIWholeData(
         break;
       }
 
-      page_count = page_count + 1;
+      if (api_name != "export/inventory-bills") {
+        page_count = page_count + 1;
+      } else {
+        continueFrom = api_data["continueFrom"] ? api_data["continueFrom"] : "";
+      }
     } while (shouldIterate);
 
     // console.log("Data fetching completed successfully");
@@ -165,7 +173,13 @@ async function getAPIWholeData(
     has_error_occured = true;
   }
 
-  return { data_pool_object, data_pool, page_count, has_error_occured };
+  return {
+    data_pool_object,
+    data_pool,
+    page_count,
+    continueFrom,
+    has_error_occured,
+  };
 }
 
 module.exports = getAPIWholeData;

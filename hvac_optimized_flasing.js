@@ -2505,6 +2505,7 @@ async function fetch_main_data(
                 let data_pool_object = {};
                 let data_pool = [];
                 let page_count = 0;
+                let continueFrom = ''
                 let has_error_occured = false;
 
                 do {
@@ -2512,6 +2513,7 @@ async function fetch_main_data(
                     data_pool_object,
                     data_pool,
                     page_count,
+                    continueFrom,
                     has_error_occured,
                   } = await getAPIWholeData(
                     access_token,
@@ -2523,7 +2525,8 @@ async function fetch_main_data(
                     params_header,
                     data_pool_object,
                     data_pool,
-                    page_count
+                    page_count,
+                    continueFrom,
                   ));
                 } while (has_error_occured);
 

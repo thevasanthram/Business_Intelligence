@@ -466,6 +466,11 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
 
       let access_token = "";
 
+      // Signing a new access token in Service Titan's API
+      do {
+        access_token = await getAccessToken(client_id, client_secret);
+      } while (!access_token);
+
       const refreshAccessToken = async () => {
         // Signing a new access token in Service Titan's API
         do {
@@ -473,7 +478,7 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
         } while (!access_token);
       }
 
-      setInterval(refreshAccessToken, 1000 * 60 * 3);
+      setInterval(refreshAccessToken,1000 * 60 * 3)
 
       await Promise.all(
         api_collection.map(async (api_data) => {
