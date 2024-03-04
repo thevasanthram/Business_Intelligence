@@ -17,6 +17,15 @@ const create_hvac_schema = require("./modules/create_hvac_schema");
 
 // Service Titan's API parameters
 
+let access_token = "";
+
+setInterval(async () => {
+  // Signing a new access token in Service Titan's API
+  do {
+    access_token = await getAccessToken(client_id, client_secret);
+  } while (!access_token);
+}, 1000 * 60 * 3);
+
 const api_collection = [
   // {
   //   api_group: "accounting",
@@ -37,10 +46,10 @@ const api_collection = [
   //   api_group: "accounting",
   //   api_name: "invoices",
   // },
-  // {
-  //   api_group: "accounting",
-  //   api_name: "inventory-bills",
-  // },
+  {
+    api_group: "accounting",
+    api_name: "export/inventory-bills",
+  },
   // {
   //   api_group: "accounting",
   //   api_name: "payments",
@@ -301,54 +310,54 @@ const api_collection = [
   //   api_group: "sales",
   //   api_name: "estimates/export",
   // },
-  {
-    api_group: "sales",
-    api_name: "estimates/items",
-  },
-  {
-    api_group: "service-agreements",
-    api_name: "service-agreements",
-  },
-  {
-    api_group: "settings",
-    api_name: "business-units",
-  },
-  {
-    api_group: "settings",
-    api_name: "employees",
-  },
-  {
-    api_group: "settings",
-    api_name: "technicians",
-  },
-  {
-    api_group: "settings",
-    api_name: "tag-types",
-  },
-  {
-    api_group: "settings",
-    api_name: "user-roles",
-  },
-  {
-    api_group: "taskmanagement",
-    api_name: "data",
-  },
+  // {
+  //   api_group: "sales",
+  //   api_name: "estimates/items",
+  // },
+  // {
+  //   api_group: "service-agreements",
+  //   api_name: "service-agreements",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "business-units",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "employees",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "technicians",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "tag-types",
+  // },
+  // {
+  //   api_group: "settings",
+  //   api_name: "user-roles",
+  // },
+  // {
+  //   api_group: "taskmanagement",
+  //   api_name: "data",
+  // },
   // {
   //   api_group: "telecom",
   //   api_name: "export/calls",
   // },
-  {
-    api_group: "telecom",
-    api_name: "calls",
-  },
-  {
-    api_group: "forms",
-    api_name: "forms",
-  },
-  {
-    api_group: "forms",
-    api_name: "submissions",
-  },
+  // {
+  //   api_group: "telecom",
+  //   api_name: "calls",
+  // },
+  // {
+  //   api_group: "forms",
+  //   api_name: "forms",
+  // },
+  // {
+  //   api_group: "forms",
+  //   api_name: "submissions",
+  // },
 ];
 
 const instance_details = [
@@ -455,8 +464,16 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
       const client_id = instance_data["client_id"];
       const client_secret = instance_data["client_secret"];
 
-      // signing a new access token in Service Titan's API
-      const access_token = await getAccessToken(client_id, client_secret);
+      let access_token = "";
+
+      const refreshAccessToken = async () => {
+        // Signing a new access token in Service Titan's API
+        do {
+          access_token = await getAccessToken(client_id, client_secret);
+        } while (!access_token);
+      }
+
+      setInterval(refreshAccessToken, 1000 * 60 * 3);
 
       await Promise.all(
         api_collection.map(async (api_data) => {

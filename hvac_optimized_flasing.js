@@ -2425,6 +2425,22 @@ async function fetch_main_data(
       const client_id = instance_data["client_id"];
       const client_secret = instance_data["client_secret"];
 
+      let access_token = "";
+
+      // refreshing for the first time manually
+      do {
+        access_token = await getAccessToken(client_id, client_secret);
+      } while (!access_token);
+
+      const refreshAccessToken = async () => {
+        // Signing a new access token in Service Titan's API
+        do {
+          access_token = await getAccessToken(client_id, client_secret);
+        } while (!access_token);
+      };
+
+      setInterval(refreshAccessToken, 1000 * 60 * 3);
+
       await Promise.all(
         Object.keys(main_api_list).map(async (api_key) => {
           if (!data_lake[api_key]) {
@@ -2492,16 +2508,6 @@ async function fetch_main_data(
                 let has_error_occured = false;
 
                 do {
-                  // signing a new access token in Service Titan's API
-                  let access_token = "";
-
-                  do {
-                    access_token = await getAccessToken(
-                      client_id,
-                      client_secret
-                    );
-                  } while (!access_token);
-
                   ({
                     data_pool_object,
                     data_pool,
