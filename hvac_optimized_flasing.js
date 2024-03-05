@@ -2505,7 +2505,7 @@ async function fetch_main_data(
                 let data_pool_object = {};
                 let data_pool = [];
                 let page_count = 0;
-                let continueFrom = ''
+                let continueFrom = "";
                 let has_error_occured = false;
 
                 do {
@@ -2526,7 +2526,7 @@ async function fetch_main_data(
                     data_pool_object,
                     data_pool,
                     page_count,
-                    continueFrom,
+                    continueFrom
                   ));
                 } while (has_error_occured);
 
@@ -6659,30 +6659,30 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        // if (wip_final_data_pool.length > 0) {
-        //   do {
-        //     hvac_tables_responses["projects_wip_data"]["status"] =
-        //       await hvac_data_insertion(
-        //         sql_request,
-        //         wip_final_data_pool,
-        //         wip_header_data,
-        //         "projects_wip_data"
-        //       );
-        //   } while (
-        //     hvac_tables_responses["projects_wip_data"]["status"] != "success"
-        //   );
+        if (wip_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["projects_wip_data"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                wip_final_data_pool,
+                wip_header_data,
+                "projects_wip_data"
+              );
+          } while (
+            hvac_tables_responses["projects_wip_data"]["status"] != "success"
+          );
 
-        //   // entry into auto_update table
-        //   try {
-        //     const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
 
-        //     await sql_request.query(auto_update_query);
+            await sql_request.query(auto_update_query);
 
-        //     console.log("Auto_Update log created ");
-        //   } catch (err) {
-        //     console.log("Error while inserting into auto_update", err);
-        //   }
-        // }
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
 
         if (project_managers_final_data_pool.length > 0) {
           do {
