@@ -639,10 +639,13 @@ CREATE TABLE cogs_labor (
   actual_job_details_id INT NULL,
   invoice_id INT NOT NULL,
   actual_invoice_id INT NULL,
+  project_id INT NOT NULL,
+  actual_project_id INT NULL,
   technician_id INT NOT NULL,
   actual_technician_id INT NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (invoice_id) REFERENCES invoice (id),
+  FOREIGN KEY (project_id) REFERENCES projects (id),
   FOREIGN KEY (technician_id) REFERENCES technician (id)
 );
 END;

@@ -2060,6 +2060,14 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      project_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
       technician_id: {
         data_type: "INT",
         constraint: { nullable: false },
@@ -9039,6 +9047,21 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
+        // fetching projects data from db
+        // ----------------
+        const projects_response = await sql_request.query(
+          "SELECT * FROM projects"
+        );
+
+        const projects_data = projects_response.recordset;
+
+        const projects_data_pool = {};
+
+        projects_data.map((current_record) => {
+          projects_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
         let final_data_pool = [];
 
         // console.log("gross_pay_items_data_pool: ", gross_pay_items_data_pool);
@@ -9059,6 +9082,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_job_details_id: 1,
             invoice_id: 1,
             actual_invoice_id: 1,
+            project_id: 1,
+            actual_project_id: 1,
             technician_id: 1,
             actual_technician_id: 1,
           });
@@ -9074,6 +9099,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_job_details_id: 2,
             invoice_id: 2,
             actual_invoice_id: 2,
+            project_id: 2,
+            actual_project_id: 2,
             technician_id: 2,
             actual_technician_id: 2,
           });
@@ -9089,6 +9116,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_job_details_id: 3,
             invoice_id: 3,
             actual_invoice_id: 3,
+            project_id: 3,
+            actual_project_id: 3,
             technician_id: 3,
             actual_technician_id: 3,
           });
@@ -9123,6 +9152,16 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (record["projectId"]) {
+            if (projects_data_pool[record["projectId"]]) {
+              project_id = record["projectId"];
+            }
+          }
+
           let technician_id = record["instance_id"];
           let actual_technician_id = record["employeeId"]
             ? record["employeeId"]
@@ -9146,7 +9185,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_job_details_id: actual_job_details_id,
             invoice_id: invoice_id,
             actual_invoice_id: actual_invoice_id,
-            technician_id: technician_id,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
             actual_technician_id: actual_technician_id,
           });
         });
