@@ -5301,6 +5301,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           if (gpi_record["invoiceId"] != null) {
             if (!invoice_po_and_gpi_data[gpi_record["invoiceId"]]) {
               invoice_po_and_gpi_data[gpi_record["invoiceId"]] = {
+                inventory_bill_amount: 0,
                 po_cost: 0,
                 labor_cost: 0,
                 labor_hours: 0,
