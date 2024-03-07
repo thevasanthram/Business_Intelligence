@@ -4167,6 +4167,21 @@ async function data_processor(data_lake, sql_request, table_list) {
         const purchase_order_data_pool =
           data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
 
+        // fetching business units from db
+        // ----------------
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
         // inventory-bills
 
         let inventory_bills_final_data_pool = [];
