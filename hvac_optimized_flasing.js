@@ -510,6 +510,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      inventory_bill_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_returns: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -723,6 +727,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -1976,6 +1984,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      inventory_bill_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -2668,6 +2680,7 @@ async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let project_cache = {};
   let purchase_order_returns_cache = {};
+  let inventory_bills_cache = {};
 
   // experimenting invoices to have future dates
   // data_lake["invoice"]["accounting__invoices"]["data_pool"][83944291][
@@ -4144,11 +4157,176 @@ async function data_processor(data_lake, sql_request, table_list) {
         let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
         let vendors_data_pool =
           data_lake["vendor"]["inventory__vendors"]["data_pool"];
+        let bills_data_pool =
+          data_lake["inventory_bills"]["accounting__export/inventory-bills"][
+            "data_pool"
+          ];
 
         const header_data = hvac_tables[table_name]["columns"];
 
         const purchase_order_data_pool =
           data_lake[api_name]["inventory__purchase-orders"]["data_pool"];
+
+        // inventory-bills
+
+        let inventory_bills_final_data_pool = [];
+        // for accomodating null po id's values
+        project_cache["inventory_bills_purchase_order"] = {
+          1: {
+            inventory_bill_amount: 0,
+          },
+          2: {
+            inventory_bill_amount: 0,
+          },
+          3: {
+            inventory_bill_amount: 0,
+          },
+        };
+
+        // processing bills data pool
+        Object.keys(bills_data_pool).map((record_id) => {
+          const record = bills_data_pool[record_id];
+
+          if (record["purchaseOrderId"]) {
+            if (
+              !project_cache["inventory_bills_purchase_order"][
+                record["purchaseOrderId"]
+              ]
+            ) {
+              project_cache["inventory_bills_purchase_order"][
+                record["purchaseOrderId"]
+              ] = {
+                inventory_bill_amount: 0,
+              };
+            }
+
+            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
+              project_cache["inventory_bills_purchase_order"][
+                record["purchaseOrderId"]
+              ]["inventory_bill_amount"] += record["billAmount"]
+                ? parseFloat(record["billAmount"])
+                : 0;
+            } else {
+              project_cache["inventory_bills_purchase_order"][
+                record["instance_id"]
+              ]["inventory_bill_amount"] += record["billAmount"]
+                ? parseFloat(record["billAmount"])
+                : 0;
+            }
+          } else {
+            project_cache["inventory_bills_purchase_order"][
+              record["instance_id"]
+            ]["inventory_bill_amount"] += record["billAmount"]
+              ? parseFloat(record["billAmount"])
+              : 0;
+          }
+
+          let purchase_order_id = record["instance_id"];
+          let actual_purchase_order_id = record["purchaseOrderId"]
+            ? record["purchaseOrderId"]
+            : record["instance_id"];
+
+          if (record["purchaseOrderId"]) {
+            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
+              purchase_order_id = record["purchaseOrderId"];
+            }
+          }
+
+          let billDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["billDate"]) {
+            if (
+              new Date(record["billDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              billDate = record["billDate"];
+            }
+          } else {
+            billDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let vendor_id = record["instance_id"];
+          let actual_vendor_id = record["instance_id"];
+
+          if (record["vendor"]) {
+            actual_vendor_id = record["vendor"]["id"]
+              ? record["vendor"]["id"]
+              : record["instance_id"];
+            if (vendors_data_pool[record["vendor"]["id"]]) {
+              vendor_id = record["vendor"]["id"];
+            }
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (record["jobId"]) {
+            if (jobs_data_pool[record["jobId"]]) {
+              job_details_id = record["jobId"];
+            }
+          }
+
+          inventory_bills_final_data_pool.push({
+            id: record["id"],
+            purchase_order_id: purchase_order_id,
+            actual_purchase_order_id: actual_purchase_order_id,
+            referenceNumber: record["referenceNumber"],
+            vendorNumber: record["vendorNumber"],
+            billDate: billDate,
+            billAmount: parseFloat(record["billAmount"]),
+            taxAmount: parseFloat(record["taxAmount"]),
+            shippingAmount: parseFloat(record["shippingAmount"]),
+            createdOn: createdOn,
+            dueDate: dueDate,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            vendor_id: vendor_id,
+            actual_vendor_id: actual_vendor_id,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            job_number: record["jobNumber"],
+          });
+        });
+
+        inventory_bills_cache["inventory_bills_final_data_pool"] =
+          inventory_bills_final_data_pool;
 
         let purchase_order_final_data_pool = [];
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
@@ -4159,6 +4337,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
+            inventory_bill_amount:
+              project_cache["inventory_bills_purchase_order"][1][
+                "inventory_bill_amount"
+              ],
             po_returns: purchase_order_returns_cache[1]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
@@ -4181,6 +4363,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
+            inventory_bill_amount:
+              project_cache["inventory_bills_purchase_order"][2][
+                "inventory_bill_amount"
+              ],
             po_returns: purchase_order_returns_cache[2]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
@@ -4203,6 +4389,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
+            inventory_bill_amount:
+              project_cache["inventory_bills_purchase_order"][3][
+                "inventory_bill_amount"
+              ],
             po_returns: purchase_order_returns_cache[3]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
@@ -4226,6 +4416,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         let invoice_po_and_gpi_data = {};
 
         let invoice_dummy_values = {
+          inventory_bill_amount: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
           po_cost: {
             1: 0,
             2: 0,
@@ -4258,6 +4453,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         let project_total_data = {};
 
         const project_dummy_values = {
+          inventory_bill_amount: {
+            1: 0,
+            2: 0,
+            3: 0,
+          },
           po_cost: {
             1: 0,
             2: 0,
@@ -4359,11 +4559,21 @@ async function data_processor(data_lake, sql_request, table_list) {
               purchase_order_returns_cache[po_record_id]["returnAmount"];
           }
 
+          let inventory_bill_amount = 0;
+
+          if (project_cache["inventory_bills_purchase_order"][po_record_id]) {
+            inventory_bill_amount =
+              project_cache["inventory_bills_purchase_order"][po_record_id][
+                "inventory_bill_amount"
+              ];
+          }
+
           if (po_record["status"] != "Canceled") {
             // data accumulation for invoice table
             if (po_record["invoiceId"] != null) {
               if (!invoice_po_and_gpi_data[po_record["invoiceId"]]) {
                 invoice_po_and_gpi_data[po_record["invoiceId"]] = {
+                  inventory_bill_amount: 0,
                   po_cost: 0,
                   po_returns: 0,
                   labor_cost: 0,
@@ -4373,12 +4583,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (!invoice_data_pool[po_record["invoiceId"]]) {
+                invoice_dummy_values["inventory_bill_amount"][
+                  po_record["instance_id"]
+                ] += inventory_bill_amount;
+
                 invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
                   parseFloat(po_record["total"]);
 
                 invoice_dummy_values["po_returns"][po_record["instance_id"]] +=
                   po_returns;
               } else {
+                invoice_po_and_gpi_data[po_record["invoiceId"]][
+                  "inventory_bill_amount"
+                ] += inventory_bill_amount;
+
                 invoice_po_and_gpi_data[po_record["invoiceId"]]["po_cost"] +=
                   parseFloat(po_record["total"]);
 
@@ -4386,6 +4604,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                   po_returns;
               }
             } else {
+              invoice_dummy_values["inventory_bill_amount"][
+                po_record["instance_id"]
+              ] += inventory_bill_amount;
+
               invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
                 parseFloat(po_record["total"]);
 
@@ -4397,6 +4619,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             if (po_record["projectId"] != null) {
               if (!projects_po_and_gpi_data[po_record["projectId"]]) {
                 projects_po_and_gpi_data[po_record["projectId"]] = {
+                  inventory_bill_amount: 0,
                   po_cost: 0,
                   po_returns: 0,
                   labor_cost: 0,
@@ -4406,12 +4629,20 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (!data_pool[po_record["projectId"]]) {
+                project_dummy_values["inventory_bill_amount"][
+                  po_record["instance_id"]
+                ] += inventory_bill_amount;
+
                 project_dummy_values["po_cost"][po_record["instance_id"]] +=
                   parseFloat(po_record["total"]);
 
                 project_dummy_values["po_returns"][po_record["instance_id"]] +=
                   po_returns;
               } else {
+                projects_po_and_gpi_data[po_record["projectId"]][
+                  "inventory_bill_amount"
+                ] += inventory_bill_amount;
+
                 projects_po_and_gpi_data[po_record["projectId"]]["po_cost"] +=
                   parseFloat(po_record["total"]);
 
@@ -4420,6 +4651,10 @@ async function data_processor(data_lake, sql_request, table_list) {
                 ] += po_returns;
               }
             } else {
+              project_dummy_values["inventory_bill_amount"][
+                po_record["instance_id"]
+              ] += inventory_bill_amount;
+
               project_dummy_values["po_cost"][po_record["instance_id"]] +=
                 parseFloat(po_record["total"]);
 
@@ -4546,6 +4781,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: po_record["status"] ? po_record["status"] : "default",
             total: po_record["total"] ? po_record["total"] : 0,
             tax: po_record["tax"] ? po_record["tax"] : 0,
+            inventory_bill_amount: inventory_bill_amount,
             po_returns: po_returns,
             date: date,
             requiredOn: requiredOn,
@@ -5491,6 +5727,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
+            inventory_bill_amount:
+              invoice_dummy_values["inventory_bill_amount"][1], // inventory-bills
             po_cost: invoice_dummy_values["po_cost"][1], // purchase orders
             po_returns: invoice_dummy_values["po_returns"][1],
             equipment_cost: 0, //
@@ -5512,6 +5750,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
+            inventory_bill_amount:
+              invoice_dummy_values["inventory_bill_amount"][2], // inventory-bills
             po_cost: invoice_dummy_values["po_cost"][2], // purchase orders
             po_returns: invoice_dummy_values["po_returns"][2],
             equipment_cost: 0, //
@@ -5533,6 +5773,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: 0,
             default: 0,
             total: 0,
+            inventory_bill_amount:
+              invoice_dummy_values["inventory_bill_amount"][3], // inventory-bills
             po_cost: invoice_dummy_values["po_cost"][3], // purchase orders
             po_returns: invoice_dummy_values["po_returns"][3],
             equipment_cost: 0, //
@@ -5791,6 +6033,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_name: customer_name,
           });
 
+          let inventory_bill_amount = 0;
           let po_cost = 0;
           let po_returns = 0;
           let labor_cost = 0;
@@ -5798,6 +6041,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           let burden = 0;
 
           if (invoice_po_and_gpi_data[record["id"]]) {
+            inventory_bill_amount = invoice_po_and_gpi_data[record["id"]][
+              "inventory_bill_amount"
+            ]
+              ? invoice_po_and_gpi_data[record["id"]]["inventory_bill_amount"]
+              : 0;
             po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
               ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
               : 0;
@@ -6193,6 +6441,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             membership_liability: membership_liability,
             default: default_val,
             total: record["total"] ? parseFloat(record["total"]) : 0,
+            inventory_bill_amount: inventory_bill_amount,
             po_cost: po_cost, // purchase orders
             po_returns: po_returns,
             equipment_cost: equipment_cost, //
@@ -6231,6 +6480,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: project_dummy_values["sold_contract_value"][1],
             budget_expense: project_dummy_values["budget_expense"][1],
             budget_hours: project_dummy_values["budget_hours"][1],
+            inventory_bill_amount:
+              project_dummy_values["inventory_bill_amount"][1],
             po_cost: project_dummy_values["po_cost"][1],
             po_returns: project_dummy_values["po_returns"][1],
             equipment_cost: project_dummy_values["equipment_cost"][1],
@@ -6268,6 +6519,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: project_dummy_values["sold_contract_value"][2],
             budget_expense: project_dummy_values["budget_expense"][2],
             budget_hours: project_dummy_values["budget_hours"][2],
+            inventory_bill_amount:
+              project_dummy_values["inventory_bill_amount"][2],
             po_cost: project_dummy_values["po_cost"][2],
             po_returns: project_dummy_values["po_returns"][2],
             equipment_cost: project_dummy_values["equipment_cost"][2],
@@ -6305,6 +6558,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: project_dummy_values["sold_contract_value"][3],
             budget_expense: project_dummy_values["budget_expense"][3],
             budget_hours: project_dummy_values["budget_hours"][3],
+            inventory_bill_amount:
+              project_dummy_values["inventory_bill_amount"][3],
             po_cost: project_dummy_values["po_cost"][3],
             po_returns: project_dummy_values["po_returns"][3],
             equipment_cost: project_dummy_values["equipment_cost"][3],
@@ -6421,6 +6676,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let sold_contract_value = 0;
           let budget_expense = 0;
           let budget_hours = 0;
+          let inventory_bill_amount = 0;
           let po_cost = 0;
           let po_returns = 0;
           let equipment_cost = 0;
@@ -6520,6 +6776,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
 
           if (projects_po_and_gpi_data[record["id"]]) {
+            inventory_bill_amount = projects_po_and_gpi_data[record["id"]][
+              "inventory_bill_amount"
+            ]
+              ? projects_po_and_gpi_data[record["id"]]["inventory_bill_amount"]
+              : 0;
             po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
               ? projects_po_and_gpi_data[record["id"]]["po_cost"]
               : 0;
@@ -6565,6 +6826,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: sold_contract_value,
             budget_expense: budget_expense,
             budget_hours: budget_hours,
+            inventory_bill_amount: inventory_bill_amount,
             po_cost: po_cost,
             po_returns: po_returns,
             equipment_cost: equipment_cost,
@@ -6605,6 +6867,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: sold_contract_value,
             budget_expense: budget_expense,
             budget_hours: budget_hours,
+            // inventory_bill_amount: inventory_bill_amount,
             po_cost: po_cost,
             po_returns: po_returns,
             equipment_cost: equipment_cost,
@@ -8024,173 +8287,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           ];
         const header_data = hvac_tables[table_name]["columns"];
 
-        const final_data_pool = [];
-
-        // fetching purchase_order from db
-        // ----------------
-        const purchase_order_response = await sql_request.query(
-          "SELECT * FROM purchase_order"
-        );
-
-        const purchase_order_data = purchase_order_response.recordset;
-
-        const purchase_order_data_pool = {};
-
-        purchase_order_data.map((current_record) => {
-          purchase_order_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching vendor data from db
-        // ----------------
-        const vendor_response = await sql_request.query("SELECT * FROM vendor");
-
-        const vendor_data = vendor_response.recordset;
-
-        const vendors_data_pool = {};
-
-        vendor_data.map((current_record) => {
-          vendors_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // processing bills data pool
-        Object.keys(bills_data_pool).map((record_id) => {
-          const record = bills_data_pool[record_id];
-
-          let purchase_order_id = record["instance_id"];
-          let actual_purchase_order_id = record["purchaseOrderId"]
-            ? record["purchaseOrderId"]
-            : record["instance_id"];
-
-          if (record["purchaseOrderId"]) {
-            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
-              purchase_order_id = record["purchaseOrderId"];
-            }
-          }
-
-          let billDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["billDate"]) {
-            if (
-              new Date(record["billDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              billDate = record["billDate"];
-            }
-          } else {
-            billDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let dueDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["dueDate"]) {
-            if (
-              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              dueDate = record["dueDate"];
-            }
-          } else {
-            dueDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"]
-              ? record["businessUnit"]["id"]
-              : record["instance_id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
-
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-
-          if (record["vendor"]) {
-            actual_vendor_id = record["vendor"]["id"]
-              ? record["vendor"]["id"]
-              : record["instance_id"];
-            if (vendors_data_pool[record["vendor"]["id"]]) {
-              vendor_id = record["vendor"]["id"];
-            }
-          }
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (record["jobId"]) {
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
-            }
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            purchase_order_id: purchase_order_id,
-            actual_purchase_order_id: actual_purchase_order_id,
-            referenceNumber: record["referenceNumber"],
-            vendorNumber: record["vendorNumber"],
-            billDate: billDate,
-            billAmount: parseFloat(record["billAmount"]),
-            taxAmount: parseFloat(record["taxAmount"]),
-            shippingAmount: parseFloat(record["shippingAmount"]),
-            createdOn: createdOn,
-            dueDate: dueDate,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            job_number: record["jobNumber"],
-          });
-        });
+        const final_data_pool =
+          inventory_bills_cache["inventory_bills_final_data_pool"];
 
         console.log("inventory_bills data: ", final_data_pool.length);
 
