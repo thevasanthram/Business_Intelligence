@@ -2929,11 +2929,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           // });
         }
 
-        const instance_list = [
-          "Expert Heating and Cooling Co LLC",
-          "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
-          "Family Heating & Cooling Co LLC",
-        ];
+        const instance_list = {
+          1: "Expert Heating and Cooling Co LLC",
+          2: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+          3: "Family Heating & Cooling Co LLC",
+        };
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
@@ -3010,8 +3010,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: business,
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
-            legal_entity_name:
-              instance_list[parseInt(record["instance_id"]) - 1],
+            legal_entity_name: instance_list[record["instance_id"]],
           });
         });
 
