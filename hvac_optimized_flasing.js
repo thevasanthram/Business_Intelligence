@@ -3010,7 +3010,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: business,
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
-            legal_entity_name: instance_list[parseInt(record["instance_id"])],
+            legal_entity_name:
+              instance_list[parseInt(record["instance_id"]) - 1],
           });
         });
 
