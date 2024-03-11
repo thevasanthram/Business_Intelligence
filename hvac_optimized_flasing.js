@@ -6887,7 +6887,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             sold_contract_value: sold_contract_value,
             budget_expense: budget_expense,
             budget_hours: budget_hours,
-            // inventory_bill_amount: inventory_bill_amount,
+            inventory_bill_amount: inventory_bill_amount,
             po_cost: po_cost,
             inventory_bill_amount: inventory_bill_amount,
             po_returns: po_returns,
