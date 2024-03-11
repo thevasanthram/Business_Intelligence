@@ -39,6 +39,24 @@ CREATE TABLE business_unit (
 );
 END;
 
+-- project_business_unit
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'project_business_unit')
+BEGIN
+CREATE TABLE project_business_unit (
+  id INT PRIMARY KEY,
+  business_unit_name NVARCHAR(MAX) NULL,
+  business_unit_official_name NVARCHAR(MAX) NULL,
+  trade_type NVARCHAR(MAX) NULL,
+  segment_type NVARCHAR(MAX) NULL,
+  revenue_type NVARCHAR(MAX) NULL,
+  business NVARCHAR(MAX) NULL,
+  is_active TINYINT NULL,
+  legal_entity_id INT NOT NULL,
+  legal_entity_name NVARCHAR(MAX) NULL,
+  FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
+);
+END;
+
 -- employees
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='employees')
 BEGIN
@@ -778,6 +796,7 @@ CREATE TABLE auto_update (
   legal_entity NVARCHAR(MAX) NULL,
   us_cities NVARCHAR(MAX) NULL,
   business_unit NVARCHAR(MAX) NULL,
+  project_business_unit NVARCHAR(MAX) NULL,
   employees NVARCHAR(MAX) NULL,
   campaigns NVARCHAR(MAX) NULL,
   bookings NVARCHAR(MAX) NULL,  

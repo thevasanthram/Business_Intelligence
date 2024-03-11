@@ -147,6 +147,51 @@ const hvac_tables = {
       },
     },
   },
+  project_business_unit: {
+    // settings business units
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      trade_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      segment_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      revenue_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      legal_entity_id: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      legal_entity_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
   employees: {
     columns: {
       id: {
@@ -2106,6 +2151,9 @@ const hvac_tables_responses = {
   business_unit: {
     status: "",
   },
+  project_business_unit: {
+    status: "",
+  },
   employees: {
     status: "",
   },
@@ -2612,6 +2660,7 @@ async function azure_sql_operations(data_lake, table_list) {
       legal_entity,
       us_cities,
       business_unit,
+      project_business_unit,
       employees,
       campaigns,
       bookings,
@@ -2645,7 +2694,7 @@ async function azure_sql_operations(data_lake, table_list) {
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2801,8 +2850,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool =
           data_lake[api_name]["settings__business-units"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const project_business_unit_header_data =
+          hvac_tables["project_business_unit"]["columns"];
 
         let final_data_pool = [];
+        let project_business_unit_final_data_pool = [];
 
         if (initial_execute) {
           final_data_pool.push({
@@ -2877,6 +2929,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           // });
         }
 
+        const instance_list = [
+          "Expert Heating and Cooling Co LLC",
+          "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+          "Family Heating & Cooling Co LLC",
+        ];
+
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
 
@@ -2941,6 +2999,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
           });
+
+          project_business_unit_final_data_pool.push({
+            id: record["id"],
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            trade_type: trade_type,
+            segment_type: segment_type,
+            revenue_type: revenue_type,
+            business: business,
+            is_active: record["active"] ? 1 : 0,
+            legal_entity_id: record["instance_id"],
+            legal_entity_name: instance_list[record["instance_id"]],
+          });
         });
 
         console.log("business unit data: ", final_data_pool.length);
@@ -2969,6 +3040,32 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET business_unit = '${hvac_tables_responses["business_unit"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        }
+
+        if (project_business_unit_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["project_business_unit"]["status"] =
+              await hvac_data_insertion(
+                sql_request,
+                final_data_pool,
+                project_business_unit_header_data,
+                "project_business_unit"
+              );
+          } while (
+            hvac_tables_responses["project_business_unit"]["status"] !=
+            "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_business_unit = '${hvac_tables_responses["project_business_unit"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
