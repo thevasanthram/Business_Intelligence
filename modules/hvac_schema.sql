@@ -314,6 +314,7 @@ CREATE TABLE projects_wip_data(
   sold_contract_value DECIMAL(18, 8) NULL,
   budget_expense DECIMAL(18, 8) NULL,
   budget_hours DECIMAL(18, 8) NULL,
+  inventory_bill_amount DECIMAL(18, 8) NULL,
   po_cost DECIMAL(18, 8) NULL,
   po_returns DECIMAL(18, 8) NULL,
   equipment_cost DECIMAL(18, 8) NULL,

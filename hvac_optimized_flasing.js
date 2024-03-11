@@ -870,6 +870,10 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      inventory_bill_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       po_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -6885,6 +6889,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             budget_hours: budget_hours,
             // inventory_bill_amount: inventory_bill_amount,
             po_cost: po_cost,
+            inventory_bill_amount: inventory_bill_amount,
             po_returns: po_returns,
             equipment_cost: equipment_cost,
             material_cost: material_cost,
