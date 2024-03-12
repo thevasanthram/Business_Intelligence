@@ -2856,6 +2856,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         let final_data_pool = [];
         let project_business_unit_final_data_pool = [];
 
+        const instance_list = {
+          1: "Expert Heating and Cooling Co LLC",
+          2: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+          3: "Family Heating & Cooling Co LLC",
+        };
+
         if (initial_execute) {
           final_data_pool.push({
             id: 1,
@@ -2893,47 +2899,45 @@ async function data_processor(data_lake, sql_request, table_list) {
             legal_entity_id: 3,
           });
 
-          // MANUAL ENTRY
+          project_business_unit_final_data_pool.push({
+            id: 1,
+            business_unit_name: "default_business_1",
+            business_unit_official_name: "default_business_1",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
+            is_active: 0,
+            legal_entity_id: 1,
+            legal_entity_name: instance_list[1],
+          });
 
-          // final_data_pool.push({
-          //   id: 108709,
-          //   business_unit_name: "Imported Default Businessunit",
-          //   business_unit_official_name:
-          //     "Expert Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 1,
-          // });
+          project_business_unit_final_data_pool.push({
+            id: 2,
+            business_unit_name: "default_business_2",
+            business_unit_official_name: "default_business_2",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
+            is_active: 0,
+            legal_entity_id: 2,
+            legal_entity_name: instance_list[2],
+          });
 
-          // final_data_pool.push({
-          //   id: 1000004,
-          //   business_unit_name: "Imported Businessunit",
-          //   business_unit_official_name:
-          //     "Expert Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 1,
-          // });
-
-          // final_data_pool.push({
-          //   id: 166181,
-          //   business_unit_name: "Imported Default Businessunit",
-          //   business_unit_official_name:
-          //     "Family Imported Default Business Unit",
-          //   trade_type: "HIS",
-          //   revenue_type: "HIS",
-          //   account_type: "HIS",
-          //   legal_entity_id: 3,
-          // });
+          project_business_unit_final_data_pool.push({
+            id: 3,
+            business_unit_name: "default_business_3",
+            business_unit_official_name: "default_business_3",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
+            is_active: 0,
+            legal_entity_id: 3,
+            legal_entity_name: instance_list[3],
+          });
         }
-
-        const instance_list = {
-          1: "Expert Heating and Cooling Co LLC",
-          2: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
-          3: "Family Heating & Cooling Co LLC",
-        };
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
@@ -3010,7 +3014,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: business,
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
-            legal_entity_name: instance_list[record["instance_id"]],
+            legal_entity_name: instance_list[Number(record["instance_id"])],
           });
         });
 
