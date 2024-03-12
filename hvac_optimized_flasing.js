@@ -3058,7 +3058,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             hvac_tables_responses["project_business_unit"]["status"] =
               await hvac_data_insertion(
                 sql_request,
-                final_data_pool,
+                project_business_unit_final_data_pool,
                 project_business_unit_header_data,
                 "project_business_unit"
               );
