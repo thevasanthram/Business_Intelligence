@@ -2856,10 +2856,16 @@ async function data_processor(data_lake, sql_request, table_list) {
         let final_data_pool = [];
         let project_business_unit_final_data_pool = [];
 
-        const instance_list = {
-          1: "Expert Heating and Cooling Co LLC",
-          2: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
-          3: "Family Heating & Cooling Co LLC",
+        // const instance_list = {
+        //   1: "Expert Heating and Cooling Co LLC",
+        //   2: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+        //   3: "Family Heating & Cooling Co LLC",
+        // }
+
+        const instance_code = {
+          1: "EXP",
+          2: "PA",
+          3: "NMI",
         };
 
         if (initial_execute) {
@@ -2909,7 +2915,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: "OTHER",
             is_active: 0,
             legal_entity_id: 1,
-            legal_entity_name: instance_list[1],
+            legal_entity_name: instance_code[1],
           });
 
           project_business_unit_final_data_pool.push({
@@ -2922,7 +2928,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: "OTHER",
             is_active: 0,
             legal_entity_id: 2,
-            legal_entity_name: instance_list[2],
+            legal_entity_name: instance_code[2],
           });
 
           project_business_unit_final_data_pool.push({
@@ -2935,7 +2941,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: "OTHER",
             is_active: 0,
             legal_entity_id: 3,
-            legal_entity_name: instance_list[3],
+            legal_entity_name: instance_code[3],
           });
         }
 
@@ -2952,13 +2958,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           let business = "DEF";
           let business_unit_official_name = "DEF";
           let business_unit_name = "DEF";
-
-          // let legal_entity_id = record["instance_id"];
-          const legal_entity_code = {
-            1: "EXP",
-            2: "PA",
-            3: "NMI",
-          };
 
           if (kpi_data[record["id"]]) {
             trade_type = kpi_data[record["id"]]["Trade"]
@@ -2984,12 +2983,12 @@ async function data_processor(data_lake, sql_request, table_list) {
               : "DEF";
 
             // if (legal_entity_group != "DEF") {
-            //   legal_entity_id = legal_entity_code[legal_entity_group];
+            //   legal_entity_id = instance_code[legal_entity_group];
             // } else {
             //   legal_entity_id = record["instance_id"];
             // }
 
-            business = legal_entity_code[record["instance_id"]];
+            business = instance_code[record["instance_id"]];
           }
 
           final_data_pool.push({
@@ -3014,7 +3013,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: business,
             is_active: record["active"] ? 1 : 0,
             legal_entity_id: record["instance_id"],
-            legal_entity_name: instance_list[Number(record["instance_id"])],
+            legal_entity_name: instance_code[Number(record["instance_id"])],
           });
         });
 
