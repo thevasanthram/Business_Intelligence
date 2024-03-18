@@ -1419,6 +1419,10 @@ const hvac_tables = {
         data_type: "INT",
         constraint: { nullable: true },
       },
+      syncStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       referenceNumber: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -4426,7 +4430,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: record["id"],
             purchase_order_id: purchase_order_id,
             actual_purchase_order_id: actual_purchase_order_id,
-            referenceNumber: record["referenceNumber"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            referenceNumber: record["referenceNumber"]
+              ? record["referenceNumber"]
+              : "default",
             vendorNumber: record["vendorNumber"],
             billDate: billDate,
             billAmount: parseFloat(record["billAmount"]),

@@ -31,9 +31,13 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
     fs.writeFileSync(filePath, csvHeader + "\n");
   }
 
+  const modifed_data_pool = Object.keys(data_pool).map((key) => {
+    return data_pool[key];
+  });
+
   // Function to write the next batch of data
   async function writeNextBatch() {
-    const batch = data_pool.slice(index, index + batchSize);
+    const batch = modifed_data_pool.slice(index, index + batchSize);
 
     if (batch.length > 0) {
       for (const currentObj of batch) {

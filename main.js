@@ -4,6 +4,7 @@ const sql = require("mssql");
 const create_sql_connection = require("./modules/create_sql_connection");
 const getAccessToken = require("./modules/get_access_token");
 const getAPIData = require("./modules/get_api_data");
+const getAPIWholeData = require("./modules/get_api_whole_data");
 const getAPIDataItem = require("./modules/get_api_data_item");
 const create_flat_tables = require("./modules/create_flat_tables");
 const flat_data_insertion = require("./modules/flat_data_insertion");
@@ -16,15 +17,6 @@ const find_lenghthiest_header = require("./modules/find_lengthiest_header");
 const create_hvac_schema = require("./modules/create_hvac_schema");
 
 // Service Titan's API parameters
-
-let access_token = "";
-
-setInterval(async () => {
-  // Signing a new access token in Service Titan's API
-  do {
-    access_token = await getAccessToken(client_id, client_secret);
-  } while (!access_token);
-}, 1000 * 60 * 3);
 
 const api_collection = [
   // {
@@ -476,9 +468,9 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
         do {
           access_token = await getAccessToken(client_id, client_secret);
         } while (!access_token);
-      }
+      };
 
-      setInterval(refreshAccessToken,1000 * 60 * 3)
+      setInterval(refreshAccessToken, 1000 * 60 * 3);
 
       await Promise.all(
         api_collection.map(async (api_data) => {
@@ -487,33 +479,62 @@ async function fetch_all_data(data_lake, instance_details, api_collection) {
 
           if (!api_data["mode"]) {
             // for normal
-            if (
-              !data_lake[
-                api_group_temp + "__" + api_name_temp + "&&" + "normal"
-              ]
-            ) {
-              data_lake[
-                api_group_temp + "__" + api_name_temp + "&&" + "normal"
-              ] = {
-                data_pool: [],
-                header_data: [],
-              };
+            if (!data_lake[api_group_temp + "__" + api_name_temp]) {
+              if (api_name_temp == "gross-pay-items") {
+                data_lake[api_group_temp + "__" + api_name_temp] = {
+                  data_pool: [],
+                };
+              } else {
+                data_lake[api_group_temp + "__" + api_name_temp] = {
+                  data_pool: {},
+                };
+              }
             }
 
             // continuously fetching whole api data
-            const data_pool = await getAPIData(
-              access_token,
-              app_key,
-              instance_name,
-              tenant_id,
-              api_group_temp,
-              api_name_temp,
-              params_header
-            );
+            let data_pool_object = {};
+            let data_pool = [];
+            let page_count = 0;
+            let continueFrom = "";
+            let has_error_occured = false;
 
-            data_lake[api_group_temp + "__" + api_name_temp + "&&" + "normal"][
-              "data_pool"
-            ].push(...data_pool);
+            do {
+              ({
+                data_pool_object,
+                data_pool,
+                page_count,
+                continueFrom,
+                has_error_occured,
+              } = await getAPIWholeData(
+                access_token,
+                app_key,
+                instance_name,
+                tenant_id,
+                api_group_temp,
+                api_name_temp,
+                params_header,
+                data_pool_object,
+                data_pool,
+                page_count,
+                continueFrom
+              ));
+            } while (has_error_occured);
+
+            if (api_name_temp == "gross-pay-items") {
+              data_lake[api_group_temp + "__" + api_name_temp]["data_pool"] = [
+                ...data_lake[api_group_temp + "__" + api_name_temp][
+                  "data_pool"
+                ],
+                ...data_pool,
+              ];
+            } else {
+              data_lake[api_group_temp + "__" + api_name_temp]["data_pool"] = {
+                ...data_lake[api_group_temp + "__" + api_name_temp][
+                  "data_pool"
+                ],
+                ...data_pool_object,
+              }; //;
+            }
           } else {
             // for items
             if (
@@ -557,20 +578,25 @@ async function find_max_and_write_csv(data_lake) {
     api_count < Object.keys(data_lake).length;
     api_count = api_count + api_batch_limit
   ) {
-    console.log("inside for loop");
-
     const key = Object.keys(data_lake)[api_count];
     const current_data_pool = data_lake[key]["data_pool"];
     const current_instance_name = data_lake[key]["instance_name"];
 
     const [api_group, api_name_and_mode] = key.split("__");
 
+    console.log("api_group, api_name_and_mode: ", api_group, api_name_and_mode);
+
     const [api_name, api_mode] = api_name_and_mode.split("&&");
+
+    console.log("api_mode: ", api_mode);
 
     // find lengthiest data
     data_lake[key]["header_data"] = await find_lenghthiest_header(
       current_data_pool
     );
+
+    // console.log("header_data: ", data_lake[key]["header_data"]);
+    // console.log("current_data_pool: ", current_data_pool);
 
     if (api_mode == "normal") {
       console.log("csv_generator");

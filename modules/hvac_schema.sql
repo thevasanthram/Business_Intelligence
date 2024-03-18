@@ -509,6 +509,7 @@ CREATE TABLE inventory_bills(
   id INT NOT NULL,
   purchase_order_id INT NOT NULL, 
   actual_purchase_order_id INT NULL,
+  syncStatus NVARCHAR(MAX) NULL,
   referenceNumber NVARCHAR(MAX) NULL,
   vendorNumber NVARCHAR(MAX) NULL,
   billDate DATETIME2 NULL,
