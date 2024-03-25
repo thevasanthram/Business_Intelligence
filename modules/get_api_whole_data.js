@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { type } = require("os");
 const path = require("path");
 
 async function add_suffix(id, instance_id) {
@@ -15,6 +16,8 @@ async function add_suffix(id, instance_id) {
 
   // Append suffix to id
   let modified_id = id + suffix;
+
+  console.log(typeof modified_id);
 
   // Return the modified id
   return modified_id;
