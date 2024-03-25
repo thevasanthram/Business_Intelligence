@@ -7542,7 +7542,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          let campaign_id = 0;
+          let campaign_id = record["instance_id"];
           let campaign_category = "default";
           let campaign_source = "default";
           let campaign_medium = "default";
@@ -7578,7 +7578,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             campaign_id = record["leadCall"]["campaign"]["id"]
               ? record["leadCall"]["campaign"]["id"]
-              : 0;
+              : record["instance_id"];
 
             if (record["leadCall"]["campaign"]["category"]) {
               campaign_category = record["leadCall"]["campaign"]["category"][
