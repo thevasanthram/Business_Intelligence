@@ -2974,7 +2974,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             const number_in_string = String(record["id"]);
 
-            record["id"] = Number(number_in_string.slice(0, -3));
+            record["id"] = Number(number_in_string.slice(0, -2));
 
             // console.log("id: ", record["id"]);
             // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
