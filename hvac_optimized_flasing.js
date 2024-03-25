@@ -2954,11 +2954,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           // Append suffix based on instance_id
           if (instance_id == 1) {
-            suffix = "001";
+            suffix = "01";
           } else if (instance_id == 2) {
-            suffix = "002";
+            suffix = "02";
           } else if (instance_id == 3) {
-            suffix = "003";
+            suffix = "03";
           }
 
           // Append suffix to id
