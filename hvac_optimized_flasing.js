@@ -295,7 +295,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       bookingProviderId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       createdOn: {
@@ -3322,13 +3322,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
-          let category_id = 0;
+          let category_id = "0";
           let category_name = "default";
           let is_category_active = 0;
           if (record["category"]) {
             category_id = record["category"]["id"]
               ? record["category"]["id"]
-              : 0;
+              : "0";
             category_name = record["category"]["name"]
               ? record["category"]["name"]
               : "default";
@@ -3435,13 +3435,13 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             name: "default",
             source: "default",
             status: "default",
             customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
-            bookingProviderId: 1,
+            bookingProviderId: "1",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             address_street: "default",
@@ -3450,21 +3450,21 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_zip: "default",
             address_country: "default",
-            business_unit_id: 1,
-            actual_business_unit_id: 1,
-            campaign_id: 1,
-            actual_campaign_id: 1,
-            job_details_id: 1,
+            business_unit_id: "1",
+            actual_business_unit_id: "1",
+            campaign_id: "1",
+            actual_campaign_id: "1",
+            job_details_id: "1",
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             name: "default",
             source: "default",
             status: "default",
             customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
-            bookingProviderId: 2,
+            bookingProviderId: "2",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             address_street: "default",
@@ -3473,15 +3473,15 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_zip: "default",
             address_country: "default",
-            business_unit_id: 2,
-            actual_business_unit_id: 2,
-            campaign_id: 2,
-            actual_campaign_id: 2,
-            job_details_id: 2,
+            business_unit_id: "2",
+            actual_business_unit_id: "2",
+            campaign_id: "2",
+            actual_campaign_id: "2",
+            job_details_id: "2",
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             name: "default",
             source: "default",
             status: "default",
@@ -3496,11 +3496,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_zip: "default",
             address_country: "default",
-            business_unit_id: 3,
-            actual_business_unit_id: 3,
-            campaign_id: 3,
-            actual_campaign_id: 3,
-            job_details_id: 3,
+            business_unit_id: "3",
+            actual_business_unit_id: "3",
+            campaign_id: "3",
+            actual_campaign_id: "3",
+            job_details_id: "3",
           });
         }
 
@@ -3657,7 +3657,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             name: "default_customer_1",
             is_active: 1,
             type: "default_type",
@@ -3670,7 +3670,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             name: "default_customer_2",
             is_active: 1,
             type: "default_type",
@@ -3683,7 +3683,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             name: "default_customer_3",
             is_active: 1,
             type: "default_type",
@@ -3800,7 +3800,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             name: "default",
             street: "",
             unit: "",
@@ -3811,13 +3811,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: 0,
-            zone_id: 0,
+            taxzone: "0",
+            zone_id: "0",
             full_address: "",
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             name: "default",
             street: "",
             unit: "",
@@ -3828,13 +3828,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: 0,
-            zone_id: 0,
+            taxzone: "0",
+            zone_id: "0",
             full_address: "",
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             name: "default",
             street: "",
             unit: "",
@@ -3845,8 +3845,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: 0,
-            zone_id: 0,
+            taxzone: "0",
+            zone_id: "0",
             full_address: "",
           });
         }

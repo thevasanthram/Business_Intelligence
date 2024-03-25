@@ -100,7 +100,7 @@ CREATE TABLE bookings (
   [status] NVARCHAR(MAX) NULL,
   customer_type NVARCHAR(MAX) NULL,
   [start] DATETIME2 NULL,
-  bookingProviderId INT NULL,
+  bookingProviderId NVARCHAR(20) NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
   address_street NVARCHAR(MAX) NULL,

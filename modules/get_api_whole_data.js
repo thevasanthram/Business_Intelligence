@@ -140,6 +140,13 @@ async function getAPIWholeData(
                 );
               }
 
+              if (record["bookingProviderId"]) {
+                record["bookingProviderId"] = await add_suffix(
+                  record["bookingProviderId"],
+                  record["instance_id"]
+                );
+              }
+
               if (record["jobId"]) {
                 record["jobId"] = await add_suffix(
                   record["jobId"],
