@@ -7645,6 +7645,66 @@ async function data_processor(data_lake, sql_request, table_list) {
             status = lead_call_status[record["jobNumber"]];
           }
 
+          console.log({
+            id: record["leadCall"]["id"],
+            instance_id: Number(record["instance_id"]),
+            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
+            status: status,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            receivedOn: receivedOn,
+            duration: record["leadCall"]["duration"]
+              ? record["leadCall"]["duration"]
+              : "00:00:00",
+            from: record["leadCall"]["from"]
+              ? record["leadCall"]["from"]
+              : "default",
+            to: record["leadCall"]["to"] ? record["leadCall"]["to"] : "default",
+            direction: record["leadCall"]["direction"]
+              ? record["leadCall"]["direction"]
+              : "Others",
+            call_type: record["leadCall"]["callType"]
+              ? record["leadCall"]["callType"]
+              : "Others",
+            customer_details_id: customer_details_id,
+            actual_customer_details_id: actual_customer_details_id,
+            is_customer_active: is_customer_active,
+            customer_name: customer_name,
+            street_address: street_address,
+            street: street,
+            unit: unit,
+            city: city,
+            state: state,
+            country: country,
+            zip: zip,
+            latitude: latitude,
+            longitude: longitude,
+            customer_import_id: customer_import_id,
+            customer_type: customer_type,
+            campaign_id: campaign_id,
+            campaign_category: campaign_category,
+            campaign_source: campaign_source,
+            campaign_medium: campaign_medium,
+            campaign_dnis: campaign_dnis,
+            campaign_name: campaign_name,
+            campaign_createdOn: campaign_createdOn,
+            campaign_modifiedOn: campaign_modifiedOn,
+            is_campaign_active: is_campaign_active,
+            agent_id: agent_id,
+            agent_externalId: agent_externalId,
+            agent_name: agent_name,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            business_unit_active: business_unit_active,
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            type_id: type_id,
+            type_name: type_name,
+            type_modifiedOn: type_modifiedOn,
+          });
+
           final_data_pool.push({
             id: record["leadCall"]["id"],
             instance_id: Number(record["instance_id"]),
