@@ -26,7 +26,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'business_unit')
 BEGIN
 CREATE TABLE business_unit (
-  id INT PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   business_unit_name NVARCHAR(MAX) NULL,
   business_unit_official_name NVARCHAR(MAX) NULL,
   trade_type NVARCHAR(MAX) NULL,

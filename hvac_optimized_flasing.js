@@ -110,7 +110,7 @@ const hvac_tables = {
     // settings business units
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "BIGINT",
         constraint: { primary: true, nullable: false },
       },
       business_unit_name: {
