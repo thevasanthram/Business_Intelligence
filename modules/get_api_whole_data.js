@@ -6,11 +6,11 @@ async function add_suffix(id, instance_id) {
 
   // Append suffix based on instance_id
   if (instance_id == 1) {
-    suffix = "01";
+    suffix = "_01";
   } else if (instance_id == 2) {
-    suffix = "02";
+    suffix = "_02";
   } else if (instance_id == 3) {
-    suffix = "03";
+    suffix = "_03";
   }
 
   // Append suffix to id

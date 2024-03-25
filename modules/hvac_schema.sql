@@ -2,7 +2,7 @@
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'legal_entity')
 BEGIN
 CREATE TABLE legal_entity (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   legal_name NVARCHAR(MAX) NULL
 );
 END;
@@ -34,7 +34,7 @@ CREATE TABLE business_unit (
   revenue_type NVARCHAR(MAX) NULL,
   business NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
-  legal_entity_id INT NOT NULL,
+  legal_entity_id NVARCHAR(20) NOT NULL,
   FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
 );
 END;
@@ -51,7 +51,7 @@ CREATE TABLE project_business_unit (
   revenue_type NVARCHAR(MAX) NULL,
   business NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
-  legal_entity_id INT NOT NULL,
+  legal_entity_id NVARCHAR(20) NOT NULL,
   legal_entity_name NVARCHAR(MAX) NULL,
   FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
 );
@@ -61,7 +61,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='employees')
 BEGIN
 CREATE TABLE employees(
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   [role] NVARCHAR(MAX) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
@@ -74,12 +74,12 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'campaigns')
 BEGIN
 CREATE TABLE campaigns (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
-  category_id INT NULL,
+  category_id NVARCHAR(20) NULL,
   category_name NVARCHAR(MAX) NULL,
   is_category_active TINYINT NULL,
   source NVARCHAR(MAX) NULL,
@@ -94,7 +94,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'bookings')
 BEGIN
 CREATE TABLE bookings (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   source NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
@@ -111,9 +111,9 @@ CREATE TABLE bookings (
   address_country NVARCHAR(MAX) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  campaign_id INT NOT NULL,
-  actual_campaign_id INT NULL,
-  job_details_id INT NULL,
+  campaign_id NVARCHAR(20) NOT NULL,
+  actual_campaign_id NVARCHAR(20) NULL,
+  job_details_id NVARCHAR(20) NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (campaign_id) REFERENCES campaigns (id)
 );
@@ -123,7 +123,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'customer_details')
 BEGIN
 CREATE TABLE customer_details (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   type NVARCHAR(MAX) NULL,
@@ -140,7 +140,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'location')
 BEGIN
 CREATE TABLE location (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   name NVARCHAR(MAX) NULL,
   street NVARCHAR(MAX) NULL,
   unit NVARCHAR(MAX) NULL,
@@ -151,8 +151,8 @@ CREATE TABLE location (
   acutal_address_zip NVARCHAR(MAX) NULL,
   latitude NVARCHAR(MAX) NULL,
   longitude NVARCHAR(MAX) NULL,
-  taxzone INT NULL,
-  zone_id INT NULL,
+  taxzone NVARCHAR(20) NULL,
+  zone_id NVARCHAR(20) NULL,
   full_address NVARCHAR(MAX) NULL,
   FOREIGN KEY (address_zip) REFERENCES us_cities (id)
 );
@@ -163,12 +163,12 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_pay_items')
 BEGIN
 CREATE TABLE gross_pay_items (
-  id INT NULL,
-  payrollId INT NULL,
+  id NVARCHAR(20) NULL,
+  payrollId NVARCHAR(20) NULL,
   amount DECIMAL(18, 8) NULL,
   paidDurationHours DECIMAL(18, 8) NULL,
-  projectId INT NULL,
-  invoiceId INT NULL,
+  projectId NVARCHAR(20) NULL,
+  invoiceId NVARCHAR(20) NULL,
 );
 END;
 
@@ -176,7 +176,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'payrolls')
 BEGIN
 CREATE TABLE payrolls (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   burdenRate DECIMAL(18, 8) NULL,
 );
 END;
@@ -185,7 +185,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'job_types')
 BEGIN
 CREATE TABLE job_types (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   job_type_name NVARCHAR(MAX) NULL,
 );
 END;
@@ -194,10 +194,10 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'returns')
 BEGIN
   CREATE TABLE returns (
-    id INT PRIMARY KEY,
+    id NVARCHAR(20) PRIMARY KEY,
     status NVARCHAR(MAX) NULL,
-    purchaseOrderId INT NULL,
-    jobId INT NULL,
+    purchaseOrderId NVARCHAR(20) NULL,
+    jobId NVARCHAR(20) NULL,
     returnAmount DECIMAL(18, 8) NULL,
     taxAmount DECIMAL(18, 8) NULL,
   );
@@ -207,7 +207,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'purchase_order')
 BEGIN
   CREATE TABLE purchase_order (
-    id INT PRIMARY KEY,
+    id NVARCHAR(20) PRIMARY KEY,
     status NVARCHAR(MAX) NULL,
     total DECIMAL(18, 8) NULL,
     tax DECIMAL(18, 8) NULL,
@@ -219,14 +219,14 @@ BEGIN
     receivedOn DATETIME2 NULL,
     createdOn DATETIME2 NULL,
     modifiedOn DATETIME2 NULL,
-    job_details_id INT NOT NULL,
-    actual_job_details_id INT NULL,
-    invoice_id INT NOT NULL,
-    actual_invoice_id INT NULL,
-    project_id INT NOT NULL,
-    actual_project_id INT NULL,
-    vendor_id INT NOT NULL,
-    actual_vendor_id INT NULL,
+    job_details_id NVARCHAR(20) NOT NULL,
+    actual_job_details_id NVARCHAR(20) NULL,
+    invoice_id NVARCHAR(20) NOT NULL,
+    actual_invoice_id NVARCHAR(20) NULL,
+    project_id NVARCHAR(20) NOT NULL,
+    actual_project_id NVARCHAR(20) NULL,
+    vendor_id NVARCHAR(20) NOT NULL,
+    actual_vendor_id NVARCHAR(20) NULL,
     -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     -- FOREIGN KEY (project_id) REFERENCES projects (id),
@@ -238,13 +238,13 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sales_details')
 BEGIN
 CREATE TABLE sales_details (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
   job_number NVARCHAR(MAX) NULL,
   soldOn DATETIME2 NULL,
-  soldBy INT NOT NULL,
+  soldBy NVARCHAR(20) NOT NULL,
   soldBy_name NVARCHAR(MAX) NULL,
   is_active TINYINT NULL,
   subtotal DECIMAL(18, 8) NULL,
@@ -259,12 +259,12 @@ CREATE TABLE sales_details (
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
   businessUnitName NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
+  location_id NVARCHAR(20) NOT NULL,
+  actual_location_id NVARCHAR(20) NULL,
+  customer_details_id NVARCHAR(20) NOT NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
   FOREIGN KEY (soldBy) REFERENCES employees (id),
   -- FOREIGN KEY (project_id) REFERENCES projects (id),
   -- FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
@@ -278,7 +278,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects')
 BEGIN
 CREATE TABLE projects(
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [number] NVARCHAR(MAX) NULL,
   [name] NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
@@ -303,10 +303,10 @@ CREATE TABLE projects(
   membership_liability DECIMAL(18, 8) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
+  customer_details_id NVARCHAR(20) NOT NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
+  location_id NVARCHAR(20) NOT NULL,
+  actual_location_id NVARCHAR(20) NULL,
   startDate DATETIME2 NULL,
   targetCompletionDate DATETIME2 NULL,
   actualCompletionDate DATETIME2 NULL,
@@ -322,7 +322,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='projects_wip_data')
 BEGIN
 CREATE TABLE projects_wip_data(
-  id INT NULL,
+  id NVARCHAR(20) NULL,
   [number] NVARCHAR(MAX) NULL,
   [name] NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
@@ -347,10 +347,10 @@ CREATE TABLE projects_wip_data(
   membership_liability DECIMAL(18, 8) NULL,
   business_unit_id NVARCHAR(20) NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  customer_details_id INT  NULL,
-  actual_customer_details_id INT NULL,
-  location_id INT  NULL,
-  actual_location_id INT NULL,
+  customer_details_id NVARCHAR(20)  NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
+  location_id NVARCHAR(20)  NULL,
+  actual_location_id NVARCHAR(20) NULL,
   startDate DATETIME2 NULL,
   targetCompletionDate DATETIME2 NULL,
   actualCompletionDate DATETIME2 NULL,
@@ -364,9 +364,9 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='project_managers')
 BEGIN
 CREATE TABLE project_managers(
-  id INT NOT NULL,
-  manager_id INT NOT NULL,
-  actual_manager_id INT NULL,
+  id NVARCHAR(20) NOT NULL,
+  manager_id NVARCHAR(20) NOT NULL,
+  actual_manager_id NVARCHAR(20) NULL,
   FOREIGN KEY (id) REFERENCES projects (id),
   FOREIGN KEY (manager_id) REFERENCES employees (id),
 )
@@ -376,12 +376,12 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'call_details')
 BEGIN
 CREATE TABLE call_details (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   instance_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
   receivedOn DATETIME2 NULL,
@@ -390,8 +390,8 @@ CREATE TABLE call_details (
   [to] NVARCHAR(MAX) NULL,
   direction NVARCHAR(MAX) NULL,
   call_type NVARCHAR(MAX) NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
+  customer_details_id NVARCHAR(20) NOT NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
   is_customer_active TINYINT NULL,
   customer_name NVARCHAR(MAX) NULL,
   street_address NVARCHAR(MAX) NULL,
@@ -405,7 +405,7 @@ CREATE TABLE call_details (
   longitude DECIMAL(9, 6) NULL,
   customer_import_id NVARCHAR(MAX) NULL,
   customer_type NVARCHAR(MAX) NULL,
-  campaign_id INT NULL,
+  campaign_id NVARCHAR(20) NULL,
   campaign_category NVARCHAR(MAX) NULL,
   campaign_source NVARCHAR(MAX) NULL,
   campaign_medium NVARCHAR(MAX) NULL,
@@ -414,15 +414,15 @@ CREATE TABLE call_details (
   campaign_createdOn DATETIME2 NULL,
   campaign_modifiedOn DATETIME2 NULL,
   is_campaign_active TINYINT NULL,
-  agent_id INT NULL,
-  agent_externalId INT NULL,
+  agent_id NVARCHAR(20) NULL,
+  agent_externalId NVARCHAR(20) NULL,
   agent_name NVARCHAR(MAX) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
   business_unit_active TINYINT NULL,
   business_unit_name NVARCHAR(MAX) NULL,
   business_unit_official_name NVARCHAR(MAX) NULL,
-  type_id INT NULL,
+  type_id NVARCHAR(20) NULL,
   type_name NVARCHAR(MAX) NULL,
   type_modifiedOn DATETIME2 NULL,
   FOREIGN KEY (project_id) REFERENCES projects (id),
@@ -435,30 +435,30 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'job_details')
 BEGIN
 CREATE TABLE job_details (
-  id INT PRIMARY KEY,
-  job_type_id INT NOT NULL,
-  actual_job_type_id INT NULL,
+  id NVARCHAR(20) PRIMARY KEY,
+  job_type_id NVARCHAR(20) NOT NULL,
+  actual_job_type_id NVARCHAR(20) NULL,
   job_number NVARCHAR(MAX) NULL,
   job_status NVARCHAR(MAX) NULL,
   job_completion_time DATETIME2 NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
-  campaign_id INT NOT NULL,
-  actual_campaign_id INT NULL,
+  location_id NVARCHAR(20) NOT NULL,
+  actual_location_id NVARCHAR(20) NULL,
+  customer_details_id NVARCHAR(20) NOT NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
+  campaign_id NVARCHAR(20) NOT NULL,
+  actual_campaign_id NVARCHAR(20) NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
-  created_by_id INT NULL,
-  lead_call_id INT NOT NULL,
-  actual_lead_call_id INT NULL,
-  booking_id INT NOT NULL,
-  actual_booking_id INT NULL,
-  sold_by_id INT NULL,
+  created_by_id NVARCHAR(20) NULL,
+  lead_call_id NVARCHAR(20) NOT NULL,
+  actual_lead_call_id NVARCHAR(20) NULL,
+  booking_id NVARCHAR(20) NOT NULL,
+  actual_booking_id NVARCHAR(20) NULL,
+  sold_by_id NVARCHAR(20) NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
@@ -474,9 +474,9 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointments')
 BEGIN
 CREATE TABLE appointments (
-  id INT PRIMARY KEY,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
+  id NVARCHAR(20) PRIMARY KEY,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
   appointmentNumber NVARCHAR(MAX) NULL,
   [start] DATETIME2 NULL,
   [end] DATETIME2 NULL,
@@ -485,8 +485,8 @@ CREATE TABLE appointments (
   [status] NVARCHAR(MAX) NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
-  customer_details_id INT NOT NULL,
-  actual_customer_details_id INT NULL,
+  customer_details_id NVARCHAR(20) NOT NULL,
+  actual_customer_details_id NVARCHAR(20) NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id)
 );
@@ -496,7 +496,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'vendor')
 BEGIN
 CREATE TABLE vendor (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   is_active TINYINT NULL
 );
@@ -506,9 +506,9 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='inventory_bills')
 BEGIN
 CREATE TABLE inventory_bills(
-  id INT NOT NULL,
-  purchase_order_id INT NOT NULL, 
-  actual_purchase_order_id INT NULL,
+  id NVARCHAR(20) NOT NULL,
+  purchase_order_id NVARCHAR(20) NOT NULL, 
+  actual_purchase_order_id NVARCHAR(20) NULL,
   syncStatus NVARCHAR(MAX) NULL,
   referenceNumber NVARCHAR(MAX) NULL,
   vendorNumber NVARCHAR(MAX) NULL,
@@ -520,10 +520,10 @@ CREATE TABLE inventory_bills(
   dueDate DATETIME2 NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  vendor_id INT NOT NULL,
-  actual_vendor_id INT NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
+  vendor_id NVARCHAR(20) NOT NULL,
+  actual_vendor_id NVARCHAR(20) NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
   job_number NVARCHAR(MAX) NULL,
   FOREIGN KEY (vendor_id) REFERENCES vendor (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
@@ -536,7 +536,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'technician')
 BEGIN
 CREATE TABLE technician (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
@@ -548,18 +548,18 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointment_assignments')
 BEGIN
 CREATE TABLE appointment_assignments (
-  id INT PRIMARY KEY,
-  technician_id INT NOT NULL,
-  actual_technician_id INT NULL,
+  id NVARCHAR(20) PRIMARY KEY,
+  technician_id NVARCHAR(20) NOT NULL,
+  actual_technician_id NVARCHAR(20) NULL,
   technician_name NVARCHAR(MAX) NULL,
-  assigned_by_id INT NULL,
+  assigned_by_id NVARCHAR(20) NULL,
   assignedOn DATETIME2 NULL,
   [status] NVARCHAR(MAX) NULL,
   is_paused TINYINT NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  appointment_id INT NOT NULL,
-  actual_appointment_id INT NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
+  appointment_id NVARCHAR(20) NOT NULL,
+  actual_appointment_id NVARCHAR(20) NULL,
   FOREIGN KEY (technician_id) REFERENCES technician (id),
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (appointment_id) REFERENCES appointments (id),
@@ -570,9 +570,9 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'non_job_appointments')
 BEGIN
 CREATE TABLE non_job_appointments (
-  id INT PRIMARY KEY,
-  technician_id INT NOT NULL,
-  actual_technician_id INT NULL,
+  id NVARCHAR(20) PRIMARY KEY,
+  technician_id NVARCHAR(20) NOT NULL,
+  actual_technician_id NVARCHAR(20) NULL,
   [start] DATETIME2 NULL,
   [name] NVARCHAR(MAX) NULL,
   duration NVARCHAR(MAX) NULL,
@@ -583,7 +583,7 @@ CREATE TABLE non_job_appointments (
   is_all_day TINYINT NULL,
   is_active TINYINT NULL,
   createdOn DATETIME2 NULL,
-  created_by_id INT NULL,
+  created_by_id NVARCHAR(20) NULL,
   FOREIGN KEY (technician_id) REFERENCES technician (id)
 );
 END;
@@ -592,12 +592,12 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sku_details')
 BEGIN
 CREATE TABLE sku_details (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   sku_name NVARCHAR(MAX) NULL,
   sku_type NVARCHAR(MAX) NULL,
   sku_unit_price DECIMAL(18, 8) NULL,
-  vendor_id INT NOT NULL,
-  actual_vendor_id INT NULL,
+  vendor_id NVARCHAR(20) NOT NULL,
+  actual_vendor_id NVARCHAR(20) NULL,
   FOREIGN KEY (vendor_id) REFERENCES vendor (id)
 );
 END;
@@ -606,7 +606,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'invoice')
 BEGIN
 CREATE TABLE invoice (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   syncStatus NVARCHAR(MAX) NULL,
   date DATETIME2 NULL,
   dueDate DATETIME2 NULL,
@@ -617,16 +617,16 @@ CREATE TABLE invoice (
   depositedOn DATETIME2 NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL, -- syncStatus, dueDate, 
-  invoice_type_id INT NULL,
+  invoice_type_id NVARCHAR(20) NULL,
   invoice_type_name NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
-  location_id INT NOT NULL,
-  actual_location_id INT NULL,
+  location_id NVARCHAR(20) NOT NULL,
+  actual_location_id NVARCHAR(20) NULL,
   address_street NVARCHAR(MAX) NULL,
   address_unit NVARCHAR(MAX) NULL,
   address_city NVARCHAR(MAX) NULL,
@@ -634,8 +634,8 @@ CREATE TABLE invoice (
   address_country NVARCHAR(MAX) NULL,
   address_zip INT NOT NULL,
   acutal_address_zip NVARCHAR(MAX) NULL,
-  customer_id INT NOT NULL,
-  actual_customer_id INT NULL,
+  customer_id NVARCHAR(20) NOT NULL,
+  actual_customer_id NVARCHAR(20) NULL,
   customer_name NVARCHAR(MAX) NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
@@ -657,14 +657,14 @@ CREATE TABLE cogs_labor (
   burden_cost DECIMAL(18, 8) NULL,
   activity NVARCHAR(MAX) NULL,
   paid_time_type NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  invoice_id INT NOT NULL,
-  actual_invoice_id INT NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
-  technician_id INT NOT NULL,
-  actual_technician_id INT NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
+  invoice_id NVARCHAR(20) NOT NULL,
+  actual_invoice_id NVARCHAR(20) NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
+  technician_id NVARCHAR(20) NOT NULL,
+  actual_technician_id NVARCHAR(20) NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   FOREIGN KEY (invoice_id) REFERENCES invoice (id),
   FOREIGN KEY (project_id) REFERENCES projects (id),
@@ -689,13 +689,13 @@ BEGIN
     generalLedgerAccountnumber BIGINT NULL,
     generalLedgerAccounttype NVARCHAR(MAX) NULL,
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
-    job_details_id INT NOT NULL,
-    actual_job_details_id INT NULL,
-    project_id INT NOT NULL,
-    actual_project_id INT NULL,
-    invoice_id INT NOT NULL,
-    sku_details_id INT NOT NULL,
-    actual_sku_details_id INT NULL,
+    job_details_id NVARCHAR(20) NOT NULL,
+    actual_job_details_id NVARCHAR(20) NULL,
+    project_id NVARCHAR(20) NOT NULL,
+    actual_project_id NVARCHAR(20) NULL,
+    invoice_id NVARCHAR(20) NOT NULL,
+    sku_details_id NVARCHAR(20) NOT NULL,
+    actual_sku_details_id NVARCHAR(20) NULL,
     -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
@@ -717,13 +717,13 @@ BEGIN
     generalLedgerAccountnumber BIGINT NULL,
     generalLedgerAccounttype NVARCHAR(MAX) NULL,
     generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
-    job_details_id INT NOT NULL,
-    actual_job_details_id INT NULL,
-    project_id INT NOT NULL,
-    actual_project_id INT NULL,
-    invoice_id INT NOT NULL,
-    sku_details_id INT NOT NULL,
-    actual_sku_details_id INT NULL,
+    job_details_id NVARCHAR(20) NOT NULL,
+    actual_job_details_id NVARCHAR(20) NULL,
+    project_id NVARCHAR(20) NOT NULL,
+    actual_project_id NVARCHAR(20) NULL,
+    invoice_id NVARCHAR(20) NOT NULL,
+    sku_details_id NVARCHAR(20) NOT NULL,
+    actual_sku_details_id NVARCHAR(20) NULL,
     -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
     -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
     -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
@@ -747,13 +747,13 @@ CREATE TABLE cogs_equipment (
   generalLedgerAccountnumber BIGINT NULL,
   generalLedgerAccounttype NVARCHAR(MAX) NULL,
   generalLedgerAccountdetailType NVARCHAR(MAX) NULL,
-  job_details_id INT NOT NULL,
-  actual_job_details_id INT NULL,
-  project_id INT NOT NULL,
-  actual_project_id INT NULL,
-  invoice_id INT NOT NULL,
-  sku_details_id INT NOT NULL,
-  actual_sku_details_id INT NULL,
+  job_details_id NVARCHAR(20) NOT NULL,
+  actual_job_details_id NVARCHAR(20) NULL,
+  project_id NVARCHAR(20) NOT NULL,
+  actual_project_id NVARCHAR(20) NULL,
+  invoice_id NVARCHAR(20) NOT NULL,
+  sku_details_id NVARCHAR(20) NOT NULL,
+  actual_sku_details_id NVARCHAR(20) NULL,
   -- FOREIGN KEY (job_details_id) REFERENCES job_details (id),
   -- FOREIGN KEY (invoice_id) REFERENCES invoice (id),
   -- FOREIGN KEY (sku_details_id) REFERENCES sku_details (id)
@@ -765,7 +765,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
 BEGIN
 CREATE TABLE gross_profit (
-  id INT PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   accounts_receivable DECIMAL(18, 8) NULL,
   expense DECIMAL(18, 8) NULL,
   income DECIMAL(18, 8) NULL,
