@@ -110,7 +110,7 @@ const hvac_tables = {
     // settings business units
     columns: {
       id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       business_unit_name: {
@@ -151,7 +151,7 @@ const hvac_tables = {
     // settings business units
     columns: {
       id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       business_unit_name: {
@@ -207,11 +207,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -259,11 +259,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -331,11 +331,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       campaign_id: {
@@ -696,11 +696,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       businessUnitName: {
@@ -828,11 +828,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
@@ -968,11 +968,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
@@ -1200,11 +1200,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       business_unit_active: {
@@ -1260,11 +1260,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {
@@ -1456,11 +1456,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       vendor_id: {
@@ -1496,11 +1496,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1716,11 +1716,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "NVARCHAR",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {

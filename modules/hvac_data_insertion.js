@@ -34,6 +34,12 @@ async function hvac_data_insertion(
           mssql.NVarChar(mssql.MAX),
           constraint ? constraint : {}
         );
+      } else if (data_type === "NVARCHAR20") {
+        table.columns.add(
+          column,
+          mssql.NVarChar(20),
+          constraint ? constraint : {}
+        );
       } else if (data_type === "INT") {
         table.columns.add(column, mssql.Int, constraint ? constraint : {});
       } else if (data_type === "TINYINT") {
