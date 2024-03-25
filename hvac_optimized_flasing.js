@@ -3584,7 +3584,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let campaign_id = record["instance_id"];
           let actual_campaign_id = record["campaignId"]
             ? record["campaignId"]
-            : record["campaignId"];
+            : record["instance_id"];
           if (campaigns_data_pool[record["campaignId"]]) {
             campaign_id = record["campaignId"];
           }
