@@ -3588,34 +3588,34 @@ async function data_processor(data_lake, sql_request, table_list) {
             campaign_id = record["campaignId"];
           }
 
-          final_data_pool.push({
-            id: record["id"],
-            name: record["name"] ? record["name"] : "default",
-            source: record["source"] ? record["source"] : "default",
-            status: record["status"] ? record["status"] : "default",
-            customer_type: record["customerType"]
-              ? record["customerType"]
-              : "default",
-            start: start,
-            bookingProviderId: record["bookingProviderId"]
-              ? record["bookingProviderId"]
-              : record["instance_id"],
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            address_street: address_street,
-            address_unit: address_unit,
-            address_city: address_city,
-            address_state: address_state,
-            address_zip: address_zip,
-            address_country: address_country,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            campaign_id: campaign_id,
-            actual_campaign_id: actual_campaign_id,
-            job_details_id: record["jobId"]
-              ? record["jobId"]
-              : record["instance_id"],
-          });
+          // final_data_pool.push({
+          //   id: record["id"],
+          //   name: record["name"] ? record["name"] : "default",
+          //   source: record["source"] ? record["source"] : "default",
+          //   status: record["status"] ? record["status"] : "default",
+          //   customer_type: record["customerType"]
+          //     ? record["customerType"]
+          //     : "default",
+          //   start: start,
+          //   bookingProviderId: record["bookingProviderId"]
+          //     ? record["bookingProviderId"]
+          //     : record["instance_id"],
+          //   createdOn: createdOn,
+          //   modifiedOn: modifiedOn,
+          //   address_street: address_street,
+          //   address_unit: address_unit,
+          //   address_city: address_city,
+          //   address_state: address_state,
+          //   address_zip: address_zip,
+          //   address_country: address_country,
+          //   business_unit_id: business_unit_id,
+          //   actual_business_unit_id: actual_business_unit_id,
+          //   campaign_id: campaign_id,
+          //   actual_campaign_id: actual_campaign_id,
+          //   job_details_id: record["jobId"]
+          //     ? record["jobId"]
+          //     : record["instance_id"],
+          // });
         });
 
         console.log("bookings data: ", final_data_pool.length);
