@@ -7605,26 +7605,28 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0;
           }
 
-          let agent_id = 0;
-          let agent_externalId = 0;
+          let agent_id = record["instance_id"];
+          let agent_externalId = record["instance_id"];
           let agent_name = "default";
           if (record["leadCall"]["agent"]) {
             agent_id = record["leadCall"]["agent"]["id"]
               ? record["leadCall"]["agent"]["id"]
-              : 0;
+              : record["instance_id"];
             agent_externalId = record["leadCall"]["agent"]["externalId"]
               ? record["leadCall"]["agent"]["externalId"]
-              : 0;
+              : record["instance_id"];
             agent_name = record["leadCall"]["agent"]["name"]
               ? record["leadCall"]["agent"]["name"]
               : "default";
           }
 
-          let type_id = 0;
+          let type_id = record["instance_id"];
           let type_name = "default";
           let type_modifiedOn = "2000-01-01T00:00:00.00Z";
           if (record["type"]) {
-            type_id = record["type"]["id"] ? record["type"]["id"] : 0;
+            type_id = record["type"]["id"]
+              ? record["type"]["id"]
+              : record["instance_id"];
             type_name = record["type"]["name"]
               ? record["type"]["name"]
               : "default";
