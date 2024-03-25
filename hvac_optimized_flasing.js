@@ -3487,7 +3487,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
-            bookingProviderId: 3,
+            bookingProviderId: '3',
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             address_street: "default",
@@ -3811,8 +3811,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: "0",
-            zone_id: "0",
+            taxzone: "1",
+            zone_id: "1",
             full_address: "",
           });
 
@@ -3828,8 +3828,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: "0",
-            zone_id: "0",
+            taxzone: "2",
+            zone_id: "2",
             full_address: "",
           });
 
@@ -3845,8 +3845,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: "57483",
             latitude: 0.0,
             longitude: 0.0,
-            taxzone: "0",
-            zone_id: "0",
+            taxzone: "3",
+            zone_id: "3",
             full_address: "",
           });
         }
@@ -3939,8 +3939,12 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: acutal_address_zip,
             latitude: latitude,
             longitude: longitude,
-            taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
-            zone_id: record["zoneId"] ? record["zoneId"] : 0,
+            taxzone: record["taxZoneId"]
+              ? record["taxZoneId"]
+              : record["instance_id"],
+            zone_id: record["zoneId"]
+              ? record["zoneId"]
+              : record["instance_id"],
             full_address: full_address,
           });
         });
@@ -4124,17 +4128,17 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: '1',
             job_type_name: "default",
           });
 
           final_data_pool.push({
-            id: 2,
+            id: '2',
             job_type_name: "default",
           });
 
           final_data_pool.push({
-            id: 3,
+            id: '3',
             job_type_name: "default",
           });
         }
