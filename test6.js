@@ -1,6 +1,7 @@
-let access_token = "q234";
+const record = { id: "123123213001" };
 
-setInterval(() => {
-  access_token = "1234";
-  console.log("access_token:, ", access_token);
-}, 3000);
+const number_in_string = String(record["id"]);
+
+record["id"] = Number(number_in_string.slice(0, -3));
+
+console.log(record);

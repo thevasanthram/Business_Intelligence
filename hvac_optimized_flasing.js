@@ -2949,77 +2949,109 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        async function add_suffix(id, instance_id) {
+          let suffix = "";
 
-          // console.log("id: ", record["id"]);
-          // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
-          // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
-
-          let trade_type = "DEF";
-          let segment_type = "DEF";
-          let revenue_type = "DEF";
-          let business = "DEF";
-          let business_unit_official_name = "DEF";
-          let business_unit_name = "DEF";
-
-          if (kpi_data[record["id"]]) {
-            trade_type = kpi_data[record["id"]]["Trade"]
-              ? kpi_data[record["id"]]["Trade"]
-              : "DEF";
-            segment_type = kpi_data[record["id"]]["Segment"]
-              ? kpi_data[record["id"]]["Segment"]
-              : "DEF";
-            revenue_type = kpi_data[record["id"]]["Type"]
-              ? kpi_data[record["id"]]["Type"]
-              : "DEF";
-            // business = kpi_data[record["id"]]["Business"]
-            //   ? kpi_data[record["id"]]["Business"]
-            //   : "DEF";
-            business_unit_official_name = kpi_data[record["id"]]["Name"]
-              ? kpi_data[record["id"]]["Name"]
-              : "DEF";
-            business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
-              ? kpi_data[record["id"]]["Invoice Business Unit"]
-              : "DEF";
-            let legal_entity_group = kpi_data[record["id"]]["Business"]
-              ? kpi_data[record["id"]]["Business"]
-              : "DEF";
-
-            // if (legal_entity_group != "DEF") {
-            //   legal_entity_id = instance_code[legal_entity_group];
-            // } else {
-            //   legal_entity_id = record["instance_id"];
-            // }
-
-            business = instance_code[record["instance_id"]];
+          // Append suffix based on instance_id
+          if (instance_id == 1) {
+            suffix = "001";
+          } else if (instance_id == 2) {
+            suffix = "002";
+          } else if (instance_id == 3) {
+            suffix = "003";
           }
 
-          final_data_pool.push({
-            id: record["id"],
-            business_unit_name: business_unit_name,
-            business_unit_official_name: business_unit_official_name,
-            trade_type: trade_type,
-            segment_type: segment_type,
-            revenue_type: revenue_type,
-            business: business,
-            is_active: record["active"] ? 1 : 0,
-            legal_entity_id: record["instance_id"],
-          });
+          // Append suffix to id
+          let modified_id = id + suffix;
 
-          project_business_unit_final_data_pool.push({
-            id: record["id"],
-            business_unit_name: business_unit_name,
-            business_unit_official_name: business_unit_official_name,
-            trade_type: trade_type,
-            segment_type: segment_type,
-            revenue_type: revenue_type,
-            business: business,
-            is_active: record["active"] ? 1 : 0,
-            legal_entity_id: record["instance_id"],
-            legal_entity_name: instance_code[Number(record["instance_id"])],
-          });
-        });
+          // Return the modified id
+          return modified_id;
+        }
+
+        await Promise.all(
+          Object.keys(data_pool).map(async (record_id) => {
+            const record = data_pool[record_id];
+
+            const number_in_string = String(record["id"]);
+
+            record["id"] = Number(number_in_string.slice(0, -3));
+
+            // console.log("id: ", record["id"]);
+            // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
+            // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
+
+            let trade_type = "DEF";
+            let segment_type = "DEF";
+            let revenue_type = "DEF";
+            let business = "DEF";
+            let business_unit_official_name = "DEF";
+            let business_unit_name = "DEF";
+
+            if (kpi_data[record["id"]]) {
+              trade_type = kpi_data[record["id"]]["Trade"]
+                ? kpi_data[record["id"]]["Trade"]
+                : "DEF";
+              segment_type = kpi_data[record["id"]]["Segment"]
+                ? kpi_data[record["id"]]["Segment"]
+                : "DEF";
+              revenue_type = kpi_data[record["id"]]["Type"]
+                ? kpi_data[record["id"]]["Type"]
+                : "DEF";
+              // business = kpi_data[record["id"]]["Business"]
+              //   ? kpi_data[record["id"]]["Business"]
+              //   : "DEF";
+              business_unit_official_name = kpi_data[record["id"]]["Name"]
+                ? kpi_data[record["id"]]["Name"]
+                : "DEF";
+              business_unit_name = kpi_data[record["id"]][
+                "Invoice Business Unit"
+              ]
+                ? kpi_data[record["id"]]["Invoice Business Unit"]
+                : "DEF";
+              let legal_entity_group = kpi_data[record["id"]]["Business"]
+                ? kpi_data[record["id"]]["Business"]
+                : "DEF";
+
+              // if (legal_entity_group != "DEF") {
+              //   legal_entity_id = instance_code[legal_entity_group];
+              // } else {
+              //   legal_entity_id = record["instance_id"];
+              // }
+
+              business = instance_code[record["instance_id"]];
+            }
+
+            record["id"] = await add_suffix(
+              record["id"],
+              record["instance_id"]
+            );
+
+            final_data_pool.push({
+              id: record["id"],
+              business_unit_name: business_unit_name,
+              business_unit_official_name: business_unit_official_name,
+              trade_type: trade_type,
+              segment_type: segment_type,
+              revenue_type: revenue_type,
+              business: business,
+              is_active: record["active"] ? 1 : 0,
+              legal_entity_id: record["instance_id"],
+            });
+
+            project_business_unit_final_data_pool.push({
+              id: record["id"],
+              business_unit_name: business_unit_name,
+              business_unit_official_name: business_unit_official_name,
+              trade_type: trade_type,
+              segment_type: segment_type,
+              revenue_type: revenue_type,
+              business: business,
+              is_active: record["active"] ? 1 : 0,
+              legal_entity_id: record["instance_id"],
+              legal_entity_name: instance_code[Number(record["instance_id"])],
+            });
+          })
+        );
 
         console.log("business unit data: ", final_data_pool.length);
 
