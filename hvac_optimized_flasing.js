@@ -3027,7 +3027,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             );
 
             final_data_pool.push({
-              id: record["id"],
+              id: String(record["id"]),
               business_unit_name: business_unit_name,
               business_unit_official_name: business_unit_official_name,
               trade_type: trade_type,
@@ -3039,7 +3039,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             });
 
             project_business_unit_final_data_pool.push({
-              id: record["id"],
+              id: String(record["id"]),
               business_unit_name: business_unit_name,
               business_unit_official_name: business_unit_official_name,
               trade_type: trade_type,
