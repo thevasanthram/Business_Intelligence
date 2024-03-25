@@ -114,7 +114,9 @@ async function getAPIWholeData(
 
           await Promise.all(
             pushing_item.map(async (record) => {
-              record["instance_id"] = instance_list.indexOf(instance_name) + 1;
+              record["instance_id"] = String(
+                instance_list.indexOf(instance_name) + 1
+              );
 
               if (record["id"]) {
                 record["id"] = await add_suffix(
