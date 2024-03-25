@@ -2874,7 +2874,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
             trade_type: "OTHER",
@@ -2886,7 +2886,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
             trade_type: "OTHER",
@@ -2898,7 +2898,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
             trade_type: "OTHER",
@@ -2910,7 +2910,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           project_business_unit_final_data_pool.push({
-            id: 1,
+            id: "1",
             business_unit_name: "default_business_1",
             business_unit_official_name: "default_business_1",
             trade_type: "OTHER",
@@ -2923,7 +2923,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           project_business_unit_final_data_pool.push({
-            id: 2,
+            id: "2",
             business_unit_name: "default_business_2",
             business_unit_official_name: "default_business_2",
             trade_type: "OTHER",
@@ -2936,7 +2936,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           project_business_unit_final_data_pool.push({
-            id: 3,
+            id: "3",
             business_unit_name: "default_business_3",
             business_unit_official_name: "default_business_3",
             trade_type: "OTHER",
