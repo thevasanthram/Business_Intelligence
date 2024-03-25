@@ -7647,66 +7647,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status = lead_call_status[record["jobNumber"]];
           }
 
-          console.log({
-            id: record["leadCall"]["id"],
-            instance_id: Number(record["instance_id"]),
-            job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            status: status,
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            receivedOn: receivedOn,
-            duration: record["leadCall"]["duration"]
-              ? record["leadCall"]["duration"]
-              : "00:00:00",
-            from: record["leadCall"]["from"]
-              ? record["leadCall"]["from"]
-              : "default",
-            to: record["leadCall"]["to"] ? record["leadCall"]["to"] : "default",
-            direction: record["leadCall"]["direction"]
-              ? record["leadCall"]["direction"]
-              : "Others",
-            call_type: record["leadCall"]["callType"]
-              ? record["leadCall"]["callType"]
-              : "Others",
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            is_customer_active: is_customer_active,
-            customer_name: customer_name,
-            street_address: street_address,
-            street: street,
-            unit: unit,
-            city: city,
-            state: state,
-            country: country,
-            zip: zip,
-            latitude: latitude,
-            longitude: longitude,
-            customer_import_id: customer_import_id,
-            customer_type: customer_type,
-            campaign_id: campaign_id,
-            campaign_category: campaign_category,
-            campaign_source: campaign_source,
-            campaign_medium: campaign_medium,
-            campaign_dnis: campaign_dnis,
-            campaign_name: campaign_name,
-            campaign_createdOn: campaign_createdOn,
-            campaign_modifiedOn: campaign_modifiedOn,
-            is_campaign_active: is_campaign_active,
-            agent_id: agent_id,
-            agent_externalId: agent_externalId,
-            agent_name: agent_name,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            business_unit_active: business_unit_active,
-            business_unit_name: business_unit_name,
-            business_unit_official_name: business_unit_official_name,
-            type_id: type_id,
-            type_name: type_name,
-            type_modifiedOn: type_modifiedOn,
-          });
-
           final_data_pool.push({
             id: record["leadCall"]["id"],
             instance_id: Number(record["instance_id"]),
@@ -8139,7 +8079,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             job_type_id: job_type_id,
             actual_job_type_id: actual_job_type_id,
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            job_status: record["jobStatus"],
+            job_status: record["jobStatus"] ? record["jobStatus"] : "default",
             job_completion_time: job_completion_time,
             business_unit_id: business_unit_id,
             actual_business_unit_id: actual_business_unit_id,
@@ -8245,9 +8185,9 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
-            job_details_id: 1,
-            actual_job_details_id: 1,
+            id: "1",
+            job_details_id: "1",
+            actual_job_details_id: "1",
             appointmentNumber: "default",
             start: "1999-01-01T00:00:00.00Z",
             end: "1999-01-01T00:00:00.00Z",
@@ -8256,14 +8196,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "Not Known",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            customer_details_id: 1,
-            actual_customer_details_id: 1,
+            customer_details_id: "1",
+            actual_customer_details_id: "1",
           });
 
           final_data_pool.push({
-            id: 2,
-            job_details_id: 2,
-            actual_job_details_id: 2,
+            id: "2",
+            job_details_id: "2",
+            actual_job_details_id: "2",
             appointmentNumber: "default",
             start: "1999-01-01T00:00:00.00Z",
             end: "1999-01-01T00:00:00.00Z",
@@ -8272,14 +8212,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "Not Known",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            customer_details_id: 2,
-            actual_customer_details_id: 2,
+            customer_details_id: "2",
+            actual_customer_details_id: "2",
           });
 
           final_data_pool.push({
-            id: 3,
-            job_details_id: 3,
-            actual_job_details_id: 3,
+            id: "3",
+            job_details_id: "3",
+            actual_job_details_id: "3",
             appointmentNumber: "default",
             start: "1999-01-01T00:00:00.00Z",
             end: "1999-01-01T00:00:00.00Z",
@@ -8288,8 +8228,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "Not Known",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            customer_details_id: 3,
-            actual_customer_details_id: 3,
+            customer_details_id: "3",
+            actual_customer_details_id: "3",
           });
         }
 
@@ -8445,19 +8385,19 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             name: "default_vendor_1",
             is_active: 1,
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             name: "default_vendor_2",
             is_active: 1,
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             name: "default_vendor_3",
             is_active: 1,
           });
@@ -8584,24 +8524,24 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             name: "default_technician_1",
-            business_unit_id: 1,
-            acutal_business_unit_id: 1,
+            business_unit_id: "1",
+            acutal_business_unit_id: "1",
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             name: "default_technician_2",
-            business_unit_id: 2,
-            acutal_business_unit_id: 2,
+            business_unit_id: "2",
+            acutal_business_unit_id: "2",
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             name: "default_technician_3",
-            business_unit_id: 3,
-            acutal_business_unit_id: 3,
+            business_unit_id: "3",
+            acutal_business_unit_id: "3",
           });
         }
 
@@ -8773,7 +8713,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             technician_name: record["technicianName"]
               ? record["technicianName"]
               : "default",
-            assigned_by_id: record["assignedById"] ? record["assignedById"] : 0,
+            assigned_by_id: record["assignedById"]
+              ? record["assignedById"]
+              : record["instance_id"],
             assignedOn: assignedOn,
             status: record["status"] ? record["status"] : "default",
             is_paused: record["isPaused"] ? record["isPaused"] : 0,
@@ -8911,7 +8853,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             is_all_day: record["allDay"] ? record["allDay"] : 0,
             is_active: record["active"] ? record["active"] : 0,
             createdOn: createdOn,
-            created_by_id: record["createdById"] ? record["createdById"] : 0,
+            created_by_id: record["createdById"]
+              ? record["createdById"]
+              : record["instance_id"],
           });
         });
 
@@ -8986,84 +8930,84 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("header_data: ", header_data);
         if (initial_execute) {
           final_data_pool.push({
-            id: 1,
+            id: "1",
             sku_name: "default_material_1",
             sku_type: "Material",
             sku_unit_price: 0,
-            vendor_id: 1,
-            actual_vendor_id: 1,
+            vendor_id: "1",
+            actual_vendor_id: "1",
           });
 
           final_data_pool.push({
-            id: 2,
+            id: "2",
             sku_name: "default_material_2",
             sku_type: "Material",
             sku_unit_price: 0,
-            vendor_id: 2,
-            actual_vendor_id: 2,
+            vendor_id: "2",
+            actual_vendor_id: "2",
           });
 
           final_data_pool.push({
-            id: 3,
+            id: "3",
             sku_name: "default_material_3",
             sku_type: "Material",
             sku_unit_price: 0,
-            vendor_id: 3,
-            actual_vendor_id: 3,
+            vendor_id: "3",
+            actual_vendor_id: "3",
           });
 
           final_data_pool.push({
-            id: 4,
+            id: "4",
             sku_name: "default_equipment_1",
             sku_type: "Equipment",
             sku_unit_price: 0,
-            vendor_id: 1,
-            actual_vendor_id: 1,
+            vendor_id: "1",
+            actual_vendor_id: "1",
           });
 
           final_data_pool.push({
-            id: 5,
+            id: "5",
             sku_name: "default_equipment_2",
             sku_type: "Equipment",
             sku_unit_price: 0,
-            vendor_id: 2,
-            actual_vendor_id: 2,
+            vendor_id: "2",
+            actual_vendor_id: "2",
           });
 
           final_data_pool.push({
-            id: 6,
+            id: "6",
             sku_name: "default_equipment_3",
             sku_type: "Equipment",
             sku_unit_price: 0,
-            vendor_id: 3,
-            actual_vendor_id: 3,
+            vendor_id: "3",
+            actual_vendor_id: "3",
           });
 
           final_data_pool.push({
-            id: 7,
+            id: "7",
             sku_name: "default_service_1",
             sku_type: "Service",
             sku_unit_price: 0,
-            vendor_id: 1,
-            actual_vendor_id: 1,
+            vendor_id: "1",
+            actual_vendor_id: "1",
           });
 
           final_data_pool.push({
-            id: 8,
+            id: "8",
             sku_name: "default_service_2",
             sku_type: "Service",
             sku_unit_price: 0,
-            vendor_id: 2,
-            actual_vendor_id: 2,
+            vendor_id: "2",
+            actual_vendor_id: "2",
           });
 
           final_data_pool.push({
-            id: 9,
+            id: "9",
             sku_name: "default_service_3",
             sku_type: "Service",
             sku_unit_price: 0,
-            vendor_id: 3,
-            actual_vendor_id: 3,
+            vendor_id: "3",
+            actual_vendor_id: "3",
           });
         }
 
@@ -9412,14 +9356,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            actual_invoice_id: 1,
-            project_id: 1,
-            actual_project_id: 1,
-            technician_id: 1,
-            actual_technician_id: 1,
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            invoice_id: "1",
+            actual_invoice_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            technician_id: "1",
+            actual_technician_id: "1",
           });
 
           final_data_pool.push({
@@ -9429,14 +9373,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            actual_invoice_id: 2,
-            project_id: 2,
-            actual_project_id: 2,
-            technician_id: 2,
-            actual_technician_id: 2,
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            invoice_id: "2",
+            actual_invoice_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            technician_id: "2",
+            actual_technician_id: "2",
           });
 
           final_data_pool.push({
@@ -9446,14 +9390,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            actual_invoice_id: 3,
-            project_id: 3,
-            actual_project_id: 3,
-            technician_id: 3,
-            actual_technician_id: 3,
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            invoice_id: "3",
+            actual_invoice_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            technician_id: "3",
+            actual_technician_id: "3",
           });
         }
 
