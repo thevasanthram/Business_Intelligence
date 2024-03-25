@@ -3487,7 +3487,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             customer_type: "default",
             start: "1999-01-01T00:00:00.00Z",
-            bookingProviderId: '3',
+            bookingProviderId: "3",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
             address_street: "default",
@@ -4128,17 +4128,17 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
-            id: '1',
+            id: "1",
             job_type_name: "default",
           });
 
           final_data_pool.push({
-            id: '2',
+            id: "2",
             job_type_name: "default",
           });
 
           final_data_pool.push({
-            id: '3',
+            id: "3",
             job_type_name: "default",
           });
         }
@@ -4205,15 +4205,15 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const returns_final_data_pool = [];
 
-        purchase_order_returns_cache[1] = {
+        purchase_order_returns_cache["1"] = {
           returnAmount: 0,
         };
 
-        purchase_order_returns_cache[2] = {
+        purchase_order_returns_cache["2"] = {
           returnAmount: 0,
         };
 
-        purchase_order_returns_cache[3] = {
+        purchase_order_returns_cache["3"] = {
           returnAmount: 0,
         };
 
@@ -4495,81 +4495,81 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           purchase_order_final_data_pool.push({
-            id: 1,
+            id: "1",
             status: "default",
             total: 0,
             tax: 0,
             inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"][1][
+              project_cache["inventory_bills_purchase_order"]["1"][
                 "inventory_bill_amount"
               ],
-            po_returns: purchase_order_returns_cache[1]["returnAmount"],
+            po_returns: purchase_order_returns_cache["1"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 1,
-            actual_job_details_id: 1,
-            invoice_id: 1,
-            actual_invoice_id: 1,
-            project_id: 1,
-            actual_project_id: 1,
-            vendor_id: 1,
-            actual_vendor_id: 1,
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            invoice_id: "1",
+            actual_invoice_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            vendor_id: "1",
+            actual_vendor_id: "1",
           });
 
           purchase_order_final_data_pool.push({
-            id: 2,
+            id: "2",
             status: "default",
             total: 0,
             tax: 0,
             inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"][2][
+              project_cache["inventory_bills_purchase_order"]["2"][
                 "inventory_bill_amount"
               ],
-            po_returns: purchase_order_returns_cache[2]["returnAmount"],
+            po_returns: purchase_order_returns_cache["2"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 2,
-            actual_job_details_id: 2,
-            invoice_id: 2,
-            actual_invoice_id: 2,
-            project_id: 2,
-            actual_project_id: 2,
-            vendor_id: 2,
-            actual_vendor_id: 2,
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            invoice_id: "2",
+            actual_invoice_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            vendor_id: "2",
+            actual_vendor_id: "2",
           });
 
           purchase_order_final_data_pool.push({
-            id: 3,
+            id: "3",
             status: "default",
             total: 0,
             tax: 0,
             inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"][3][
+              project_cache["inventory_bills_purchase_order"]["3"][
                 "inventory_bill_amount"
               ],
-            po_returns: purchase_order_returns_cache[3]["returnAmount"],
+            po_returns: purchase_order_returns_cache["3"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
             receivedOn: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
-            job_details_id: 3,
-            actual_job_details_id: 3,
-            invoice_id: 3,
-            actual_invoice_id: 3,
-            project_id: 3,
-            actual_project_id: 3,
-            vendor_id: 3,
-            actual_vendor_id: 3,
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            invoice_id: "3",
+            actual_invoice_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            vendor_id: "3",
+            actual_vendor_id: "3",
           });
         }
 
