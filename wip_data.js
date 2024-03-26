@@ -5,11 +5,11 @@ async function add_suffix(id, instance_id) {
   let suffix = "";
 
   // Append suffix based on instance_id
-  if (instance_id == 1) {
+  if (instance_id == 1 && id != 1 && id != 2 && id != 3) {
     suffix = "_01";
-  } else if (instance_id == 2) {
+  } else if (instance_id == 2 && id != 1 && id != 2 && id != 3) {
     suffix = "_02";
-  } else if (instance_id == 3) {
+  } else if (instance_id == 3 && id != 1 && id != 2 && id != 3) {
     suffix = "_03";
   }
 
@@ -190,8 +190,6 @@ async function wip_data() {
     wip_result["recordsets"][0].map(async (record) => {
       const business_unit_id = record["business_unit_id"];
 
-      record["id"] = await add_suffix(record["id"], instance_id);
-
       let instance_id = "";
       if (
         business_unit_id == 1 ||
@@ -199,62 +197,53 @@ async function wip_data() {
         business_unit_id == 3
       ) {
         instance_id = String(business_unit_id);
-
-        record["business_unit_id"] = String(record["business_unit_id"]);
-        record["actual_business_unit_id"] = String(
-          record["actual_business_unit_id"]
-        );
-        record["customer_details_id"] = String(record["customer_details_id"]);
-        record["actual_customer_details_id"] = String(
-          record["actual_customer_details_id"]
-        );
-        record["location_id"] = String(record["location_id"]);
-        record["actual_location_id"] = String(record["actual_location_id"]);
       } else {
         instance_id =
           business_unit_data_pool[business_unit_id]["legal_entity_id"];
+      }
+      // ===
 
-        if (record["business_unit_id"]) {
-          record["business_unit_id"] = await add_suffix(
-            record["business_unit_id"],
-            instance_id
-          );
-        }
+      record["id"] = await add_suffix(record["id"], instance_id);
+      if (record["business_unit_id"]) {
+        record["business_unit_id"] = await add_suffix(
+          record["business_unit_id"],
+          instance_id
+        );
+      }
 
-        if (record["actual_business_unit_id"]) {
-          record["actual_business_unit_id"] = await add_suffix(
-            record["actual_business_unit_id"],
-            instance_id
-          );
-        }
+      if (record["actual_business_unit_id"]) {
+        record["actual_business_unit_id"] = await add_suffix(
+          record["actual_business_unit_id"],
+          instance_id
+        );
+      }
 
-        if (record["customer_details_id"]) {
-          record["customer_details_id"] = await add_suffix(
-            record["customer_details_id"],
-            instance_id
-          );
-        }
+      if (record["customer_details_id"]) {
+        record["customer_details_id"] = await add_suffix(
+          record["customer_details_id"],
+          instance_id
+        );
+      }
 
-        if (record["actual_customer_details_id"]) {
-          record["actual_customer_details_id"] = await add_suffix(
-            record["actual_customer_details_id"],
-            instance_id
-          );
-        }
+      if (record["actual_customer_details_id"]) {
+        record["actual_customer_details_id"] = await add_suffix(
+          record["actual_customer_details_id"],
+          instance_id
+        );
+      }
 
-        if (record["location_id"]) {
-          record["location_id"] = await add_suffix(
-            record["location_id"],
-            instance_id
-          );
-        }
+      if (record["location_id"]) {
+        record["location_id"] = await add_suffix(
+          record["location_id"],
+          instance_id
+        );
+      }
 
-        if (record["actual_location_id"]) {
-          record["actual_location_id"] = await add_suffix(
-            record["actual_location_id"],
-            instance_id
-          );
-        }
+      if (record["actual_location_id"]) {
+        record["actual_location_id"] = await add_suffix(
+          record["actual_location_id"],
+          instance_id
+        );
       }
 
       wip_final_data_pool.push(record);
