@@ -1,4 +1,3 @@
-const { select } = require("async");
 const create_sql_connection = require("./modules/create_sql_connection");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
 
