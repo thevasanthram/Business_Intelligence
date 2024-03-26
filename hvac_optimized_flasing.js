@@ -5606,9 +5606,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             invoice_type_id: "0",
             invoice_type_name: "default_invoice",
             job_details_id: "1",
+            actual_job_details_id: "1",
             project_id: "1",
             actual_project_id: "1",
-            actual_job_details_id: "1",
             business_unit_id: "1",
             actual_business_unit_id: "1",
             location_id: "1",
@@ -6163,90 +6163,39 @@ async function data_processor(data_lake, sql_request, table_list) {
               parseFloat(record["balance"]);
           }
 
-          if (
-            typeof record["id"] !== "string" ||
-            typeof invoice_type_id !== "string" ||
-            typeof job_details_id !== "string" ||
-            typeof actual_job_details_id !== "string" ||
-            typeof project_id !== "string" ||
-            typeof actual_project_id !== "string" ||
-            typeof business_unit_id !== "string" ||
-            typeof actual_business_unit_id !== "string" ||
-            typeof location_id !== "string" ||
-            typeof actual_location_id !== "string" ||
-            typeof customer_id !== "string" ||
-            typeof actual_customer_id !== "string"
-          ) {
-            console.log({
-              id: record["id"],
-              syncStatus: record["syncStatus"]
-                ? record["syncStatus"]
-                : "default",
-              date: invoice_date,
-              dueDate: dueDate,
-              subtotal: record["subTotal"] ? record["subTotal"] : 0,
-              tax: record["salesTax"] ? record["salesTax"] : 0,
-              total: record["total"] ? record["total"] : 0,
-              balance: record["balance"] ? record["balance"] : 0,
-              depositedOn: depositedOn,
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              invoice_type_id: invoice_type_id,
-              invoice_type_name: invoice_type_name,
-              job_details_id: job_details_id,
-              actual_job_details_id: actual_job_details_id,
-              project_id: project_id,
-              actual_project_id: actual_project_id,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              location_id: location_id,
-              actual_location_id: actual_location_id,
-              address_street: address_street,
-              address_unit: address_unit,
-              address_city: address_city,
-              address_state: address_state,
-              address_country: address_country,
-              address_zip: address_zip,
-              acutal_address_zip: acutal_address_zip,
-              customer_id: customer_id,
-              actual_customer_id: actual_customer_id,
-              customer_name: customer_name,
-            });
-          }
-
-          // invoice_final_data_pool.push({
-          //   id: record["id"],
-          //   syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
-          //   date: invoice_date,
-          //   dueDate: dueDate,
-          //   subtotal: record["subTotal"] ? record["subTotal"] : 0,
-          //   tax: record["salesTax"] ? record["salesTax"] : 0,
-          //   total: record["total"] ? record["total"] : 0,
-          //   balance: record["balance"] ? record["balance"] : 0,
-          //   depositedOn: depositedOn,
-          //   createdOn: createdOn,
-          //   modifiedOn: modifiedOn,
-          //   invoice_type_id: invoice_type_id,
-          //   invoice_type_name: invoice_type_name,
-          //   job_details_id: job_details_id,
-          //   actual_job_details_id: actual_job_details_id,
-          //   project_id: project_id,
-          //   actual_project_id: actual_project_id,
-          //   business_unit_id: business_unit_id,
-          //   actual_business_unit_id: actual_business_unit_id,
-          //   location_id: location_id,
-          //   actual_location_id: actual_location_id,
-          //   address_street: address_street,
-          //   address_unit: address_unit,
-          //   address_city: address_city,
-          //   address_state: address_state,
-          //   address_country: address_country,
-          //   address_zip: address_zip,
-          //   acutal_address_zip: acutal_address_zip,
-          //   customer_id: customer_id,
-          //   actual_customer_id: actual_customer_id,
-          //   customer_name: customer_name,
-          // });
+          invoice_final_data_pool.push({
+            id: record["id"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            date: invoice_date,
+            dueDate: dueDate,
+            subtotal: record["subTotal"] ? record["subTotal"] : 0,
+            tax: record["salesTax"] ? record["salesTax"] : 0,
+            total: record["total"] ? record["total"] : 0,
+            balance: record["balance"] ? record["balance"] : 0,
+            depositedOn: depositedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            invoice_type_id: invoice_type_id,
+            invoice_type_name: invoice_type_name,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_country: address_country,
+            address_zip: address_zip,
+            acutal_address_zip: acutal_address_zip,
+            customer_id: customer_id,
+            actual_customer_id: actual_customer_id,
+            customer_name: customer_name,
+          });
 
           let inventory_bill_amount = 0;
           let po_cost = 0;
