@@ -412,7 +412,7 @@ async function wip_data() {
     },
   };
 
-  const wip_query = "SELECT * FROM projects_wip_data;";
+  const wip_query = "SELECT * FROM projects_wip_data_duplicate;";
   const wip_result = await sql_request.query(wip_query);
 
   //   console.log(wip_result["recordsets"][0]);
