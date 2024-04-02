@@ -171,13 +171,19 @@ async function wip_data_duplicate() {
     },
   };
 
-  const business_unit_query = "SELECT * FROM business_unit;";
-  const business_result = await sql_request.query(business_unit_query);
+  const projects_query = "SELECT * FROM projects;";
+  const projects_result = await sql_request.query(projects_query);
 
-  const business_unit_data_pool = {};
-  business_result["recordsets"][0].map((record) => {
-    business_unit_data_pool[record["id"].split("_")[0]] = record;
+  const projects_data_pool = {};
+  projects_result["recordsets"][0].map((record) => {
+    if (!projects_data_pool[record["id"].split("_")[0]]) {
+      projects_data_pool[record["id"].split("_")[0]] = {};
+    }
+    projects_data_pool[record["id"].split("_")[0]][record["id"].split("_")[1]] =
+      record;
   });
+
+  console.log("projects_data_pool: ", projects_data_pool);
 
   const wip_query = "SELECT * FROM projects_wip_data;";
   const wip_result = await sql_request.query(wip_query);
@@ -186,61 +192,124 @@ async function wip_data_duplicate() {
 
   const wip_final_data_pool = [];
 
+  // await Promise.all(
+  //   wip_result["recordsets"][0].map(async (record) => {
+  //     const business_unit_id = record["business_unit_id"];
+
+  //     let instance_id = "";
+  //     if (
+  //       business_unit_id == 1 ||
+  //       business_unit_id == 2 ||
+  //       business_unit_id == 3
+  //     ) {
+  //       instance_id = String(business_unit_id);
+  //     } else {
+  //       instance_id =
+  //         business_unit_data_pool[business_unit_id]["legal_entity_id"];
+  //     }
+
+  //     record["id"] = await add_suffix(record["id"], instance_id);
+  //     if (record["business_unit_id"]) {
+  //       record["business_unit_id"] = await add_suffix(
+  //         record["business_unit_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     if (record["actual_business_unit_id"]) {
+  //       record["actual_business_unit_id"] = await add_suffix(
+  //         record["actual_business_unit_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     if (record["customer_details_id"]) {
+  //       record["customer_details_id"] = await add_suffix(
+  //         record["customer_details_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     if (record["actual_customer_details_id"]) {
+  //       record["actual_customer_details_id"] = await add_suffix(
+  //         record["actual_customer_details_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     if (record["location_id"]) {
+  //       record["location_id"] = await add_suffix(
+  //         record["location_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     if (record["actual_location_id"]) {
+  //       record["actual_location_id"] = await add_suffix(
+  //         record["actual_location_id"],
+  //         instance_id
+  //       );
+  //     }
+
+  //     wip_final_data_pool.push(record);
+  //   })
+  // );
+
   await Promise.all(
     wip_result["recordsets"][0].map(async (record) => {
       const business_unit_id = record["business_unit_id"];
 
       let instance_id = "";
-      if (
-        business_unit_id == 1 ||
-        business_unit_id == 2 ||
-        business_unit_id == 3
-      ) {
-        instance_id = String(business_unit_id);
+
+      const projects_all_instances = Object.keys(
+        projects_data_pool[record["id"].split("_")[0]]
+      );
+
+      if (projects_all_instances.includes(record["id"].split("_")[1])) {
+        instance_id = record["id"].split("_")[1];
       } else {
-        instance_id =
-          business_unit_data_pool[business_unit_id]["legal_entity_id"];
+        instance_id = projects_all_instances[0];
       }
 
-      record["id"] = await add_suffix(record["id"], instance_id);
+      record["id"] = await add_suffix(record["id"].split("_")[0], instance_id);
       if (record["business_unit_id"]) {
         record["business_unit_id"] = await add_suffix(
-          record["business_unit_id"],
+          record["business_unit_id"].split("_")[0],
           instance_id
         );
       }
 
       if (record["actual_business_unit_id"]) {
         record["actual_business_unit_id"] = await add_suffix(
-          record["actual_business_unit_id"],
+          record["actual_business_unit_id"].split("_")[0],
           instance_id
         );
       }
 
       if (record["customer_details_id"]) {
         record["customer_details_id"] = await add_suffix(
-          record["customer_details_id"],
+          record["customer_details_id"].split("_")[0],
           instance_id
         );
       }
 
       if (record["actual_customer_details_id"]) {
         record["actual_customer_details_id"] = await add_suffix(
-          record["actual_customer_details_id"],
+          record["actual_customer_details_id"].split("_")[0],
           instance_id
         );
       }
 
       if (record["location_id"]) {
         record["location_id"] = await add_suffix(
-          record["location_id"],
+          record["location_id"].split("_")[0],
           instance_id
         );
       }
 
       if (record["actual_location_id"]) {
         record["actual_location_id"] = await add_suffix(
-          record["actual_location_id"],
+          record["actual_location_id"].split("_")[0],
           instance_id
         );
       }
@@ -429,5 +498,5 @@ async function wip_data() {
   console.log("feedback: ", feedback);
 }
 
-wip_data();
-// wip_data_duplicate();
+// wip_data();
+wip_data_duplicate();
