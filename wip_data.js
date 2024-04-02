@@ -183,7 +183,7 @@ async function wip_data_duplicate() {
       record;
   });
 
-  console.log("projects_data_pool: ", projects_data_pool);
+  // console.log("projects_data_pool: ", projects_data_pool);
 
   const wip_query = "SELECT * FROM projects_wip_data;";
   const wip_result = await sql_request.query(wip_query);
@@ -498,5 +498,5 @@ async function wip_data() {
   console.log("feedback: ", feedback);
 }
 
-// wip_data();
-wip_data_duplicate();
+wip_data();
+// wip_data_duplicate();
