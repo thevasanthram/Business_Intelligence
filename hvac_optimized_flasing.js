@@ -870,6 +870,10 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
     },
   },
   projects_wip_data: {
@@ -6670,6 +6674,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             actualCompletionDate: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
+            legal_entity_id: "1",
           });
 
           final_data_pool.push({
@@ -6711,6 +6716,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             actualCompletionDate: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
+            legal_entity_id: "2",
           });
 
           final_data_pool.push({
@@ -6752,6 +6758,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             actualCompletionDate: "1999-01-01T00:00:00.00Z",
             createdOn: "1999-01-01T00:00:00.00Z",
             modifiedOn: "1999-01-01T00:00:00.00Z",
+            legal_entity_id: "3",
           });
         }
 
@@ -7018,6 +7025,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             actualCompletionDate: actualCompletionDate,
             createdOn: createdOn,
             modifiedOn: modifiedOn,
+            legal_entity_id: record["instance_id"],
           });
 
           const UTC_update_date = new Date(params_header["createdBefore"])

@@ -38,10 +38,10 @@ const api_collection = [
   //   api_group: "accounting",
   //   api_name: "invoices",
   // },
-  {
-    api_group: "accounting",
-    api_name: "export/inventory-bills",
-  },
+  // {
+  //   api_group: "accounting",
+  //   api_name: "export/inventory-bills",
+  // },
   // {
   //   api_group: "accounting",
   //   api_name: "payments",
@@ -166,10 +166,10 @@ const api_collection = [
   //   api_group: "jpm",
   //   api_name: "jobs",
   // },
-  // {
-  //   api_group: "jpm",
-  //   api_name: "projects",
-  // },
+  {
+    api_group: "jpm",
+    api_name: "projects",
+  },
   // {
   //   api_group: "jpm",
   //   api_name: "job-cancel-reasons",

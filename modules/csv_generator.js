@@ -72,6 +72,7 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
 
       // End the batch
       index += batchSize;
+      console.log("index: ", index, ` / ${modifed_data_pool.length} finished`);
 
       // Process the next batch in the next event loop iteration
       setImmediate(writeNextBatch);

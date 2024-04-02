@@ -312,9 +312,11 @@ CREATE TABLE projects(
   actualCompletionDate DATETIME2 NULL,
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
+  legal_entity_id NVARCHAR(20) NOT NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
+  FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
 )
 END;
 
