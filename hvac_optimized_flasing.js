@@ -2975,13 +2975,9 @@ async function data_processor(data_lake, sql_request, table_list) {
           Object.keys(data_pool).map(async (record_id) => {
             const record = data_pool[record_id];
 
-            const number_in_string = String(record["id"]);
+            // const number_in_string = String(record["id"]);
 
-            record["id"] = Number(number_in_string.slice(0, -3));
-
-            // console.log("id: ", record["id"]);
-            // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
-            // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
+            // record["id"] = Number(number_in_string.slice(0, -3));
 
             let trade_type = "DEF";
             let segment_type = "DEF";
@@ -3023,11 +3019,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               business = instance_code[record["instance_id"]];
             }
-
-            record["id"] = await add_suffix(
-              record["id"],
-              record["instance_id"]
-            );
 
             final_data_pool.push({
               id: String(record["id"]),
