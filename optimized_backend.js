@@ -87,7 +87,7 @@ const hvac_tables = {
     // manual entry
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       legal_name: {
@@ -128,7 +128,7 @@ const hvac_tables = {
     // settings business units
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       business_unit_name: {
@@ -160,15 +160,60 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       legal_entity_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
+      },
+    },
+  },
+  project_business_unit: {
+    // settings business units
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      trade_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      segment_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      revenue_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      legal_entity_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
       },
     },
   },
   employees: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -180,11 +225,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -192,7 +237,7 @@ const hvac_tables = {
   campaigns: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -212,7 +257,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       category_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       category_name: {
@@ -232,11 +277,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -244,7 +289,7 @@ const hvac_tables = {
   bookings: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -268,7 +313,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       bookingProviderId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       createdOn: {
@@ -304,23 +349,23 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       campaign_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_campaign_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -328,7 +373,7 @@ const hvac_tables = {
   customer_details: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -373,7 +418,7 @@ const hvac_tables = {
   location: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -417,11 +462,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       taxzone: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       zone_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       full_address: {
@@ -433,11 +478,11 @@ const hvac_tables = {
   gross_pay_items: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       payrollId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       amount: {
@@ -449,11 +494,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       projectId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoiceId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -461,7 +506,7 @@ const hvac_tables = {
   payrolls: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       burdenRate: {
@@ -473,7 +518,7 @@ const hvac_tables = {
   job_types: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       job_type_name: {
@@ -485,7 +530,7 @@ const hvac_tables = {
   returns: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       status: {
@@ -493,11 +538,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       purchaseOrderId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       jobId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       returnAmount: {
@@ -513,7 +558,7 @@ const hvac_tables = {
   purchase_order: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       status: {
@@ -525,6 +570,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -557,35 +606,35 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       vendor_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_vendor_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -593,7 +642,7 @@ const hvac_tables = {
   sales_details: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -601,11 +650,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       job_number: {
@@ -617,7 +666,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       soldBy: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       soldBy_name: {
@@ -665,11 +714,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       businessUnitName: {
@@ -677,27 +726,27 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -705,7 +754,7 @@ const hvac_tables = {
   projects: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       number: {
@@ -741,6 +790,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -793,27 +846,27 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       startDate: {
@@ -836,20 +889,168 @@ const hvac_tables = {
         data_type: "DATETIME2",
         constraint: { nullable: true },
       },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+    },
+  },
+  projects_wip_data: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billed_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sold_contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_returns: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      equipment_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      material_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      burden: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      startDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      targetCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      actualCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      UTC_update_date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
     },
   },
   project_managers: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       manager_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_manager_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -857,7 +1058,7 @@ const hvac_tables = {
   call_details: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       instance_id: {
@@ -873,11 +1074,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       createdOn: {
@@ -913,11 +1114,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       is_customer_active: {
@@ -973,7 +1174,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       campaign_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       campaign_category: {
@@ -1009,11 +1210,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       agent_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       agent_externalId: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       agent_name: {
@@ -1021,11 +1222,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       business_unit_active: {
@@ -1041,7 +1242,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       type_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       type_name: {
@@ -1057,15 +1258,15 @@ const hvac_tables = {
   job_details: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       job_type_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_type_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       job_number: {
@@ -1081,43 +1282,43 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       campaign_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_campaign_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       createdOn: {
@@ -1129,27 +1330,27 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       created_by_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       lead_call_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_lead_call_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       booking_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_booking_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       sold_by_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1157,15 +1358,15 @@ const hvac_tables = {
   appointments: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       appointmentNumber: {
@@ -1201,11 +1402,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1213,7 +1414,7 @@ const hvac_tables = {
   vendor: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -1226,10 +1427,90 @@ const hvac_tables = {
       },
     },
   },
+  inventory_bills: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      purchase_order_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_purchase_order_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      syncStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      referenceNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      vendorNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      billAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      taxAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      shippingAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      dueDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
   technician: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       name: {
@@ -1237,11 +1518,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1249,15 +1530,15 @@ const hvac_tables = {
   appointment_assignments: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       technician_name: {
@@ -1265,7 +1546,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       assigned_by_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       assignedOn: {
@@ -1281,19 +1562,19 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       appointment_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_appointment_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1301,15 +1582,15 @@ const hvac_tables = {
   non_job_appointments: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       start: {
@@ -1353,7 +1634,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       created_by_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1361,7 +1642,7 @@ const hvac_tables = {
   sku_details: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       sku_name: {
@@ -1377,11 +1658,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       vendor_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_vendor_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1389,7 +1670,7 @@ const hvac_tables = {
   invoice: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       syncStatus: {
@@ -1433,7 +1714,7 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       invoice_type_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_type_name: {
@@ -1441,35 +1722,35 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_business_unit_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_location_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       address_street: {
@@ -1501,11 +1782,11 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       customer_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_customer_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_name: {
@@ -1561,31 +1842,31 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1638,31 +1919,31 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1715,31 +1996,31 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_project_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_sku_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1747,7 +2028,7 @@ const hvac_tables = {
   gross_profit: {
     columns: {
       id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { primary: true, nullable: false },
       },
       accounts_receivable: {
@@ -1775,6 +2056,10 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -1847,27 +2132,35 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_job_details_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_invoice_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: false },
       },
       actual_technician_id: {
-        data_type: "INT",
+        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
     },
@@ -1882,6 +2175,9 @@ const hvac_tables_responses = {
     status: "",
   },
   business_unit: {
+    status: "",
+  },
+  project_business_unit: {
     status: "",
   },
   employees: {
@@ -1914,6 +2210,9 @@ const hvac_tables_responses = {
   projects: {
     status: "",
   },
+  projects_wip_data: {
+    status: "",
+  },
   project_managers: {
     status: "",
   },
@@ -1927,6 +2226,9 @@ const hvac_tables_responses = {
     status: "",
   },
   vendor: {
+    status: "",
+  },
+  inventory_bills: {
     status: "",
   },
   technician: {
@@ -2049,6 +2351,13 @@ const main_api_list = {
       table_name: "job_details",
     },
   ],
+  inventory_bills: [
+    {
+      api_group: "accounting",
+      api_name: "export/inventory-bills",
+      table_name: "inventory_bills",
+    },
+  ],
   sales_details: [
     {
       api_group: "sales",
@@ -2142,7 +2451,6 @@ const main_api_list = {
     },
   ],
 };
-
 let unique_us_zip_codes = {};
 
 function startStopwatch(task_name) {
@@ -2365,6 +2673,7 @@ async function azure_sql_operations(data_lake, table_list) {
       legal_entity,
       us_cities,
       business_unit,
+      project_business_unit,
       employees,
       campaigns,
       bookings,
@@ -2375,11 +2684,13 @@ async function azure_sql_operations(data_lake, table_list) {
       payrolls,
       job_types,
       projects,
+      projects_wip_data,
       project_managers,
       job_details,
       appointments,
       sales_details,
       vendor,
+      inventory_bills,
       technician,
       appointment_assignments,
       non_job_appointments,
@@ -2395,8 +2706,8 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["modifiedBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+        params_header["createdBefore"]
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2434,6 +2745,7 @@ async function azure_sql_operations(data_lake, table_list) {
 async function data_processor(data_lake, sql_request, table_list) {
   let invoice_cache = {};
   let purchase_order_cache = {};
+
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
@@ -2483,71 +2795,82 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
+        const batchSize = 50;
 
-          // console.log("id: ", record["id"]);
-          // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
-          // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
+        for (let i = 0; i < Object.keys(data_pool).length; i = i + batchSize) {
+          // processing campaingns data for pushing into db
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map((record_id) => {
+                const record = data_pool[record_id];
 
-          let trade_type = "DEF";
-          let segment_type = "DEF";
-          let revenue_type = "DEF";
-          let business = "DEF";
-          let business_unit_official_name = "DEF";
-          let business_unit_name = "DEF";
+                // console.log("id: ", record["id"]);
+                // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
+                // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
-          // let legal_entity_id = record["instance_id"];
-          const legal_entity_code = {
-            1: "EXP",
-            2: "PA",
-            3: "NMI",
-          };
+                let trade_type = "DEF";
+                let segment_type = "DEF";
+                let revenue_type = "DEF";
+                let business = "DEF";
+                let business_unit_official_name = "DEF";
+                let business_unit_name = "DEF";
 
-          if (kpi_data[record["id"]]) {
-            trade_type = kpi_data[record["id"]]["Trade"]
-              ? kpi_data[record["id"]]["Trade"]
-              : "DEF";
-            segment_type = kpi_data[record["id"]]["Segment"]
-              ? kpi_data[record["id"]]["Segment"]
-              : "DEF";
-            revenue_type = kpi_data[record["id"]]["Type"]
-              ? kpi_data[record["id"]]["Type"]
-              : "DEF";
-            // business = kpi_data[record["id"]]["Business"]
-            //   ? kpi_data[record["id"]]["Business"]
-            //   : "DEF";
-            business_unit_official_name = kpi_data[record["id"]]["Name"]
-              ? kpi_data[record["id"]]["Name"]
-              : "DEF";
-            business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
-              ? kpi_data[record["id"]]["Invoice Business Unit"]
-              : "DEF";
-            let legal_entity_group = kpi_data[record["id"]]["Business"]
-              ? kpi_data[record["id"]]["Business"]
-              : "DEF";
+                // let legal_entity_id = record["instance_id"];
+                const legal_entity_code = {
+                  1: "EXP",
+                  2: "PA",
+                  3: "NMI",
+                };
 
-            // if (legal_entity_group != "DEF") {
-            //   legal_entity_id = legal_entity_code[legal_entity_group];
-            // } else {
-            //   legal_entity_id = record["instance_id"];
-            // }
+                if (kpi_data[record["id"]]) {
+                  trade_type = kpi_data[record["id"]]["Trade"]
+                    ? kpi_data[record["id"]]["Trade"]
+                    : "DEF";
+                  segment_type = kpi_data[record["id"]]["Segment"]
+                    ? kpi_data[record["id"]]["Segment"]
+                    : "DEF";
+                  revenue_type = kpi_data[record["id"]]["Type"]
+                    ? kpi_data[record["id"]]["Type"]
+                    : "DEF";
+                  // business = kpi_data[record["id"]]["Business"]
+                  //   ? kpi_data[record["id"]]["Business"]
+                  //   : "DEF";
+                  business_unit_official_name = kpi_data[record["id"]]["Name"]
+                    ? kpi_data[record["id"]]["Name"]
+                    : "DEF";
+                  business_unit_name = kpi_data[record["id"]][
+                    "Invoice Business Unit"
+                  ]
+                    ? kpi_data[record["id"]]["Invoice Business Unit"]
+                    : "DEF";
+                  let legal_entity_group = kpi_data[record["id"]]["Business"]
+                    ? kpi_data[record["id"]]["Business"]
+                    : "DEF";
 
-            business = legal_entity_code[record["instance_id"]];
-          }
+                  // if (legal_entity_group != "DEF") {
+                  //   legal_entity_id = legal_entity_code[legal_entity_group];
+                  // } else {
+                  //   legal_entity_id = record["instance_id"];
+                  // }
 
-          final_data_pool.push({
-            id: record["id"],
-            business_unit_name: business_unit_name,
-            business_unit_official_name: business_unit_official_name,
-            trade_type: trade_type,
-            segment_type: segment_type,
-            revenue_type: revenue_type,
-            business: business,
-            is_active: record["active"] ? 1 : 0,
-            legal_entity_id: record["instance_id"],
-          });
-        });
+                  business = legal_entity_code[record["instance_id"]];
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  business_unit_name: business_unit_name,
+                  business_unit_official_name: business_unit_official_name,
+                  trade_type: trade_type,
+                  segment_type: segment_type,
+                  revenue_type: revenue_type,
+                  business: business,
+                  is_active: record["active"] ? 1 : 0,
+                  legal_entity_id: record["instance_id"],
+                });
+              })
+          );
+        }
 
         console.log("business unit data: ", final_data_pool.length);
 
