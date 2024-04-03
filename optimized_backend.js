@@ -2792,85 +2792,90 @@ async function data_processor(data_lake, sql_request, table_list) {
         const data_pool =
           data_lake[api_name]["settings__business-units"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
+        const project_business_unit_header_data =
+          hvac_tables["project_business_unit"]["columns"];
 
         let final_data_pool = [];
+        let project_business_unit_final_data_pool = [];
 
-        const batchSize = 50;
+        // processing campaingns data for pushing into db
+        Object.keys(data_pool).map((record_id) => {
+          const record = data_pool[record_id];
 
-        for (let i = 0; i < Object.keys(data_pool).length; i = i + batchSize) {
-          // processing campaingns data for pushing into db
-          await Promise.all(
-            Object.keys(data_pool)
-              .slice(i, i + batchSize)
-              .map((record_id) => {
-                const record = data_pool[record_id];
+          // console.log("id: ", record["id"]);
+          // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
+          // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
 
-                // console.log("id: ", record["id"]);
-                // console.log("Acc type", kpi_data[record["id"]]["Account Type"]);
-                // console.log("Trade type", kpi_data[record["id"]]["Trade Type"]);
+          let trade_type = "DEF";
+          let segment_type = "DEF";
+          let revenue_type = "DEF";
+          let business = "DEF";
+          let business_unit_official_name = "DEF";
+          let business_unit_name = "DEF";
 
-                let trade_type = "DEF";
-                let segment_type = "DEF";
-                let revenue_type = "DEF";
-                let business = "DEF";
-                let business_unit_official_name = "DEF";
-                let business_unit_name = "DEF";
+          // let legal_entity_id = record["instance_id"];
+          const legal_entity_code = {
+            1: "EXP",
+            2: "PA",
+            3: "NMI",
+          };
 
-                // let legal_entity_id = record["instance_id"];
-                const legal_entity_code = {
-                  1: "EXP",
-                  2: "PA",
-                  3: "NMI",
-                };
+          if (kpi_data[record["id"]]) {
+            trade_type = kpi_data[record["id"]]["Trade"]
+              ? kpi_data[record["id"]]["Trade"]
+              : "DEF";
+            segment_type = kpi_data[record["id"]]["Segment"]
+              ? kpi_data[record["id"]]["Segment"]
+              : "DEF";
+            revenue_type = kpi_data[record["id"]]["Type"]
+              ? kpi_data[record["id"]]["Type"]
+              : "DEF";
+            // business = kpi_data[record["id"]]["Business"]
+            //   ? kpi_data[record["id"]]["Business"]
+            //   : "DEF";
+            business_unit_official_name = kpi_data[record["id"]]["Name"]
+              ? kpi_data[record["id"]]["Name"]
+              : "DEF";
+            business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
+              ? kpi_data[record["id"]]["Invoice Business Unit"]
+              : "DEF";
+            let legal_entity_group = kpi_data[record["id"]]["Business"]
+              ? kpi_data[record["id"]]["Business"]
+              : "DEF";
 
-                if (kpi_data[record["id"]]) {
-                  trade_type = kpi_data[record["id"]]["Trade"]
-                    ? kpi_data[record["id"]]["Trade"]
-                    : "DEF";
-                  segment_type = kpi_data[record["id"]]["Segment"]
-                    ? kpi_data[record["id"]]["Segment"]
-                    : "DEF";
-                  revenue_type = kpi_data[record["id"]]["Type"]
-                    ? kpi_data[record["id"]]["Type"]
-                    : "DEF";
-                  // business = kpi_data[record["id"]]["Business"]
-                  //   ? kpi_data[record["id"]]["Business"]
-                  //   : "DEF";
-                  business_unit_official_name = kpi_data[record["id"]]["Name"]
-                    ? kpi_data[record["id"]]["Name"]
-                    : "DEF";
-                  business_unit_name = kpi_data[record["id"]][
-                    "Invoice Business Unit"
-                  ]
-                    ? kpi_data[record["id"]]["Invoice Business Unit"]
-                    : "DEF";
-                  let legal_entity_group = kpi_data[record["id"]]["Business"]
-                    ? kpi_data[record["id"]]["Business"]
-                    : "DEF";
+            // if (legal_entity_group != "DEF") {
+            //   legal_entity_id = legal_entity_code[legal_entity_group];
+            // } else {
+            //   legal_entity_id = record["instance_id"];
+            // }
 
-                  // if (legal_entity_group != "DEF") {
-                  //   legal_entity_id = legal_entity_code[legal_entity_group];
-                  // } else {
-                  //   legal_entity_id = record["instance_id"];
-                  // }
+            business = legal_entity_code[record["instance_id"]];
+          }
 
-                  business = legal_entity_code[record["instance_id"]];
-                }
+          final_data_pool.push({
+            id: record["id"],
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            trade_type: trade_type,
+            segment_type: segment_type,
+            revenue_type: revenue_type,
+            business: business,
+            is_active: record["active"] ? 1 : 0,
+            legal_entity_id: record["instance_id"],
+          });
 
-                final_data_pool.push({
-                  id: record["id"],
-                  business_unit_name: business_unit_name,
-                  business_unit_official_name: business_unit_official_name,
-                  trade_type: trade_type,
-                  segment_type: segment_type,
-                  revenue_type: revenue_type,
-                  business: business,
-                  is_active: record["active"] ? 1 : 0,
-                  legal_entity_id: record["instance_id"],
-                });
-              })
-          );
-        }
+          project_business_unit_final_data_pool.push({
+            id: record["id"],
+            business_unit_name: business_unit_name,
+            business_unit_official_name: business_unit_official_name,
+            trade_type: trade_type,
+            segment_type: segment_type,
+            revenue_type: revenue_type,
+            business: business,
+            is_active: record["active"] ? 1 : 0,
+            legal_entity_id: record["instance_id"],
+          });
+        });
 
         console.log("business unit data: ", final_data_pool.length);
 
@@ -2909,6 +2914,34 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["business_unit"]["status"] = "success";
+        }
+
+        if (project_business_unit_final_data_pool.length > 0) {
+          do {
+            hvac_tables_responses["project_business_unit"]["status"] =
+              await hvac_merge_insertion(
+                sql_request,
+                project_business_unit_final_data_pool,
+                project_business_unit_header_data,
+                "project_business_unit"
+              );
+          } while (
+            hvac_tables_responses["project_business_unit"]["status"] !=
+            "success"
+          );
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_business_unit = '${hvac_tables_responses["project_business_unit"]["status"]}' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
+        } else {
+          hvac_tables_responses["project_business_unit"]["status"] = "success";
         }
 
         delete data_lake[api_name];
@@ -2961,14 +2994,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         console.log("employees data: ", final_data_pool.length);
-
-        // console.log("final data pool", final_data_pool);
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
 
         if (final_data_pool.length > 0) {
           do {
@@ -3043,7 +3068,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   modifiedOn = "2001-01-01T00:00:00.00Z";
                 }
 
-                let category_id = 0;
+                let category_id = "0";
                 let category_name = "default";
                 let is_category_active = 0;
                 if (record["category"]) {
@@ -3140,133 +3165,140 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        await Promise.all(
-          Object.keys(data_pool).map(async (record_id) => {
-            const record = data_pool[record_id];
+        const batchSize = 100;
 
-            let start = "2000-01-01T00:00:00.00Z";
+        for (let i = 0; i < Object.keys(data_pool).length; i = i + batchSize) {
+          await Promise.all(
+            Object.keys(data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record_id) => {
+                const record = data_pool[record_id];
 
-            if (record["start"]) {
-              if (
-                new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                start = record["start"];
-              }
-            } else {
-              start = "2001-01-01T00:00:00.00Z";
-            }
+                let start = "2000-01-01T00:00:00.00Z";
 
-            let createdOn = "2000-01-01T00:00:00.00Z";
+                if (record["start"]) {
+                  if (
+                    new Date(record["start"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    start = record["start"];
+                  }
+                } else {
+                  start = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["createdOn"]) {
-              if (
-                new Date(record["createdOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                createdOn = record["createdOn"];
-              }
-            } else {
-              createdOn = "2001-01-01T00:00:00.00Z";
-            }
+                let createdOn = "2000-01-01T00:00:00.00Z";
 
-            let modifiedOn = "2000-01-01T00:00:00.00Z";
+                if (record["createdOn"]) {
+                  if (
+                    new Date(record["createdOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    createdOn = record["createdOn"];
+                  }
+                } else {
+                  createdOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            if (record["modifiedOn"]) {
-              if (
-                new Date(record["modifiedOn"]) >
-                new Date("2000-01-01T00:00:00.00Z")
-              ) {
-                modifiedOn = record["modifiedOn"];
-              }
-            } else {
-              modifiedOn = "2001-01-01T00:00:00.00Z";
-            }
+                let modifiedOn = "2000-01-01T00:00:00.00Z";
 
-            let address_street = "default";
-            let address_unit = "default";
-            let address_city = "default";
-            let address_state = "default";
-            let address_zip = "default";
-            let address_country = "default";
-            if (record["address"]) {
-              address_street = record["address"]["street"]
-                ? record["address"]["street"]
-                : "default";
-              address_unit = record["address"]["unit"]
-                ? record["address"]["unit"]
-                : "default";
-              address_city = record["address"]["city"]
-                ? record["address"]["city"]
-                : "default";
-              address_state = record["address"]["state"]
-                ? record["address"]["state"]
-                : "default";
-              address_zip = record["address"]["zip"]
-                ? record["address"]["zip"]
-                : "default";
-              address_country = record["address"]["country"]
-                ? record["address"]["country"]
-                : "default";
-            }
+                if (record["modifiedOn"]) {
+                  if (
+                    new Date(record["modifiedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    modifiedOn = record["modifiedOn"];
+                  }
+                } else {
+                  modifiedOn = "2001-01-01T00:00:00.00Z";
+                }
 
-            let business_unit_id = record["instance_id"];
-            let actual_business_unit_id = record["businessUnitId"]
-              ? record["businessUnitId"]
-              : record["instance_id"];
+                let address_street = "default";
+                let address_unit = "default";
+                let address_city = "default";
+                let address_state = "default";
+                let address_zip = "default";
+                let address_country = "default";
+                if (record["address"]) {
+                  address_street = record["address"]["street"]
+                    ? record["address"]["street"]
+                    : "default";
+                  address_unit = record["address"]["unit"]
+                    ? record["address"]["unit"]
+                    : "default";
+                  address_city = record["address"]["city"]
+                    ? record["address"]["city"]
+                    : "default";
+                  address_state = record["address"]["state"]
+                    ? record["address"]["state"]
+                    : "default";
+                  address_zip = record["address"]["zip"]
+                    ? record["address"]["zip"]
+                    : "default";
+                  address_country = record["address"]["country"]
+                    ? record["address"]["country"]
+                    : "default";
+                }
 
-            // checking business unit availlable or not for mapping
-            const is_business_unit_available = await sql_request.query(
-              `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-            );
+                let business_unit_id = record["instance_id"];
+                let actual_business_unit_id = record["businessUnitId"]
+                  ? record["businessUnitId"]
+                  : record["instance_id"];
 
-            if (is_business_unit_available["recordset"].length > 0) {
-              business_unit_id = record["businessUnitId"];
-            }
+                // checking business unit availlable or not for mapping
+                const is_business_unit_available = await sql_request.query(
+                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                );
 
-            let campaign_id = record["instance_id"];
-            let actual_campaign_id = record["campaignId"]
-              ? record["campaignId"]
-              : record["campaignId"];
+                if (is_business_unit_available["recordset"].length > 0) {
+                  business_unit_id = record["businessUnitId"];
+                }
 
-            // checking campaignId availlable or not for mapping
-            const is_campaigns_available = await sql_request.query(
-              `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
-            );
+                let campaign_id = record["instance_id"];
+                let actual_campaign_id = record["campaignId"]
+                  ? record["campaignId"]
+                  : record["campaignId"];
 
-            if (is_campaigns_available["recordset"].length > 0) {
-              campaign_id = record["campaignId"];
-            }
+                // checking campaignId availlable or not for mapping
+                const is_campaigns_available = await sql_request.query(
+                  `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
+                );
 
-            final_data_pool.push({
-              id: record["id"],
-              name: record["name"] ? record["name"] : "default",
-              source: record["source"] ? record["source"] : "default",
-              status: record["status"] ? record["status"] : "default",
-              customer_type: record["customerType"]
-                ? record["customerType"]
-                : "default",
-              start: start,
-              bookingProviderId: record["bookingProviderId"]
-                ? record["bookingProviderId"]
-                : record["instance_id"],
-              createdOn: createdOn,
-              modifiedOn: modifiedOn,
-              address_street: address_street,
-              address_unit: address_unit,
-              address_city: address_city,
-              address_state: address_state,
-              address_zip: address_zip,
-              address_country: address_country,
-              business_unit_id: business_unit_id,
-              actual_business_unit_id: actual_business_unit_id,
-              campaign_id: campaign_id,
-              actual_campaign_id: actual_campaign_id,
-              job_details_id: record["jobId"]
-                ? record["jobId"]
-                : record["instance_id"],
-            });
-          })
-        );
+                if (is_campaigns_available["recordset"].length > 0) {
+                  campaign_id = record["campaignId"];
+                }
+
+                final_data_pool.push({
+                  id: record["id"],
+                  name: record["name"] ? record["name"] : "default",
+                  source: record["source"] ? record["source"] : "default",
+                  status: record["status"] ? record["status"] : "default",
+                  customer_type: record["customerType"]
+                    ? record["customerType"]
+                    : "default",
+                  start: start,
+                  bookingProviderId: record["bookingProviderId"]
+                    ? record["bookingProviderId"]
+                    : record["instance_id"],
+                  createdOn: createdOn,
+                  modifiedOn: modifiedOn,
+                  address_street: address_street,
+                  address_unit: address_unit,
+                  address_city: address_city,
+                  address_state: address_state,
+                  address_zip: address_zip,
+                  address_country: address_country,
+                  business_unit_id: business_unit_id,
+                  actual_business_unit_id: actual_business_unit_id,
+                  campaign_id: campaign_id,
+                  actual_campaign_id: actual_campaign_id,
+                  job_details_id: record["jobId"]
+                    ? record["jobId"]
+                    : record["instance_id"],
+                });
+              })
+          );
+        }
 
         console.log("bookings data: ", final_data_pool.length);
 
@@ -3478,9 +3510,22 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
+          const full_address = [
+            address_street,
+            address_city,
+            address_state,
+            address_zip,
+          ]
+            .map((address_data) => {
+              if (address_data) {
+                return address_data;
+              }
+            })
+            .join(" ");
+
           final_data_pool.push({
             id: record["id"],
-            name: record["name"],
+            name: record["name"] ? record["name"] : "default",
             street: address_street,
             unit: address_unit,
             city: address_city,
@@ -3490,8 +3535,13 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_address_zip: acutal_address_zip,
             latitude: latitude,
             longitude: longitude,
-            taxzone: record["taxZoneId"] ? record["taxZoneId"] : 0,
-            zone_id: record["zoneId"] ? record["zoneId"] : 0,
+            taxzone: record["taxZoneId"]
+              ? record["taxZoneId"]
+              : record["instance_id"],
+            zone_id: record["zoneId"]
+              ? record["zoneId"]
+              : record["instance_id"],
+            full_address: full_address,
           });
         });
 
