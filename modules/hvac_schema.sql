@@ -665,6 +665,8 @@ CREATE TABLE cogs_labor (
   actual_invoice_id NVARCHAR(20) NULL,
   project_id NVARCHAR(20) NOT NULL,
   actual_project_id NVARCHAR(20) NULL,
+  payrollId NVARCHAR(20) NOT NULL,
+  acutal_payrollId NVARCHAR(20) NULL,
   technician_id NVARCHAR(20) NOT NULL,
   actual_technician_id NVARCHAR(20) NULL,
   FOREIGN KEY (job_details_id) REFERENCES job_details (id),

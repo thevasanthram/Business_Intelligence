@@ -2136,6 +2136,14 @@ const hvac_tables = {
         data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
+      payrollId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      acutal_payrollId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
       technician_id: {
         data_type: "NVARCHAR20",
         constraint: { nullable: false },
@@ -9330,6 +9338,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_invoice_id: "1",
             project_id: "1",
             actual_project_id: "1",
+            payrollId: "1",
+            acutal_payrollId: "1",
             technician_id: "1",
             actual_technician_id: "1",
           });
@@ -9347,6 +9357,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_invoice_id: "2",
             project_id: "2",
             actual_project_id: "2",
+            payrollId: "2",
+            acutal_payrollId: "2",
             technician_id: "2",
             actual_technician_id: "2",
           });
@@ -9364,6 +9376,8 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_invoice_id: "3",
             project_id: "3",
             actual_project_id: "3",
+            payrollId: "3",
+            acutal_payrollId: "3",
             technician_id: "3",
             actual_technician_id: "3",
           });
@@ -9408,6 +9422,16 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
+          let payrollId = record["instance_id"];
+          let acutal_payrollId = record["payrollId"]
+            ? record["payrollId"]
+            : record["instance_id"];
+          if (record["payrollId"]) {
+            if (payrolls_data_pool[record["payrollId"]]) {
+              payrollId = record["payrollId"];
+            }
+          }
+
           let technician_id = record["instance_id"];
           let actual_technician_id = record["employeeId"]
             ? record["employeeId"]
@@ -9433,6 +9457,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_invoice_id: actual_invoice_id,
             project_id: project_id,
             actual_project_id: actual_project_id,
+            payrollId: payrollId,
+            acutal_payrollId: acutal_payrollId,
+            technician_id: technician_id,
             actual_technician_id: actual_technician_id,
           });
         });
