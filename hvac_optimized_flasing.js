@@ -7216,13 +7216,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                     break;
                   }
-                  case "default": {
-                    default_val += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
                 }
 
                 cogs_services_final_data_pool.push({
