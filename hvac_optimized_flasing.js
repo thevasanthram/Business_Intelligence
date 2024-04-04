@@ -7193,31 +7193,6 @@ async function data_processor(data_lake, sql_request, table_list) {
                   sku_details_id = items_record["skuId"];
                 }
 
-                // for gross profit
-                switch (generalLedgerAccounttype) {
-                  case "Accounts Receivable": {
-                    accounts_receivable += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Current Liability": {
-                    current_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                  case "Membership Liability": {
-                    membership_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                }
-
                 cogs_services_final_data_pool.push({
                   quantity: items_record["quantity"]
                     ? items_record["quantity"]
@@ -7246,30 +7221,9 @@ async function data_processor(data_lake, sql_request, table_list) {
                   actual_sku_details_id: actual_sku_details_id,
                 });
               }
-
-              // for gross profit
-              switch (generalLedgerAccounttype) {
-                case "Expense": {
-                  expense += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  break;
-                }
-                case "Income": {
-                  income += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  break;
-                }
-              }
             });
           }
 
-          let revenue = parseFloat(record["total"])
-            ? parseFloat(record["total"])
-            : 0;
         });
 
         console.log("invoice data: ", invoice_final_data_pool.length);
