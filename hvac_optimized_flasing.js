@@ -7533,7 +7533,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             paid_duration: record["paidDurationHours"]
               ? record["paidDurationHours"]
               : 0,
-            burden_rate: burden_rate,
             labor_cost: record["amount"] ? record["amount"] : 0,
             activity: record["activity"] ? record["activity"] : "default",
             paid_time_type: record["paidTimeType"]
