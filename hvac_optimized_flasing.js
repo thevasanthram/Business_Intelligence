@@ -6492,7 +6492,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         const cogs_equipment_header_data =
           hvac_tables["cogs_equipment"]["columns"];
         const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
-        const gross_profit_header_data = hvac_tables["gross_profit"]["columns"];
 
         // fetching job_details data from db
         // ----------------
@@ -7380,32 +7379,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET cogs_service = '${hvac_tables_responses["cogs_service"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        console.log("gross_profit data: ", gross_profit_final_data_pool.length);
-        if (gross_profit_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["gross_profit"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                gross_profit_final_data_pool,
-                gross_profit_header_data,
-                "gross_profit"
-              );
-          } while (
-            hvac_tables_responses["gross_profit"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET gross_profit = '${hvac_tables_responses["gross_profit"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
