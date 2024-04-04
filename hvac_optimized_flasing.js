@@ -456,34 +456,6 @@ const hvac_tables = {
       },
     },
   },
-  gross_pay_items: {
-    columns: {
-      id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      payrollId: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      amount: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      paidDurationHours: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      projectId: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      invoiceId: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-    },
-  },
   payrolls: {
     columns: {
       id: {
@@ -551,14 +523,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       tax: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      inventory_bill_amount: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_returns: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -748,90 +712,6 @@ const hvac_tables = {
       },
       status: {
         data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      billed_amount: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      balance: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      contract_value: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      sold_contract_value: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      budget_expense: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      budget_hours: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      inventory_bill_amount: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_returns: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      equipment_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      material_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      labor_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      labor_hours: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      burden: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      accounts_receivable: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      expense: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      income: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      current_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      membership_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      business_unit_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: false },
-      },
-      actual_business_unit_id: {
-        data_type: "NVARCHAR20",
         constraint: { nullable: true },
       },
       customer_details_id: {
@@ -1047,10 +927,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       job_number: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      status: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -1508,118 +1384,6 @@ const hvac_tables = {
       },
     },
   },
-  appointment_assignments: {
-    columns: {
-      id: {
-        data_type: "NVARCHAR20",
-        constraint: { primary: true, nullable: false },
-      },
-      technician_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: false },
-      },
-      actual_technician_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      technician_name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      assigned_by_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      assignedOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      status: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      is_paused: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      job_details_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: false },
-      },
-      actual_job_details_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      appointment_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: false },
-      },
-      actual_appointment_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-    },
-  },
-  non_job_appointments: {
-    columns: {
-      id: {
-        data_type: "NVARCHAR20",
-        constraint: { primary: true, nullable: false },
-      },
-      technician_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: false },
-      },
-      actual_technician_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-      start: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      name: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      duration: {
-        data_type: "NVARCHAR",
-        constraint: { nullable: true },
-      },
-      timesheetCodeId: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      clearDispatchBoard: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      clearTechnicianView: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      removeTechnicianFromCapacityPlanning: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      is_all_day: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      is_active: {
-        data_type: "TINYINT",
-        constraint: { nullable: true },
-      },
-      createdOn: {
-        data_type: "DATETIME2",
-        constraint: { nullable: true },
-      },
-      created_by_id: {
-        data_type: "NVARCHAR20",
-        constraint: { nullable: true },
-      },
-    },
-  },
   sku_details: {
     columns: {
       id: {
@@ -2006,86 +1770,6 @@ const hvac_tables = {
       },
     },
   },
-  gross_profit: {
-    columns: {
-      id: {
-        data_type: "NVARCHAR20",
-        constraint: { primary: true, nullable: false },
-      },
-      accounts_receivable: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      expense: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      income: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      current_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      membership_liability: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      default: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      total: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      inventory_bill_amount: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      po_returns: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      equipment_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      material_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      labor_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      burden: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      // gross_profit: {
-      //   data_type: "DECIMAL",
-      //   constraint: { nullable: true },
-      // },
-      // gross_margin: {
-      //   data_type: "DECIMAL",
-      //   constraint: { nullable: true },
-      // },
-      units: {
-        data_type: "INT",
-        constraint: { nullable: true },
-      },
-      labor_hours: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-    },
-  },
   cogs_labor: {
     columns: {
       paid_duration: {
@@ -2097,10 +1781,6 @@ const hvac_tables = {
         constraint: { nullable: true },
       },
       labor_cost: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
-      burden_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
@@ -2187,9 +1867,6 @@ const hvac_tables_responses = {
   location: {
     status: "",
   },
-  gross_pay_items: {
-    status: "",
-  },
   payrolls: {
     status: "",
   },
@@ -2217,16 +1894,7 @@ const hvac_tables_responses = {
   vendor: {
     status: "",
   },
-  inventory_bills: {
-    status: "",
-  },
   technician: {
-    status: "",
-  },
-  appointment_assignments: {
-    status: "",
-  },
-  non_job_appointments: {
     status: "",
   },
   sku_details: {
@@ -2247,10 +1915,10 @@ const hvac_tables_responses = {
   invoice: {
     status: "",
   },
-  gross_profit: {
+  purchase_order: {
     status: "",
   },
-  purchase_order: {
+  inventory_bills: {
     status: "",
   },
   returns: {
@@ -2373,20 +2041,6 @@ const main_api_list = {
       api_group: "settings",
       api_name: "technicians",
       table_name: "technician",
-    },
-  ],
-  appointment_assignments: [
-    {
-      api_group: "dispatch",
-      api_name: "appointment-assignments",
-      table_name: "appointment_assignments",
-    },
-  ],
-  non_job_appointments: [
-    {
-      api_group: "dispatch",
-      api_name: "non-job-appointments",
-      table_name: "non_job_appointments",
     },
   ],
   sku_details: [
@@ -2682,7 +2336,6 @@ async function azure_sql_operations(data_lake, table_list) {
       customer_details,
       call_details,
       [location],
-      gross_pay_items,
       payrolls,
       job_types,
       projects,
@@ -2694,8 +2347,6 @@ async function azure_sql_operations(data_lake, table_list) {
       vendor,
       inventory_bills,
       technician,
-      appointment_assignments,
-      non_job_appointments,
       sku_details,
       invoice,
       cogs_material,
@@ -2704,12 +2355,11 @@ async function azure_sql_operations(data_lake, table_list) {
       cogs_labor,
       returns,
       purchase_order,
-      gross_profit,
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
         params_header["createdBefore"]
-      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
+      }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
     const result = await sql_request.query(auto_update_query);
@@ -2745,19 +2395,6 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  let invoice_cache = {};
-  let project_cache = {};
-  let purchase_order_returns_cache = {};
-  let inventory_bills_cache = {};
-
-  // experimenting invoices to have future dates
-  // data_lake["invoice"]["accounting__invoices"]["data_pool"][83944291][
-  //   "invoiceDate"
-  // ] = "2024-04-29";
-  // data_lake["invoice"]["accounting__invoices"]["data_pool"][80605743][
-  //   "invoiceDate"
-  // ] = "2025-01-01";
-
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     const api_name = table_list[api_count];
 
@@ -3962,72 +3599,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         break;
       }
 
-      case "gross_pay_items": {
-        const table_name = "gross_pay_items";
-        const data_pool =
-          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        let final_data_pool = [];
-
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          final_data_pool.push({
-            id: record["id"],
-            payrollId: record["payrollId"],
-            amount: record["amount"],
-            paidDurationHours: record["paidDurationHours"],
-            projectId: record["projectId"],
-            invoiceId: record["invoiceId"],
-          });
-        });
-
-        // console.log("final_data_pool: ", final_data_pool);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        console.log("gross_pay_items data: ", final_data_pool.length);
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["gross_pay_items"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["gross_pay_items"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET gross_pay_items = '${hvac_tables_responses["gross_pay_items"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        // delete data_lake["cogs_labor"]["payroll__gross_pay_items"];
-
-        break;
-      }
-
       case "payrolls": {
         const table_name = "payrolls";
         const data_pool =
@@ -4083,7 +3654,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        // delete data_lake["cogs_labor"]["payroll__payrolls"];
+        delete data_lake["cogs_labor"]["payroll__payrolls"];
 
         break;
       }
@@ -4169,26 +3740,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         const table_name = "returns";
         const data_pool =
           data_lake["returns"]["inventory__returns"]["data_pool"];
-        const purchase_order_data_pool =
-          data_lake["purchase_order"]["inventory__purchase-orders"][
-            "data_pool"
-          ];
 
         const header_data = hvac_tables[table_name]["columns"];
 
         const returns_final_data_pool = [];
-
-        purchase_order_returns_cache["1"] = {
-          returnAmount: 0,
-        };
-
-        purchase_order_returns_cache["2"] = {
-          returnAmount: 0,
-        };
-
-        purchase_order_returns_cache["3"] = {
-          returnAmount: 0,
-        };
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
@@ -4200,28 +3755,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           const taxAmount = record["taxAmount"]
             ? parseFloat(record["taxAmount"])
             : 0;
-
-          if (record["purchaseOrderId"]) {
-            if (!purchase_order_returns_cache[record["purchaseOrderId"]]) {
-              purchase_order_returns_cache[record["purchaseOrderId"]] = {
-                returnAmount: 0,
-              };
-            }
-
-            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
-              purchase_order_returns_cache[record["purchaseOrderId"]][
-                "returnAmount"
-              ] += returnAmount;
-            } else {
-              purchase_order_returns_cache[record["instance_id"]][
-                "returnAmount"
-              ] += returnAmount;
-            }
-          } else {
-            purchase_order_returns_cache[record["instance_id"]][
-              "returnAmount"
-            ] += returnAmount;
-          }
 
           returns_final_data_pool.push({
             id: record["id"],
@@ -4268,16 +3801,13 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "purchase_order": {
         const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool = data_lake["projects"]["jpm__projects"]["data_pool"];
+        const projects_data_pool =
+          data_lake["projects"]["jpm__projects"]["data_pool"];
         const invoice_data_pool =
           data_lake["invoice"]["accounting__invoices"]["data_pool"];
         let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
         let vendors_data_pool =
           data_lake["vendor"]["inventory__vendors"]["data_pool"];
-        let bills_data_pool =
-          data_lake["inventory_bills"]["accounting__export/inventory-bills"][
-            "data_pool"
-          ];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -4299,170 +3829,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
-        // inventory-bills
-
-        let inventory_bills_final_data_pool = [];
-        // for accomodating null po id's values
-        project_cache["inventory_bills_purchase_order"] = {
-          1: {
-            inventory_bill_amount: 0,
-          },
-          2: {
-            inventory_bill_amount: 0,
-          },
-          3: {
-            inventory_bill_amount: 0,
-          },
-        };
-
-        // processing bills data pool
-        Object.keys(bills_data_pool).map((record_id) => {
-          const record = bills_data_pool[record_id];
-
-          if (record["purchaseOrderId"]) {
-            if (
-              !project_cache["inventory_bills_purchase_order"][
-                record["purchaseOrderId"]
-              ]
-            ) {
-              project_cache["inventory_bills_purchase_order"][
-                record["purchaseOrderId"]
-              ] = {
-                inventory_bill_amount: 0,
-              };
-            }
-
-            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
-              project_cache["inventory_bills_purchase_order"][
-                record["purchaseOrderId"]
-              ]["inventory_bill_amount"] += record["billAmount"]
-                ? parseFloat(record["billAmount"])
-                : 0;
-            } else {
-              project_cache["inventory_bills_purchase_order"][
-                record["instance_id"]
-              ]["inventory_bill_amount"] += record["billAmount"]
-                ? parseFloat(record["billAmount"])
-                : 0;
-            }
-          } else {
-            project_cache["inventory_bills_purchase_order"][
-              record["instance_id"]
-            ]["inventory_bill_amount"] += record["billAmount"]
-              ? parseFloat(record["billAmount"])
-              : 0;
-          }
-
-          let purchase_order_id = record["instance_id"];
-          let actual_purchase_order_id = record["purchaseOrderId"]
-            ? record["purchaseOrderId"]
-            : record["instance_id"];
-
-          if (record["purchaseOrderId"]) {
-            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
-              purchase_order_id = record["purchaseOrderId"];
-            }
-          }
-
-          let billDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["billDate"]) {
-            if (
-              new Date(record["billDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              billDate = record["billDate"];
-            }
-          } else {
-            billDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let dueDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["dueDate"]) {
-            if (
-              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              dueDate = record["dueDate"];
-            }
-          } else {
-            dueDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"]
-              ? record["businessUnit"]["id"]
-              : record["instance_id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
-
-          let vendor_id = record["instance_id"];
-          let actual_vendor_id = record["instance_id"];
-
-          if (record["vendor"]) {
-            actual_vendor_id = record["vendor"]["id"]
-              ? record["vendor"]["id"]
-              : record["instance_id"];
-            if (vendors_data_pool[record["vendor"]["id"]]) {
-              vendor_id = record["vendor"]["id"];
-            }
-          }
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (record["jobId"]) {
-            if (jobs_data_pool[record["jobId"]]) {
-              job_details_id = record["jobId"];
-            }
-          }
-
-          inventory_bills_final_data_pool.push({
-            id: record["id"],
-            purchase_order_id: purchase_order_id,
-            actual_purchase_order_id: actual_purchase_order_id,
-            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
-            referenceNumber: record["referenceNumber"]
-              ? record["referenceNumber"]
-              : "default",
-            vendorNumber: record["vendorNumber"],
-            billDate: billDate,
-            billAmount: parseFloat(record["billAmount"]),
-            taxAmount: parseFloat(record["taxAmount"]),
-            shippingAmount: parseFloat(record["shippingAmount"]),
-            createdOn: createdOn,
-            dueDate: dueDate,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            vendor_id: vendor_id,
-            actual_vendor_id: actual_vendor_id,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            job_number: record["jobNumber"],
-          });
-        });
-
-        inventory_bills_cache["inventory_bills_final_data_pool"] =
-          inventory_bills_final_data_pool;
-
         let purchase_order_final_data_pool = [];
         // deleting purchase order_records, where jobId = null (:- for reducing time complexity )
 
@@ -4472,11 +3838,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
-            inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"]["1"][
-                "inventory_bill_amount"
-              ],
-            po_returns: purchase_order_returns_cache["1"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
@@ -4498,11 +3859,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
-            inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"]["2"][
-                "inventory_bill_amount"
-              ],
-            po_returns: purchase_order_returns_cache["2"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
@@ -4524,11 +3880,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: "default",
             total: 0,
             tax: 0,
-            inventory_bill_amount:
-              project_cache["inventory_bills_purchase_order"]["3"][
-                "inventory_bill_amount"
-              ],
-            po_returns: purchase_order_returns_cache["3"]["returnAmount"],
             date: "1999-01-01T00:00:00.00Z",
             requiredOn: "1999-01-01T00:00:00.00Z",
             sentOn: "1999-01-01T00:00:00.00Z",
@@ -4546,257 +3897,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        // for projects and invoice table
-
-        let invoice_po_and_gpi_data = {};
-
-        let invoice_dummy_values = {
-          inventory_bill_amount: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          po_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          po_returns: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_hours: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          burden_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-        };
-
-        let projects_po_and_gpi_data = {};
-
-        let project_total_data = {};
-
-        const project_dummy_values = {
-          inventory_bill_amount: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          po_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          po_returns: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          labor_hours: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          burden_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          billed_amount: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          equipment_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          material_cost: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          accounts_receivable: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          expense: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          income: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          current_liability: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          membership_liability: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          contract_value: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          sold_contract_value: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          budget_expense: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          budget_hours: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-          balance: {
-            1: 0,
-            2: 0,
-            3: 0,
-          },
-        };
-
         Object.keys(purchase_order_data_pool).map((po_record_id) => {
           const po_record = purchase_order_data_pool[po_record_id];
-
-          let po_returns = 0;
-          if (purchase_order_returns_cache[po_record_id]) {
-            po_returns =
-              purchase_order_returns_cache[po_record_id]["returnAmount"];
-          }
-
-          let inventory_bill_amount = 0;
-
-          if (project_cache["inventory_bills_purchase_order"][po_record_id]) {
-            inventory_bill_amount =
-              project_cache["inventory_bills_purchase_order"][po_record_id][
-                "inventory_bill_amount"
-              ];
-          }
-
-          if (po_record["status"] != "Canceled") {
-            // data accumulation for invoice table
-            if (po_record["invoiceId"] != null) {
-              if (!invoice_po_and_gpi_data[po_record["invoiceId"]]) {
-                invoice_po_and_gpi_data[po_record["invoiceId"]] = {
-                  inventory_bill_amount: 0,
-                  po_cost: 0,
-                  po_returns: 0,
-                  labor_cost: 0,
-                  labor_hours: 0,
-                  burden: 0,
-                };
-              }
-
-              if (!invoice_data_pool[po_record["invoiceId"]]) {
-                invoice_dummy_values["inventory_bill_amount"][
-                  po_record["instance_id"]
-                ] += inventory_bill_amount;
-
-                invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
-                  parseFloat(po_record["total"]);
-
-                invoice_dummy_values["po_returns"][po_record["instance_id"]] +=
-                  po_returns;
-              } else {
-                invoice_po_and_gpi_data[po_record["invoiceId"]][
-                  "inventory_bill_amount"
-                ] += inventory_bill_amount;
-
-                invoice_po_and_gpi_data[po_record["invoiceId"]]["po_cost"] +=
-                  parseFloat(po_record["total"]);
-
-                invoice_po_and_gpi_data[po_record["invoiceId"]]["po_returns"] +=
-                  po_returns;
-              }
-            } else {
-              invoice_dummy_values["inventory_bill_amount"][
-                po_record["instance_id"]
-              ] += inventory_bill_amount;
-
-              invoice_dummy_values["po_cost"][po_record["instance_id"]] +=
-                parseFloat(po_record["total"]);
-
-              invoice_dummy_values["po_returns"][po_record["instance_id"]] +=
-                po_returns;
-            }
-
-            // data accumulation for projects table
-            if (po_record["projectId"] != null) {
-              if (!projects_po_and_gpi_data[po_record["projectId"]]) {
-                projects_po_and_gpi_data[po_record["projectId"]] = {
-                  inventory_bill_amount: 0,
-                  po_cost: 0,
-                  po_returns: 0,
-                  labor_cost: 0,
-                  labor_hours: 0,
-                  burden: 0,
-                };
-              }
-
-              if (!data_pool[po_record["projectId"]]) {
-                project_dummy_values["inventory_bill_amount"][
-                  po_record["instance_id"]
-                ] += inventory_bill_amount;
-
-                project_dummy_values["po_cost"][po_record["instance_id"]] +=
-                  parseFloat(po_record["total"]);
-
-                project_dummy_values["po_returns"][po_record["instance_id"]] +=
-                  po_returns;
-              } else {
-                projects_po_and_gpi_data[po_record["projectId"]][
-                  "inventory_bill_amount"
-                ] += inventory_bill_amount;
-
-                projects_po_and_gpi_data[po_record["projectId"]]["po_cost"] +=
-                  parseFloat(po_record["total"]);
-
-                projects_po_and_gpi_data[po_record["projectId"]][
-                  "po_returns"
-                ] += po_returns;
-              }
-            } else {
-              project_dummy_values["inventory_bill_amount"][
-                po_record["instance_id"]
-              ] += inventory_bill_amount;
-
-              project_dummy_values["po_cost"][po_record["instance_id"]] +=
-                parseFloat(po_record["total"]);
-
-              project_dummy_values["po_returns"][po_record["instance_id"]] +=
-                po_returns;
-            }
-          }
 
           let job_details_id = po_record["instance_id"];
           let actual_job_details_id = po_record["instance_id"];
@@ -4820,7 +3922,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let actual_project_id = po_record["instance_id"];
           if (po_record["projectId"]) {
             actual_project_id = po_record["projectId"];
-            if (data_pool[po_record["projectId"]]) {
+            if (projects_data_pool[po_record["projectId"]]) {
               project_id = po_record["projectId"];
             }
           }
@@ -4916,8 +4018,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             status: po_record["status"] ? po_record["status"] : "default",
             total: po_record["total"] ? po_record["total"] : 0,
             tax: po_record["tax"] ? po_record["tax"] : 0,
-            inventory_bill_amount: inventory_bill_amount,
-            po_returns: po_returns,
             date: date,
             requiredOn: requiredOn,
             sentOn: sentOn,
@@ -4934,14 +4034,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_vendor_id: actual_vendor_id,
           });
         });
-
-        project_cache["invoice_po_and_gpi_data"] = invoice_po_and_gpi_data;
-        project_cache["invoice_dummy_values"] = invoice_dummy_values;
-        project_cache["projects_po_and_gpi_data"] = projects_po_and_gpi_data;
-        project_cache["project_total_data"] = project_total_data;
-        project_cache["project_dummy_values"] = project_dummy_values;
-
-        delete purchase_order_returns_cache;
 
         // console.log("purchase_order_final_data_pool: ", purchase_order_final_data_pool);
         // console.log("header_data: ", header_data);
@@ -5055,9 +4147,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         // ---------------
 
         let final_data_pool = [];
-
-        // calculating contract value from sales estimates for projects table
-        project_cache["project_contract_value"] = {};
 
         Object.keys(data_pool).map((record_id) => {
           const record = data_pool[record_id];
@@ -5218,65 +4307,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_details_id: customer_details_id,
             actual_customer_details_id: actual_customer_details_id,
           });
-
-          if (record["status"] && record["status"]["name"] == "Sold") {
-            // preparing data for projects table
-            if (record["projectId"] != null) {
-              if (
-                !project_cache["project_contract_value"][record["projectId"]]
-              ) {
-                project_cache["project_contract_value"][record["projectId"]] = {
-                  contract_value: 0,
-                  sold_contract_value: 0,
-                  budget_expense: 0,
-                  budget_hours: 0,
-                };
-              }
-
-              if (!projects_data_pool[record["projectId"]]) {
-                project_cache["project_dummy_values"]["contract_value"][
-                  record["instance_id"]
-                ] += parseFloat(record["subtotal"]);
-                project_cache["project_dummy_values"]["budget_expense"][
-                  record["instance_id"]
-                ] += totalCost;
-                project_cache["project_dummy_values"]["budget_hours"][
-                  record["instance_id"]
-                ] += budget_hours;
-                project_cache["project_dummy_values"]["sold_contract_value"][
-                  record["instance_id"]
-                ] += parseFloat(record["subtotal"]);
-              } else {
-                project_cache["project_contract_value"][record["projectId"]][
-                  "contract_value"
-                ] += parseFloat(record["subtotal"]);
-
-                project_cache["project_contract_value"][record["projectId"]][
-                  "budget_expense"
-                ] += totalCost;
-
-                project_cache["project_contract_value"][record["projectId"]][
-                  "budget_hours"
-                ] += budget_hours;
-                project_cache["project_contract_value"][record["projectId"]][
-                  "sold_contract_value"
-                ] += parseFloat(record["subtotal"]);
-              }
-            } else {
-              project_cache["project_dummy_values"]["contract_value"][
-                record["instance_id"]
-              ] += parseFloat(record["subtotal"]);
-              project_cache["project_dummy_values"]["budget_expense"][
-                record["instance_id"]
-              ] += totalCost;
-              project_cache["project_dummy_values"]["budget_hours"][
-                record["instance_id"]
-              ] += budget_hours;
-              project_cache["project_dummy_values"]["sold_contract_value"][
-                record["instance_id"]
-              ] += parseFloat(record["subtotal"]);
-            }
-          }
         });
 
         console.log("sales_details data: ", final_data_pool.length);
@@ -5314,35 +4344,10 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "projects": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool = data_lake[api_name]["jpm__projects"]["data_pool"];
-        const invoice_data_pool =
-          data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const header_data = hvac_tables[table_name]["columns"];
         const wip_header_data = hvac_tables["projects_wip_data"]["columns"];
         const project_managers_header_data =
           hvac_tables["project_managers"]["columns"];
-
-        // getting data directly from service titan
-
-        let jobs_data_pool = data_lake["job_details"]["jpm__jobs"]["data_pool"];
-        let gross_pay_items_data_pool =
-          data_lake["cogs_labor"]["payroll__gross-pay-items"]["data_pool"];
-        let payrolls_data_pool =
-          data_lake["cogs_labor"]["payroll__payrolls"]["data_pool"];
-
-        // fetching business units from db
-        // ----------------
-        const business_unit_response = await sql_request.query(
-          "SELECT * FROM business_unit"
-        );
-
-        const business_unit_data = business_unit_response.recordset;
-
-        const business_unit_data_pool = {};
-
-        business_unit_data.map((current_record) => {
-          business_unit_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
 
         // fetching customers data from db
         // ----------------
@@ -5374,12 +4379,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
         // ----------------
 
-        const sku_details_data_pool = {
-          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
-        };
-
         // fetching business units from db
         const employees_response = await sql_request.query(
           "SELECT * FROM employees"
@@ -5402,1239 +4401,12 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("data_pool: ", data_pool);
         // console.log("header_data: ", header_data);
 
-        let invoice_po_and_gpi_data = project_cache["invoice_po_and_gpi_data"];
-
-        let invoice_dummy_values = project_cache["invoice_dummy_values"];
-
-        let projects_po_and_gpi_data =
-          project_cache["projects_po_and_gpi_data"];
-
-        let project_total_data = project_cache["project_total_data"];
-
-        const project_dummy_values = project_cache["project_dummy_values"];
-
-        // console.log("po_and_gpi_data: ", Object.keys(po_and_gpi_data).length);
-
-        Object.keys(gross_pay_items_data_pool).map((gpi_record_id) => {
-          const gpi_record = gross_pay_items_data_pool[gpi_record_id];
-          // data accumulation for invoice table
-          if (gpi_record["invoiceId"] != null) {
-            if (!invoice_po_and_gpi_data[gpi_record["invoiceId"]]) {
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]] = {
-                inventory_bill_amount: 0,
-                po_cost: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (!invoice_data_pool[gpi_record["invoiceId"]]) {
-              invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            } else {
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_cost"] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["labor_hours"] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              invoice_po_and_gpi_data[gpi_record["invoiceId"]]["burden"] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            }
-          } else {
-            invoice_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-            invoice_dummy_values["labor_hours"][gpi_record["invoiceId"]] +=
-              gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-            invoice_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-              (gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? parseFloat(
-                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  )
-                : 0);
-          }
-
-          // data accumulation for projects table
-          if (gpi_record["projectId"] != null) {
-            if (!projects_po_and_gpi_data[gpi_record["projectId"]]) {
-              projects_po_and_gpi_data[gpi_record["projectId"]] = {
-                po_cost: 0,
-                labor_cost: 0,
-                labor_hours: 0,
-                burden: 0,
-              };
-            }
-
-            if (!data_pool[gpi_record["projectId"]]) {
-              project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
-                gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0;
-
-              project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            } else {
-              projects_po_and_gpi_data[gpi_record["projectId"]]["labor_cost"] +=
-                gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-              projects_po_and_gpi_data[gpi_record["projectId"]][
-                "labor_hours"
-              ] += gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-              projects_po_and_gpi_data[gpi_record["projectId"]]["burden"] +=
-                (gpi_record["paidDurationHours"]
-                  ? parseFloat(gpi_record["paidDurationHours"])
-                  : 0) *
-                (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  ? parseFloat(
-                      payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                    )
-                  : 0);
-            }
-          } else {
-            project_dummy_values["labor_cost"][gpi_record["instance_id"]] +=
-              gpi_record["amount"] ? parseFloat(gpi_record["amount"]) : 0;
-
-            project_dummy_values["labor_hours"][gpi_record["projectId"]] +=
-              gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0;
-
-            project_dummy_values["burden_cost"][gpi_record["instance_id"]] +=
-              (gpi_record["paidDurationHours"]
-                ? parseFloat(gpi_record["paidDurationHours"])
-                : 0) *
-              (payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                ? parseFloat(
-                    payrolls_data_pool[gpi_record["payrollId"]]["burdenRate"]
-                  )
-                : 0);
-          }
-        });
-
-        let invoice_final_data_pool = [];
-        let cogs_material_final_data_pool = [];
-        let cogs_equipment_final_data_pool = [];
-        let cogs_services_final_data_pool = [];
-        let gross_profit_final_data_pool = [];
-
-        if (initial_execute) {
-          invoice_final_data_pool.push({
-            id: "1",
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: "1",
-            invoice_type_name: "default_invoice",
-            job_details_id: "1",
-            actual_job_details_id: "1",
-            project_id: "1",
-            actual_project_id: "1",
-            business_unit_id: "1",
-            actual_business_unit_id: "1",
-            location_id: "1",
-            actual_location_id: "1",
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: "1",
-            actual_customer_id: "1",
-            customer_name: "default",
-          });
-
-          invoice_final_data_pool.push({
-            id: "2",
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: "2",
-            invoice_type_name: "default_invoice",
-            job_details_id: "2",
-            actual_job_details_id: "2",
-            project_id: "2",
-            actual_project_id: "2",
-            business_unit_id: "2",
-            actual_business_unit_id: "2",
-            location_id: "2",
-            actual_location_id: "2",
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: "2",
-            actual_customer_id: "2",
-            customer_name: "default",
-          });
-
-          invoice_final_data_pool.push({
-            id: "3",
-            syncStatus: "default",
-            date: "1999-01-01T00:00:00.00Z",
-            dueDate: "1999-01-01T00:00:00.00Z",
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            balance: 0,
-            depositedOn: "1999-01-01T00:00:00.00Z",
-            createdOn: "1999-01-01T00:00:00.00Z",
-            modifiedOn: "1999-01-01T00:00:00.00Z",
-            invoice_type_id: "3",
-            invoice_type_name: "default_invoice",
-            job_details_id: "3",
-            actual_job_details_id: "3",
-            project_id: "3",
-            actual_project_id: "3",
-            business_unit_id: "3",
-            actual_business_unit_id: "3",
-            location_id: "3",
-            actual_location_id: "3",
-            address_street: "default",
-            address_unit: "default",
-            address_city: "default",
-            address_state: "default",
-            address_country: "default",
-            address_zip: 57483,
-            acutal_address_zip: "57483",
-            customer_id: "3",
-            actual_customer_id: "3",
-            customer_name: "default",
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "1",
-            actual_job_details_id: "1",
-            project_id: "1",
-            actual_project_id: "1",
-            invoice_id: "1",
-            sku_details_id: "1",
-            actual_sku_details_id: "1",
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: "2",
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: "2",
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "2",
-            actual_job_details_id: "2",
-            project_id: "2",
-            actual_project_id: "2",
-            invoice_id: "2",
-            sku_details_id: "2",
-            actual_sku_details_id: "2",
-          });
-
-          cogs_material_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: "3",
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: "3",
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "3",
-            actual_job_details_id: "3",
-            project_id: "3",
-            actual_project_id: "3",
-            invoice_id: "3",
-            sku_details_id: "3",
-            actual_sku_details_id: "3",
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "1",
-            actual_job_details_id: "1",
-            project_id: "1",
-            actual_project_id: "1",
-            invoice_id: "1",
-            sku_details_id: "1",
-            actual_sku_details_id: "1",
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 2,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 2,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "2",
-            actual_job_details_id: "2",
-            project_id: "2",
-            actual_project_id: "2",
-            invoice_id: "2",
-            sku_details_id: "2",
-            actual_sku_details_id: "2",
-          });
-
-          cogs_equipment_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 3,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 3,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "3",
-            actual_job_details_id: "3",
-            project_id: "3",
-            actual_project_id: "3",
-            invoice_id: "3",
-            sku_details_id: "3",
-            actual_sku_details_id: "3",
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 1,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 1,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "1",
-            actual_job_details_id: "1",
-            project_id: "1",
-            actual_project_id: "1",
-            invoice_id: "1",
-            sku_details_id: "1",
-            actual_sku_details_id: "1",
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 2,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 2,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "2",
-            actual_job_details_id: "2",
-            project_id: "2",
-            actual_project_id: "2",
-            invoice_id: "2",
-            sku_details_id: "2",
-            actual_sku_details_id: "2",
-          });
-
-          cogs_services_final_data_pool.push({
-            quantity: 0,
-            cost: 0,
-            total_cost: 0,
-            price: 0,
-            sku_name: "default",
-            sku_total: 0,
-            generalLedgerAccountid: 3,
-            generalLedgerAccountname: "default",
-            generalLedgerAccountnumber: 3,
-            generalLedgerAccounttype: "default",
-            generalLedgerAccountdetailType: "default",
-            job_details_id: "3",
-            actual_job_details_id: "3",
-            project_id: "3",
-            actual_project_id: "3",
-            invoice_id: "3",
-            sku_details_id: "3",
-            actual_sku_details_id: "3",
-          });
-
-          gross_profit_final_data_pool.push({
-            id: "1",
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            inventory_bill_amount:
-              invoice_dummy_values["inventory_bill_amount"]["1"], // inventory-bills
-            po_cost: invoice_dummy_values["po_cost"]["1"], // purchase orders
-            po_returns: invoice_dummy_values["po_returns"]["1"],
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: invoice_dummy_values["labor_cost"]["1"], // cogs_labor burden cost, labor cost, paid duration
-            burden: invoice_dummy_values["burden_cost"]["1"], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: invoice_dummy_values["labor_hours"]["1"], // cogs_labor paid duration
-          });
-
-          gross_profit_final_data_pool.push({
-            id: "2",
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            inventory_bill_amount:
-              invoice_dummy_values["inventory_bill_amount"]["2"], // inventory-bills
-            po_cost: invoice_dummy_values["po_cost"]["2"], // purchase orders
-            po_returns: invoice_dummy_values["po_returns"]["2"],
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: invoice_dummy_values["labor_cost"]["2"], // cogs_labor burden cost, labor cost, paid duration
-            burden: invoice_dummy_values["burden_cost"]["2"], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: invoice_dummy_values["labor_hours"]["2"], // cogs_labor paid duration
-          });
-
-          gross_profit_final_data_pool.push({
-            id: "3",
-            accounts_receivable: 0,
-            expense: 0,
-            income: 0,
-            current_liability: 0,
-            membership_liability: 0,
-            default: 0,
-            total: 0,
-            inventory_bill_amount:
-              invoice_dummy_values["inventory_bill_amount"]["3"], // inventory-bills
-            po_cost: invoice_dummy_values["po_cost"]["3"], // purchase orders
-            po_returns: invoice_dummy_values["po_returns"]["3"],
-            equipment_cost: 0, //
-            material_cost: 0, //
-            labor_cost: invoice_dummy_values["labor_cost"]["3"], // cogs_labor burden cost, labor cost, paid duration
-            burden: invoice_dummy_values["burden_cost"]["3"], // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: invoice_dummy_values["labor_hours"]["3"], // cogs_labor paid duration
-          });
-        }
-
-        Object.keys(invoice_data_pool).map((record_id) => {
-          const record = invoice_data_pool[record_id];
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["instance_id"];
-          if (record["job"]) {
-            actual_job_details_id = record["job"]["id"];
-            if (jobs_data_pool[record["job"]["id"]]) {
-              job_details_id = record["job"]["id"];
-            }
-          }
-
-          let project_id = record["instance_id"];
-          let actual_project_id = record["instance_id"];
-          if (record["projectId"]) {
-            actual_project_id = record["projectId"];
-            if (data_pool[record["projectId"]]) {
-              project_id = record["projectId"];
-            }
-          }
-
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-          if (record["businessUnit"]) {
-            actual_business_unit_id = record["businessUnit"]["id"];
-            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
-              business_unit_id = record["businessUnit"]["id"];
-            }
-          }
-
-          let location_id = record["instance_id"];
-          let actual_location_id = record["instance_id"];
-          if (record["location"]) {
-            actual_location_id = record["location"]["id"];
-            if (location_data_pool[record["location"]["id"]]) {
-              location_id = record["location"]["id"];
-            }
-          }
-
-          let customer_id = record["instance_id"];
-          let actual_customer_id = record["instance_id"];
-          let customer_name = "default";
-          if (record["customer"]) {
-            actual_customer_id = record["customer"]["id"];
-            customer_name = record["customer"]["name"]
-              ? record["customer"]["name"]
-              : "default";
-            if (customer_data_pool[record["customer"]["id"]]) {
-              customer_id = record["customer"]["id"];
-            }
-          }
-
-          let address_street = "";
-          let address_unit = "";
-          let address_city = "";
-          let address_state = "";
-          let address_zip = 57483;
-          let acutal_address_zip = "";
-          let address_country = "";
-          let city = "Mexico";
-          if (record["locationAddress"]) {
-            address_street = record["locationAddress"]["street"]
-              ? record["locationAddress"]["street"]
-              : "";
-            address_unit = record["locationAddress"]["unit"]
-              ? record["locationAddress"]["unit"]
-              : "";
-            address_city = record["locationAddress"]["city"]
-              ? record["locationAddress"]["city"]
-              : "";
-            address_state = record["locationAddress"]["state"]
-              ? record["locationAddress"]["state"]
-              : "";
-            address_country = record["locationAddress"]["country"]
-              ? record["locationAddress"]["country"]
-              : "";
-            acutal_address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : "";
-
-            address_zip = record["locationAddress"]["zip"]
-              ? record["locationAddress"]["zip"]
-              : 57483;
-
-            if (typeof address_zip == "string") {
-              const numericValue = Number(address_zip.split("-")[0]);
-              if (!isNaN(numericValue)) {
-                // If the conversion is successful and numericValue is not NaN, update address_zip
-                address_zip = numericValue;
-              } else {
-                // Handle the case where the conversion fails
-                address_zip = 57483;
-              }
-            }
-
-            if (!unique_us_zip_codes[String(address_zip)]) {
-              address_zip = 57483;
-            } else {
-              city = unique_us_zip_codes[String(address_zip)]["city"];
-            }
-          }
-
-          let invoice_date = "2000-01-01T00:00:00.00Z";
-
-          if (record["invoiceDate"]) {
-            if (
-              new Date(record["invoiceDate"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              invoice_date = record["invoiceDate"];
-            }
-          } else {
-            invoice_date = "2001-01-01T00:00:00.00Z";
-          }
-
-          let dueDate = "2000-01-01T00:00:00.00Z";
-
-          if (record["dueDate"]) {
-            if (
-              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              dueDate = record["dueDate"];
-            }
-          } else {
-            dueDate = "2001-01-01T00:00:00.00Z";
-          }
-
-          let depositedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["depositedOn"]) {
-            if (
-              new Date(record["depositedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              depositedOn = record["depositedOn"];
-            }
-          } else {
-            depositedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let modifiedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["modifiedOn"]) {
-            if (
-              new Date(record["modifiedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              modifiedOn = record["modifiedOn"];
-            }
-          } else {
-            modifiedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let invoice_type_id = record["instance_id"];
-          let invoice_type_name = "default_invoice";
-          if (record["invoiceType"]) {
-            invoice_type_id = String(record["invoiceType"]["id"]);
-            invoice_type_name = record["invoiceType"]["name"];
-          }
-
-          // data accumulation for projects table
-          if (record["projectId"] != null) {
-            if (!project_total_data[record["projectId"]]) {
-              project_total_data[record["projectId"]] = {
-                billed_amount: 0,
-                equipment_cost: 0,
-                material_cost: 0,
-                accounts_receivable: 0,
-                expense: 0,
-                income: 0,
-                current_liability: 0,
-                membership_liability: 0,
-                balance: 0,
-                business_unit_id: business_unit_id,
-                actual_business_unit_id: actual_business_unit_id,
-              };
-            }
-
-            // calculating billed amount
-            if (!data_pool[record["projectId"]]) {
-              project_dummy_values["billed_amount"][record["instance_id"]] +=
-                parseFloat(record["total"]);
-              project_dummy_values["balance"][record["instance_id"]] +=
-                parseFloat(record["balance"]);
-            } else {
-              project_total_data[record["projectId"]]["billed_amount"] +=
-                parseFloat(record["total"]);
-              project_total_data[record["projectId"]]["balance"] += parseFloat(
-                record["balance"]
-              );
-            }
-          } else {
-            project_dummy_values["billed_amount"][record["instance_id"]] +=
-              parseFloat(record["total"]);
-            project_dummy_values["balance"][record["instance_id"]] +=
-              parseFloat(record["balance"]);
-          }
-
-          invoice_final_data_pool.push({
-            id: record["id"],
-            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
-            date: invoice_date,
-            dueDate: dueDate,
-            subtotal: record["subTotal"] ? record["subTotal"] : 0,
-            tax: record["salesTax"] ? record["salesTax"] : 0,
-            total: record["total"] ? record["total"] : 0,
-            balance: record["balance"] ? record["balance"] : 0,
-            depositedOn: depositedOn,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            invoice_type_id: invoice_type_id,
-            invoice_type_name: invoice_type_name,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            project_id: project_id,
-            actual_project_id: actual_project_id,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            address_street: address_street,
-            address_unit: address_unit,
-            address_city: address_city,
-            address_state: address_state,
-            address_country: address_country,
-            address_zip: address_zip,
-            acutal_address_zip: acutal_address_zip,
-            customer_id: customer_id,
-            actual_customer_id: actual_customer_id,
-            customer_name: customer_name,
-          });
-
-          let inventory_bill_amount = 0;
-          let po_cost = 0;
-          let po_returns = 0;
-          let labor_cost = 0;
-          let labor_hours = 0;
-          let burden = 0;
-
-          if (invoice_po_and_gpi_data[record["id"]]) {
-            inventory_bill_amount = invoice_po_and_gpi_data[record["id"]][
-              "inventory_bill_amount"
-            ]
-              ? invoice_po_and_gpi_data[record["id"]]["inventory_bill_amount"]
-              : 0;
-            po_cost = invoice_po_and_gpi_data[record["id"]]["po_cost"]
-              ? invoice_po_and_gpi_data[record["id"]]["po_cost"]
-              : 0;
-            po_returns = invoice_po_and_gpi_data[record["id"]]["po_returns"]
-              ? invoice_po_and_gpi_data[record["id"]]["po_returns"]
-              : 0;
-            labor_cost = invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-              ? invoice_po_and_gpi_data[record["id"]]["labor_cost"]
-              : 0;
-            labor_hours = invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-              ? invoice_po_and_gpi_data[record["id"]]["labor_hours"]
-              : 0;
-            burden = invoice_po_and_gpi_data[record["id"]]["burden"]
-              ? invoice_po_and_gpi_data[record["id"]]["burden"]
-              : 0;
-          }
-
-          let material_cost = 0;
-          let equipment_cost = 0;
-
-          let accounts_receivable = 0;
-          let expense = 0;
-          let income = 0;
-          let current_liability = 0;
-          let membership_liability = 0;
-          let default_val = 0;
-
-          if (record["items"]) {
-            record["items"].map((items_record) => {
-              let generalLedgerAccountid = 0;
-              let generalLedgerAccountname = "default";
-              let generalLedgerAccountnumber = 0;
-              let generalLedgerAccounttype = "default";
-              let generalLedgerAccountdetailType = "default";
-
-              if (items_record["generalLedgerAccount"]) {
-                generalLedgerAccountid =
-                  items_record["generalLedgerAccount"]["id"];
-                generalLedgerAccountname =
-                  items_record["generalLedgerAccount"]["name"];
-                generalLedgerAccountnumber =
-                  items_record["generalLedgerAccount"]["number"];
-                generalLedgerAccounttype =
-                  items_record["generalLedgerAccount"]["type"];
-                generalLedgerAccountdetailType =
-                  items_record["generalLedgerAccount"]["detailType"];
-              }
-
-              if (items_record["type"] == "Material") {
-                material_cost =
-                  material_cost + parseFloat(items_record["totalCost"]);
-
-                // for projects table
-                if (record["projectId"] != null) {
-                  // calculating material cost
-                  if (!data_pool[record["projectId"]]) {
-                    project_dummy_values["material_cost"][
-                      record["instance_id"]
-                    ] += parseFloat(items_record["totalCost"]);
-                  } else {
-                    project_total_data[record["projectId"]]["material_cost"] +=
-                      parseFloat(items_record["totalCost"]);
-                  }
-                } else {
-                  project_dummy_values["material_cost"][
-                    record["instance_id"]
-                  ] += parseFloat(items_record["totalCost"]);
-                }
-
-                let sku_details_id = record["instance_id"];
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                cogs_material_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  project_id: project_id,
-                  actual_project_id: actual_project_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              if (items_record["type"] == "Equipment") {
-                equipment_cost =
-                  equipment_cost + parseFloat(items_record["totalCost"]);
-
-                // for projects table
-                if (record["projectId"] != null) {
-                  // calculating equipment cost
-                  if (!data_pool[record["projectId"]]) {
-                    project_dummy_values["equipment_cost"][
-                      record["instance_id"]
-                    ] += parseFloat(items_record["totalCost"]);
-                  } else {
-                    project_total_data[record["projectId"]]["equipment_cost"] +=
-                      parseFloat(items_record["totalCost"]);
-                  }
-                } else {
-                  project_dummy_values["equipment_cost"][
-                    record["instance_id"]
-                  ] += parseFloat(items_record["totalCost"]);
-                }
-
-                let sku_details_id = record["instance_id"] + 3;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                cogs_equipment_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  project_id: project_id,
-                  actual_project_id: actual_project_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              if (items_record["type"] == "Service") {
-                let sku_details_id = record["instance_id"] + 6;
-                let actual_sku_details_id = items_record["skuId"]
-                  ? items_record["skuId"]
-                  : record["instance_id"];
-                if (sku_details_data_pool[items_record["skuId"]]) {
-                  sku_details_id = items_record["skuId"];
-                }
-
-                // for gross profit
-                switch (generalLedgerAccounttype) {
-                  case "Accounts Receivable": {
-                    accounts_receivable += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating accounts_receivable
-                      if (!data_pool[record["projectId"]]) {
-                        project_dummy_values["accounts_receivable"][
-                          record["instance_id"]
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "accounts_receivable"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      }
-                    } else {
-                      project_dummy_values["accounts_receivable"][
-                        record["instance_id"]
-                      ] += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-                    }
-
-                    break;
-                  }
-                  case "Current Liability": {
-                    current_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating current_liability
-                      if (!data_pool[record["projectId"]]) {
-                        project_dummy_values["current_liability"][
-                          record["instance_id"]
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "current_liability"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      }
-                    } else {
-                      project_dummy_values["current_liability"][
-                        record["instance_id"]
-                      ] += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-                    }
-
-                    break;
-                  }
-                  case "Membership Liability": {
-                    membership_liability += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    // for projects table
-                    if (record["projectId"] != null) {
-                      // calculating membership_liability
-                      if (!data_pool[record["projectId"]]) {
-                        project_dummy_values["membership_liability"][
-                          record["instance_id"]
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      } else {
-                        project_total_data[record["projectId"]][
-                          "membership_liability"
-                        ] += items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                      }
-                    } else {
-                      project_dummy_values["membership_liability"][
-                        record["instance_id"]
-                      ] += items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-                    }
-
-                    break;
-                  }
-                  case "default": {
-                    default_val += items_record["total"]
-                      ? parseFloat(items_record["total"])
-                      : 0;
-
-                    break;
-                  }
-                }
-
-                cogs_services_final_data_pool.push({
-                  quantity: items_record["quantity"]
-                    ? items_record["quantity"]
-                    : 0,
-                  cost: items_record["cost"] ? items_record["cost"] : 0,
-                  total_cost: items_record["totalCost"]
-                    ? items_record["totalCost"]
-                    : 0,
-                  price: items_record["price"] ? items_record["price"] : 0,
-                  sku_name: items_record["skuName"]
-                    ? items_record["skuName"]
-                    : "default",
-                  sku_total: items_record["total"] ? items_record["total"] : 0,
-                  generalLedgerAccountid: generalLedgerAccountid,
-                  generalLedgerAccountname: generalLedgerAccountname,
-                  generalLedgerAccountnumber: generalLedgerAccountnumber,
-                  generalLedgerAccounttype: generalLedgerAccounttype,
-                  generalLedgerAccountdetailType:
-                    generalLedgerAccountdetailType,
-                  job_details_id: job_details_id,
-                  actual_job_details_id: actual_job_details_id,
-                  project_id: project_id,
-                  actual_project_id: actual_project_id,
-                  invoice_id: record["id"],
-                  sku_details_id: sku_details_id,
-                  actual_sku_details_id: actual_sku_details_id,
-                });
-              }
-
-              // for gross profit
-              switch (generalLedgerAccounttype) {
-                case "Expense": {
-                  expense += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  // for projects table
-                  if (record["projectId"] != null) {
-                    // calculating expense
-                    if (!data_pool[record["projectId"]]) {
-                      project_dummy_values["expense"][record["instance_id"]] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                    } else {
-                      project_total_data[record["projectId"]]["expense"] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                    }
-                  } else {
-                    project_dummy_values["expense"][record["instance_id"]] +=
-                      items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-                  }
-
-                  break;
-                }
-                case "Income": {
-                  income += items_record["total"]
-                    ? parseFloat(items_record["total"])
-                    : 0;
-
-                  // for projects table
-                  if (record["projectId"] != null) {
-                    // calculating income
-                    if (!data_pool[record["projectId"]]) {
-                      project_dummy_values["income"][record["instance_id"]] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                    } else {
-                      project_total_data[record["projectId"]]["income"] +=
-                        items_record["total"]
-                          ? parseFloat(items_record["total"])
-                          : 0;
-                    }
-                  } else {
-                    project_dummy_values["income"][record["instance_id"]] +=
-                      items_record["total"]
-                        ? parseFloat(items_record["total"])
-                        : 0;
-                  }
-
-                  break;
-                }
-              }
-            });
-          }
-
-          let revenue = parseFloat(record["total"])
-            ? parseFloat(record["total"])
-            : 0;
-
-          // let gross_profit =
-          //   revenue -
-          //   po_cost -
-          //   equipment_cost -
-          //   material_cost -
-          //   labor_cost -
-          //   burden;
-
-          // let gross_margin = (Number(gross_profit) / Number(revenue)) * 100;
-
-          // if (isNaN(gross_margin) || !isFinite(gross_margin)) {
-          //   gross_margin = 0;
-          // }
-
-          gross_profit_final_data_pool.push({
-            id: record["id"],
-            accounts_receivable: accounts_receivable,
-            expense: expense,
-            income: income,
-            current_liability: current_liability,
-            membership_liability: membership_liability,
-            default: default_val,
-            total: record["total"] ? parseFloat(record["total"]) : 0,
-            inventory_bill_amount: inventory_bill_amount,
-            po_cost: po_cost, // purchase orders
-            po_returns: po_returns,
-            equipment_cost: equipment_cost, //
-            material_cost: material_cost, //
-            labor_cost: labor_cost, // cogs_labor burden cost, labor cost, paid duration
-            burden: burden, // cogs_labor
-            // gross_profit: gross_profit, // invoice[total] - po - equi - mater - labor - burden
-            // gross_margin: gross_margin, // gross_profit / invoice['total'] * 100 %
-            units: 1, //  currently for 1
-            labor_hours: labor_hours, // cogs_labor paid duration
-          });
-        });
-
-        invoice_po_and_gpi_data = {};
-        invoice_dummy_values = {};
-
-        invoice_cache["invoice_final_data_pool"] = invoice_final_data_pool;
-        invoice_cache["cogs_material_final_data_pool"] =
-          cogs_material_final_data_pool;
-        invoice_cache["cogs_equipment_final_data_pool"] =
-          cogs_equipment_final_data_pool;
-        invoice_cache["cogs_services_final_data_pool"] =
-          cogs_services_final_data_pool;
-        invoice_cache["gross_profit_final_data_pool"] =
-          gross_profit_final_data_pool;
-
         if (initial_execute) {
           final_data_pool.push({
             id: "1",
             number: "1",
             name: "1",
             status: "No Status",
-            billed_amount: project_dummy_values["billed_amount"]["1"],
-            balance: project_dummy_values["balance"]["1"],
-            contract_value: project_dummy_values["contract_value"]["1"],
-            sold_contract_value:
-              project_dummy_values["sold_contract_value"]["1"],
-            budget_expense: project_dummy_values["budget_expense"]["1"],
-            budget_hours: project_dummy_values["budget_hours"]["1"],
-            inventory_bill_amount:
-              project_dummy_values["inventory_bill_amount"]["1"],
-            po_cost: project_dummy_values["po_cost"]["1"],
-            po_returns: project_dummy_values["po_returns"]["1"],
-            equipment_cost: project_dummy_values["equipment_cost"]["1"],
-            material_cost: project_dummy_values["material_cost"]["1"],
-            labor_cost: project_dummy_values["labor_cost"]["1"],
-            labor_hours: project_dummy_values["labor_hours"]["1"],
-            burden: project_dummy_values["burden_cost"]["1"],
-            accounts_receivable:
-              project_dummy_values["accounts_receivable"]["1"],
-            expense: project_dummy_values["expense"]["1"],
-            income: project_dummy_values["income"]["1"],
-            current_liability: project_dummy_values["current_liability"]["1"],
-            membership_liability:
-              project_dummy_values["membership_liability"]["1"],
-            business_unit_id: "1",
-            actual_business_unit_id: "1",
             customer_details_id: "1",
             actual_customer_details_id: "1",
             location_id: "1",
@@ -6652,31 +4424,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: "2",
             name: "2",
             status: "No Status",
-            billed_amount: project_dummy_values["billed_amount"]["2"],
-            balance: project_dummy_values["balance"]["2"],
-            contract_value: project_dummy_values["contract_value"]["2"],
-            sold_contract_value:
-              project_dummy_values["sold_contract_value"]["2"],
-            budget_expense: project_dummy_values["budget_expense"]["2"],
-            budget_hours: project_dummy_values["budget_hours"]["2"],
-            inventory_bill_amount:
-              project_dummy_values["inventory_bill_amount"]["2"],
-            po_cost: project_dummy_values["po_cost"]["2"],
-            po_returns: project_dummy_values["po_returns"]["2"],
-            equipment_cost: project_dummy_values["equipment_cost"]["2"],
-            material_cost: project_dummy_values["material_cost"]["2"],
-            labor_cost: project_dummy_values["labor_cost"]["2"],
-            labor_hours: project_dummy_values["labor_hours"]["2"],
-            burden: project_dummy_values["burden_cost"]["2"],
-            accounts_receivable:
-              project_dummy_values["accounts_receivable"]["2"],
-            expense: project_dummy_values["expense"]["2"],
-            income: project_dummy_values["income"]["2"],
-            current_liability: project_dummy_values["current_liability"]["2"],
-            membership_liability:
-              project_dummy_values["membership_liability"]["2"],
-            business_unit_id: "2",
-            actual_business_unit_id: "2",
             customer_details_id: "2",
             actual_customer_details_id: "2",
             location_id: "2",
@@ -6694,31 +4441,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: "3",
             name: "3",
             status: "No Status",
-            billed_amount: project_dummy_values["billed_amount"]["3"],
-            balance: project_dummy_values["balance"]["3"],
-            contract_value: project_dummy_values["contract_value"]["3"],
-            sold_contract_value:
-              project_dummy_values["sold_contract_value"]["3"],
-            budget_expense: project_dummy_values["budget_expense"]["3"],
-            budget_hours: project_dummy_values["budget_hours"]["3"],
-            inventory_bill_amount:
-              project_dummy_values["inventory_bill_amount"]["3"],
-            po_cost: project_dummy_values["po_cost"]["3"],
-            po_returns: project_dummy_values["po_returns"]["3"],
-            equipment_cost: project_dummy_values["equipment_cost"]["3"],
-            material_cost: project_dummy_values["material_cost"]["3"],
-            labor_cost: project_dummy_values["labor_cost"]["3"],
-            labor_hours: project_dummy_values["labor_hours"]["3"],
-            burden: project_dummy_values["burden_cost"]["3"],
-            accounts_receivable:
-              project_dummy_values["accounts_receivable"]["3"],
-            expense: project_dummy_values["expense"]["3"],
-            income: project_dummy_values["income"]["3"],
-            current_liability: project_dummy_values["current_liability"]["3"],
-            membership_liability:
-              project_dummy_values["membership_liability"]["3"],
-            business_unit_id: "3",
-            actual_business_unit_id: "3",
             customer_details_id: "3",
             actual_customer_details_id: "3",
             location_id: "3",
@@ -6815,134 +4537,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn = "2001-01-01T00:00:00.00Z";
           }
 
-          let billed_amount = 0;
-          let balance = 0;
-          let contract_value = 0;
-          let sold_contract_value = 0;
-          let budget_expense = 0;
-          let budget_hours = 0;
-          let inventory_bill_amount = 0;
-          let po_cost = 0;
-          let po_returns = 0;
-          let equipment_cost = 0;
-          let material_cost = 0;
-          let labor_cost = 0;
-          let labor_hours = 0;
-          let burden = 0;
-          let accounts_receivable = 0;
-          let expense = 0;
-          let income = 0;
-          let current_liability = 0;
-          let membership_liability = 0;
-          let business_unit_id = record["instance_id"];
-          let actual_business_unit_id = record["instance_id"];
-
-          if (project_total_data[record["id"]]) {
-            billed_amount = project_total_data[record["id"]]["billed_amount"]
-              ? project_total_data[record["id"]]["billed_amount"]
-              : 0;
-            balance = project_total_data[record["id"]]["balance"]
-              ? project_total_data[record["id"]]["balance"]
-              : 0;
-            equipment_cost = project_total_data[record["id"]]["equipment_cost"]
-              ? project_total_data[record["id"]]["equipment_cost"]
-              : 0;
-            material_cost = project_total_data[record["id"]]["material_cost"]
-              ? project_total_data[record["id"]]["material_cost"]
-              : 0;
-
-            accounts_receivable = project_total_data[record["id"]][
-              "accounts_receivable"
-            ]
-              ? project_total_data[record["id"]]["accounts_receivable"]
-              : 0;
-            expense = project_total_data[record["id"]]["expense"]
-              ? project_total_data[record["id"]]["expense"]
-              : 0;
-            income = project_total_data[record["id"]]["income"]
-              ? project_total_data[record["id"]]["income"]
-              : 0;
-            current_liability = project_total_data[record["id"]][
-              "current_liability"
-            ]
-              ? project_total_data[record["id"]]["current_liability"]
-              : 0;
-            membership_liability = project_total_data[record["id"]][
-              "membership_liability"
-            ]
-              ? project_total_data[record["id"]]["membership_liability"]
-              : 0;
-
-            business_unit_id = project_total_data[record["id"]][
-              "business_unit_id"
-            ]
-              ? project_total_data[record["id"]]["business_unit_id"]
-              : record["instance_id"];
-
-            actual_business_unit_id = project_total_data[record["id"]][
-              "actual_business_unit_id"
-            ]
-              ? project_total_data[record["id"]]["actual_business_unit_id"]
-              : record["instance_id"];
-          }
-
-          if (project_cache["project_contract_value"][record["id"]]) {
-            contract_value = project_cache["project_contract_value"][
-              record["id"]
-            ]["contract_value"]
-              ? project_cache["project_contract_value"][record["id"]][
-                  "contract_value"
-                ]
-              : 0;
-
-            sold_contract_value = project_cache["project_contract_value"][
-              record["id"]
-            ]["sold_contract_value"]
-              ? project_cache["project_contract_value"][record["id"]][
-                  "sold_contract_value"
-                ]
-              : 0;
-
-            budget_expense = project_cache["project_contract_value"][
-              record["id"]
-            ]["budget_expense"]
-              ? project_cache["project_contract_value"][record["id"]][
-                  "budget_expense"
-                ]
-              : 0;
-
-            budget_hours = project_cache["project_contract_value"][
-              record["id"]
-            ]["budget_hours"]
-              ? project_cache["project_contract_value"][record["id"]][
-                  "budget_hours"
-                ]
-              : 0;
-          }
-
-          if (projects_po_and_gpi_data[record["id"]]) {
-            inventory_bill_amount = projects_po_and_gpi_data[record["id"]][
-              "inventory_bill_amount"
-            ]
-              ? projects_po_and_gpi_data[record["id"]]["inventory_bill_amount"]
-              : 0;
-            po_cost = projects_po_and_gpi_data[record["id"]]["po_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["po_cost"]
-              : 0;
-            po_returns = projects_po_and_gpi_data[record["id"]]["po_returns"]
-              ? projects_po_and_gpi_data[record["id"]]["po_returns"]
-              : 0;
-            labor_cost = projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_cost"]
-              : 0;
-            labor_hours = projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              ? projects_po_and_gpi_data[record["id"]]["labor_hours"]
-              : 0;
-            burden = projects_po_and_gpi_data[record["id"]]["burden"]
-              ? projects_po_and_gpi_data[record["id"]]["burden"]
-              : 0;
-          }
-
           // preparing project_managers_final_data_pool
           const project_managers_ids = record["projectManagerIds"];
           project_managers_ids.map((manager_id) => {
@@ -6965,27 +4559,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             number: record["number"] ? record["number"] : "default",
             name: record["name"] ? record["name"] : `${record["id"]}`,
             status: record["status"] ? record["status"] : "No Status",
-            billed_amount: billed_amount,
-            balance: balance,
-            contract_value: contract_value,
-            sold_contract_value: sold_contract_value,
-            budget_expense: budget_expense,
-            budget_hours: budget_hours,
-            inventory_bill_amount: inventory_bill_amount,
-            po_cost: po_cost,
-            po_returns: po_returns,
-            equipment_cost: equipment_cost,
-            material_cost: material_cost,
-            labor_cost: labor_cost,
-            labor_hours: labor_hours,
-            burden: burden,
-            accounts_receivable: accounts_receivable,
-            expense: expense,
-            income: income,
-            current_liability: current_liability,
-            membership_liability: membership_liability,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
             customer_details_id: customer_details_id,
             actual_customer_details_id: actual_customer_details_id,
             location_id: location_id,
@@ -6998,47 +4571,47 @@ async function data_processor(data_lake, sql_request, table_list) {
             legal_entity_id: record["instance_id"],
           });
 
-          const UTC_update_date = new Date(params_header["createdBefore"])
-            .toISOString()
-            .slice(0, 10);
+          // const UTC_update_date = new Date(params_header["createdBefore"])
+          //   .toISOString()
+          //   .slice(0, 10);
 
-          wip_final_data_pool.push({
-            id: record["id"],
-            number: record["number"] ? record["number"] : "default",
-            name: record["name"] ? record["name"] : `${record["id"]}`,
-            status: record["status"] ? record["status"] : "No Status",
-            billed_amount: billed_amount,
-            balance: balance,
-            contract_value: contract_value,
-            sold_contract_value: sold_contract_value,
-            budget_expense: budget_expense,
-            budget_hours: budget_hours,
-            inventory_bill_amount: inventory_bill_amount,
-            po_cost: po_cost,
-            po_returns: po_returns,
-            equipment_cost: equipment_cost,
-            material_cost: material_cost,
-            labor_cost: labor_cost,
-            labor_hours: labor_hours,
-            burden: burden,
-            accounts_receivable: accounts_receivable,
-            expense: expense,
-            income: income,
-            current_liability: current_liability,
-            membership_liability: membership_liability,
-            business_unit_id: business_unit_id,
-            actual_business_unit_id: actual_business_unit_id,
-            customer_details_id: customer_details_id,
-            actual_customer_details_id: actual_customer_details_id,
-            location_id: location_id,
-            actual_location_id: actual_location_id,
-            startDate: startDate,
-            targetCompletionDate: targetCompletionDate,
-            actualCompletionDate: actualCompletionDate,
-            createdOn: createdOn,
-            modifiedOn: modifiedOn,
-            UTC_update_date: UTC_update_date,
-          });
+          // wip_final_data_pool.push({
+          //   id: record["id"],
+          //   number: record["number"] ? record["number"] : "default",
+          //   name: record["name"] ? record["name"] : `${record["id"]}`,
+          //   status: record["status"] ? record["status"] : "No Status",
+          //   billed_amount: billed_amount,
+          //   balance: balance,
+          //   contract_value: contract_value,
+          //   sold_contract_value: sold_contract_value,
+          //   budget_expense: budget_expense,
+          //   budget_hours: budget_hours,
+          //   inventory_bill_amount: inventory_bill_amount,
+          //   po_cost: po_cost,
+          //   po_returns: po_returns,
+          //   equipment_cost: equipment_cost,
+          //   material_cost: material_cost,
+          //   labor_cost: labor_cost,
+          //   labor_hours: labor_hours,
+          //   burden: burden,
+          //   accounts_receivable: accounts_receivable,
+          //   expense: expense,
+          //   income: income,
+          //   current_liability: current_liability,
+          //   membership_liability: membership_liability,
+          //   business_unit_id: business_unit_id,
+          //   actual_business_unit_id: actual_business_unit_id,
+          //   customer_details_id: customer_details_id,
+          //   actual_customer_details_id: actual_customer_details_id,
+          //   location_id: location_id,
+          //   actual_location_id: actual_location_id,
+          //   startDate: startDate,
+          //   targetCompletionDate: targetCompletionDate,
+          //   actualCompletionDate: actualCompletionDate,
+          //   createdOn: createdOn,
+          //   modifiedOn: modifiedOn,
+          //   UTC_update_date: UTC_update_date,
+          // });
         });
 
         // console.log("final_data_pool: ", final_data_pool);
@@ -7076,30 +4649,30 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        if (wip_final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["projects_wip_data"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                wip_final_data_pool,
-                wip_header_data,
-                "projects_wip_data"
-              );
-          } while (
-            hvac_tables_responses["projects_wip_data"]["status"] != "success"
-          );
+        // if (wip_final_data_pool.length > 0) {
+        //   do {
+        //     hvac_tables_responses["projects_wip_data"]["status"] =
+        //       await hvac_data_insertion(
+        //         sql_request,
+        //         wip_final_data_pool,
+        //         wip_header_data,
+        //         "projects_wip_data"
+        //       );
+        //   } while (
+        //     hvac_tables_responses["projects_wip_data"]["status"] != "success"
+        //   );
 
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
+        //   // entry into auto_update table
+        //   try {
+        //     const auto_update_query = `UPDATE auto_update SET projects_wip_data = '${hvac_tables_responses["projects_wip_data"]["status"]}' WHERE id=${lastInsertedId}`;
 
-            await sql_request.query(auto_update_query);
+        //     await sql_request.query(auto_update_query);
 
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
+        //     console.log("Auto_Update log created ");
+        //   } catch (err) {
+        //     console.log("Error while inserting into auto_update", err);
+        //   }
+        // }
 
         if (project_managers_final_data_pool.length > 0) {
           do {
@@ -7127,8 +4700,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake[api_name];
-        delete data_lake["invoice"];
-        delete data_lake["purchase_order"];
 
         break;
       }
@@ -7138,28 +4709,10 @@ async function data_processor(data_lake, sql_request, table_list) {
         const telecom_calls_data_pool =
           data_lake[table_name]["telecom__calls"]["data_pool"];
 
-        let appointments_data_pool = {};
-
         const header_data = hvac_tables[table_name]["columns"];
 
-        if (initial_execute) {
-          appointments_data_pool =
-            data_lake["appointments"]["jpm__appointments"]["data_pool"];
-        } else {
-          // appointments data from db,  has to fetched
-          // fetching appointments data from db
-          // ----------------
-          const appointments_response = await sql_request.query(
-            "SELECT * FROM appointments"
-          );
-
-          const appointments_data = appointments_response.recordset;
-
-          appointments_data.map((current_record) => {
-            appointments_data_pool[current_record["id"]] = current_record;
-          });
-          // ----------------
-        }
+        const appointments_data_pool =
+          data_lake["appointments"]["jpm__appointments"]["data_pool"];
 
         // fetching business units from db
         // ----------------
@@ -7216,7 +4769,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: "1",
             instance_id: 1,
             job_number: "default",
-            status: "Not Known",
             project_id: "1",
             actual_project_id: "1",
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -7268,7 +4820,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: "2",
             instance_id: 2,
             job_number: "default",
-            status: "Not Known",
             project_id: "2",
             actual_project_id: "2",
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -7320,7 +4871,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: "3",
             instance_id: 3,
             job_number: "default",
-            status: "Not Known",
             project_id: "3",
             actual_project_id: "3",
             createdOn: "1999-01-01T00:00:00.00Z",
@@ -7368,16 +4918,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             type_modifiedOn: "1999-01-01T00:00:00.00Z",
           });
         }
-
-        let lead_call_status = {};
-
-        Object.keys(appointments_data_pool).map((record_id) => {
-          const record = appointments_data_pool[record_id];
-
-          if (record["jobId"]) {
-            lead_call_status[record["jobId"]] = record["status"];
-          }
-        });
 
         Object.keys(telecom_calls_data_pool).map((record_id) => {
           const record = telecom_calls_data_pool[record_id];
@@ -7618,16 +5158,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             }
           }
 
-          let status = "Not Known";
-          if (lead_call_status[record["jobNumber"]]) {
-            status = lead_call_status[record["jobNumber"]];
-          }
-
           final_data_pool.push({
             id: record["leadCall"]["id"],
             instance_id: Number(record["instance_id"]),
             job_number: record["jobNumber"] ? record["jobNumber"] : "default",
-            status: status,
             project_id: project_id,
             actual_project_id: actual_project_id,
             createdOn: createdOn,
@@ -8433,14 +5967,169 @@ async function data_processor(data_lake, sql_request, table_list) {
 
       case "inventory_bills": {
         const table_name = main_api_list[api_name][0]["table_name"];
+        const header_data = hvac_tables[table_name]["columns"];
         const bills_data_pool =
           data_lake[api_name]["accounting__export/inventory-bills"][
             "data_pool"
           ];
-        const header_data = hvac_tables[table_name]["columns"];
+        const purchase_order_data_pool =
+          data_lake["purchase_order"]["inventory__purchase-orders"][
+            "data_pool"
+          ];
 
-        const final_data_pool =
-          inventory_bills_cache["inventory_bills_final_data_pool"];
+        // fetching business units from db
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+
+        // fetching vendor data from db
+        // ----------------
+        const vendor_response = await sql_request.query("SELECT * FROM vendor");
+
+        const vendor_data = vendor_response.recordset;
+
+        const vendors_data_pool = {};
+
+        vendor_data.map((current_record) => {
+          vendors_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching job_details data from db
+        // ----------------
+        const jobs_response = await sql_request.query(
+          "SELECT * FROM job_details"
+        );
+
+        const jobs_data = jobs_response.recordset;
+
+        const jobs_data_pool = {};
+
+        jobs_data.map((current_record) => {
+          jobs_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        const final_data_pool = [];
+
+        // processing bills data pool
+        Object.keys(bills_data_pool).map((record_id) => {
+          const record = bills_data_pool[record_id];
+
+          let purchase_order_id = record["instance_id"];
+          let actual_purchase_order_id = record["purchaseOrderId"]
+            ? record["purchaseOrderId"]
+            : record["instance_id"];
+
+          if (record["purchaseOrderId"]) {
+            if (purchase_order_data_pool[record["purchaseOrderId"]]) {
+              purchase_order_id = record["purchaseOrderId"];
+            }
+          }
+
+          let billDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["billDate"]) {
+            if (
+              new Date(record["billDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              billDate = record["billDate"];
+            }
+          } else {
+            billDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"]
+              ? record["businessUnit"]["id"]
+              : record["instance_id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let vendor_id = record["instance_id"];
+          let actual_vendor_id = record["instance_id"];
+
+          if (record["vendor"]) {
+            actual_vendor_id = record["vendor"]["id"]
+              ? record["vendor"]["id"]
+              : record["instance_id"];
+            if (vendors_data_pool[record["vendor"]["id"]]) {
+              vendor_id = record["vendor"]["id"];
+            }
+          }
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["jobId"]
+            ? record["jobId"]
+            : record["instance_id"];
+          if (record["jobId"]) {
+            if (jobs_data_pool[record["jobId"]]) {
+              job_details_id = record["jobId"];
+            }
+          }
+
+          final_data_pool.push({
+            id: record["id"],
+            purchase_order_id: purchase_order_id,
+            actual_purchase_order_id: actual_purchase_order_id,
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            referenceNumber: record["referenceNumber"]
+              ? record["referenceNumber"]
+              : "default",
+            vendorNumber: record["vendorNumber"],
+            billDate: billDate,
+            billAmount: parseFloat(record["billAmount"]),
+            taxAmount: parseFloat(record["taxAmount"]),
+            shippingAmount: parseFloat(record["shippingAmount"]),
+            createdOn: createdOn,
+            dueDate: dueDate,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            vendor_id: vendor_id,
+            actual_vendor_id: actual_vendor_id,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            job_number: record["jobNumber"],
+          });
+        });
 
         console.log("inventory_bills data: ", final_data_pool.length);
 
@@ -8470,6 +6159,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         delete data_lake[api_name];
+        delete data_lake["purchase_order"];
 
         break;
       }
@@ -8572,295 +6262,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           // entry into auto_update table
           try {
             const auto_update_query = `UPDATE auto_update SET technician = '${hvac_tables_responses["technician"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[api_name];
-
-        break;
-      }
-
-      case "appointment_assignments": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool =
-          data_lake[api_name]["dispatch__appointment-assignments"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        // fetching job_details data from db
-        // ----------------
-        const jobs_response = await sql_request.query(
-          "SELECT * FROM job_details"
-        );
-
-        const jobs_data = jobs_response.recordset;
-
-        const jobs_data_pool = {};
-
-        jobs_data.map((current_record) => {
-          jobs_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching technician data from db
-        // ----------------
-        const technician_response = await sql_request.query(
-          "SELECT * FROM technician"
-        );
-
-        const technician_data = technician_response.recordset;
-
-        const technician_data_pool = {};
-
-        technician_data.map((current_record) => {
-          technician_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        // fetching appointments data from db
-        // ----------------
-        const appointments_response = await sql_request.query(
-          "SELECT * FROM appointments"
-        );
-
-        const appointments_data = appointments_response.recordset;
-
-        const appointments_data_pool = {};
-
-        appointments_data.map((current_record) => {
-          appointments_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        let final_data_pool = [];
-
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let technician_id = record["instance_id"];
-          let actual_technician_id = record["technicianId"]
-            ? record["technicianId"]
-            : record["instance_id"];
-          if (technician_data_pool[record["technicianId"]]) {
-            technician_id = record["technicianId"];
-          }
-
-          let assignedOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["assignedOn"]) {
-            if (
-              new Date(record["assignedOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              assignedOn = record["assignedOn"];
-            }
-          } else {
-            assignedOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          let job_details_id = record["instance_id"];
-          let actual_job_details_id = record["jobId"]
-            ? record["jobId"]
-            : record["instance_id"];
-          if (jobs_data_pool[record["jobId"]]) {
-            job_details_id = record["jobId"];
-          }
-
-          let appointment_id = record["instance_id"];
-          let actual_appointment_id = record["appointmentId"]
-            ? record["appointmentId"]
-            : record["instance_id"];
-          if (appointments_data_pool[record["appointmentId"]]) {
-            appointment_id = record["appointmentId"];
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            technician_id: technician_id,
-            actual_technician_id: actual_technician_id,
-            technician_name: record["technicianName"]
-              ? record["technicianName"]
-              : "default",
-            assigned_by_id: record["assignedById"]
-              ? record["assignedById"]
-              : record["instance_id"],
-            assignedOn: assignedOn,
-            status: record["status"] ? record["status"] : "default",
-            is_paused: record["isPaused"] ? record["isPaused"] : 0,
-            job_details_id: job_details_id,
-            actual_job_details_id: actual_job_details_id,
-            appointment_id: appointment_id,
-            actual_appointment_id: actual_appointment_id,
-          });
-        });
-
-        console.log("appointment_assignments data: ", final_data_pool.length);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["appointment_assignments"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["appointment_assignments"]["status"] !=
-            "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET appointment_assignments = '${hvac_tables_responses["appointment_assignments"]["status"]}' WHERE id=${lastInsertedId}`;
-
-            await sql_request.query(auto_update_query);
-
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
-
-        delete data_lake[api_name];
-
-        break;
-      }
-
-      case "non_job_appointments": {
-        const table_name = main_api_list[api_name][0]["table_name"];
-        const data_pool =
-          data_lake[api_name]["dispatch__non-job-appointments"]["data_pool"];
-        const header_data = hvac_tables[table_name]["columns"];
-
-        // fetching technician data from db
-        // ----------------
-        const technician_response = await sql_request.query(
-          "SELECT * FROM technician"
-        );
-
-        const technician_data = technician_response.recordset;
-
-        const technician_data_pool = {};
-
-        technician_data.map((current_record) => {
-          technician_data_pool[current_record["id"]] = current_record;
-        });
-        // ----------------
-
-        let final_data_pool = [];
-
-        // console.log("data_pool: ", data_pool);
-        // console.log("header_data: ", header_data);
-
-        Object.keys(data_pool).map((record_id) => {
-          const record = data_pool[record_id];
-
-          let technician_id = record["instance_id"];
-          let actual_technician_id = record["technicianId"]
-            ? record["technicianId"]
-            : record["instance_id"];
-          if (technician_data_pool[record["technicianId"]]) {
-            technician_id = record["technicianId"];
-          }
-
-          let start = "2000-01-01T00:00:00.00Z";
-
-          if (record["start"]) {
-            if (
-              new Date(record["start"]) > new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              start = record["start"];
-            }
-          } else {
-            start = "2001-01-01T00:00:00.00Z";
-          }
-
-          let createdOn = "2000-01-01T00:00:00.00Z";
-
-          if (record["createdOn"]) {
-            if (
-              new Date(record["createdOn"]) >
-              new Date("2000-01-01T00:00:00.00Z")
-            ) {
-              createdOn = record["createdOn"];
-            }
-          } else {
-            createdOn = "2001-01-01T00:00:00.00Z";
-          }
-
-          final_data_pool.push({
-            id: record["id"],
-            technician_id: technician_id,
-            actual_technician_id: actual_technician_id,
-            start: start,
-            name: record["name"] ? record["name"] : "default",
-            duration: record["duration"] ? record["duration"] : "00:00:00",
-            timesheetCodeId: record["timesheetCodeId"]
-              ? record["timesheetCodeId"]
-              : 0,
-            clearDispatchBoard: record["clearDispatchBoard"]
-              ? record["clearDispatchBoard"]
-              : 0,
-            clearTechnicianView: record["clearTechnicianView"]
-              ? record["clearTechnicianView"]
-              : 0,
-            removeTechnicianFromCapacityPlanning: record[
-              "removeTechnicianFromCapacityPlanning"
-            ]
-              ? record["removeTechnicianFromCapacityPlanning"]
-              : 0,
-            is_all_day: record["allDay"] ? record["allDay"] : 0,
-            is_active: record["active"] ? record["active"] : 0,
-            createdOn: createdOn,
-            created_by_id: record["createdById"]
-              ? record["createdById"]
-              : record["instance_id"],
-          });
-        });
-
-        console.log("non_job_appointments data: ", final_data_pool.length);
-        // console.log("header_data: ", header_data);
-
-        // await hvac_flat_data_insertion(
-        //   sql_request,
-        //   final_data_pool,
-        //   header_data,
-        //   table_name
-        // );
-
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["non_job_appointments"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name
-              );
-          } while (
-            hvac_tables_responses["non_job_appointments"]["status"] != "success"
-          );
-
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET non_job_appointments = '${hvac_tables_responses["non_job_appointments"]["status"]}' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
@@ -9079,8 +6480,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        delete data_lake[api_name];
-
         break;
       }
 
@@ -9095,15 +6494,789 @@ async function data_processor(data_lake, sql_request, table_list) {
         const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
         const gross_profit_header_data = hvac_tables["gross_profit"]["columns"];
 
-        let invoice_final_data_pool = invoice_cache["invoice_final_data_pool"];
-        let cogs_material_final_data_pool =
-          invoice_cache["cogs_material_final_data_pool"];
-        let cogs_equipment_final_data_pool =
-          invoice_cache["cogs_equipment_final_data_pool"];
-        let cogs_services_final_data_pool =
-          invoice_cache["cogs_services_final_data_pool"];
-        let gross_profit_final_data_pool =
-          invoice_cache["gross_profit_final_data_pool"];
+        // fetching job_details data from db
+        // ----------------
+        const jobs_response = await sql_request.query(
+          "SELECT * FROM job_details"
+        );
+
+        const jobs_data = jobs_response.recordset;
+
+        const jobs_data_pool = {};
+
+        jobs_data.map((current_record) => {
+          jobs_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching projects data from db
+        // ----------------
+        const projects_response = await sql_request.query(
+          "SELECT * FROM projects"
+        );
+
+        const projects_data = projects_response.recordset;
+
+        const projects_data_pool = {};
+
+        projects_data.map((current_record) => {
+          projects_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching business units from db
+        // ----------------
+        const business_unit_response = await sql_request.query(
+          "SELECT * FROM business_unit"
+        );
+
+        const business_unit_data = business_unit_response.recordset;
+
+        const business_unit_data_pool = {};
+
+        business_unit_data.map((current_record) => {
+          business_unit_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching customers data from db
+        // ----------------
+        const customers_response = await sql_request.query(
+          "SELECT * FROM customer_details"
+        );
+
+        const customer_data = customers_response.recordset;
+
+        const customer_data_pool = {};
+
+        customer_data.map((current_record) => {
+          customer_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        // fetching location data from db
+        // ----------------
+        const location_response = await sql_request.query(
+          "SELECT * FROM location"
+        );
+
+        const location_data = location_response.recordset;
+
+        const location_data_pool = {};
+
+        location_data.map((current_record) => {
+          location_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
+
+        const sku_details_data_pool = {
+          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
+          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
+        };
+
+        let invoice_final_data_pool = [];
+        let cogs_material_final_data_pool = [];
+        let cogs_equipment_final_data_pool = [];
+        let cogs_services_final_data_pool = [];
+
+        if (initial_execute) {
+          invoice_final_data_pool.push({
+            id: "1",
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: "1",
+            invoice_type_name: "default_invoice",
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            business_unit_id: "1",
+            actual_business_unit_id: "1",
+            location_id: "1",
+            actual_location_id: "1",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            customer_id: "1",
+            actual_customer_id: "1",
+            customer_name: "default",
+          });
+
+          invoice_final_data_pool.push({
+            id: "2",
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: "2",
+            invoice_type_name: "default_invoice",
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            business_unit_id: "2",
+            actual_business_unit_id: "2",
+            location_id: "2",
+            actual_location_id: "2",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            customer_id: "2",
+            actual_customer_id: "2",
+            customer_name: "default",
+          });
+
+          invoice_final_data_pool.push({
+            id: "3",
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: "3",
+            invoice_type_name: "default_invoice",
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            business_unit_id: "3",
+            actual_business_unit_id: "3",
+            location_id: "3",
+            actual_location_id: "3",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            customer_id: "3",
+            actual_customer_id: "3",
+            customer_name: "default",
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            invoice_id: "1",
+            sku_details_id: "1",
+            actual_sku_details_id: "1",
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: "2",
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: "2",
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            invoice_id: "2",
+            sku_details_id: "2",
+            actual_sku_details_id: "2",
+          });
+
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: "3",
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: "3",
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            invoice_id: "3",
+            sku_details_id: "3",
+            actual_sku_details_id: "3",
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            invoice_id: "1",
+            sku_details_id: "1",
+            actual_sku_details_id: "1",
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            invoice_id: "2",
+            sku_details_id: "2",
+            actual_sku_details_id: "2",
+          });
+
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            invoice_id: "3",
+            sku_details_id: "3",
+            actual_sku_details_id: "3",
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 1,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 1,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "1",
+            actual_job_details_id: "1",
+            project_id: "1",
+            actual_project_id: "1",
+            invoice_id: "1",
+            sku_details_id: "1",
+            actual_sku_details_id: "1",
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 2,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 2,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "2",
+            actual_job_details_id: "2",
+            project_id: "2",
+            actual_project_id: "2",
+            invoice_id: "2",
+            sku_details_id: "2",
+            actual_sku_details_id: "2",
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 3,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 3,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "3",
+            actual_job_details_id: "3",
+            project_id: "3",
+            actual_project_id: "3",
+            invoice_id: "3",
+            sku_details_id: "3",
+            actual_sku_details_id: "3",
+          });
+        }
+
+        Object.keys(invoice_data_pool).map((record_id) => {
+          const record = invoice_data_pool[record_id];
+
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["instance_id"];
+          if (record["job"]) {
+            actual_job_details_id = record["job"]["id"];
+            if (jobs_data_pool[record["job"]["id"]]) {
+              job_details_id = record["job"]["id"];
+            }
+          }
+
+          let project_id = record["instance_id"];
+          let actual_project_id = record["instance_id"];
+          if (record["projectId"]) {
+            actual_project_id = record["projectId"];
+            if (projects_data_pool[record["projectId"]]) {
+              project_id = record["projectId"];
+            }
+          }
+
+          let business_unit_id = record["instance_id"];
+          let actual_business_unit_id = record["instance_id"];
+          if (record["businessUnit"]) {
+            actual_business_unit_id = record["businessUnit"]["id"];
+            if (business_unit_data_pool[record["businessUnit"]["id"]]) {
+              business_unit_id = record["businessUnit"]["id"];
+            }
+          }
+
+          let location_id = record["instance_id"];
+          let actual_location_id = record["instance_id"];
+          if (record["location"]) {
+            actual_location_id = record["location"]["id"];
+            if (location_data_pool[record["location"]["id"]]) {
+              location_id = record["location"]["id"];
+            }
+          }
+
+          let customer_id = record["instance_id"];
+          let actual_customer_id = record["instance_id"];
+          let customer_name = "default";
+          if (record["customer"]) {
+            actual_customer_id = record["customer"]["id"];
+            customer_name = record["customer"]["name"]
+              ? record["customer"]["name"]
+              : "default";
+            if (customer_data_pool[record["customer"]["id"]]) {
+              customer_id = record["customer"]["id"];
+            }
+          }
+
+          let address_street = "";
+          let address_unit = "";
+          let address_city = "";
+          let address_state = "";
+          let address_zip = 57483;
+          let acutal_address_zip = "";
+          let address_country = "";
+          let city = "Mexico";
+          if (record["locationAddress"]) {
+            address_street = record["locationAddress"]["street"]
+              ? record["locationAddress"]["street"]
+              : "";
+            address_unit = record["locationAddress"]["unit"]
+              ? record["locationAddress"]["unit"]
+              : "";
+            address_city = record["locationAddress"]["city"]
+              ? record["locationAddress"]["city"]
+              : "";
+            address_state = record["locationAddress"]["state"]
+              ? record["locationAddress"]["state"]
+              : "";
+            address_country = record["locationAddress"]["country"]
+              ? record["locationAddress"]["country"]
+              : "";
+            acutal_address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : "";
+
+            address_zip = record["locationAddress"]["zip"]
+              ? record["locationAddress"]["zip"]
+              : 57483;
+
+            if (typeof address_zip == "string") {
+              const numericValue = Number(address_zip.split("-")[0]);
+              if (!isNaN(numericValue)) {
+                // If the conversion is successful and numericValue is not NaN, update address_zip
+                address_zip = numericValue;
+              } else {
+                // Handle the case where the conversion fails
+                address_zip = 57483;
+              }
+            }
+
+            if (!unique_us_zip_codes[String(address_zip)]) {
+              address_zip = 57483;
+            } else {
+              city = unique_us_zip_codes[String(address_zip)]["city"];
+            }
+          }
+
+          let invoice_date = "2000-01-01T00:00:00.00Z";
+
+          if (record["invoiceDate"]) {
+            if (
+              new Date(record["invoiceDate"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              invoice_date = record["invoiceDate"];
+            }
+          } else {
+            invoice_date = "2001-01-01T00:00:00.00Z";
+          }
+
+          let dueDate = "2000-01-01T00:00:00.00Z";
+
+          if (record["dueDate"]) {
+            if (
+              new Date(record["dueDate"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              dueDate = record["dueDate"];
+            }
+          } else {
+            dueDate = "2001-01-01T00:00:00.00Z";
+          }
+
+          let depositedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["depositedOn"]) {
+            if (
+              new Date(record["depositedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              depositedOn = record["depositedOn"];
+            }
+          } else {
+            depositedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let createdOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["createdOn"]) {
+            if (
+              new Date(record["createdOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              createdOn = record["createdOn"];
+            }
+          } else {
+            createdOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let modifiedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["modifiedOn"]) {
+            if (
+              new Date(record["modifiedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              modifiedOn = record["modifiedOn"];
+            }
+          } else {
+            modifiedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let invoice_type_id = record["instance_id"];
+          let invoice_type_name = "default_invoice";
+          if (record["invoiceType"]) {
+            invoice_type_id = String(record["invoiceType"]["id"]);
+            invoice_type_name = record["invoiceType"]["name"];
+          }
+
+          invoice_final_data_pool.push({
+            id: record["id"],
+            syncStatus: record["syncStatus"] ? record["syncStatus"] : "default",
+            date: invoice_date,
+            dueDate: dueDate,
+            subtotal: record["subTotal"] ? record["subTotal"] : 0,
+            tax: record["salesTax"] ? record["salesTax"] : 0,
+            total: record["total"] ? record["total"] : 0,
+            balance: record["balance"] ? record["balance"] : 0,
+            depositedOn: depositedOn,
+            createdOn: createdOn,
+            modifiedOn: modifiedOn,
+            invoice_type_id: invoice_type_id,
+            invoice_type_name: invoice_type_name,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            business_unit_id: business_unit_id,
+            actual_business_unit_id: actual_business_unit_id,
+            location_id: location_id,
+            actual_location_id: actual_location_id,
+            address_street: address_street,
+            address_unit: address_unit,
+            address_city: address_city,
+            address_state: address_state,
+            address_country: address_country,
+            address_zip: address_zip,
+            acutal_address_zip: acutal_address_zip,
+            customer_id: customer_id,
+            actual_customer_id: actual_customer_id,
+            customer_name: customer_name,
+          });
+
+          if (record["items"]) {
+            record["items"].map((items_record) => {
+              let generalLedgerAccountid = 0;
+              let generalLedgerAccountname = "default";
+              let generalLedgerAccountnumber = 0;
+              let generalLedgerAccounttype = "default";
+              let generalLedgerAccountdetailType = "default";
+
+              if (items_record["generalLedgerAccount"]) {
+                generalLedgerAccountid =
+                  items_record["generalLedgerAccount"]["id"];
+                generalLedgerAccountname =
+                  items_record["generalLedgerAccount"]["name"];
+                generalLedgerAccountnumber =
+                  items_record["generalLedgerAccount"]["number"];
+                generalLedgerAccounttype =
+                  items_record["generalLedgerAccount"]["type"];
+                generalLedgerAccountdetailType =
+                  items_record["generalLedgerAccount"]["detailType"];
+              }
+
+              if (items_record["type"] == "Material") {
+                material_cost =
+                  material_cost + parseFloat(items_record["totalCost"]);
+
+                let sku_details_id = record["instance_id"];
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                cogs_material_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              if (items_record["type"] == "Equipment") {
+                equipment_cost =
+                  equipment_cost + parseFloat(items_record["totalCost"]);
+
+                let sku_details_id = record["instance_id"] + 3;
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                cogs_equipment_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              if (items_record["type"] == "Service") {
+                let sku_details_id = record["instance_id"] + 6;
+                let actual_sku_details_id = items_record["skuId"]
+                  ? items_record["skuId"]
+                  : record["instance_id"];
+                if (sku_details_data_pool[items_record["skuId"]]) {
+                  sku_details_id = items_record["skuId"];
+                }
+
+                // for gross profit
+                switch (generalLedgerAccounttype) {
+                  case "Accounts Receivable": {
+                    accounts_receivable += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                  case "Current Liability": {
+                    current_liability += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                  case "Membership Liability": {
+                    membership_liability += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                  case "default": {
+                    default_val += items_record["total"]
+                      ? parseFloat(items_record["total"])
+                      : 0;
+
+                    break;
+                  }
+                }
+
+                cogs_services_final_data_pool.push({
+                  quantity: items_record["quantity"]
+                    ? items_record["quantity"]
+                    : 0,
+                  cost: items_record["cost"] ? items_record["cost"] : 0,
+                  total_cost: items_record["totalCost"]
+                    ? items_record["totalCost"]
+                    : 0,
+                  price: items_record["price"] ? items_record["price"] : 0,
+                  sku_name: items_record["skuName"]
+                    ? items_record["skuName"]
+                    : "default",
+                  sku_total: items_record["total"] ? items_record["total"] : 0,
+                  generalLedgerAccountid: generalLedgerAccountid,
+                  generalLedgerAccountname: generalLedgerAccountname,
+                  generalLedgerAccountnumber: generalLedgerAccountnumber,
+                  generalLedgerAccounttype: generalLedgerAccounttype,
+                  generalLedgerAccountdetailType:
+                    generalLedgerAccountdetailType,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  invoice_id: record["id"],
+                  sku_details_id: sku_details_id,
+                  actual_sku_details_id: actual_sku_details_id,
+                });
+              }
+
+              // for gross profit
+              switch (generalLedgerAccounttype) {
+                case "Expense": {
+                  expense += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  break;
+                }
+                case "Income": {
+                  income += items_record["total"]
+                    ? parseFloat(items_record["total"])
+                    : 0;
+
+                  break;
+                }
+              }
+            });
+          }
+
+          let revenue = parseFloat(record["total"])
+            ? parseFloat(record["total"])
+            : 0;
+        });
 
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
@@ -9242,7 +7415,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         }
 
-        invoice_cache = {};
+        delete data_lake[api_name];
+        delete data_lake["sku_details"];
 
         break;
       }
@@ -9251,10 +7425,23 @@ async function data_processor(data_lake, sql_request, table_list) {
         const table_name = main_api_list[api_name][0]["table_name"];
         const gross_pay_items_data_pool =
           data_lake[table_name]["payroll__gross-pay-items"]["data_pool"];
-        const payrolls_data_pool =
-          data_lake[table_name]["payroll__payrolls"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
+
+        // fetching payroll data from db
+        // ----------------
+        const payroll_response = await sql_request.query(
+          "SELECT * FROM payrolls"
+        );
+
+        const payroll_data = payroll_response.recordset;
+
+        const payrolls_data_pool = {};
+
+        payroll_data.map((current_record) => {
+          payrolls_data_pool[current_record["id"]] = current_record;
+        });
+        // ----------------
 
         // fetching job_details data from db
         // ----------------
@@ -9329,7 +7516,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             paid_duration: 0,
             burden_rate: 0,
             labor_cost: 0,
-            burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
             job_details_id: "1",
@@ -9348,7 +7534,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             paid_duration: 0,
             burden_rate: 0,
             labor_cost: 0,
-            burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
             job_details_id: "2",
@@ -9367,7 +7552,6 @@ async function data_processor(data_lake, sql_request, table_list) {
             paid_duration: 0,
             burden_rate: 0,
             labor_cost: 0,
-            burden_cost: 0,
             activity: "default",
             paid_time_type: "default",
             job_details_id: "3",
@@ -9384,16 +7568,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         gross_pay_items_data_pool.map((record) => {
-          let burden_rate = payrolls_data_pool[record["payrollId"]][
-            "burdenRate"
-          ]
-            ? payrolls_data_pool[record["payrollId"]]["burdenRate"]
-            : 0.0;
-
-          let burden_cost =
-            (record["paidDurationHours"] ? record["paidDurationHours"] : 0) *
-            burden_rate;
-
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["jobId"]) {
@@ -9446,7 +7620,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               : 0,
             burden_rate: burden_rate,
             labor_cost: record["amount"] ? record["amount"] : 0,
-            burden_cost: burden_cost,
             activity: record["activity"] ? record["activity"] : "default",
             paid_time_type: record["paidTimeType"]
               ? record["paidTimeType"]

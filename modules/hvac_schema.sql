@@ -158,20 +158,6 @@ CREATE TABLE location (
 );
 END;
 
---
--- gross_pay_items
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_pay_items')
-BEGIN
-CREATE TABLE gross_pay_items (
-  id NVARCHAR(20) NULL,
-  payrollId NVARCHAR(20) NULL,
-  amount DECIMAL(18, 8) NULL,
-  paidDurationHours DECIMAL(18, 8) NULL,
-  projectId NVARCHAR(20) NULL,
-  invoiceId NVARCHAR(20) NULL,
-);
-END;
-
 -- payrolls
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'payrolls')
 BEGIN
@@ -211,8 +197,6 @@ BEGIN
     status NVARCHAR(MAX) NULL,
     total DECIMAL(18, 8) NULL,
     tax DECIMAL(18, 8) NULL,
-    inventory_bill_amount DECIMAL(18, 8) NULL,
-    po_returns DECIMAL(18, 8) NULL,
     date DATETIME2 NULL,
     requiredOn DATETIME2 NULL,
     sentOn DATETIME2 NULL,
@@ -282,27 +266,6 @@ CREATE TABLE projects(
   [number] NVARCHAR(MAX) NULL,
   [name] NVARCHAR(MAX) NULL,
   [status] NVARCHAR(MAX) NULL,
-  billed_amount DECIMAL(18, 8) NULL,
-  balance DECIMAL(18, 8) NULL,
-  contract_value DECIMAL(18, 8) NULL,
-  sold_contract_value DECIMAL(18, 8) NULL,
-  budget_expense DECIMAL(18, 8) NULL,
-  budget_hours DECIMAL(18, 8) NULL,
-  inventory_bill_amount DECIMAL(18, 8) NULL,
-  po_cost DECIMAL(18, 8) NULL,
-  po_returns DECIMAL(18, 8) NULL,
-  equipment_cost DECIMAL(18, 8) NULL,
-  material_cost DECIMAL(18, 8) NULL,
-  labor_cost DECIMAL(18, 8) NULL,
-  labor_hours DECIMAL(18, 8) NULL,
-  burden DECIMAL(18, 8) NULL,
-  accounts_receivable DECIMAL(18, 8) NULL,
-  expense DECIMAL(18, 8) NULL,
-  income DECIMAL(18, 8) NULL,
-  current_liability DECIMAL(18, 8) NULL,
-  membership_liability DECIMAL(18, 8) NULL,
-  business_unit_id NVARCHAR(20) NOT NULL,
-  actual_business_unit_id NVARCHAR(20) NULL,
   customer_details_id NVARCHAR(20) NOT NULL,
   actual_customer_details_id NVARCHAR(20) NULL,
   location_id NVARCHAR(20) NOT NULL,
@@ -313,7 +276,6 @@ CREATE TABLE projects(
   createdOn DATETIME2 NULL,
   modifiedOn DATETIME2 NULL,
   legal_entity_id NVARCHAR(20) NOT NULL,
-  FOREIGN KEY (business_unit_id) REFERENCES business_unit (id),
   FOREIGN KEY (customer_details_id) REFERENCES customer_details (id),
   FOREIGN KEY (location_id) REFERENCES location (id),
   FOREIGN KEY (legal_entity_id) REFERENCES legal_entity (id)
@@ -381,7 +343,6 @@ CREATE TABLE call_details (
   id NVARCHAR(20) PRIMARY KEY,
   instance_id INT NULL,
   job_number NVARCHAR(MAX) NULL,
-  [status] NVARCHAR(MAX) NULL,
   project_id NVARCHAR(20) NOT NULL,
   actual_project_id NVARCHAR(20) NULL,
   createdOn DATETIME2 NULL,
@@ -546,50 +507,6 @@ CREATE TABLE technician (
 );
 END;
 
---appointment_assignments
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'appointment_assignments')
-BEGIN
-CREATE TABLE appointment_assignments (
-  id NVARCHAR(20) PRIMARY KEY,
-  technician_id NVARCHAR(20) NOT NULL,
-  actual_technician_id NVARCHAR(20) NULL,
-  technician_name NVARCHAR(MAX) NULL,
-  assigned_by_id NVARCHAR(20) NULL,
-  assignedOn DATETIME2 NULL,
-  [status] NVARCHAR(MAX) NULL,
-  is_paused TINYINT NULL,
-  job_details_id NVARCHAR(20) NOT NULL,
-  actual_job_details_id NVARCHAR(20) NULL,
-  appointment_id NVARCHAR(20) NOT NULL,
-  actual_appointment_id NVARCHAR(20) NULL,
-  FOREIGN KEY (technician_id) REFERENCES technician (id),
-  FOREIGN KEY (job_details_id) REFERENCES job_details (id),
-  FOREIGN KEY (appointment_id) REFERENCES appointments (id),
-);
-END;
-
--- non-job-appointments
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'non_job_appointments')
-BEGIN
-CREATE TABLE non_job_appointments (
-  id NVARCHAR(20) PRIMARY KEY,
-  technician_id NVARCHAR(20) NOT NULL,
-  actual_technician_id NVARCHAR(20) NULL,
-  [start] DATETIME2 NULL,
-  [name] NVARCHAR(MAX) NULL,
-  duration NVARCHAR(MAX) NULL,
-  timesheetCodeId INT NULL,
-  clearDispatchBoard TINYINT NULL,
-  clearTechnicianView TINYINT NULL,
-  removeTechnicianFromCapacityPlanning TINYINT NULL,
-  is_all_day TINYINT NULL,
-  is_active TINYINT NULL,
-  createdOn DATETIME2 NULL,
-  created_by_id NVARCHAR(20) NULL,
-  FOREIGN KEY (technician_id) REFERENCES technician (id)
-);
-END;
-
 -- sku_details
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'sku_details')
 BEGIN
@@ -656,7 +573,6 @@ CREATE TABLE cogs_labor (
   paid_duration DECIMAL(18, 8) NULL,
   burden_rate DECIMAL(18, 8) NULL,
   labor_cost DECIMAL(18, 8) NULL,
-  burden_cost DECIMAL(18, 8) NULL,
   activity NVARCHAR(MAX) NULL,
   paid_time_type NVARCHAR(MAX) NULL,
   job_details_id NVARCHAR(20) NOT NULL,
@@ -764,31 +680,6 @@ CREATE TABLE cogs_equipment (
 );
 END;
 
-
--- gross_profit
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'gross_profit')
-BEGIN
-CREATE TABLE gross_profit (
-  id NVARCHAR(20) PRIMARY KEY,
-  accounts_receivable DECIMAL(18, 8) NULL,
-  expense DECIMAL(18, 8) NULL,
-  income DECIMAL(18, 8) NULL,
-  current_liability DECIMAL(18, 8) NULL,
-  membership_liability DECIMAL(18, 8) NULL,
-  [default] DECIMAL(18, 8) NULL,
-  total DECIMAL(18, 8) NULL,
-  inventory_bill_amount DECIMAL(18, 8) NULL,
-  po_cost DECIMAL(18, 8) NULL,
-  po_returns DECIMAL(18, 8) NULL,
-  equipment_cost DECIMAL(18, 8) NULL,
-  material_cost DECIMAL(18, 8) NULL,
-  labor_cost DECIMAL(18, 8) NULL,
-  burden DECIMAL(18, 8) NULL,
-  units INT NULL,
-  labor_hours DECIMAL(18, 8) NULL,
-);
-END;
-
 -- auto_update
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
 BEGIN
@@ -807,7 +698,6 @@ CREATE TABLE auto_update (
   bookings NVARCHAR(MAX) NULL,  
   customer_details NVARCHAR(MAX) NULL,
   [location] NVARCHAR(MAX) NULL,
-  gross_pay_items NVARCHAR(MAX) NULL,
   payrolls NVARCHAR(MAX) NULL,
   job_types NVARCHAR(MAX) NULL,
   projects NVARCHAR(MAX) NULL,
@@ -820,8 +710,6 @@ CREATE TABLE auto_update (
   vendor NVARCHAR(MAX) NULL,
   inventory_bills NVARCHAR(MAX) NULL,
   technician NVARCHAR(MAX) NULL,
-  appointment_assignments NVARCHAR(MAX) NULL,
-  non_job_appointments NVARCHAR(MAX) NULL,
   sku_details NVARCHAR(MAX) NULL,
   invoice NVARCHAR(MAX) NULL,
   cogs_material NVARCHAR(MAX) NULL,
