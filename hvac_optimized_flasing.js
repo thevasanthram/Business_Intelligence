@@ -7103,9 +7103,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (items_record["type"] == "Material") {
-                material_cost =
-                  material_cost + parseFloat(items_record["totalCost"]);
-
                 let sku_details_id = record["instance_id"];
                 let actual_sku_details_id = items_record["skuId"]
                   ? items_record["skuId"]
@@ -7144,9 +7141,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (items_record["type"] == "Equipment") {
-                equipment_cost =
-                  equipment_cost + parseFloat(items_record["totalCost"]);
-
                 let sku_details_id = record["instance_id"] + 3;
                 let actual_sku_details_id = items_record["skuId"]
                   ? items_record["skuId"]
@@ -7223,7 +7217,6 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
             });
           }
-
         });
 
         console.log("invoice data: ", invoice_final_data_pool.length);
