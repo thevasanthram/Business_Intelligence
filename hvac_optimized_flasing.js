@@ -6486,6 +6486,8 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "invoice": {
         const table_name = main_api_list[api_name][0]["table_name"];
 
+        const invoice_data_pool =
+          data_lake["invoice"]["accounting__invoices"]["data_pool"];
         const invoice_header_data = hvac_tables["invoice"]["columns"];
         const cogs_material_header_data =
           hvac_tables["cogs_material"]["columns"];
