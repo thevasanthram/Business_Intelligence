@@ -7339,6 +7339,8 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
+        console.log('cogs_labor')
+
         // fetching payroll data from db
         // ----------------
         const payroll_response = await sql_request.query(
