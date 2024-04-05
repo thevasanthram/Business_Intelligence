@@ -1776,10 +1776,6 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
-      burden_rate: {
-        data_type: "DECIMAL",
-        constraint: { nullable: true },
-      },
       labor_cost: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -7429,7 +7425,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         if (initial_execute) {
           final_data_pool.push({
             paid_duration: 0,
-            burden_rate: 0,
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
@@ -7447,7 +7442,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             paid_duration: 0,
-            burden_rate: 0,
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
@@ -7465,7 +7459,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             paid_duration: 0,
-            burden_rate: 0,
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",

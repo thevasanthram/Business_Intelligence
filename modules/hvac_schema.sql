@@ -571,7 +571,6 @@ BEGIN
 CREATE TABLE cogs_labor (
   id INT IDENTITY(1,1) PRIMARY KEY,
   paid_duration DECIMAL(18, 8) NULL,
-  burden_rate DECIMAL(18, 8) NULL,
   labor_cost DECIMAL(18, 8) NULL,
   activity NVARCHAR(MAX) NULL,
   paid_time_type NVARCHAR(MAX) NULL,
