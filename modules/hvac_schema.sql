@@ -679,6 +679,33 @@ CREATE TABLE cogs_equipment (
 );
 END;
 
+-- wip_report
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name='wip_report')
+BEGIN
+CREATE TABLE wip_report(
+  Instance_id NVARCHAR(20) NOT NULL,
+  ProjectNumber NVARCHAR(20) NOT NULL,
+  ProjectName NVARCHAR(MAX) NULL,
+  ProjectStatus NVARCHAR(MAX) NULL,
+  ProjectContractStartDate DATETIME2 NULL,
+  ActualCompletionDate DATETIME2 NULL,
+  ContractValue DECIMAL(18, 10) NULL,
+  ChangeOrderValue DECIMAL(18, 10) NULL,
+  CostAdjustment DECIMAL(18, 10) NULL,
+  TotalEstimatedCost DECIMAL(18, 10) NULL,
+  EstimatedMargin DECIMAL(18, 10) NULL,
+  EstimatedMarginPercentage DECIMAL(18, 10) NULL,
+  TotalCost DECIMAL(18, 10) NULL,
+  CostToComplete DECIMAL(18, 10) NULL,
+  PercentCompleteCost DECIMAL(18, 10) NULL,
+  EarnedRevenue DECIMAL(18, 10) NULL,
+  TotalRevenue DECIMAL(18, 10) NULL,
+  OverBilling DECIMAL(18, 10) NULL,
+  UnderBilling DECIMAL(18, 10) NULL,
+  UTC_update_date DATETIME2 NULL,
+)
+END;
+
 -- auto_update
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'auto_update')
 BEGIN

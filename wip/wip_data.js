@@ -1,5 +1,5 @@
-const create_sql_connection = require("./modules/create_sql_connection");
-const hvac_data_insertion = require("./modules/hvac_data_insertion");
+const create_sql_connection = require("../modules/create_sql_connection");
+const hvac_data_insertion = require("../modules/hvac_data_insertion");
 
 async function add_suffix(id, instance_id) {
   let suffix = "";

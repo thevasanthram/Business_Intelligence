@@ -3,7 +3,7 @@ const fs = require("fs");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
-const getAccessToken = require("./modules/get_access_token");
+const getAccessToken = require("./modules/get_access_token")
 const getAPIWholeData = require("./modules/get_api_whole_data");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
 const hvac_merge_insertion = require("./modules/hvac_merge_insertion");
