@@ -56,7 +56,7 @@ async function get_wip_report_data(
           parameters: [
             {
               name: "From",
-              value: "2024-01-01",
+              value: "1900-01-01",
             },
             {
               name: "To",
