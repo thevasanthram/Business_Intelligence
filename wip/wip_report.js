@@ -129,7 +129,7 @@ const wip_response = {
   },
 };
 
-async function wip_report() {
+async function wip_report(as_of_date) {
   await Promise.all(
     instance_details.map(async (instance_data) => {
       const instance_name = instance_data["instance_name"];
@@ -168,6 +168,7 @@ async function wip_report() {
             instance_name,
             tenant_id,
             wip_report_id,
+            as_of_date,
             data_pool,
             page_count
           ));
@@ -211,4 +212,20 @@ async function wip_report() {
   console.log("Data written to DB");
 }
 
-wip_report();
+async function wip_historical_report() {
+  let to_date = new Date("01-01-2024");
+//   const to_dateString = to_date.toISOString().substring(0, 10);
+  to_date = new Date(to_date);
+
+  const current_date = new Date("2024-04-16");
+
+  while (to_date <= current_date) {
+    console.log("=========================================");
+    console.log("as of date: ", to_date);
+    console.log("=========================================");
+    await wip_report(to_date.toISOString().substring(0, 10));
+    to_date.setDate(to_date.getDate() + 1);
+  }
+}
+
+wip_historical_report();

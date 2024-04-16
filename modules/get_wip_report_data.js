@@ -26,6 +26,7 @@ async function get_wip_report_data(
   instance_name,
   tenant_id,
   wip_report_id,
+  as_of_date,
   data_pool,
   page_count
 ) {
@@ -41,9 +42,6 @@ async function get_wip_report_data(
     let shouldIterate = false;
     do {
       const api_endpoint = `https://api.servicetitan.io/reporting/v2/tenant/${tenant_id}/report-category/accounting/reports/${wip_report_id}/data`;
-
-      const to_date = new Date();
-      const to_dateString = to_date.toISOString().substring(0, 10);
 
       const api_url =
         api_endpoint + `?page=${page_count + 1}&includeTotal=true`;
@@ -62,7 +60,7 @@ async function get_wip_report_data(
             },
             {
               name: "To",
-              value: to_dateString,
+              value: as_of_date,
             },
             {
               name: "TransactionAsOfDateOptions",
@@ -70,7 +68,7 @@ async function get_wip_report_data(
             },
             {
               name: "TransactionAsOfDate",
-              value: to_dateString,
+              value: as_of_date,
             },
             {
               name: "InvoiceCostStatus",
@@ -120,6 +118,7 @@ async function get_wip_report_data(
       }
 
       const data = response.data;
+      console.log("data: ", data);
 
       shouldIterate = response["hasMore"];
 
@@ -156,7 +155,7 @@ async function get_wip_report_data(
           return {
             instance_id: instance_id,
             ...modified_record,
-            UTC_update_date: to_dateString,
+            UTC_update_date: as_of_date,
           };
         })
       );
