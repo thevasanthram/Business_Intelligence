@@ -16,11 +16,6 @@ async function hvac_merge_insertion(
     const table = new mssql.Table(tempTableName);
     table.create = true; // Create the table if it doesn't exist
 
-    // // update query
-    // const updation_query = Object.keys(header_data)
-    //   .map((column) => `Target.${column} = Source.${column}`)
-    //   .join(",\n");
-
     // Update query
     const updation_query = Object.keys(header_data)
       .map((column) => `Target.[${column}] = Source.[${column}]`)
@@ -35,6 +30,12 @@ async function hvac_merge_insertion(
         table.columns.add(
           column,
           mssql.NVarChar(mssql.MAX),
+          constraint ? constraint : {}
+        );
+      } else if (data_type === "NVARCHAR20") {
+        table.columns.add(
+          column,
+          mssql.NVarChar(20),
           constraint ? constraint : {}
         );
       } else if (data_type === "INT") {
@@ -126,7 +127,7 @@ async function hvac_merge_insertion(
 
     await sql_pool.query(`DROP TABLE ${tempTableName}`);
 
-    await swl;
+    // await sql_pool;
   }
 
   return status;

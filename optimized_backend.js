@@ -14,6 +14,7 @@ const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
+const { type } = require("os");
 // const csv_generator = require("./modules/csv_generator");
 
 // Service Titan's API parameters
@@ -1891,9 +1892,6 @@ const hvac_tables_responses = {
   projects: {
     status: "",
   },
-  projects_wip_data: {
-    status: "",
-  },
   project_managers: {
     status: "",
   },
@@ -2361,7 +2359,7 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["createdBefore"]
+        params_header["modifiedBefore"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
@@ -2398,12 +2396,14 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  let invoice_cache = {};
-  let purchase_order_cache = {};
-
   for (let api_count = 0; api_count < table_list.length; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
+
+    // if (api_count < table_list.length - 1) {
+    //   continue;
+    // }
+
     const api_name = table_list[api_count];
 
     console.log("table_name: ", api_name);
@@ -2413,7 +2413,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // entry into auto_update table
         try {
           hvac_tables_responses["legal_entity"]["status"] = "success";
-          const auto_update_query = `UPDATE auto_update SET legal_entity = '${hvac_tables_responses["legal_entity"]["status"]}' WHERE id=${lastInsertedId}`;
+          const auto_update_query = `UPDATE auto_update SET legal_entity = 'no changes' WHERE id=${lastInsertedId}`;
           await sql_request.query(auto_update_query);
 
           console.log("Auto_Update log created ");
@@ -2430,7 +2430,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // entry into auto_update table
         try {
           hvac_tables_responses["us_cities"]["status"] = "success";
-          const auto_update_query = `UPDATE auto_update SET us_cities = '${hvac_tables_responses["us_cities"]["status"]}' WHERE id=${lastInsertedId}`;
+          const auto_update_query = `UPDATE auto_update SET us_cities = 'no changes' WHERE id=${lastInsertedId}`;
 
           await sql_request.query(auto_update_query);
 
@@ -2469,7 +2469,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           let business_unit_name = "DEF";
 
           // let legal_entity_id = record["instance_id"];
-          const legal_entity_code = {
+          const instance_code = {
             1: "EXP",
             2: "PA",
             3: "NMI",
@@ -2499,12 +2499,12 @@ async function data_processor(data_lake, sql_request, table_list) {
               : "DEF";
 
             // if (legal_entity_group != "DEF") {
-            //   legal_entity_id = legal_entity_code[legal_entity_group];
+            //   legal_entity_id = instance_code[legal_entity_group];
             // } else {
             //   legal_entity_id = record["instance_id"];
             // }
 
-            business = legal_entity_code[record["instance_id"]];
+            business = instance_code[record["instance_id"]];
           }
 
           final_data_pool.push({
@@ -2569,6 +2569,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["business_unit"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET business_unit = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         if (project_business_unit_final_data_pool.length > 0) {
@@ -2597,6 +2608,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["project_business_unit"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_business_unit = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -2629,7 +2651,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 if (record["businessUnit"]) {
                   // checking business unit availlable or not for mapping
                   const is_business_unit_available = await sql_request.query(
-                    `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnitId"]}'`
                   );
 
                   if (is_business_unit_available["recordset"].length > 0) {
@@ -2673,6 +2695,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["employees"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET employees = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -2738,14 +2771,14 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 let business_unit_id = record["instance_id"];
                 let actual_business_unit_id = record["instance_id"];
-                if (record["businessUnit"]) {
+                if (record["businessUnit"] && record["businessUnit"]["id"]) {
                   actual_business_unit_id = record["businessUnit"]["id"]
                     ? record["businessUnit"]["id"]
                     : record["instance_id"];
 
                   // checking business unit availlable or not for mapping
                   const is_business_unit_available = await sql_request.query(
-                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnit"]["id"]}'`
                   );
 
                   if (is_business_unit_available["recordset"].length > 0) {
@@ -2806,6 +2839,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["campaigns"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET campaigns = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -2900,27 +2944,31 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["businessUnitId"]
                   : record["instance_id"];
 
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
+                if (record["businessUnitId"]) {
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnitId"]}'`
+                  );
 
-                if (is_business_unit_available["recordset"].length > 0) {
-                  business_unit_id = record["businessUnitId"];
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnitId"];
+                  }
                 }
 
                 let campaign_id = record["instance_id"];
                 let actual_campaign_id = record["campaignId"]
                   ? record["campaignId"]
-                  : record["campaignId"];
+                  : record["instance_id"];
 
-                // checking campaignId availlable or not for mapping
-                const is_campaigns_available = await sql_request.query(
-                  `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
-                );
+                if (record["campaignId"]) {
+                  // checking campaignId availlable or not for mapping
+                  const is_campaigns_available = await sql_request.query(
+                    `SELECT id FROM campaigns WHERE id='${record["campaignId"]}'`
+                  );
 
-                if (is_campaigns_available["recordset"].length > 0) {
-                  campaign_id = record["campaignId"];
+                  if (is_campaigns_available["recordset"].length > 0) {
+                    campaign_id = record["campaignId"];
+                  }
                 }
 
                 final_data_pool.push({
@@ -2982,6 +3030,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["bookings"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET bookings = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -3085,6 +3144,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["customer_details"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET customer_details = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -3237,6 +3307,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["location"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET location = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -3301,6 +3382,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["payrolls"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET payrolls = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         // delete data_lake["cogs_labor"]["payroll__payrolls"];
@@ -3365,6 +3457,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["job_types"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET job_types = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake["job_details"]["jpm__job-types"];
@@ -3432,6 +3535,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["returns"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET returns = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3468,7 +3582,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                   // checking jobId availlable or not for mapping
                   const is_jobs_available = await sql_request.query(
-                    `SELECT id FROM job_details WHERE id=${po_record["jobId"]}`
+                    `SELECT id FROM job_details WHERE id='${po_record["jobId"]}'`
                   );
 
                   if (is_jobs_available["recordset"].length > 0) {
@@ -3483,7 +3597,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                   // checking invoice availlable or not for mapping
                   const is_invoice_available = await sql_request.query(
-                    `SELECT id FROM invoice WHERE id=${po_record["invoiceId"]}`
+                    `SELECT id FROM invoice WHERE id='${po_record["invoiceId"]}'`
                   );
 
                   if (is_invoice_available["recordset"].length > 0) {
@@ -3497,7 +3611,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   actual_project_id = po_record["projectId"];
                   // checking projects availlable or not for mapping
                   const is_project_available = await sql_request.query(
-                    `SELECT id FROM projects WHERE id=${po_record["projectId"]}`
+                    `SELECT id FROM projects WHERE id='${po_record["projectId"]}'`
                   );
 
                   if (is_project_available["recordset"].length > 0) {
@@ -3511,7 +3625,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   actual_vendor_id = po_record["vendorId"];
                   // checking vendor availlable or not for mapping
                   const is_vendor_available = await sql_request.query(
-                    `SELECT id FROM vendor WHERE id=${po_record["vendorId"]}`
+                    `SELECT id FROM vendor WHERE id='${po_record["vendorId"]}'`
                   );
 
                   if (is_vendor_available["recordset"].length > 0) {
@@ -3662,6 +3776,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["purchase_order"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET purchase_order = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -3688,13 +3813,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["projectId"]
                   : record["instance_id"];
 
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
+                if (record["projectId"]) {
+                  // checking projects availlable or not for mapping
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id='${record["projectId"]}'`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
+                  }
                 }
 
                 let business_unit_id = record["instance_id"];
@@ -3704,13 +3831,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let businessUnitName = record["businessUnitName"]
                   ? record["businessUnitName"]
                   : "default";
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
 
-                if (is_business_unit_available["recordset"].length > 0) {
-                  business_unit_id = record["businessUnitId"];
+                if (record["businessUnitId"]) {
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnitId"]}'`
+                  );
+
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnitId"];
+                  }
                 }
 
                 let job_details_id = record["instance_id"];
@@ -3718,13 +3848,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["jobId"]
                   : record["instance_id"];
 
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-                );
+                if (record["jobId"]) {
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
+                  );
 
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
                 }
 
                 let location_id = record["instance_id"];
@@ -3732,35 +3864,41 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["locationId"]
                   : record["instance_id"];
 
-                // checking location availlable or not for mapping
-                const is_location_available = await sql_request.query(
-                  `SELECT id FROM location WHERE id=${record["locationId"]}`
-                );
+                if (record["locationId"]) {
+                  // checking location availlable or not for mapping
+                  const is_location_available = await sql_request.query(
+                    `SELECT id FROM location WHERE id='${record["locationId"]}'`
+                  );
 
-                if (is_location_available["recordset"].length > 0) {
-                  location_id = record["locationId"];
-                  actual_location_id = record["locationId"];
+                  if (is_location_available["recordset"].length > 0) {
+                    location_id = record["locationId"];
+                    actual_location_id = record["locationId"];
+                  }
                 }
 
                 let customer_details_id = record["instance_id"];
                 let actual_customer_details_id = record["customerId"]
                   ? record["customerId"]
                   : record["instance_id"];
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
 
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
+                if (record["customerId"]) {
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id='${record["customerId"]}'`
+                  );
+
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["customerId"];
+                  }
                 }
 
                 let soldBy_name = "default";
                 let soldBy = record["instance_id"];
+
                 // checking soldBy_name in db
                 if (record["soldBy"]) {
                   const is_employee_available = await sql_request.query(
-                    `SELECT name,id FROM employees WHERE id=${record["soldBy"]}`
+                    `SELECT name,id FROM employees WHERE id='${record["soldBy"]}'`
                   );
 
                   if (is_employee_available["recordset"].length > 0) {
@@ -3916,6 +4054,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["sales_details"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sales_details = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -3949,13 +4098,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["customerId"]
                   : record["instance_id"];
 
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
+                if (record["customerId"]) {
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id='${record["customerId"]}'`
+                  );
 
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["customerId"];
+                  }
                 }
 
                 let location_id = record["instance_id"];
@@ -3963,13 +4114,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["locationId"]
                   : record["instance_id"];
 
-                // checking location availlable or not for mapping
-                const is_location_available = await sql_request.query(
-                  `SELECT id FROM location WHERE id=${record["locationId"]}`
-                );
+                if (record["locationId"]) {
+                  // checking location availlable or not for mapping
+                  const is_location_available = await sql_request.query(
+                    `SELECT id FROM location WHERE id='${record["locationId"]}'`
+                  );
 
-                if (is_location_available["recordset"].length > 0) {
-                  location_id = record["locationId"];
+                  if (is_location_available["recordset"].length > 0) {
+                    location_id = record["locationId"];
+                  }
                 }
 
                 let startDate = "2000-01-01T00:00:00.00Z";
@@ -4038,7 +4191,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 // project_manager id deletion
                 const project_managers_deleting_query = await sql_request.query(
-                  `DELETE FROM project_managers WHERE id = ${record["id"]}`
+                  `DELETE FROM project_managers WHERE id = '${record["id"]}'`
                 );
 
                 // project_manager id insertion
@@ -4049,7 +4202,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                     // checking customer availlable or not for mapping
                     const is_employee_available = await sql_request.query(
-                      `SELECT id FROM employees WHERE id=${manager_id}`
+                      `SELECT id FROM employees WHERE id='${manager_id}'`
                     );
 
                     if (is_employee_available["recordset"].length > 0) {
@@ -4121,6 +4274,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["projects"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET projects = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         if (project_managers_final_data_pool.length > 0) {
@@ -4148,10 +4312,20 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["project_managers"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET project_managers = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
-        delete data_lake["invoice"];
         delete data_lake["purchase_order"];
 
         break;
@@ -4237,13 +4411,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["projectId"]
                   : record["instance_id"];
 
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
+                if (record["projectId"]) {
+                  // checking projects availlable or not for mapping
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id='${record["projectId"]}'`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
+                  }
                 }
 
                 let business_unit_id = record["instance_id"];
@@ -4267,13 +4443,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["businessUnit"]["officialName"]
                     : "default";
 
-                  // checking business unit availlable or not for mapping
-                  const is_business_unit_available = await sql_request.query(
-                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
-                  );
+                  if (record["businessUnit"]["id"]) {
+                    // checking business unit availlable or not for mapping
+                    const is_business_unit_available = await sql_request.query(
+                      `SELECT id FROM business_unit WHERE id='${record["businessUnit"]["id"]}'`
+                    );
 
-                  if (is_business_unit_available["recordset"].length > 0) {
-                    business_unit_id = record["businessUnit"]["id"];
+                    if (is_business_unit_available["recordset"].length > 0) {
+                      business_unit_id = record["businessUnit"]["id"];
+                    }
                   }
                 }
 
@@ -4351,17 +4529,20 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["leadCall"]["customer"]["type"]
                     : "Others";
 
-                  // checking customer availlable or not for mapping
-                  const is_customer_available = await sql_request.query(
-                    `SELECT id FROM customer_details WHERE id=${record["leadCall"]["customer"]["id"]}`
-                  );
+                  if (record["leadCall"]["customer"]["id"]) {
+                    // checking customer availlable or not for mapping
+                    const is_customer_available = await sql_request.query(
+                      `SELECT id FROM customer_details WHERE id='${record["leadCall"]["customer"]["id"]}'`
+                    );
 
-                  if (is_customer_available["recordset"].length > 0) {
-                    customer_details_id = record["leadCall"]["customer"]["id"];
+                    if (is_customer_available["recordset"].length > 0) {
+                      customer_details_id =
+                        record["leadCall"]["customer"]["id"];
+                    }
                   }
                 }
 
-                let campaign_id = 0;
+                let campaign_id = record["instance_id"];
                 let campaign_category = "default";
                 let campaign_source = "default";
                 let campaign_medium = "default";
@@ -4397,7 +4578,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                   campaign_id = record["leadCall"]["campaign"]["id"]
                     ? record["leadCall"]["campaign"]["id"]
-                    : 0;
+                    : record["instance_id"];
 
                   if (record["leadCall"]["campaign"]["category"]) {
                     campaign_category = record["leadCall"]["campaign"][
@@ -4424,26 +4605,28 @@ async function data_processor(data_lake, sql_request, table_list) {
                     : 0;
                 }
 
-                let agent_id = 0;
-                let agent_externalId = 0;
+                let agent_id = record["instance_id"];
+                let agent_externalId = record["instance_id"];
                 let agent_name = "default";
                 if (record["leadCall"]["agent"]) {
                   agent_id = record["leadCall"]["agent"]["id"]
                     ? record["leadCall"]["agent"]["id"]
-                    : 0;
+                    : record["instance_id"];
                   agent_externalId = record["leadCall"]["agent"]["externalId"]
                     ? record["leadCall"]["agent"]["externalId"]
-                    : 0;
+                    : record["instance_id"];
                   agent_name = record["leadCall"]["agent"]["name"]
                     ? record["leadCall"]["agent"]["name"]
                     : "default";
                 }
 
-                let type_id = 0;
+                let type_id = record["instance_id"];
                 let type_name = "default";
                 let type_modifiedOn = "2000-01-01T00:00:00.00Z";
                 if (record["type"]) {
-                  type_id = record["type"]["id"] ? record["type"]["id"] : 0;
+                  type_id = record["type"]["id"]
+                    ? record["type"]["id"]
+                    : record["instance_id"];
                   type_name = record["type"]["name"]
                     ? record["type"]["name"]
                     : "default";
@@ -4536,11 +4719,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         console.log("telecom_calls data: ", final_data_pool.length);
-        // console.log("telecom_calls data: ", final_data_pool);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
-
           do {
             hvac_tables_responses["call_details"]["status"] =
               await hvac_merge_insertion(
@@ -4565,6 +4745,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["call_details"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET call_details = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -4628,76 +4819,92 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["jobTypeId"]
                   : record["instance_id"];
 
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
+                if (record["businessUnitId"]) {
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnitId"]}'`
+                  );
 
-                if (is_business_unit_available["recordset"].length > 0) {
-                  business_unit_id = record["businessUnitId"];
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnitId"];
+                  }
                 }
 
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
+                if (record["customerId"]) {
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id='${record["customerId"]}'`
+                  );
 
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["customerId"];
+                  }
                 }
 
-                // checking projects availlable or not for mapping
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id=${record["projectId"]}`
-                );
+                if (record["projectId"]) {
+                  // checking projects availlable or not for mapping
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id='${record["projectId"]}'`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
+                  }
                 }
 
-                // checking location availlable or not for mapping
-                const is_location_available = await sql_request.query(
-                  `SELECT id FROM location WHERE id=${record["locationId"]}`
-                );
+                if (record["locationId"]) {
+                  // checking location availlable or not for mapping
+                  const is_location_available = await sql_request.query(
+                    `SELECT id FROM location WHERE id='${record["locationId"]}'`
+                  );
 
-                if (is_location_available["recordset"].length > 0) {
-                  location_id = record["locationId"];
+                  if (is_location_available["recordset"].length > 0) {
+                    location_id = record["locationId"];
+                  }
                 }
 
-                // checking call availlable or not for mapping
-                const is_call_available = await sql_request.query(
-                  `SELECT id FROM call_details WHERE id=${record["leadCallId"]}`
-                );
+                if (record["leadCallId"]) {
+                  // checking call availlable or not for mapping
+                  const is_call_available = await sql_request.query(
+                    `SELECT id FROM call_details WHERE id='${record["leadCallId"]}'`
+                  );
 
-                if (is_call_available["recordset"].length > 0) {
-                  lead_call_id = record["leadCallId"];
+                  if (is_call_available["recordset"].length > 0) {
+                    lead_call_id = record["leadCallId"];
+                  }
                 }
 
-                // checking campaignId availlable or not for mapping
-                const is_campaigns_available = await sql_request.query(
-                  `SELECT id FROM campaigns WHERE id=${record["campaignId"]}`
-                );
+                if (record["campaignId"]) {
+                  // checking campaignId availlable or not for mapping
+                  const is_campaigns_available = await sql_request.query(
+                    `SELECT id FROM campaigns WHERE id='${record["campaignId"]}'`
+                  );
 
-                if (is_campaigns_available["recordset"].length > 0) {
-                  campaign_id = record["campaignId"];
+                  if (is_campaigns_available["recordset"].length > 0) {
+                    campaign_id = record["campaignId"];
+                  }
                 }
 
-                // checking bookings id availlable or not for mapping
-                const is_bookings_available = await sql_request.query(
-                  `SELECT id FROM bookings WHERE id=${record["bookingId"]}`
-                );
+                if (record["bookingId"]) {
+                  // checking bookings id availlable or not for mapping
+                  const is_bookings_available = await sql_request.query(
+                    `SELECT id FROM bookings WHERE id='${record["bookingId"]}'`
+                  );
 
-                if (is_bookings_available["recordset"].length > 0) {
-                  booking_id = record["bookingId"];
+                  if (is_bookings_available["recordset"].length > 0) {
+                    booking_id = record["bookingId"];
+                  }
                 }
 
-                // checking job_type_id availlable or not for mapping
-                const is_job_type_available = await sql_request.query(
-                  `SELECT id FROM job_types WHERE id=${record["jobTypeId"]}`
-                );
+                if (record["jobTypeId"]) {
+                  // checking job_type_id availlable or not for mapping
+                  const is_job_type_available = await sql_request.query(
+                    `SELECT id FROM job_types WHERE id='${record["jobTypeId"]}'`
+                  );
 
-                if (is_job_type_available["recordset"].length > 0) {
-                  job_type_id = record["jobTypeId"];
+                  if (is_job_type_available["recordset"].length > 0) {
+                    job_type_id = record["jobTypeId"];
+                  }
                 }
 
                 let createdOn = "2000-01-01T00:00:00.00Z";
@@ -4761,12 +4968,14 @@ async function data_processor(data_lake, sql_request, table_list) {
                   modifiedOn: modifiedOn,
                   created_by_id: record["createdById"]
                     ? record["createdById"]
-                    : 0,
+                    : record["instance_id"],
                   lead_call_id: lead_call_id,
                   actual_lead_call_id: actual_lead_call_id,
                   booking_id: booking_id,
                   actual_booking_id: actual_booking_id,
-                  sold_by_id: record["soldById"] ? record["soldById"] : 0,
+                  sold_by_id: record["soldById"]
+                    ? record["soldById"]
+                    : record["instance_id"],
                 });
               })
           );
@@ -4809,6 +5018,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["job_details"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET job_details = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -4836,13 +5056,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let actual_job_details_id = record["jobId"]
                   ? record["jobId"]
                   : record["instance_id"];
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-                );
 
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
+                if (record["jobId"]) {
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
+                  );
+
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
                 }
 
                 let customer_details_id = record["instance_id"];
@@ -4850,13 +5073,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                   ? record["customerId"]
                   : record["instance_id"];
 
-                // checking customer availlable or not for mapping
-                const is_customer_available = await sql_request.query(
-                  `SELECT id FROM customer_details WHERE id=${record["customerId"]}`
-                );
+                if (record["customerId"]) {
+                  // checking customer availlable or not for mapping
+                  const is_customer_available = await sql_request.query(
+                    `SELECT id FROM customer_details WHERE id='${record["customerId"]}'`
+                  );
 
-                if (is_customer_available["recordset"].length > 0) {
-                  customer_details_id = record["customerId"];
+                  if (is_customer_available["recordset"].length > 0) {
+                    customer_details_id = record["customerId"];
+                  }
                 }
 
                 let start = "2000-01-01T00:00:00.00Z";
@@ -4984,6 +5209,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["appointments"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET appointments = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -5056,6 +5292,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["vendor"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET vendor = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -5066,7 +5313,9 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "inventory_bills": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool =
-          data_lake[api_name]["accounting__inventory-bills"]["data_pool"];
+          data_lake[api_name]["accounting__export/inventory-bills"][
+            "data_pool"
+          ];
 
         const header_data = hvac_tables[table_name]["columns"];
         let final_data_pool = [];
@@ -5121,13 +5370,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let actual_purchase_order_id = record["purchaseOrderId"]
                   ? record["purchaseOrderId"]
                   : record["instance_id"];
-                // checking purchaseOrderId availlable or not for mapping
-                const is_po_available = await sql_request.query(
-                  `SELECT id FROM purchase_order WHERE id=${record["purchaseOrderId"]}`
-                );
 
-                if (is_po_available["recordset"].length > 0) {
-                  purchase_order_id = record["purchaseOrderId"];
+                if (record["purchaseOrderId"]) {
+                  // checking purchaseOrderId availlable or not for mapping
+                  const is_po_available = await sql_request.query(
+                    `SELECT id FROM purchase_order WHERE id='${record["purchaseOrderId"]}'`
+                  );
+
+                  if (is_po_available["recordset"].length > 0) {
+                    purchase_order_id = record["purchaseOrderId"];
+                  }
                 }
 
                 let business_unit_id = record["instance_id"];
@@ -5138,13 +5390,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["businessUnit"]["id"]
                     : record["instance_id"];
 
-                  // checking business unit availlable or not for mapping
-                  const is_business_unit_available = await sql_request.query(
-                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
-                  );
+                  if (record["businessUnit"]["id"]) {
+                    // checking business unit availlable or not for mapping
+                    const is_business_unit_available = await sql_request.query(
+                      `SELECT id FROM business_unit WHERE id='${record["businessUnit"]["id"]}'`
+                    );
 
-                  if (is_business_unit_available["recordset"].length > 0) {
-                    business_unit_id = record["businessUnit"]["id"];
+                    if (is_business_unit_available["recordset"].length > 0) {
+                      business_unit_id = record["businessUnit"]["id"];
+                    }
                   }
                 }
 
@@ -5154,13 +5408,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                   actual_vendor_id = record["vendor"]["id"]
                     ? record["vendor"]["id"]
                     : record["instance_id"];
-                  // checking vendor availlable or not for mapping
-                  const is_vendor_available = await sql_request.query(
-                    `SELECT id FROM vendor WHERE id=${record["vendor"]["id"]}`
-                  );
 
-                  if (is_vendor_available["recordset"].length > 0) {
-                    vendor_id = record["vendor"]["id"];
+                  if (record["vendor"]["id"]) {
+                    // checking vendor availlable or not for mapping
+                    const is_vendor_available = await sql_request.query(
+                      `SELECT id FROM vendor WHERE id='${record["vendor"]["id"]}'`
+                    );
+
+                    if (is_vendor_available["recordset"].length > 0) {
+                      vendor_id = record["vendor"]["id"];
+                    }
                   }
                 }
 
@@ -5168,13 +5425,16 @@ async function data_processor(data_lake, sql_request, table_list) {
                 let actual_job_details_id = record["jobId"]
                   ? record["jobId"]
                   : record["instance_id"];
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id=${record["jobId"]}`
-                );
 
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
+                if (record["jobId"]) {
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
+                  );
+
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
                 }
 
                 final_data_pool.push({
@@ -5233,13 +5493,26 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["inventory_bills"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET inventory_bills = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
+
+        break;
       }
 
       case "technician": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const data_pool =
-          data_lake[api_name]["settings__technicians"]["data_pool"];
+          data_lake["technician"]["settings__technicians"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 
@@ -5259,13 +5532,15 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                 let business_unit_id = record["instance_id"];
 
-                // checking business unit availlable or not for mapping
-                const is_business_unit_available = await sql_request.query(
-                  `SELECT id FROM business_unit WHERE id=${record["businessUnitId"]}`
-                );
+                if (record["businessUnitId"]) {
+                  // checking business unit availlable or not for mapping
+                  const is_business_unit_available = await sql_request.query(
+                    `SELECT id FROM business_unit WHERE id='${record["businessUnitId"]}'`
+                  );
 
-                if (is_business_unit_available["recordset"].length > 0) {
-                  business_unit_id = record["businessUnitId"];
+                  if (is_business_unit_available["recordset"].length > 0) {
+                    business_unit_id = record["businessUnitId"];
+                  }
                 }
 
                 final_data_pool.push({
@@ -5314,6 +5589,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["technician"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET technician = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -5357,15 +5643,18 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["primaryVendor"]["vendorId"]
                     : record["instance_id"];
 
-                  // checking vendor availlable or not for mapping
-                  const is_vendor_available = await sql_request.query(
-                    `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
-                  );
+                  if (record["primaryVendor"]["vendorId"]) {
+                    // checking vendor availlable or not for mapping
+                    const is_vendor_available = await sql_request.query(
+                      `SELECT id FROM vendor WHERE id='${record["primaryVendor"]["vendorId"]}'`
+                    );
 
-                  if (is_vendor_available["recordset"].length > 0) {
-                    vendor_id = record["primaryVendor"]["vendorId"];
+                    if (is_vendor_available["recordset"].length > 0) {
+                      vendor_id = record["primaryVendor"]["vendorId"];
+                    }
                   }
                 }
+
                 final_data_pool.push({
                   id: record["id"],
                   sku_name: record["code"],
@@ -5397,13 +5686,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["primaryVendor"]["vendorId"]
                     : record["instance_id"];
 
-                  // checking vendor availlable or not for mapping
-                  const is_vendor_available = await sql_request.query(
-                    `SELECT id FROM vendor WHERE id=${record["primaryVendor"]["vendorId"]}`
-                  );
+                  if (record["primaryVendor"]["vendorId"]) {
+                    // checking vendor availlable or not for mapping
+                    const is_vendor_available = await sql_request.query(
+                      `SELECT id FROM vendor WHERE id='${record["primaryVendor"]["vendorId"]}'`
+                    );
 
-                  if (is_vendor_available["recordset"].length > 0) {
-                    vendor_id = record["primaryVendor"]["vendorId"];
+                    if (is_vendor_available["recordset"].length > 0) {
+                      vendor_id = record["primaryVendor"]["vendorId"];
+                    }
                   }
                 }
                 final_data_pool.push({
@@ -5476,6 +5767,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["sku_details"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET sku_details = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         delete data_lake[api_name];
@@ -5495,18 +5797,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           hvac_tables["cogs_equipment"]["columns"];
         const cogs_service_header_data = hvac_tables["cogs_service"]["columns"];
 
-        const sku_details_data_pool = {
-          ...data_lake["sku_details"]["pricebook__materials"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__equipment"]["data_pool"],
-          ...data_lake["sku_details"]["pricebook__services"]["data_pool"],
-        };
-
         let invoice_final_data_pool = [];
         let cogs_material_final_data_pool = [];
         let cogs_equipment_final_data_pool = [];
         let cogs_services_final_data_pool = [];
 
-        let batchSize = 25;
+        let batchSize = 20;
 
         console.log(
           "invoice total data: ",
@@ -5530,13 +5826,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                 if (record["job"]) {
                   actual_job_details_id = record["job"]["id"];
 
-                  // checking jobId availlable or not for mapping
-                  const is_jobs_available = await sql_request.query(
-                    `SELECT id FROM job_details WHERE id=${record["job"]["id"]}`
-                  );
+                  if (record["job"]["id"]) {
+                    // checking jobId availlable or not for mapping
+                    const is_jobs_available = await sql_request.query(
+                      `SELECT id FROM job_details WHERE id='${record["job"]["id"]}'`
+                    );
 
-                  if (is_jobs_available["recordset"].length > 0) {
-                    job_details_id = record["job"]["id"];
+                    if (is_jobs_available["recordset"].length > 0) {
+                      job_details_id = record["job"]["id"];
+                    }
                   }
                 }
 
@@ -5548,18 +5846,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                 // checking projects availlable or not for mapping
                 if (record["projectId"]) {
                   const is_project_available = await sql_request.query(
-                    `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                    `SELECT id FROM projects WHERE id='${record["projectId"]}'`
                   );
 
                   if (is_project_available["recordset"].length > 0) {
                     project_id = record["projectId"];
-                  }
-
-                  if (!project_bu_id[record["projectId"]]) {
-                    project_bu_id[record["projectId"]] = {
-                      business_unit_id: record["instance_id"],
-                      actual_business_unit_id: record["instance_id"],
-                    };
                   }
                 }
 
@@ -5568,21 +5859,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                 if (record["businessUnit"]) {
                   actual_business_unit_id = record["businessUnit"]["id"];
 
-                  // checking business unit availlable or not for mapping
-                  const is_business_unit_available = await sql_request.query(
-                    `SELECT id FROM business_unit WHERE id=${record["businessUnit"]["id"]}`
-                  );
+                  if (record["businessUnit"]["id"]) {
+                    // checking business unit availlable or not for mapping
+                    const is_business_unit_available = await sql_request.query(
+                      `SELECT id FROM business_unit WHERE id='${record["businessUnit"]["id"]}'`
+                    );
 
-                  if (is_business_unit_available["recordset"].length > 0) {
-                    business_unit_id = record["businessUnit"]["id"];
-                  }
-
-                  if (record["projectId"]) {
-                    project_bu_id[record["projectId"]]["business_unit_id"] =
-                      business_unit_id;
-                    project_bu_id[record["projectId"]][
-                      "actual_business_unit_id"
-                    ] = actual_business_unit_id;
+                    if (is_business_unit_available["recordset"].length > 0) {
+                      business_unit_id = record["businessUnit"]["id"];
+                    }
                   }
                 }
 
@@ -5591,13 +5876,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                 if (record["location"]) {
                   actual_location_id = record["location"]["id"];
 
-                  // checking location availlable or not for mapping
-                  const is_location_available = await sql_request.query(
-                    `SELECT id FROM location WHERE id=${record["location"]["id"]}`
-                  );
+                  if (record["location"]["id"]) {
+                    // checking location availlable or not for mapping
+                    const is_location_available = await sql_request.query(
+                      `SELECT id FROM location WHERE id='${record["location"]["id"]}'`
+                    );
 
-                  if (is_location_available["recordset"].length > 0) {
-                    location_id = record["location"]["id"];
+                    if (is_location_available["recordset"].length > 0) {
+                      location_id = record["location"]["id"];
+                    }
                   }
                 }
 
@@ -5610,13 +5897,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["customer"]["name"]
                     : "default";
 
-                  // checking customer availlable or not for mapping
-                  const is_customer_available = await sql_request.query(
-                    `SELECT id FROM customer_details WHERE id=${record["customer"]["id"]}`
-                  );
+                  if (record["customer"]["id"]) {
+                    // checking customer availlable or not for mapping
+                    const is_customer_available = await sql_request.query(
+                      `SELECT id FROM customer_details WHERE id='${record["customer"]["id"]}'`
+                    );
 
-                  if (is_customer_available["recordset"].length > 0) {
-                    customer_id = record["customer"]["id"];
+                    if (is_customer_available["recordset"].length > 0) {
+                      customer_id = record["customer"]["id"];
+                    }
                   }
                 }
 
@@ -5743,7 +6032,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                   invoice_date = "2002-01-01T00:00:00.00Z";
                 }
 
-                let invoice_type_id = 0;
+                let invoice_type_id = record["instance_id"];
                 let invoice_type_name = "default_invoice";
                 if (record["invoiceType"]) {
                   invoice_type_id = record["invoiceType"]["id"];
@@ -5789,17 +6078,17 @@ async function data_processor(data_lake, sql_request, table_list) {
                 if (record["items"]) {
                   // deleting cogs equipment
                   const cogs_equipment_query = await sql_request.query(
-                    `DELETE FROM cogs_equipment WHERE invoice_id = ${record["id"]}`
+                    `DELETE FROM cogs_equipment WHERE invoice_id = '${record["id"]}'`
                   );
 
                   // deleting cogs material
                   const cogs_material_query = await sql_request.query(
-                    `DELETE FROM cogs_material WHERE invoice_id = ${record["id"]}`
+                    `DELETE FROM cogs_material WHERE invoice_id = '${record["id"]}'`
                   );
 
                   // deleting cogs service
                   const cogs_service_query = await sql_request.query(
-                    `DELETE FROM cogs_service WHERE invoice_id = ${record["id"]}`
+                    `DELETE FROM cogs_service WHERE invoice_id = '${record["id"]}'`
                   );
 
                   await Promise.all(
@@ -5834,7 +6123,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                           // checking sku availlable or not for mapping
                           const is_sku_available = await sql_request.query(
-                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                            `SELECT id FROM sku_details WHERE id='${items_record["skuId"]}'`
                           );
 
                           if (is_sku_available["recordset"].length > 0) {
@@ -5887,7 +6176,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                           // checking sku availlable or not for mapping
                           const is_sku_available = await sql_request.query(
-                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                            `SELECT id FROM sku_details WHERE id='${items_record["skuId"]}'`
                           );
 
                           if (is_sku_available["recordset"].length > 0) {
@@ -5940,7 +6229,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                           // checking sku availlable or not for mapping
                           const is_sku_available = await sql_request.query(
-                            `SELECT id FROM sku_details WHERE id=${items_record["skuId"]}`
+                            `SELECT id FROM sku_details WHERE id='${items_record["skuId"]}'`
                           );
 
                           if (is_sku_available["recordset"].length > 0) {
@@ -6018,6 +6307,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["invoice"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET invoice = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -6055,6 +6355,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["cogs_material"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_material = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -6092,6 +6403,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["cogs_equipment"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_equipment = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         console.log(
@@ -6100,9 +6422,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_services_final_data_pool.length > 0) {
           // await csv_generator(
-          cogs_services_final_data_pool,
-            cogs_service_header_data,
-            "cogs_service";
+          // cogs_services_final_data_pool,
+          //   cogs_service_header_data,
+          //   "cogs_service";
           // );
 
           do {
@@ -6129,6 +6451,17 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
         } else {
           hvac_tables_responses["cogs_service"]["status"] = "success";
+
+          // entry into auto_update table
+          try {
+            const auto_update_query = `UPDATE auto_update SET cogs_service = 'no changes' WHERE id=${lastInsertedId}`;
+
+            await sql_request.query(auto_update_query);
+
+            console.log("Auto_Update log created ");
+          } catch (err) {
+            console.log("Error while inserting into auto_update", err);
+          }
         }
 
         break;
@@ -6145,7 +6478,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("cogs_labor: ", gross_pay_items_data_pool.length);
 
-        const batchSize = 400;
+        const batchSize = 300;
 
         const payroll_ids = [];
 
@@ -6159,12 +6492,14 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         // deleting all records of payroll ids
         const delete_payroll_rows = await sql_request.query(
-          `DELETE FROM gross_pay_items WHERE payrollId IN (${unique_payroll_ids.join(
-            ", "
-          )});`
+          `DELETE FROM cogs_labor WHERE payrollId IN ('${unique_payroll_ids.join(
+            `','`
+          )}');`
         );
 
         let final_data_pool = [];
+
+        let access_token_list = [];
 
         await Promise.all(
           unique_payroll_ids.map(async (current_payroll_id) => {
@@ -6176,54 +6511,67 @@ async function data_processor(data_lake, sql_request, table_list) {
               JSON.stringify(params_header)
             );
 
-            params_header_temp["payrollIds"] = String(current_payroll_id);
+            let [payroll_id, payroll_instance_id] =
+              current_payroll_id.split("_");
+
+            payroll_instance_id = parseInt(payroll_instance_id);
+
+            params_header_temp["payrollIds"] = String(payroll_id);
             params_header_temp["modifiedOnOrAfter"] = "";
             params_header_temp["modifiedBefore"] = "";
 
-            await Promise.all(
-              instance_details.map(async (instance_data) => {
-                const instance_name = instance_data["instance_name"];
-                const tenant_id = instance_data["tenant_id"];
-                const app_key = instance_data["app_key"];
-                const client_id = instance_data["client_id"];
-                const client_secret = instance_data["client_secret"];
+            const instance_name =
+              instance_details[payroll_instance_id - 1]["instance_name"];
+            const tenant_id =
+              instance_details[payroll_instance_id - 1]["tenant_id"];
+            const app_key =
+              instance_details[payroll_instance_id - 1]["app_key"];
+            const client_id =
+              instance_details[payroll_instance_id - 1]["client_id"];
+            const client_secret =
+              instance_details[payroll_instance_id - 1]["client_secret"];
 
-                // signing a new access token in Service Titan's API
-                let access_token = "";
+            // console.log("payroll_instance_id: ", payroll_instance_id);
+            // console.log("instance_name: ", instance_name);
+            // console.log("tenant_id: ", tenant_id);
+            // console.log("app_key: ", app_key);
+            // console.log("client_id: ", client_id);
+            // console.log("client_secret: ", client_secret);
 
-                do {
-                  access_token = await getAccessToken(client_id, client_secret);
-                } while (!access_token);
+            if (!access_token_list[payroll_instance_id - 1]) {
+              // signing a new access token in Service Titan's API
+              let access_token = "";
 
-                // continuously fetching whole api data
-                let data_pool_object = {};
-                let data_pool = [];
-                let page_count = 0;
-                let has_error_occured = false;
+              do {
+                access_token = await getAccessToken(client_id, client_secret);
+              } while (!access_token);
 
-                do {
-                  ({
-                    data_pool_object,
-                    data_pool,
-                    page_count,
-                    has_error_occured,
-                  } = await getAPIWholeData(
-                    access_token,
-                    app_key,
-                    instance_name,
-                    tenant_id,
-                    "payroll",
-                    "gross-pay-items",
-                    params_header_temp,
-                    data_pool_object,
-                    data_pool,
-                    page_count
-                  ));
+              access_token_list[payroll_instance_id - 1] = access_token;
+            }
 
-                  gross_pay_data = [...gross_pay_data, ...data_pool];
-                } while (has_error_occured);
-              })
-            );
+            // continuously fetching whole api data
+            let data_pool_object = {};
+            let data_pool = [];
+            let page_count = 0;
+            let has_error_occured = false;
+
+            do {
+              ({ data_pool_object, data_pool, page_count, has_error_occured } =
+                await getAPIWholeData(
+                  access_token_list[payroll_instance_id - 1],
+                  app_key,
+                  instance_name,
+                  tenant_id,
+                  "payroll",
+                  "gross-pay-items",
+                  params_header_temp,
+                  data_pool_object,
+                  data_pool,
+                  page_count
+                ));
+
+              gross_pay_data = [...gross_pay_data, ...data_pool];
+            } while (has_error_occured);
 
             for (let i = 0; i < gross_pay_data.length; i += batchSize) {
               await Promise.all(
@@ -6234,7 +6582,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                     actual_job_details_id = record["jobId"];
                     // checking jobId availlable or not for mapping
                     const is_jobs_available = await sql_request.query(
-                      `SELECT id FROM job_details WHERE id=${record["jobId"]}`
+                      `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
                     );
 
                     if (is_jobs_available["recordset"].length > 0) {
@@ -6249,7 +6597,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
                     // checking invoice availlable or not for mapping
                     const is_invoice_available = await sql_request.query(
-                      `SELECT id FROM invoice WHERE id=${record["invoiceId"]}`
+                      `SELECT id FROM invoice WHERE id='${record["invoiceId"]}'`
                     );
 
                     if (is_invoice_available["recordset"].length > 0) {
@@ -6265,18 +6613,11 @@ async function data_processor(data_lake, sql_request, table_list) {
                   // checking projects availlable or not for mapping
                   if (record["projectId"]) {
                     const is_project_available = await sql_request.query(
-                      `SELECT id FROM projects WHERE id=${record["projectId"]}`
+                      `SELECT id FROM projects WHERE id='${record["projectId"]}'`
                     );
 
                     if (is_project_available["recordset"].length > 0) {
                       project_id = record["projectId"];
-                    }
-
-                    if (!project_bu_id[record["projectId"]]) {
-                      project_bu_id[record["projectId"]] = {
-                        business_unit_id: record["instance_id"],
-                        actual_business_unit_id: record["instance_id"],
-                      };
                     }
                   }
 
@@ -6285,13 +6626,15 @@ async function data_processor(data_lake, sql_request, table_list) {
                     ? record["employeeId"]
                     : record["instance_id"];
 
-                  // checking technician availlable or not for mapping
-                  const is_technnician_available = await sql_request.query(
-                    `SELECT id FROM technician WHERE id=${record["employeeId"]}`
-                  );
+                  if (record["employeeId"]) {
+                    // checking technician availlable or not for mapping
+                    const is_technnician_available = await sql_request.query(
+                      `SELECT id FROM technician WHERE id='${record["employeeId"]}'`
+                    );
 
-                  if (is_technnician_available["recordset"].length > 0) {
-                    technician_id = record["employeeId"];
+                    if (is_technnician_available["recordset"].length > 0) {
+                      technician_id = record["employeeId"];
+                    }
                   }
 
                   final_data_pool.push({
@@ -6335,10 +6678,12 @@ async function data_processor(data_lake, sql_request, table_list) {
                 table_name
               );
           } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
+        } else {
+          hvac_tables_responses["cogs_labor"]["status"] = "success";
 
           // entry into auto_update table
           try {
-            const auto_update_query = `UPDATE auto_update SET cogs_labor = '${hvac_tables_responses["cogs_labor"]["status"]}' WHERE id=${lastInsertedId}`;
+            const auto_update_query = `UPDATE auto_update SET cogs_labor = 'no changes' WHERE id=${lastInsertedId}`;
 
             await sql_request.query(auto_update_query);
 
@@ -6346,8 +6691,6 @@ async function data_processor(data_lake, sql_request, table_list) {
           } catch (err) {
             console.log("Error while inserting into auto_update", err);
           }
-        } else {
-          hvac_tables_responses["cogs_labor"]["status"] = "success";
         }
 
         delete data_lake[api_name];
