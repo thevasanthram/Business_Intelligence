@@ -176,8 +176,6 @@ async function wip_report() {
       if (data_pool.length > 0) {
         data_lake[instance_name] = data_pool;
       }
-
-      console.log("ended");
     })
   );
 

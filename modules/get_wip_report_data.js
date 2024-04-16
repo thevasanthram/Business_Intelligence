@@ -40,7 +40,6 @@ async function get_wip_report_data(
   try {
     let shouldIterate = false;
     do {
-      console.log(page_count);
       const api_endpoint = `https://api.servicetitan.io/reporting/v2/tenant/${tenant_id}/report-category/accounting/reports/${wip_report_id}/data`;
 
       const to_date = new Date();
@@ -113,7 +112,7 @@ async function get_wip_report_data(
           await new Promise((resolve) =>
             setTimeout(resolve, waiting_time * 1000)
           );
-          shouldIterate = true
+          shouldIterate = true;
           console.log("next iteration", shouldIterate);
         })();
 
