@@ -11,7 +11,7 @@ async function hvac_data_insertion(
   let status = "failure";
   try {
     // clearing old records if exists
-    if (table_name != "projects_wip_data") {
+    if (table_name != "projects_wip_data" && table_name != "wip_report") {
       const delete_table_records = `DELETE FROM ${table_name}`;
       await sql_pool.query(delete_table_records);
     }

@@ -188,12 +188,6 @@ async function wip_report(as_of_date) {
 
   const header_data = wip_header["columns"];
 
-  //   console.log("header_data: ", header_data);
-  //   console.log(
-  //     "sample_data: ",
-  //     data_lake["Expert Heating and Cooling Co LLC"][0]
-  //   );
-
   await Promise.all(
     Object.keys(data_lake).map(async (instance_name) => {
       const data_pool = data_lake[instance_name];
@@ -208,13 +202,11 @@ async function wip_report(as_of_date) {
       } while (wip_response[instance_name]["status"] != "success");
     })
   );
-
-  console.log("Data written to DB");
 }
 
 async function wip_historical_report() {
-  let to_date = new Date("01-01-2024");
-//   const to_dateString = to_date.toISOString().substring(0, 10);
+  let to_date = new Date("2024-01-01T00:00:00.000");
+  //   const to_dateString = to_date.toISOString().substring(0, 10);
   to_date = new Date(to_date);
 
   const current_date = new Date("2024-04-16");

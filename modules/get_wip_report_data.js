@@ -111,14 +111,12 @@ async function get_wip_report_data(
             setTimeout(resolve, waiting_time * 1000)
           );
           shouldIterate = true;
-          console.log("next iteration", shouldIterate);
         })();
 
         continue;
       }
 
       const data = response.data;
-      console.log("data: ", data);
 
       shouldIterate = response["hasMore"];
 
