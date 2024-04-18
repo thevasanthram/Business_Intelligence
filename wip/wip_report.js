@@ -205,11 +205,11 @@ async function wip_report(as_of_date) {
 }
 
 async function wip_historical_report() {
-  let to_date = new Date("2024-01-01T00:00:00.000");
+  let to_date = new Date("2024-04-17T00:00:00.000");
   //   const to_dateString = to_date.toISOString().substring(0, 10);
   to_date = new Date(to_date);
 
-  const current_date = new Date("2024-04-16");
+  const current_date = new Date("2024-04-18");
 
   while (to_date <= current_date) {
     console.log("=========================================");
