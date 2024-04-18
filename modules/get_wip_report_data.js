@@ -129,26 +129,52 @@ async function get_wip_report_data(
             record[0] = await add_suffix(record[0], instance_id);
           }
 
-          const modified_record = {
-            ProjectNumber: record[0],
-            ProjectName: record[1],
-            ProjectStatus: record[2],
-            ProjectContractStartDate: record[3],
-            ActualCompletionDate: record[4],
-            ContractValue: record[5],
-            ChangeOrderValue: record[6],
-            CostAdjustment: record[7],
-            TotalEstimatedCost: record[8],
-            EstimatedMargin: record[9],
-            EstimatedMarginPercentage: record[10],
-            TotalCost: record[11],
-            CostToComplete: record[12],
-            PercentCompleteCost: record[13],
-            EarnedRevenue: record[14],
-            TotalRevenue: record[15],
-            OverBilling: record[16],
-            UnderBilling: record[17],
-          };
+          let modified_record = {};
+
+          if (instance_id == 1) {
+            const estimatedMargin = record[5] - record[8];
+            modified_record = {
+              ProjectNumber: record[0],
+              ProjectName: record[1],
+              ProjectStatus: record[2],
+              ProjectContractStartDate: record[3],
+              ActualCompletionDate: record[4],
+              ContractValue: record[5],
+              ChangeOrderValue: record[6],
+              CostAdjustment: record[7],
+              TotalEstimatedCost: record[8],
+              EstimatedMargin: estimatedMargin,
+              EstimatedMarginPercentage: record[9],
+              TotalCost: record[10],
+              CostToComplete: record[11],
+              PercentCompleteCost: record[12],
+              EarnedRevenue: record[13],
+              TotalRevenue: record[14],
+              OverBilling: record[15],
+              UnderBilling: record[16],
+            };
+          } else {
+            modified_record = {
+              ProjectNumber: record[0],
+              ProjectName: record[1],
+              ProjectStatus: record[2],
+              ProjectContractStartDate: record[3],
+              ActualCompletionDate: record[4],
+              ContractValue: record[5],
+              ChangeOrderValue: record[6],
+              CostAdjustment: record[7],
+              TotalEstimatedCost: record[8],
+              EstimatedMargin: record[9],
+              EstimatedMarginPercentage: record[10],
+              TotalCost: record[11],
+              CostToComplete: record[12],
+              PercentCompleteCost: record[13],
+              EarnedRevenue: record[14],
+              TotalRevenue: record[15],
+              OverBilling: record[16],
+              UnderBilling: record[17],
+            };
+          }
 
           return {
             instance_id: instance_id,
