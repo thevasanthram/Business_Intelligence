@@ -72,15 +72,15 @@ async function get_wip_report_data(
             },
             {
               name: "InvoiceCostStatus",
-              value: "0",
+              value: "2",
             },
             {
               name: "InvoiceRevenueStatus",
-              value: "0",
+              value: "2",
             },
             {
               name: "ReturnSyncStatus",
-              value: "0",
+              value: "2",
             },
             {
               name: "ReturnStatus",
@@ -88,7 +88,7 @@ async function get_wip_report_data(
             },
             {
               name: "VendorBillStatus",
-              value: "0",
+              value: "2",
             },
             {
               name: "VendorCostType",
