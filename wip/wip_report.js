@@ -209,7 +209,7 @@ async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
   to_date = new Date(to_date);
 
-  const current_date = new Date("2024-01-30");
+  const current_date = new Date("2024-01-31");
 
   while (to_date <= current_date) {
     console.log("=========================================");
