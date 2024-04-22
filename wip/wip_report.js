@@ -230,8 +230,7 @@ async function wip_historical_report() {
         "timer funtion entering",
         timeUntilNextBatch,
         "<-->",
-        current_date,
-        now
+        current_date
       );
 
       await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
