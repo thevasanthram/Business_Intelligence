@@ -130,6 +130,10 @@ const wip_response = {
 };
 
 async function wip_report(as_of_date) {
+  console.log("=========================================");
+  console.log("as of date: ", as_of_date);
+  console.log("=========================================");
+
   await Promise.all(
     instance_details.map(async (instance_data) => {
       const instance_name = instance_data["instance_name"];
@@ -205,19 +209,42 @@ async function wip_report(as_of_date) {
 }
 
 async function wip_historical_report() {
-  let to_date = new Date("2024-01-20");
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  to_date = new Date(to_date);
+  const current_date = new Date("2024-04-22");
 
-  const current_date = new Date("2024-01-31");
+  await wip_report(current_date.toISOString().substring(0, 10));
 
-  while (to_date <= current_date) {
-    console.log("=========================================");
-    console.log("as of date: ", to_date);
-    console.log("=========================================");
-    await wip_report(to_date.toISOString().substring(0, 10));
-    to_date.setDate(to_date.getDate() + 1);
-  }
+  current_date.setDate(current_date.getDate() + 1);
+
+  current_date.setUTCHours(7, 0, 0, 0);
+
+  let iterator = false;
+
+  do {
+    const now = new Date();
+
+    if (now < current_date) {
+      // Schedule the next call after an day
+      const timeUntilNextBatch = current_date - now; // Calculate milliseconds until the next day
+      console.log(
+        "timer funtion entering",
+        timeUntilNextBatch,
+        "<-->",
+        current_date,
+        now
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+    } else {
+      await wip_report(current_date.toISOString().substring(0, 10));
+
+      current_date.setDate(current_date.getDate() + 1);
+
+      current_date.setUTCHours(7, 0, 0, 0);
+
+      iterator = true;
+    }
+  } while (iterator);
 
   console.log("COMPLETED");
 }
