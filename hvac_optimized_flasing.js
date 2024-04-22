@@ -7434,40 +7434,6 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
-        let date = "2000-01-01T00:00:00.00Z";
-
-        if (record["date"]) {
-          if (new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")) {
-            date = record["date"];
-          }
-        } else {
-          date = "2001-01-01T00:00:00.00Z";
-        }
-
-        let startedOn = "2000-01-01T00:00:00.00Z";
-
-        if (record["startedOn"]) {
-          if (
-            new Date(record["startedOn"]) > new Date("2000-01-01T00:00:00.00Z")
-          ) {
-            startedOn = record["startedOn"];
-          }
-        } else {
-          startedOn = "2001-01-01T00:00:00.00Z";
-        }
-
-        let endedOn = "2000-01-01T00:00:00.00Z";
-
-        if (record["endedOn"]) {
-          if (
-            new Date(record["endedOn"]) > new Date("2000-01-01T00:00:00.00Z")
-          ) {
-            endedOn = record["endedOn"];
-          }
-        } else {
-          endedOn = "2001-01-01T00:00:00.00Z";
-        }
-
         // console.log("gross_pay_items_data_pool: ", gross_pay_items_data_pool);
         // console.log("payrolls_data_pool: ", payrolls_data_pool);
         // console.log("jobs_data_pool: ", jobs_data_pool);
@@ -7584,6 +7550,43 @@ async function data_processor(data_lake, sql_request, table_list) {
             : record["instance_id"];
           if (technician_data_pool[record["employeeId"]]) {
             technician_id = record["employeeId"];
+          }
+
+          let date = "2000-01-01T00:00:00.00Z";
+
+          if (record["date"]) {
+            if (
+              new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              date = record["date"];
+            }
+          } else {
+            date = "2001-01-01T00:00:00.00Z";
+          }
+
+          let startedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["startedOn"]) {
+            if (
+              new Date(record["startedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              startedOn = record["startedOn"];
+            }
+          } else {
+            startedOn = "2001-01-01T00:00:00.00Z";
+          }
+
+          let endedOn = "2000-01-01T00:00:00.00Z";
+
+          if (record["endedOn"]) {
+            if (
+              new Date(record["endedOn"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              endedOn = record["endedOn"];
+            }
+          } else {
+            endedOn = "2001-01-01T00:00:00.00Z";
           }
 
           final_data_pool.push({
