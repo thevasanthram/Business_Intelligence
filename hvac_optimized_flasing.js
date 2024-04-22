@@ -3,7 +3,7 @@ const fs = require("fs");
 
 // modules
 const create_sql_connection = require("./modules/create_sql_connection");
-const getAccessToken = require("./modules/get_access_token")
+const getAccessToken = require("./modules/get_access_token");
 const getAPIWholeData = require("./modules/get_api_whole_data");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
 const hvac_merge_insertion = require("./modules/hvac_merge_insertion");
@@ -1786,6 +1786,22 @@ const hvac_tables = {
       },
       paid_time_type: {
         data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      startedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      endedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      isPrevailingWageJob: {
+        data_type: "TINYINT",
         constraint: { nullable: true },
       },
       job_details_id: {
@@ -7339,7 +7355,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log('cogs_labor')
+        console.log("cogs_labor");
 
         // fetching payroll data from db
         // ----------------
@@ -7418,6 +7434,40 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let final_data_pool = [];
 
+        let date = "2000-01-01T00:00:00.00Z";
+
+        if (record["date"]) {
+          if (new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")) {
+            date = record["date"];
+          }
+        } else {
+          date = "2001-01-01T00:00:00.00Z";
+        }
+
+        let startedOn = "2000-01-01T00:00:00.00Z";
+
+        if (record["startedOn"]) {
+          if (
+            new Date(record["startedOn"]) > new Date("2000-01-01T00:00:00.00Z")
+          ) {
+            startedOn = record["startedOn"];
+          }
+        } else {
+          startedOn = "2001-01-01T00:00:00.00Z";
+        }
+
+        let endedOn = "2000-01-01T00:00:00.00Z";
+
+        if (record["endedOn"]) {
+          if (
+            new Date(record["endedOn"]) > new Date("2000-01-01T00:00:00.00Z")
+          ) {
+            endedOn = record["endedOn"];
+          }
+        } else {
+          endedOn = "2001-01-01T00:00:00.00Z";
+        }
+
         // console.log("gross_pay_items_data_pool: ", gross_pay_items_data_pool);
         // console.log("payrolls_data_pool: ", payrolls_data_pool);
         // console.log("jobs_data_pool: ", jobs_data_pool);
@@ -7430,6 +7480,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
+            isPrevailingWageJob: 0,
             job_details_id: "1",
             actual_job_details_id: "1",
             invoice_id: "1",
@@ -7447,6 +7501,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
+            isPrevailingWageJob: 0,
             job_details_id: "2",
             actual_job_details_id: "2",
             invoice_id: "2",
@@ -7464,6 +7522,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
+            isPrevailingWageJob: 0,
             job_details_id: "3",
             actual_job_details_id: "3",
             invoice_id: "3",
@@ -7533,6 +7595,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             paid_time_type: record["paidTimeType"]
               ? record["paidTimeType"]
               : "default",
+            date: date,
+            startedOn: startedOn,
+            endedOn: endedOn,
+            isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
             job_details_id: job_details_id,
             actual_job_details_id: actual_job_details_id,
             invoice_id: invoice_id,
