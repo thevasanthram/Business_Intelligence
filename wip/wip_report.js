@@ -243,6 +243,10 @@ async function wip_historical_report() {
 
       iterator = true;
     }
+
+    if (current_date.toISOString().substring(0, 10) == "2023-12-31") {
+      iterator = false;
+    }
   } while (iterator);
 
   console.log("COMPLETED");
