@@ -486,6 +486,18 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      employeeId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      employeeType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
     },
   },
   job_types: {
@@ -1394,6 +1406,14 @@ const hvac_tables = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      team: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       business_unit_id: {
         data_type: "NVARCHAR20",
         constraint: { nullable: false },
@@ -1806,6 +1826,22 @@ const hvac_tables = {
       },
       paid_time_type: {
         data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      startedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      endedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      isPrevailingWageJob: {
+        data_type: "TINYINT",
         constraint: { nullable: true },
       },
       job_details_id: {
@@ -3342,6 +3378,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             burdenRate: record["burdenRate"] ? record["burdenRate"] : 0,
+            employeeId: record["employeeId"]
+              ? record["employeeId"]
+              : record["instance_id"],
+            employeeType: record["employeeType"],
+            status: record["status"],
           });
         });
 
@@ -5546,6 +5587,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 final_data_pool.push({
                   id: record["id"],
                   name: record["name"] ? record["name"] : "default_technician",
+                  is_active: 0,
+                  team: record["team"] ? record["team"] : "default_team",
                   business_unit_id: business_unit_id,
                   acutal_business_unit_id: acutal_business_unit_id,
                 });

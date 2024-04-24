@@ -164,6 +164,9 @@ BEGIN
 CREATE TABLE payrolls (
   id NVARCHAR(20) PRIMARY KEY,
   burdenRate DECIMAL(18, 8) NULL,
+  employeeType NVARCHAR(MAX) NULL,
+  status NVARCHAR(MAX) NULL,
+  employeeId NVARCHAR(20) NOT NULL,
 );
 END;
 
@@ -501,6 +504,8 @@ BEGIN
 CREATE TABLE technician (
   id NVARCHAR(20) PRIMARY KEY,
   [name] NVARCHAR(MAX) NULL,
+  is_active TINYINT NULL,
+  team NVARCHAR(MAX) NULL,
   business_unit_id NVARCHAR(20) NOT NULL,
   actual_business_unit_id NVARCHAR(20) NULL,
   FOREIGN KEY (business_unit_id) REFERENCES business_unit (id)

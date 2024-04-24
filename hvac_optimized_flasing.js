@@ -466,6 +466,18 @@ const hvac_tables = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      employeeId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      employeeType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
     },
   },
   job_types: {
@@ -1371,6 +1383,14 @@ const hvac_tables = {
         constraint: { primary: true, nullable: false },
       },
       name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      team: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
@@ -3628,6 +3648,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             burdenRate: record["burdenRate"] ? record["burdenRate"] : 0,
+            employeeId: record["employeeId"]
+              ? record["employeeId"]
+              : record["instance_id"],
+            employeeType: record["employeeType"],
+            status: record["status"],
           });
         });
 
@@ -6204,6 +6229,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: "1",
             name: "default_technician_1",
+            is_active: 0,
+            team: "default_team_1",
             business_unit_id: "1",
             acutal_business_unit_id: "1",
           });
@@ -6211,6 +6238,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: "2",
             name: "default_technician_2",
+            is_active: 0,
+            team: "default_team_2",
             business_unit_id: "2",
             acutal_business_unit_id: "2",
           });
@@ -6218,6 +6247,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: "3",
             name: "default_technician_3",
+            is_active: 0,
+            team: "default_team_3",
             business_unit_id: "3",
             acutal_business_unit_id: "3",
           });
@@ -6245,6 +6276,8 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: record["id"],
             name: record["name"] ? record["name"] : "default_technician",
+            is_active: 0,
+            team: record["team"] ? record["team"] : "default_team",
             business_unit_id: business_unit_id,
             acutal_business_unit_id: acutal_business_unit_id,
           });
