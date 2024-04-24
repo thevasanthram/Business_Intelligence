@@ -1,4 +1,5 @@
-let to_date = new Date("2024/01/01");
+const current_date = new Date("2023-12-31");
 
-console.log(to_date)
-
+if (current_date.toISOString().substring(0, 10) == "2023-12-31") {
+    iterator = false;
+  }
