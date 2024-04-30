@@ -6325,7 +6325,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
           // await csv_generator(
-          invoice_final_data_pool, invoice_header_data, "invoice";
+          // invoice_final_data_pool, invoice_header_data, "invoice";
           // );
 
           do {
@@ -6369,9 +6369,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_material_final_data_pool.length > 0) {
           // await csv_generator(
-          cogs_material_final_data_pool,
-            cogs_material_header_data,
-            "cogs_material";
+          // cogs_material_final_data_pool,
+          //   cogs_material_header_data,
+          //   "cogs_material";
           // );
 
           do {
@@ -6417,9 +6417,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         );
         if (cogs_equipment_final_data_pool.length > 0) {
           // await csv_generator(
-          cogs_equipment_final_data_pool,
-            cogs_equipment_header_data,
-            "cogs_equipment";
+          // cogs_equipment_final_data_pool,
+          //   cogs_equipment_header_data,
+          //   "cogs_equipment";
           // );
 
           do {
