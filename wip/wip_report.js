@@ -201,7 +201,8 @@ async function wip_report(as_of_date) {
           sql_request,
           data_pool,
           header_data,
-          "wip_report"
+          "wip_report",
+          "UPDATING"
         );
       } while (wip_response[instance_name]["status"] != "success");
     })

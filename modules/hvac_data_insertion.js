@@ -6,12 +6,14 @@ async function hvac_data_insertion(
   sql_pool,
   data_pool,
   header_data,
-  table_name
+  table_name,
+  mode
 ) {
   let status = "failure";
   try {
     // clearing old records if exists
-    if (table_name != "projects_wip_data" && table_name != "wip_report") {
+
+    if (mode == "FLASHING") {
       const delete_table_records = `DELETE FROM ${table_name}`;
       await sql_pool.query(delete_table_records);
     }

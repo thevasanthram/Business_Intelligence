@@ -2452,7 +2452,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 Object.values(data_pool),
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["legal_entity"]["status"] != "success"
@@ -2502,7 +2503,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 Object.values(data_pool),
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["us_cities"]["status"] != "success");
 
@@ -2712,7 +2714,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["business_unit"]["status"] != "success"
@@ -2737,7 +2740,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 project_business_unit_final_data_pool,
                 project_business_unit_header_data,
-                "project_business_unit"
+                "project_business_unit",
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["project_business_unit"]["status"] !=
@@ -2846,7 +2850,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["employees"]["status"] != "success");
 
@@ -3021,7 +3026,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["campaigns"]["status"] != "success");
 
@@ -3269,7 +3275,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["bookings"]["status"] != "success");
 
@@ -3407,7 +3414,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["customer_details"]["status"] != "success"
@@ -3610,7 +3618,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["location"]["status"] != "success");
 
@@ -3675,7 +3684,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["payrolls"]["status"] != "success");
 
@@ -3752,7 +3762,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["job_types"]["status"] != "success");
 
@@ -3817,7 +3828,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 returns_final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["returns"]["status"] != "success");
 
@@ -4094,7 +4106,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 purchase_order_final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["purchase_order"]["status"] != "success"
@@ -4355,7 +4368,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["sales_details"]["status"] != "success"
@@ -4670,7 +4684,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["projects"]["status"] != "success");
 
@@ -4693,7 +4708,8 @@ async function data_processor(data_lake, sql_request, table_list) {
         //         sql_request,
         //         wip_final_data_pool,
         //         wip_header_data,
-        //         "projects_wip_data"
+        //         "projects_wip_data",
+        // 'UPDATING',
         //       );
         //   } while (
         //     hvac_tables_responses["projects_wip_data"]["status"] != "success"
@@ -4718,7 +4734,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 project_managers_final_data_pool,
                 project_managers_header_data,
-                "project_managers"
+                "project_managers",
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["project_managers"]["status"] != "success"
@@ -5275,7 +5292,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["call_details"]["status"] != "success"
@@ -5672,7 +5690,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["job_details"]["status"] != "success");
 
@@ -5899,7 +5918,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["appointments"]["status"] != "success"
@@ -5981,7 +6001,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["vendor"]["status"] != "success");
 
@@ -6177,7 +6198,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["inventory_bills"]["status"] != "success"
@@ -6300,7 +6322,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["technician"]["status"] != "success");
 
@@ -6509,7 +6532,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["sku_details"]["status"] != "success");
 
@@ -7272,7 +7296,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 invoice_final_data_pool,
                 invoice_header_data,
-                "invoice"
+                "invoice",
+                "FLASHING"
               );
           } while (hvac_tables_responses["invoice"]["status"] != "success");
 
@@ -7299,7 +7324,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_material_final_data_pool,
                 cogs_material_header_data,
-                "cogs_material"
+                "cogs_material",
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["cogs_material"]["status"] != "success"
@@ -7328,7 +7354,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_equipment_final_data_pool,
                 cogs_equipment_header_data,
-                "cogs_equipment"
+                "cogs_equipment",
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["cogs_equipment"]["status"] != "success"
@@ -7357,7 +7384,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_services_final_data_pool,
                 cogs_service_header_data,
-                "cogs_service"
+                "cogs_service",
+                "FLASHING"
               );
           } while (
             hvac_tables_responses["cogs_service"]["status"] != "success"
@@ -7666,7 +7694,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "FLASHING"
               );
           } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
 

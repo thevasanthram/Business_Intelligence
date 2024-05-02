@@ -2436,7 +2436,7 @@ async function data_processor(data_lake, sql_request, table_list) {
     // Object.keys(data_lake).length
     // table_list.length
 
-    // if (api_count < table_list.length - 1) {
+    // if (api_count != 24) {
     //   continue;
     // }
 
@@ -4335,7 +4335,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 project_managers_final_data_pool,
                 project_managers_header_data,
-                "project_managers"
+                "project_managers",
+                "UPDATING"
               );
           } while (
             hvac_tables_responses["project_managers"]["status"] != "success"
@@ -5852,6 +5853,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           Object.keys(invoice_data_pool).length
         );
 
+        fs.writeFile(
+          "invoice.js",
+          Object.keys(invoice_data_pool).join(","),
+          () => console.log("invoice written to a file")
+        );
+
         for (
           let i = 0;
           i < Object.keys(invoice_data_pool).length;
@@ -6380,7 +6387,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_material_final_data_pool,
                 cogs_material_header_data,
-                "cogs_material"
+                "cogs_material",
+                "UPDATING"
               );
           } while (
             hvac_tables_responses["cogs_material"]["status"] != "success"
@@ -6428,7 +6436,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_equipment_final_data_pool,
                 cogs_equipment_header_data,
-                "cogs_equipment"
+                "cogs_equipment",
+                "UPDATING"
               );
           } while (
             hvac_tables_responses["cogs_equipment"]["status"] != "success"
@@ -6476,7 +6485,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 cogs_services_final_data_pool,
                 cogs_service_header_data,
-                "cogs_service"
+                "cogs_service",
+                "UPDATING"
               );
           } while (
             hvac_tables_responses["cogs_service"]["status"] != "success"
@@ -6761,7 +6771,8 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name
+                table_name,
+                "UPDATING"
               );
           } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
         } else {
