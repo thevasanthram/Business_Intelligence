@@ -15,7 +15,7 @@ const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
 
-// const csv_generator = require("./modules/csv_generator");
+const csv_generator = require("./modules/csv_generator");
 
 // Service Titan's API parameters
 const instance_details = [
@@ -41,7 +41,7 @@ const instance_details = [
     client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
   },
   {
-    instance_name: "SFT",
+    instance_name: "Swift Air Mechanicals LLC",
     tenant_id: 2450322465,
     app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
     client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
@@ -2575,7 +2575,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["business_unit"]["status"] =
@@ -2847,7 +2847,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["campaigns"]["status"] =
@@ -3038,7 +3038,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("bookings data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["bookings"]["status"] =
@@ -3150,7 +3150,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("customer details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["customer_details"]["status"] =
@@ -3315,7 +3315,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("location data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["location"]["status"] =
@@ -3395,7 +3395,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("payrolls data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["payrolls"]["status"] =
@@ -3470,7 +3470,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job_types data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["job_types"]["status"] =
@@ -3787,7 +3787,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("purchase order data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["purchase_order"]["status"] =
@@ -4065,7 +4065,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sales_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["sales_details"]["status"] =
@@ -4287,7 +4287,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("projects data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["projects"]["status"] =
@@ -5032,7 +5032,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("job details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["job_details"]["status"] =
@@ -5221,7 +5221,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("appointments data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["appointments"]["status"] =
@@ -5306,7 +5306,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("vendor data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["vendor"]["status"] =
@@ -5505,7 +5505,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         }
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["inventory_bills"]["status"] =
@@ -5605,7 +5605,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["technician"]["status"] =
@@ -5783,7 +5783,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("sku_details data: ", final_data_pool.length);
 
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["sku_details"]["status"] =
@@ -6327,9 +6327,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("invoice data: ", invoice_final_data_pool.length);
         if (invoice_final_data_pool.length > 0) {
-          // await csv_generator(
-          // invoice_final_data_pool, invoice_header_data, "invoice";
-          // );
+          await csv_generator(
+            invoice_final_data_pool,
+            invoice_header_data,
+            "invoice"
+          );
 
           do {
             hvac_tables_responses["invoice"]["status"] =
@@ -6371,11 +6373,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_material_final_data_pool.length
         );
         if (cogs_material_final_data_pool.length > 0) {
-          // await csv_generator(
-          // cogs_material_final_data_pool,
-          //   cogs_material_header_data,
-          //   "cogs_material";
-          // );
+          await csv_generator(
+            cogs_material_final_data_pool,
+            cogs_material_header_data,
+            "cogs_material"
+          );
 
           do {
             hvac_tables_responses["cogs_material"]["status"] =
@@ -6420,11 +6422,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_equipment_final_data_pool.length
         );
         if (cogs_equipment_final_data_pool.length > 0) {
-          // await csv_generator(
-          // cogs_equipment_final_data_pool,
-          //   cogs_equipment_header_data,
-          //   "cogs_equipment";
-          // );
+          await csv_generator(
+            cogs_equipment_final_data_pool,
+            cogs_equipment_header_data,
+            "cogs_equipment"
+          );
 
           do {
             hvac_tables_responses["cogs_equipment"]["status"] =
@@ -6469,11 +6471,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           cogs_services_final_data_pool.length
         );
         if (cogs_services_final_data_pool.length > 0) {
-          // await csv_generator(
-          // cogs_services_final_data_pool,
-          //   cogs_service_header_data,
-          //   "cogs_service";
-          // );
+          await csv_generator(
+            cogs_services_final_data_pool,
+            cogs_service_header_data,
+            "cogs_service"
+          );
 
           do {
             hvac_tables_responses["cogs_service"]["status"] =
@@ -6759,7 +6761,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
-          // await csv_generator(final_data_pool, header_data, table_name);
+          await csv_generator(final_data_pool, header_data, table_name);
 
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
