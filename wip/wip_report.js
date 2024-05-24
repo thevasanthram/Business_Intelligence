@@ -30,6 +30,14 @@ const instance_details = [
     client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
     wip_report_id: 75359909,
   },
+  {
+    instance_name: "Swift Air Mechanical LLC",
+    tenant_id: 2450322465,
+    app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
+    client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
+    client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
+    wip_report_id: 58999783,
+  },
 ];
 
 const wip_header = {
@@ -127,6 +135,9 @@ const wip_response = {
   "Family Heating & Cooling Co LLC": {
     status: "failure",
   },
+  "Swift Air Mechanical LLC": {
+    status: "failure",
+  },
 };
 
 async function wip_report(as_of_date) {
@@ -211,13 +222,13 @@ async function wip_report(as_of_date) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date("2024-04-30");
+  const current_date = new Date("2024-05-24");
 
   await wip_report(current_date.toISOString().substring(0, 10));
 
   current_date.setDate(current_date.getDate() + 1);
 
-  current_date.setUTCHours(7, 0, 0,0);
+  current_date.setUTCHours(7, 0, 0, 0);
 
   let iterator = true;
 
@@ -238,7 +249,7 @@ async function wip_historical_report() {
     } else {
       await wip_report(current_date.toISOString().substring(0, 10));
 
-      if (current_date.toISOString().substring(0, 10) == "2024-04-24") {
+      if (current_date.toISOString().substring(0, 10) == "2024-04-30") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);

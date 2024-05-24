@@ -12,6 +12,8 @@ async function add_suffix(id, instance_id) {
     suffix = "_02";
   } else if (instance_id == 3) {
     suffix = "_03";
+  } else if (instance_id == 4) {
+    suffix = "_04";
   }
 
   // Append suffix to id
@@ -44,6 +46,7 @@ async function getAPIWholeData(
       "Expert Heating and Cooling Co LLC",
       "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
       "Family Heating & Cooling Co LLC",
+      "Swift Air Mechanicals LLC",
     ];
 
     const formatted_api_group = api_group.replace(/-/g, "_").replace("/", "_");

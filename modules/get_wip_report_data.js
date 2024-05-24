@@ -36,7 +36,10 @@ async function get_wip_report_data(
     "Expert Heating and Cooling Co LLC",
     "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     "Family Heating & Cooling Co LLC",
+    "Swift Air Mechanical LLC",
   ];
+
+  console.log("as_of_date: ", as_of_date);
 
   try {
     let shouldIterate = false;
@@ -73,6 +76,10 @@ async function get_wip_report_data(
             {
               name: "InvoiceCostStatus",
               value: "2",
+            },
+            {
+              name: "TransactionDateType",
+              value: "I",
             },
             {
               name: "InvoiceRevenueStatus",
@@ -122,6 +129,8 @@ async function get_wip_report_data(
 
       const pushing_item = [];
 
+      // console.log("response: ", response);
+
       const updatedData = await Promise.all(
         data.map(async (record) => {
           const instance_id = String(instance_list.indexOf(instance_name) + 1);
@@ -131,8 +140,10 @@ async function get_wip_report_data(
 
           let modified_record = {};
 
-          if (instance_id == 1) {
+          // EXP
+          if (instance_id == 1 || instance_id == 4) {
             const estimatedMargin = record[5] - record[8];
+
             modified_record = {
               ProjectNumber: record[0],
               ProjectName: record[1],

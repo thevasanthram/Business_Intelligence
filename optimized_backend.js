@@ -14,7 +14,7 @@ const flush_hvac_schema = require("./modules/flush_hvac_schema");
 const flush_hvac_data = require("./modules/flush_hvac_data");
 const kpi_data = require("./modules/updated_business_unit_details");
 const us_cities_list = require("./modules/us_cities");
-const { type } = require("os");
+
 // const csv_generator = require("./modules/csv_generator");
 
 // Service Titan's API parameters
@@ -40,23 +40,17 @@ const instance_details = [
     client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
     client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
   },
+  {
+    instance_name: "SFT",
+    tenant_id: 2450322465,
+    app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
+    client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
+    client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
+  },
 ];
 
 let timezoneOffsetHours = 5; // 0 hours ahead of UTC
 let timezoneOffsetMinutes = 30; // 0 minutes ahead of UTC
-
-// Check if the date is in daylight saving time (PDT)
-// const today = new Date();
-// const daylightSavingStart = new Date(today.getFullYear(), 2, 14); // March 14
-// const daylightSavingEnd = new Date(today.getFullYear(), 10, 7); // November 7
-
-// if (today >= daylightSavingStart && today < daylightSavingEnd) {
-//   // Date is in PDT
-//   timezoneOffsetHours = 7;
-// } else {
-//   // Date is in PST
-//   timezoneOffsetHours = 8;
-// }
 
 let modifiedBeforeTime = new Date();
 
@@ -2227,6 +2221,7 @@ async function fetch_main_data(
                 1: { id: 1, legal_name: "EXP" },
                 2: { id: 2, legal_name: "PA" },
                 3: { id: 3, legal_name: "NMI" },
+                4: { id: 4, legal_name: "SFT" },
               },
             };
           } else if (api_key == "us_cities") {
@@ -2509,6 +2504,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             1: "EXP",
             2: "PA",
             3: "NMI",
+            4: "SFT",
           };
 
           if (kpi_data[record["id"]]) {
