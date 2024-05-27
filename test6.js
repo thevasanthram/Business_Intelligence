@@ -249,5 +249,56 @@ async function sql_duplicate() {
   console.log("feedback: ", feedback);
 }
 
+async function total_count_checker() {
+  let sql_request = "";
+  do {
+    sql_request = await create_sql_connection();
+  } while (!sql_request);
+
+  const tables = [
+    "purchase_order",
+    "appointments",
+    "inventory_bills",
+    "technician",
+    "sku_details",
+    "invoice",
+    "vendor",
+    "cogs_labor",
+    "cogs_material",
+    "cogs_service",
+    "cogs_equipment",
+    "legal_entity",
+    "us_cities",
+    "business_unit",
+    "project_business_unit",
+    "employees",
+    "campaigns",
+    "bookings",
+    "customer_details",
+    "location",
+    "payrolls",
+    "job_types",
+    "returns",
+    "sales_details",
+    "projects",
+    "project_managers",
+    "call_details",
+    "job_details",
+  ];
+
+  await Promise.all(
+    tables.map(async (table_name) => {
+      const query = `SELECT COUNT(*) as count FROM ${table_name}`;
+
+      const response = await sql_request.query(query);
+
+      console.log();
+
+      console.log(table_name, ",", response.recordset[0]["count"]);
+    })
+  );
+}
+
 // sql_hit();
-sql_duplicate();
+// sql_duplicate();
+total_count_checker();
