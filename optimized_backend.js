@@ -6552,11 +6552,11 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         let access_token_list = [];
 
+        let gross_pay_data = [];
+
         await Promise.all(
           unique_payroll_ids.map(async (current_payroll_id) => {
             // fetch the particular payroll id's records from service titan
-
-            let gross_pay_data = [];
 
             const params_header_temp = JSON.parse(
               JSON.stringify(params_header)
@@ -6623,141 +6623,138 @@ async function data_processor(data_lake, sql_request, table_list) {
 
               gross_pay_data = [...gross_pay_data, ...data_pool];
             } while (has_error_occured);
-
-            for (let i = 0; i < gross_pay_data.length; i += batchSize) {
-              await Promise.all(
-                gross_pay_data.slice(i, i + batchSize).map(async (record) => {
-                  let job_details_id = record["instance_id"];
-                  let actual_job_details_id = record["instance_id"];
-                  if (record["jobId"]) {
-                    actual_job_details_id = record["jobId"];
-                    // checking jobId availlable or not for mapping
-                    const is_jobs_available = await sql_request.query(
-                      `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
-                    );
-
-                    if (is_jobs_available["recordset"].length > 0) {
-                      job_details_id = record["jobId"];
-                    }
-                  }
-
-                  let invoice_id = record["instance_id"];
-                  let actual_invoice_id = record["instance_id"];
-                  if (record["invoiceId"]) {
-                    actual_invoice_id = record["invoiceId"];
-
-                    // checking invoice availlable or not for mapping
-                    const is_invoice_available = await sql_request.query(
-                      `SELECT id FROM invoice WHERE id='${record["invoiceId"]}'`
-                    );
-
-                    if (is_invoice_available["recordset"].length > 0) {
-                      invoice_id = record["invoiceId"];
-                    }
-                  }
-
-                  let project_id = record["instance_id"];
-                  let actual_project_id = record["projectId"]
-                    ? record["projectId"]
-                    : record["instance_id"];
-
-                  // checking projects availlable or not for mapping
-                  if (record["projectId"]) {
-                    const is_project_available = await sql_request.query(
-                      `SELECT id FROM projects WHERE id='${record["projectId"]}'`
-                    );
-
-                    if (is_project_available["recordset"].length > 0) {
-                      project_id = record["projectId"];
-                    }
-                  }
-
-                  let technician_id = record["instance_id"];
-                  let actual_technician_id = record["employeeId"]
-                    ? record["employeeId"]
-                    : record["instance_id"];
-
-                  if (record["employeeId"]) {
-                    // checking technician availlable or not for mapping
-                    const is_technnician_available = await sql_request.query(
-                      `SELECT id FROM technician WHERE id='${record["employeeId"]}'`
-                    );
-
-                    if (is_technnician_available["recordset"].length > 0) {
-                      technician_id = record["employeeId"];
-                    }
-                  }
-
-                  let date = "2000-01-01T00:00:00.00Z";
-
-                  if (record["date"]) {
-                    if (
-                      new Date(record["date"]) >
-                      new Date("2000-01-01T00:00:00.00Z")
-                    ) {
-                      date = record["date"];
-                    }
-                  } else {
-                    date = "2001-01-01T00:00:00.00Z";
-                  }
-
-                  let startedOn = "2000-01-01T00:00:00.00Z";
-
-                  if (record["startedOn"]) {
-                    if (
-                      new Date(record["startedOn"]) >
-                      new Date("2000-01-01T00:00:00.00Z")
-                    ) {
-                      startedOn = record["startedOn"];
-                    }
-                  } else {
-                    startedOn = "2001-01-01T00:00:00.00Z";
-                  }
-
-                  let endedOn = "2000-01-01T00:00:00.00Z";
-
-                  if (record["endedOn"]) {
-                    if (
-                      new Date(record["endedOn"]) >
-                      new Date("2000-01-01T00:00:00.00Z")
-                    ) {
-                      endedOn = record["endedOn"];
-                    }
-                  } else {
-                    endedOn = "2001-01-01T00:00:00.00Z";
-                  }
-
-                  final_data_pool.push({
-                    paid_duration: record["paidDurationHours"]
-                      ? record["paidDurationHours"]
-                      : 0,
-                    labor_cost: record["amount"] ? record["amount"] : 0,
-                    activity: record["activity"]
-                      ? record["activity"]
-                      : "default",
-                    paid_time_type: record["paidTimeType"]
-                      ? record["paidTimeType"]
-                      : "default",
-                    date: date,
-                    startedOn: startedOn,
-                    endedOn: endedOn,
-                    isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
-                    job_details_id: job_details_id,
-                    actual_job_details_id: actual_job_details_id,
-                    invoice_id: invoice_id,
-                    actual_invoice_id: actual_invoice_id,
-                    project_id: project_id,
-                    actual_project_id: actual_project_id,
-                    payrollId: record["payrollId"],
-                    acutal_payrollId: record["payrollId"],
-                    technician_id: technician_id,
-                    actual_technician_id: actual_technician_id,
-                  });
-                })
-              );
-            }
           })
         );
+
+        for (let i = 0; i < gross_pay_data.length; i += batchSize) {
+          await Promise.all(
+            gross_pay_data.slice(i, i + batchSize).map(async (record) => {
+              let job_details_id = record["instance_id"];
+              let actual_job_details_id = record["instance_id"];
+              if (record["jobId"]) {
+                actual_job_details_id = record["jobId"];
+                // checking jobId availlable or not for mapping
+                const is_jobs_available = await sql_request.query(
+                  `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
+                );
+
+                if (is_jobs_available["recordset"].length > 0) {
+                  job_details_id = record["jobId"];
+                }
+              }
+
+              let invoice_id = record["instance_id"];
+              let actual_invoice_id = record["instance_id"];
+              if (record["invoiceId"]) {
+                actual_invoice_id = record["invoiceId"];
+
+                // checking invoice availlable or not for mapping
+                const is_invoice_available = await sql_request.query(
+                  `SELECT id FROM invoice WHERE id='${record["invoiceId"]}'`
+                );
+
+                if (is_invoice_available["recordset"].length > 0) {
+                  invoice_id = record["invoiceId"];
+                }
+              }
+
+              let project_id = record["instance_id"];
+              let actual_project_id = record["projectId"]
+                ? record["projectId"]
+                : record["instance_id"];
+
+              // checking projects availlable or not for mapping
+              if (record["projectId"]) {
+                const is_project_available = await sql_request.query(
+                  `SELECT id FROM projects WHERE id='${record["projectId"]}'`
+                );
+
+                if (is_project_available["recordset"].length > 0) {
+                  project_id = record["projectId"];
+                }
+              }
+
+              let technician_id = record["instance_id"];
+              let actual_technician_id = record["employeeId"]
+                ? record["employeeId"]
+                : record["instance_id"];
+
+              if (record["employeeId"]) {
+                // checking technician availlable or not for mapping
+                const is_technnician_available = await sql_request.query(
+                  `SELECT id FROM technician WHERE id='${record["employeeId"]}'`
+                );
+
+                if (is_technnician_available["recordset"].length > 0) {
+                  technician_id = record["employeeId"];
+                }
+              }
+
+              let date = "2000-01-01T00:00:00.00Z";
+
+              if (record["date"]) {
+                if (
+                  new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
+                ) {
+                  date = record["date"];
+                }
+              } else {
+                date = "2001-01-01T00:00:00.00Z";
+              }
+
+              let startedOn = "2000-01-01T00:00:00.00Z";
+
+              if (record["startedOn"]) {
+                if (
+                  new Date(record["startedOn"]) >
+                  new Date("2000-01-01T00:00:00.00Z")
+                ) {
+                  startedOn = record["startedOn"];
+                }
+              } else {
+                startedOn = "2001-01-01T00:00:00.00Z";
+              }
+
+              let endedOn = "2000-01-01T00:00:00.00Z";
+
+              if (record["endedOn"]) {
+                if (
+                  new Date(record["endedOn"]) >
+                  new Date("2000-01-01T00:00:00.00Z")
+                ) {
+                  endedOn = record["endedOn"];
+                }
+              } else {
+                endedOn = "2001-01-01T00:00:00.00Z";
+              }
+
+              final_data_pool.push({
+                paid_duration: record["paidDurationHours"]
+                  ? record["paidDurationHours"]
+                  : 0,
+                labor_cost: record["amount"] ? record["amount"] : 0,
+                activity: record["activity"] ? record["activity"] : "default",
+                paid_time_type: record["paidTimeType"]
+                  ? record["paidTimeType"]
+                  : "default",
+                date: date,
+                startedOn: startedOn,
+                endedOn: endedOn,
+                isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
+                job_details_id: job_details_id,
+                actual_job_details_id: actual_job_details_id,
+                invoice_id: invoice_id,
+                actual_invoice_id: actual_invoice_id,
+                project_id: project_id,
+                actual_project_id: actual_project_id,
+                payrollId: record["payrollId"],
+                acutal_payrollId: record["payrollId"],
+                technician_id: technician_id,
+                actual_technician_id: actual_technician_id,
+              });
+            })
+          );
+        }
 
         console.log("cogs_labor data: ", final_data_pool.length);
         if (final_data_pool.length > 0) {
