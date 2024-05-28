@@ -39,8 +39,6 @@ async function get_wip_report_data(
     "Swift Air Mechanical LLC",
   ];
 
-  console.log("as_of_date: ", as_of_date);
-
   try {
     let shouldIterate = false;
     do {
