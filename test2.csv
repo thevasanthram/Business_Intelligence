@@ -1,61 +1,61 @@
-purchase_order , 30381
-technician , 774
-vendor , 2664
-inventory_bills , 31679
-cogs_material , 26088
-cogs_equipment , 5031
-legal_entity , 4
-business_unit , 249
-project_business_unit , 249
-employees , 188
-us_cities , 42742
-campaigns , 129
-bookings , 472
-payrolls , 8901
-job_types , 915
-returns , 3071
-projects , 21580
-sales_details , 18299
-project_managers , 1185
-sku_details , 239655
-customer_details , 110204
-cogs_labor , 218892
-location , 158485
-call_details , 111960
-job_details , 506460
-appointments , 526042
-cogs_service , 556880
-invoice , 526060
-
-
-
-
-main_hvac_db
-purchase_order , 30381
-technician , 774      
-inventory_bills , 31718
-vendor , 2664
-cogs_material , 26168
-cogs_equipment , 5034
-legal_entity , 4
-business_unit , 249
-us_cities , 42742
-campaigns , 129
-project_business_unit , 249
-bookings , 472
-employees , 188
-appointments , 526036
-customer_details , 110204
-payrolls , 8901
-job_types , 915
-sales_details , 18299
-returns , 3071
-sku_details , 239655
-cogs_labor , 219147
-projects , 21580
-location , 158485
-project_managers , 1185
-call_details , 111960
-cogs_service , 557158
-invoice , 526227
-job_details , 506460
+purchase_order ,30381,,,hvac_data_pool - initial,,,main_hvac_db - initial,
+technician ,774,,,purchase_order ,30381,,purchase_order ,30381
+vendor ,2664,,,inventory_bills ,31718,,technician ,774
+inventory_bills ,31679,,,technician ,774,,inventory_bills ,31718
+cogs_material ,26088,,,vendor ,2664,,vendor ,2664
+cogs_equipment ,5031,,,cogs_material ,26168,,cogs_equipment ,5034
+legal_entity ,4,,,legal_entity ,4,,cogs_material ,26168
+business_unit ,249,,,business_unit ,249,,legal_entity ,4
+project_business_unit ,249,,,cogs_equipment ,5034,,sku_details ,239655
+employees ,188,,,project_business_unit ,249,,business_unit ,249
+us_cities ,42742,,,employees ,188,,us_cities ,42742
+campaigns ,129,,,us_cities ,42742,,project_business_unit ,249
+bookings ,472,,,campaigns ,129,,employees ,188
+payrolls ,8901,,,bookings ,472,,campaigns ,129
+job_types ,915,,,payrolls ,8901,,bookings ,472
+returns ,3071,,,job_types ,915,,payrolls ,8901
+projects ,21580,,,sku_details ,239655,,cogs_labor ,219147
+sales_details ,18299,,,returns ,3071,,job_types ,915
+project_managers ,1185,,,sales_details ,18299,,sales_details ,18299
+sku_details ,239655,,,project_managers ,1185,,returns ,3071
+customer_details ,110204,,,projects ,21580,,projects ,21580
+cogs_labor ,218892,,,customer_details ,110204,,project_managers ,1185
+location ,158485,,,location ,158485,,location ,158485
+call_details ,111960,,,cogs_labor ,219150,,customer_details ,110204
+job_details ,506460,,,call_details ,111960,,job_details ,506460
+appointments ,526042,,,job_details ,506460,,call_details ,111960
+cogs_service ,556880,,,appointments ,526036,,appointments ,526036
+invoice ,526060,,,invoice ,526227,,invoice ,526227
+,,,,cogs_service ,557158,,cogs_service ,557158
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+main_hvac_db,,,,,,,,
+purchase_order ,30381,,,,,,,
+technician ,774,,,,,,,
+inventory_bills ,31718,,,,,,,
+vendor ,2664,,,,,,,
+cogs_material ,26168,,,,,,,
+cogs_equipment ,5034,,,,,,,
+legal_entity ,4,,,,,,,
+business_unit ,249,,,,,,,
+us_cities ,42742,,,,,,,
+campaigns ,129,,,,,,,
+project_business_unit ,249,,,,,,,
+bookings ,472,,,,,,,
+employees ,188,,,,,,,
+appointments ,526036,,,,,,,
+customer_details ,110204,,,,,,,
+payrolls ,8901,,,,,,,
+job_types ,915,,,,,,,
+sales_details ,18299,,,,,,,
+returns ,3071,,,,,,,
+sku_details ,239655,,,,,,,
+cogs_labor ,219147,,,,,,,
+projects ,21580,,,,,,,
+location ,158485,,,,,,,
+project_managers ,1185,,,,,,,
+call_details ,111960,,,,,,,
+cogs_service ,557158,,,,,,,
+invoice ,526227,,,,,,,
+job_details ,506460,,,,,,,

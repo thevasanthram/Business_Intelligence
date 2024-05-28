@@ -1,3 +1,4 @@
+const { table } = require("console");
 const create_sql_connection = require("./modules/create_sql_connection");
 const hvac_data_insertion = require("./modules/hvac_data_insertion");
 
@@ -251,6 +252,8 @@ async function sql_duplicate() {
 
 async function total_count_checker() {
   let sql_request = "";
+
+  // Retry connection until successful
   do {
     sql_request = await create_sql_connection();
   } while (!sql_request);
@@ -286,17 +289,27 @@ async function total_count_checker() {
     "job_details",
   ];
 
+  const table_count = {};
+
   await Promise.all(
     tables.map(async (table_name) => {
       const query = `SELECT COUNT(*) as count FROM ${table_name}`;
 
       const response = await sql_request.query(query);
 
-      console.log();
+      table_count[table_name] = response.recordset[0]["count"];
 
-      console.log(table_name, ",", response.recordset[0]["count"]);
+      // console.log(table_name, ",", response.recordset[0]["count"]);
     })
   );
+
+  let string = Object.keys(table_count)
+    .map((table_name) => {
+      return table_name + "," + table_count[table_name];
+    })
+    .join("\n");
+
+  console.log(string);
 }
 
 // sql_hit();
