@@ -63,7 +63,7 @@ modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 modifiedOnOrAfterTime.setUTCHours(7, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "2024-05-23T00:00:00.00Z", // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
+  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
   modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
