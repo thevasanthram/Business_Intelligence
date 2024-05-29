@@ -54,13 +54,13 @@ let timezoneOffsetMinutes = 30; // 0 minutes ahead of UTC
 
 let modifiedBeforeTime = new Date();
 
-modifiedBeforeTime.setUTCHours(7, 0, 0, 0);
+modifiedBeforeTime.setUTCHours(6, 0, 0, 0);
 
 let modifiedOnOrAfterTime = new Date();
 
 modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 
-modifiedOnOrAfterTime.setUTCHours(7, 0, 0, 0);
+modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
   modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
@@ -6899,7 +6899,7 @@ async function orchestrate() {
     const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
     next_batch_time.setDate(next_batch_time.getDate() + 1);
-    next_batch_time.setUTCHours(7, 0, 0, 0);
+    next_batch_time.setUTCHours(6, 0, 0, 0);
 
     console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
     console.log("next batch: ", next_batch_time);
@@ -6917,7 +6917,7 @@ async function orchestrate() {
     } else {
       console.log("next batch initiated");
 
-      now.setUTCHours(7, 0, 0, 0);
+      now.setUTCHours(6, 0, 0, 0);
 
       params_header["modifiedBefore"] = now.toISOString();
       console.log("params_header: ", params_header);
