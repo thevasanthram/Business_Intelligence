@@ -64,7 +64,7 @@ modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
   modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
-  modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
+  // modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2390,7 +2390,8 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["modifiedBefore"]
+        // params_header["modifiedBefore"]
+        params_header["modifiedOnOrAfter"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
@@ -6569,7 +6570,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
             params_header_temp["payrollIds"] = String(payroll_id);
             params_header_temp["modifiedOnOrAfter"] = "";
-            params_header_temp["modifiedBefore"] = "";
+            // params_header_temp["modifiedBefore"] = "";
 
             const instance_name =
               instance_details[payroll_instance_id - 1]["instance_name"];
@@ -6894,11 +6895,11 @@ async function orchestrate() {
 
   do {
     // finding the next batch time
-    params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+    // params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
     const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-    next_batch_time.setDate(next_batch_time.getDate() + 1);
+    next_batch_time.setDate(next_batch_time.getDate() + 2);
     next_batch_time.setUTCHours(6, 0, 0, 0);
 
     console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
@@ -6917,9 +6918,12 @@ async function orchestrate() {
     } else {
       console.log("next batch initiated");
 
-      now.setUTCHours(6, 0, 0, 0);
+      next_batch_time.setDate(next_batch_time.getDate() - 1);
 
-      params_header["modifiedBefore"] = now.toISOString();
+      next_batch_time.setUTCHours(6, 0, 0, 0);
+
+      // params_header["modifiedBefore"] = now.toISOString();
+      params_header["modifiedOnOrAfter"] = next_batch_time.toISOString();
       console.log("params_header: ", params_header);
 
       // Step 1: Call start_pipeline

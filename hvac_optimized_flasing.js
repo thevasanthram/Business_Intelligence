@@ -55,8 +55,9 @@ let createdBeforeTime = new Date();
 createdBeforeTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
-  createdOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
-  createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
+  // createdOnOrAfter: "", // "2024-02-12T00:00:00.00Z"
+  // createdBefore: createdBeforeTime.toISOString(), //createdBeforeTime.toISOString()
+  modifiedBefore: createdBeforeTime.toISOString(),
   includeTotal: true,
   pageSize: 2000,
   active: "any",
@@ -2398,7 +2399,7 @@ async function azure_sql_operations(data_lake, table_list) {
       overall_status)
       OUTPUT INSERTED.id -- Return the inserted ID
       VALUES ('${
-        params_header["createdBefore"]
+        params_header["modifiedBefore"]
       }','${start_time.toISOString()}','${end_time}','${timeDifferenceInMinutes}','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated','not yet updated', 'not yet updated')`;
 
     // Execute the INSERT query and retrieve the ID
@@ -8229,12 +8230,12 @@ async function orchestrate() {
   do {
     // finding the next batch time
 
-    const next_batch_time = new Date(params_header["createdBefore"]);
+    const next_batch_time = new Date(params_header["modifiedBefore"]);
 
     next_batch_time.setDate(next_batch_time.getDate() + 1);
     next_batch_time.setUTCHours(6, 0, 0, 0);
 
-    console.log("finished batch: ", params_header["createdBefore"]);
+    console.log("finished batch: ", params_header["modifiedBefore"]);
     console.log("next batch: ", next_batch_time);
 
     const now = new Date();
@@ -8255,7 +8256,7 @@ async function orchestrate() {
 
       now.setUTCHours(6, 0, 0, 0);
 
-      params_header["createdBefore"] = now.toISOString();
+      params_header["modifiedBefore"] = now.toISOString();
       console.log("params_header: ", params_header);
 
       // Step 1: Call start_pipeline
