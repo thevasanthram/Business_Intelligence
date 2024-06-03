@@ -56,7 +56,7 @@ let modifiedBeforeTime = new Date();
 
 modifiedBeforeTime.setUTCHours(6, 0, 0, 0);
 
-let modifiedOnOrAfterTime = new Date("2024-05-31T00:00:00.00Z");
+let modifiedOnOrAfterTime = new Date();
 
 modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 
