@@ -60,7 +60,7 @@ let modifiedOnOrAfterTime = new Date();
 
 modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 
-modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
+// modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
   modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
