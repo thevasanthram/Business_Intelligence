@@ -229,7 +229,7 @@ async function wip_report(as_of_date) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date("2024-06-11");
+  const current_date = new Date("2022-01-01");
 
   await wip_report(current_date.toISOString().substring(0, 10));
 
@@ -256,7 +256,7 @@ async function wip_historical_report() {
     } else {
       await wip_report(current_date.toISOString().substring(0, 10));
 
-      if (current_date.toISOString().substring(0, 10) == "2024-06-10") {
+      if (current_date.toISOString().substring(0, 10) == "2020-01-01") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
