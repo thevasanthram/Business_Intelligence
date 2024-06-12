@@ -2,6 +2,7 @@ const getAccessToken = require("./../modules/get_access_token");
 const get_wip_report_data = require("./../modules/get_wip_report_data");
 const hvac_data_insertion = require("./../modules/hvac_data_insertion");
 const create_sql_connection = require("./../modules/create_sql_connection");
+const fs = require("fs");
 
 const data_lake = {};
 
@@ -207,6 +208,12 @@ async function wip_report(as_of_date) {
     Object.keys(data_lake).map(async (instance_name) => {
       const data_pool = data_lake[instance_name];
 
+      // fs.writeFile(
+      //   `./${instance_name}_wip_report.js`,
+      //   JSON.stringify(data_pool),
+      //   () => console.log("done")
+      // );
+
       do {
         wip_response[instance_name]["status"] = await hvac_data_insertion(
           sql_request,
@@ -222,7 +229,7 @@ async function wip_report(as_of_date) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date("2024-06-04");
+  const current_date = new Date("2024-06-11");
 
   await wip_report(current_date.toISOString().substring(0, 10));
 
@@ -249,7 +256,7 @@ async function wip_historical_report() {
     } else {
       await wip_report(current_date.toISOString().substring(0, 10));
 
-      if (current_date.toISOString().substring(0, 10) == "2024-04-30") {
+      if (current_date.toISOString().substring(0, 10) == "2024-06-10") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
