@@ -45,13 +45,13 @@ async function validator() {
     );
     const hvac_db_result = hvac_db_response.recordset;
 
-    // fs.writeFile("./main_db_result.js", JSON.stringify(main_db_result), () =>
-    //   console.log("main_db_result done")
-    // );
+    fs.writeFile("./main_db_result.js", JSON.stringify(main_db_result), () =>
+      console.log("main_db_result done")
+    );
 
-    // fs.writeFile("./hvac_db_result.js", JSON.stringify(hvac_db_result), () =>
-    //   console.log("hvac_db_result done")
-    // );
+    fs.writeFile("./hvac_db_result.js", JSON.stringify(hvac_db_result), () =>
+      console.log("hvac_db_result done")
+    );
 
     console.log("main_db_result: ", main_db_result.length);
     console.log("hvac_db_result: ", hvac_db_result.length);
@@ -59,10 +59,10 @@ async function validator() {
     let count = 0;
 
     // Find records in main_db_result that are not in hvac_db_result
-    const unique_main_db_result = hvac_db_result.filter((main_record) => {
+    const unique_main_db_result = main_db_result.filter((main_record) => {
       count = count + 1;
       console.log("count: ", count);
-      return !main_db_result.some((hvac_record) => {
+      return !hvac_db_result.some((hvac_record) => {
         return (
           hvac_record["paid_duration"] == main_record["paid_duration"] &&
           hvac_record["labor_cost"] == main_record["labor_cost"] &&

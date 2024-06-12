@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const extractMatchingValues = require("./extract_matching_values");
 
 async function add_suffix(id, instance_id) {
   let suffix = "";
@@ -31,6 +32,29 @@ async function get_wip_report_data(
   page_count
 ) {
   let has_error_occured = false;
+
+  const wip_header_data = {
+    Instance_id: "",
+    ProjectNumber: "",
+    ProjectName: "",
+    ProjectStatus: "",
+    ProjectContractStartDate: "",
+    ActualCompletionDate: "",
+    ContractValue: "",
+    ChangeOrderValue: "",
+    CostAdjustment: "",
+    TotalEstimatedCost: "",
+    EstimatedMargin: "",
+    EstimatedMarginPercentage: "",
+    TotalCost: "",
+    CostToComplete: "",
+    PercentCompleteCost: "",
+    EarnedRevenue: "",
+    TotalRevenue: "",
+    OverBilling: "",
+    UnderBilling: "",
+    UTC_update_date: "",
+  };
 
   const instance_list = [
     "Expert Heating and Cooling Co LLC",
@@ -121,6 +145,7 @@ async function get_wip_report_data(
         continue;
       }
 
+      const fields = response.fields;
       const data = response.data;
 
       shouldIterate = response["hasMore"];
@@ -130,70 +155,52 @@ async function get_wip_report_data(
       // console.log("response: ", response);
 
       const updatedData = await Promise.all(
-        data.map(async (record) => {
+        data.map(async (record, index) => {
+          // organizing data with their fields
+          const formatted_record = fields.reduce((obj, field, index) => {
+            obj[field.name] = record[index];
+            return obj;
+          }, {});
+
           const instance_id = String(instance_list.indexOf(instance_name) + 1);
-          if (record[0]) {
-            record[0] = await add_suffix(record[0], instance_id);
+
+          if (formatted_record["ProjectNumber"]) {
+            formatted_record["ProjectNumber"] = await add_suffix(
+              formatted_record["ProjectNumber"],
+              instance_id
+            );
           }
 
-          let modified_record = {};
+          if (formatted_record["ProjectStartDate"]) {
+            formatted_record["ProjectContractStartDate"] =
+              formatted_record["ProjectStartDate"];
 
-          // EXP
+            delete formatted_record["ProjectStartDate"];
+          }
           if (instance_id == 1 || instance_id == 4) {
-            const estimatedMargin = record[5] - record[8];
-
-            modified_record = {
-              ProjectNumber: record[0],
-              ProjectName: record[1],
-              ProjectStatus: record[2],
-              ProjectContractStartDate: record[3],
-              ActualCompletionDate: record[4],
-              ContractValue: record[5],
-              ChangeOrderValue: record[6],
-              CostAdjustment: record[7],
-              TotalEstimatedCost: record[8],
-              EstimatedMargin: estimatedMargin,
-              EstimatedMarginPercentage: record[9],
-              TotalCost: record[10],
-              CostToComplete: record[11],
-              PercentCompleteCost: record[12],
-              EarnedRevenue: record[13],
-              TotalRevenue: record[14],
-              OverBilling: record[15],
-              UnderBilling: record[16],
-            };
-          } else {
-            modified_record = {
-              ProjectNumber: record[0],
-              ProjectName: record[1],
-              ProjectStatus: record[2],
-              ProjectContractStartDate: record[3],
-              ActualCompletionDate: record[4],
-              ContractValue: record[5],
-              ChangeOrderValue: record[6],
-              CostAdjustment: record[7],
-              TotalEstimatedCost: record[8],
-              EstimatedMargin: record[9],
-              EstimatedMarginPercentage: record[10],
-              TotalCost: record[11],
-              CostToComplete: record[12],
-              PercentCompleteCost: record[13],
-              EarnedRevenue: record[14],
-              TotalRevenue: record[15],
-              OverBilling: record[16],
-              UnderBilling: record[17],
-            };
+            // EXP and SFT
+            formatted_record["EstimatedMargin"] =
+              formatted_record["ContractValue"] -
+              formatted_record["TotalEstimatedCost"];
           }
 
-          return {
-            instance_id: instance_id,
-            ...modified_record,
-            UTC_update_date: as_of_date,
-          };
+          formatted_record["Instance_id"] = instance_id;
+          formatted_record["UTC_update_date"] = as_of_date;
+
+          const final_record = extractMatchingValues(
+            wip_header_data,
+            formatted_record
+          );
+
+          return final_record;
         })
       );
 
-      // Now `updatedData` contains the modified records with the updated `UTC_update_date`
+      // fs.writeFile(
+      //   `./${instance_name}_wip_report.js`,
+      //   JSON.stringify(updatedData),
+      //   () => console.log("done")
+      // );
 
       data_pool = [...data_pool, ...updatedData];
 
@@ -203,7 +210,7 @@ async function get_wip_report_data(
     } while (shouldIterate);
   } catch (error) {
     console.error(
-      `WIP Report fetching failed for ${instance_name}. Try Again!:`,
+      `WIP Report fetching failed for ${instance_name} - ${as_of_date}. Try Again!:`,
       error
     );
 
