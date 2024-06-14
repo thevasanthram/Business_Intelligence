@@ -47,6 +47,13 @@ const instance_details = [
     client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
     client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
   },
+  {
+    instance_name: "Jetstream Mechanicals LLC",
+    tenant_id: 2450309401,
+    app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
+    client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
+    client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
+  },
 ];
 
 let timezoneOffsetHours = 5; // 0 hours ahead of UTC
@@ -2222,6 +2229,7 @@ async function fetch_main_data(
                 2: { id: 2, legal_name: "PA" },
                 3: { id: 3, legal_name: "NMI" },
                 4: { id: 4, legal_name: "SFT" },
+                5: { id: 5, legal_name: "JET" },
               },
             };
           } else if (api_key == "us_cities") {
@@ -2506,6 +2514,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             2: "PA",
             3: "NMI",
             4: "SFT",
+            5: "JET",
           };
 
           if (kpi_data[record["id"]]) {
@@ -6213,7 +6222,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                       }
 
                       if (items_record["type"] == "Equipment") {
-                        let sku_details_id = record["instance_id"] + 3;
+                        let sku_details_id = record["instance_id"] + 5;
                         let actual_sku_details_id = items_record["skuId"]
                           ? items_record["skuId"]
                           : record["instance_id"];
@@ -6266,7 +6275,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                       }
 
                       if (items_record["type"] == "Service") {
-                        let sku_details_id = record["instance_id"] + 6;
+                        let sku_details_id = record["instance_id"] + 10;
                         let actual_sku_details_id = items_record["skuId"]
                           ? items_record["skuId"]
                           : record["instance_id"];
