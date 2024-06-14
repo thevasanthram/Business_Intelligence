@@ -45,6 +45,13 @@ const instance_details = [
     client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
     client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
   },
+  {
+    instance_name: "Jetstream Mechanicals LLC",
+    tenant_id: 2450309401,
+    app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
+    client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
+    client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
+  },
 ];
 
 let timezoneOffsetHours = 5; // 0 hours ahead of UTC
@@ -2235,6 +2242,7 @@ async function fetch_main_data(
                 2: { id: "2", legal_name: "PA" },
                 3: { id: "3", legal_name: "NMI" },
                 4: { id: "4", legal_name: "SFT" },
+                5: { id: "5", legal_name: "JET" },
               },
             };
           } else if (api_key == "us_cities") {
@@ -2556,6 +2564,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           2: "PA",
           3: "NMI",
           4: "SFT",
+          5: "JET",
         };
 
         if (initial_execute) {
@@ -2605,6 +2614,18 @@ async function data_processor(data_lake, sql_request, table_list) {
             business: "OTHER",
             is_active: 0,
             legal_entity_id: "4",
+          });
+
+          final_data_pool.push({
+            id: "5",
+            business_unit_name: "default_business_5",
+            business_unit_official_name: "default_business_5",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
+            is_active: 0,
+            legal_entity_id: "5",
           });
 
           project_business_unit_final_data_pool.push({
@@ -2657,6 +2678,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             is_active: 0,
             legal_entity_id: "4",
             legal_entity_name: instance_code[4],
+          });
+
+          project_business_unit_final_data_pool.push({
+            id: "5",
+            business_unit_name: "default_business_5",
+            business_unit_official_name: "default_business_5",
+            trade_type: "OTHER",
+            segment_type: "OTHER",
+            revenue_type: "OTHER",
+            business: "OTHER",
+            is_active: 0,
+            legal_entity_id: "5",
+            legal_entity_name: instance_code[5],
           });
         }
 
@@ -2840,6 +2874,14 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_id: "4",
             actual_business_unit_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default",
+            role: "default",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
+          });
         }
 
         // fetching business units from db
@@ -2996,6 +3038,21 @@ async function data_processor(data_lake, sql_request, table_list) {
             medium: "default",
             business_unit_id: "4",
             actual_business_unit_id: "4",
+          });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default",
+            is_active: 0,
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            category_id: "5",
+            category_name: "default",
+            is_category_active: "5",
+            source: "default",
+            medium: "default",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
           });
         }
 
@@ -3231,6 +3288,29 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_campaign_id: "4",
             job_details_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default",
+            source: "default",
+            status: "default",
+            customer_type: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            bookingProviderId: "5",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_zip: "default",
+            address_country: "default",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
+            campaign_id: "5",
+            actual_campaign_id: "5",
+            job_details_id: "5",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -3437,6 +3517,19 @@ async function data_processor(data_lake, sql_request, table_list) {
             address_state: "default",
             address_zip: "default",
           });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default_customer_5",
+            is_active: 1,
+            type: "default_type",
+            creation_date: "1999-01-01T00:00:00.00Z",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_zip: "default",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -3608,6 +3701,23 @@ async function data_processor(data_lake, sql_request, table_list) {
             longitude: 0.0,
             taxzone: "4",
             zone_id: "4",
+            full_address: "",
+          });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default",
+            street: "",
+            unit: "",
+            city: "",
+            state: "",
+            country: "",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            latitude: 0.0,
+            longitude: 0.0,
+            taxzone: "5",
+            zone_id: "5",
             full_address: "",
           });
         }
@@ -3848,6 +3958,11 @@ async function data_processor(data_lake, sql_request, table_list) {
             id: "4",
             job_type_name: "default",
           });
+
+          final_data_pool.push({
+            id: "5",
+            job_type_name: "default",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -4080,6 +4195,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_project_id: "4",
             vendor_id: "4",
             actual_vendor_id: "4",
+          });
+
+          purchase_order_final_data_pool.push({
+            id: "5",
+            status: "default",
+            total: 0,
+            tax: 0,
+            date: "1999-01-01T00:00:00.00Z",
+            requiredOn: "1999-01-01T00:00:00.00Z",
+            sentOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            invoice_id: "5",
+            actual_invoice_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            vendor_id: "5",
+            actual_vendor_id: "5",
           });
         }
 
@@ -4657,6 +4793,23 @@ async function data_processor(data_lake, sql_request, table_list) {
             modifiedOn: "1999-01-01T00:00:00.00Z",
             legal_entity_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            number: "5",
+            name: "5",
+            status: "No Status",
+            customer_details_id: "5",
+            actual_customer_details_id: "5",
+            location_id: "5",
+            actual_location_id: "5",
+            startDate: "1999-01-01T00:00:00.00Z",
+            targetCompletionDate: "1999-01-01T00:00:00.00Z",
+            actualCompletionDate: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            legal_entity_id: "5",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -5173,6 +5326,57 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_name: "default",
             business_unit_official_name: "default",
             type_id: "4",
+            type_name: "default",
+            type_modifiedOn: "1999-01-01T00:00:00.00Z",
+          });
+
+          final_data_pool.push({
+            id: "5",
+            instance_id: 5,
+            job_number: "default",
+            project_id: "5",
+            actual_project_id: "5",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            receivedOn: "1999-01-01T00:00:00.00Z",
+            duration: "00:00:00",
+            from: "default",
+            to: "default",
+            direction: "Others",
+            call_type: "Others",
+            customer_details_id: "5",
+            actual_customer_details_id: "5",
+            is_customer_active: 0,
+            customer_name: "default",
+            street_address: "default",
+            street: "default",
+            unit: "default",
+            city: "default",
+            state: "default",
+            country: "default",
+            zip: "default",
+            latitude: 0.0,
+            longitude: 0.0,
+            customer_import_id: "default",
+            customer_type: "Others",
+            campaign_id: "5",
+            campaign_category: "default",
+            campaign_source: "default",
+            campaign_medium: "default",
+            campaign_dnis: "default",
+            campaign_name: "default",
+            campaign_createdOn: "1999-01-01T00:00:00.00Z",
+            campaign_modifiedOn: "1999-01-01T00:00:00.00Z",
+            is_campaign_active: 0,
+            agent_id: "5",
+            agent_externalId: "5",
+            agent_name: "default",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
+            business_unit_active: 0,
+            business_unit_name: "default",
+            business_unit_official_name: "default",
+            type_id: "5",
             type_name: "default",
             type_modifiedOn: "1999-01-01T00:00:00.00Z",
           });
@@ -5756,6 +5960,33 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_booking_id: "4",
             sold_by_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            job_type_id: "5",
+            actual_job_type_id: "5",
+            job_number: "5",
+            job_status: "default",
+            job_completion_time: "1999-01-01T00:00:00.00Z",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
+            location_id: "5",
+            actual_location_id: "5",
+            customer_details_id: "5",
+            actual_customer_details_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            campaign_id: "5",
+            actual_campaign_id: "5",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            created_by_id: "5",
+            lead_call_id: "5",
+            actual_lead_call_id: "5",
+            booking_id: "5",
+            actual_booking_id: "5",
+            sold_by_id: "5",
+          });
         }
         // console.log("jobs_data_pool: ", jobs_data_pool);
         // console.log("header_data: ", header_data);
@@ -6039,6 +6270,22 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_details_id: "4",
             actual_customer_details_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            appointmentNumber: "default",
+            start: "1999-01-01T00:00:00.00Z",
+            end: "1999-01-01T00:00:00.00Z",
+            arrivalWindowStart: "1999-01-01T00:00:00.00Z",
+            arrivalWindowEnd: "1999-01-01T00:00:00.00Z",
+            status: "Not Known",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            customer_details_id: "5",
+            actual_customer_details_id: "5",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -6214,6 +6461,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           final_data_pool.push({
             id: "4",
             name: "default_vendor_4",
+            is_active: 1,
+          });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default_vendor_5",
             is_active: 1,
           });
         }
@@ -6531,6 +6784,15 @@ async function data_processor(data_lake, sql_request, table_list) {
             business_unit_id: "4",
             acutal_business_unit_id: "4",
           });
+
+          final_data_pool.push({
+            id: "5",
+            name: "default_technician_5",
+            is_active: 0,
+            team: "default_team_5",
+            business_unit_id: "5",
+            acutal_business_unit_id: "5",
+          });
         }
 
         Object.keys(data_pool).map((record_id) => {
@@ -6669,6 +6931,15 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           final_data_pool.push({
             id: "5",
+            sku_name: "default_material_5",
+            sku_type: "Material",
+            sku_unit_price: 0,
+            vendor_id: "5",
+            actual_vendor_id: "5",
+          });
+
+          final_data_pool.push({
+            id: "6",
             sku_name: "default_equipment_1",
             sku_type: "Equipment",
             sku_unit_price: 0,
@@ -6677,7 +6948,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "6",
+            id: "7",
             sku_name: "default_equipment_2",
             sku_type: "Equipment",
             sku_unit_price: 0,
@@ -6686,7 +6957,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "7",
+            id: "8",
             sku_name: "default_equipment_3",
             sku_type: "Equipment",
             sku_unit_price: 0,
@@ -6695,7 +6966,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "8",
+            id: "9",
             sku_name: "default_equipment_4",
             sku_type: "Equipment",
             sku_unit_price: 0,
@@ -6704,7 +6975,16 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "9",
+            id: "10",
+            sku_name: "default_equipment_5",
+            sku_type: "Equipment",
+            sku_unit_price: 0,
+            vendor_id: "5",
+            actual_vendor_id: "5",
+          });
+
+          final_data_pool.push({
+            id: "11",
             sku_name: "default_service_1",
             sku_type: "Service",
             sku_unit_price: 0,
@@ -6713,7 +6993,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "10",
+            id: "12",
             sku_name: "default_service_2",
             sku_type: "Service",
             sku_unit_price: 0,
@@ -6722,7 +7002,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "11",
+            id: "13",
             sku_name: "default_service_3",
             sku_type: "Service",
             sku_unit_price: 0,
@@ -6731,12 +7011,21 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
-            id: "12",
+            id: "14",
             sku_name: "default_service_4",
             sku_type: "Service",
             sku_unit_price: 0,
             vendor_id: "4",
             actual_vendor_id: "4",
+          });
+
+          final_data_pool.push({
+            id: "15",
+            sku_name: "default_service_5",
+            sku_type: "Service",
+            sku_unit_price: 0,
+            vendor_id: "5",
+            actual_vendor_id: "5",
           });
         }
 
@@ -7071,6 +7360,40 @@ async function data_processor(data_lake, sql_request, table_list) {
             customer_name: "default",
           });
 
+          invoice_final_data_pool.push({
+            id: "5",
+            syncStatus: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            dueDate: "1999-01-01T00:00:00.00Z",
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            balance: 0,
+            depositedOn: "1999-01-01T00:00:00.00Z",
+            createdOn: "1999-01-01T00:00:00.00Z",
+            modifiedOn: "1999-01-01T00:00:00.00Z",
+            invoice_type_id: "5",
+            invoice_type_name: "default_invoice",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            business_unit_id: "5",
+            actual_business_unit_id: "5",
+            location_id: "5",
+            actual_location_id: "5",
+            address_street: "default",
+            address_unit: "default",
+            address_city: "default",
+            address_state: "default",
+            address_country: "default",
+            address_zip: 57483,
+            acutal_address_zip: "57483",
+            customer_id: "5",
+            actual_customer_id: "5",
+            customer_name: "default",
+          });
+
           cogs_material_final_data_pool.push({
             quantity: 0,
             cost: 0,
@@ -7155,6 +7478,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_sku_details_id: "4",
           });
 
+          cogs_material_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: "5",
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: "5",
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            invoice_id: "5",
+            sku_details_id: "5",
+            actual_sku_details_id: "5",
+          });
+
           cogs_equipment_final_data_pool.push({
             quantity: 0,
             cost: 0,
@@ -7239,6 +7583,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_sku_details_id: "4",
           });
 
+          cogs_equipment_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 5,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 5,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            invoice_id: "5",
+            sku_details_id: "5",
+            actual_sku_details_id: "5",
+          });
+
           cogs_services_final_data_pool.push({
             quantity: 0,
             cost: 0,
@@ -7321,6 +7686,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             invoice_id: "4",
             sku_details_id: "4",
             actual_sku_details_id: "4",
+          });
+
+          cogs_services_final_data_pool.push({
+            quantity: 0,
+            cost: 0,
+            total_cost: 0,
+            price: 0,
+            sku_name: "default",
+            sku_total: 0,
+            generalLedgerAccountid: 5,
+            generalLedgerAccountname: "default",
+            generalLedgerAccountnumber: 5,
+            generalLedgerAccounttype: "default",
+            generalLedgerAccountdetailType: "default",
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            invoice_id: "5",
+            sku_details_id: "5",
+            actual_sku_details_id: "5",
           });
         }
 
@@ -7591,7 +7977,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (items_record["type"] == "Equipment") {
-                let sku_details_id = record["instance_id"] + 4;
+                let sku_details_id = record["instance_id"] + 5;
                 let actual_sku_details_id = items_record["skuId"]
                   ? items_record["skuId"]
                   : record["instance_id"];
@@ -7629,7 +8015,7 @@ async function data_processor(data_lake, sql_request, table_list) {
               }
 
               if (items_record["type"] == "Service") {
-                let sku_details_id = record["instance_id"] + 8;
+                let sku_details_id = record["instance_id"] + 10;
                 let actual_sku_details_id = items_record["skuId"]
                   ? items_record["skuId"]
                   : record["instance_id"];
@@ -7965,6 +8351,27 @@ async function data_processor(data_lake, sql_request, table_list) {
             acutal_payrollId: "4",
             technician_id: "4",
             actual_technician_id: "4",
+          });
+
+          final_data_pool.push({
+            paid_duration: 0,
+            labor_cost: 0,
+            activity: "default",
+            paid_time_type: "default",
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
+            isPrevailingWageJob: 0,
+            job_details_id: "5",
+            actual_job_details_id: "5",
+            invoice_id: "5",
+            actual_invoice_id: "5",
+            project_id: "5",
+            actual_project_id: "5",
+            payrollId: "5",
+            acutal_payrollId: "5",
+            technician_id: "5",
+            actual_technician_id: "5",
           });
         }
 
