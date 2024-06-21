@@ -111,6 +111,355 @@ async function getAPIWholeData(
 
       const api_data = await api_response.json();
 
+      // if (api_name == "inventory-bills") {
+      //   let pushing_item = api_data;
+
+      //   await Promise.all(
+      //     pushing_item.map(async (record) => {
+      //       record["instance_id"] = String(
+      //         instance_list.indexOf(instance_name) + 1
+      //       );
+
+      //       if (record["id"]) {
+      //         record["id"] = await add_suffix(
+      //           record["id"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["businessUnitId"]) {
+      //         record["businessUnitId"] = await add_suffix(
+      //           record["businessUnitId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["campaignId"]) {
+      //         record["campaignId"] = await add_suffix(
+      //           record["campaignId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["bookingProviderId"]) {
+      //         record["bookingProviderId"] = await add_suffix(
+      //           record["bookingProviderId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["jobId"]) {
+      //         record["jobId"] = await add_suffix(
+      //           record["jobId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["taxZoneId"]) {
+      //         record["taxZoneId"] = await add_suffix(
+      //           record["taxZoneId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["zoneId"]) {
+      //         record["zoneId"] = await add_suffix(
+      //           record["zoneId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["payrollId"]) {
+      //         record["payrollId"] = await add_suffix(
+      //           record["payrollId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["projectId"]) {
+      //         record["projectId"] = await add_suffix(
+      //           record["projectId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["invoiceId"]) {
+      //         record["invoiceId"] = await add_suffix(
+      //           record["invoiceId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["purchaseOrderId"]) {
+      //         record["purchaseOrderId"] = await add_suffix(
+      //           record["purchaseOrderId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["vendorId"]) {
+      //         record["vendorId"] = await add_suffix(
+      //           record["vendorId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["soldBy"]) {
+      //         record["soldBy"] = await add_suffix(
+      //           record["soldBy"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["locationId"]) {
+      //         record["locationId"] = await add_suffix(
+      //           record["locationId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["customerId"]) {
+      //         record["customerId"] = await add_suffix(
+      //           record["customerId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["leadCallId"]) {
+      //         record["leadCallId"] = await add_suffix(
+      //           record["leadCallId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["bookingId"]) {
+      //         record["bookingId"] = await add_suffix(
+      //           record["bookingId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["jobTypeId"]) {
+      //         record["jobTypeId"] = await add_suffix(
+      //           record["jobTypeId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["createdById"]) {
+      //         record["createdById"] = await add_suffix(
+      //           record["createdById"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["soldById"]) {
+      //         record["soldById"] = await add_suffix(
+      //           record["soldById"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["technicianId"]) {
+      //         record["technicianId"] = await add_suffix(
+      //           record["technicianId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["appointmentId"]) {
+      //         record["appointmentId"] = await add_suffix(
+      //           record["appointmentId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["assignedById"]) {
+      //         record["assignedById"] = await add_suffix(
+      //           record["assignedById"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["employeeId"]) {
+      //         record["employeeId"] = await add_suffix(
+      //           record["employeeId"],
+      //           record["instance_id"]
+      //         );
+      //       }
+
+      //       if (record["type"]) {
+      //         if (record["type"]["id"]) {
+      //           record["type"]["id"] = await add_suffix(
+      //             record["type"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["primaryVendor"]) {
+      //         if (record["primaryVendor"]["vendorId"]) {
+      //           record["primaryVendor"]["vendorId"] = await add_suffix(
+      //             record["primaryVendor"]["vendorId"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["category"]) {
+      //         if (record["category"]["id"]) {
+      //           record["category"]["id"] = await add_suffix(
+      //             record["category"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["businessUnit"]) {
+      //         if (record["businessUnit"]["id"]) {
+      //           record["businessUnit"]["id"] = await add_suffix(
+      //             record["businessUnit"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["vendor"]) {
+      //         if (record["vendor"]["id"]) {
+      //           record["vendor"]["id"] = await add_suffix(
+      //             record["vendor"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["job"]) {
+      //         if (record["job"]["id"]) {
+      //           record["job"]["id"] = await add_suffix(
+      //             record["job"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["location"]) {
+      //         if (record["location"]["id"]) {
+      //           record["location"]["id"] = await add_suffix(
+      //             record["location"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["customer"]) {
+      //         if (record["customer"]["id"]) {
+      //           record["customer"]["id"] = await add_suffix(
+      //             record["customer"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["invoiceType"]) {
+      //         if (record["invoiceType"]["id"]) {
+      //           record["invoiceType"]["id"] = await add_suffix(
+      //             record["invoiceType"]["id"],
+      //             record["instance_id"]
+      //           );
+      //         }
+      //       }
+
+      //       if (record["items"]) {
+      //         const modifiedItems = await Promise.all(
+      //           record["items"].map(async (items_record) => {
+      //             if (items_record["skuId"]) {
+      //               return {
+      //                 ...items_record,
+      //                 skuId: await add_suffix(
+      //                   items_record["skuId"],
+      //                   record["instance_id"]
+      //                 ),
+      //               };
+      //             } else {
+      //               return items_record;
+      //             }
+      //           })
+      //         );
+
+      //         // Replace the original items array with the modified items array
+      //         record["items"] = modifiedItems;
+      //       }
+
+      //       if (record["projectManagerIds"]) {
+      //         await Promise.all(
+      //           record["projectManagerIds"].map(async (manager_id, index) => {
+      //             if (manager_id) {
+      //               record["projectManagerIds"][index] = await add_suffix(
+      //                 manager_id,
+      //                 record["instance_id"]
+      //               );
+      //             }
+      //           })
+      //         );
+      //       }
+
+      //       if (api_name != "calls") {
+      //         data_pool_object[record["id"]] = record;
+      //       } else {
+      //         if (record["leadCall"]) {
+      //           if (record["leadCall"]["id"]) {
+      //             record["leadCall"]["id"] = await add_suffix(
+      //               record["leadCall"]["id"],
+      //               record["instance_id"]
+      //             );
+      //           }
+
+      //           if (record["leadCall"]["customer"]) {
+      //             if (record["leadCall"]["customer"]["id"]) {
+      //               record["leadCall"]["customer"]["id"] = await add_suffix(
+      //                 record["leadCall"]["customer"]["id"],
+      //                 record["instance_id"]
+      //               );
+      //             }
+      //           }
+
+      //           if (record["leadCall"]["campaign"]) {
+      //             if (record["leadCall"]["campaign"]["id"]) {
+      //               record["leadCall"]["campaign"]["id"] = await add_suffix(
+      //                 record["leadCall"]["campaign"]["id"],
+      //                 record["instance_id"]
+      //               );
+      //             }
+      //           }
+
+      //           if (record["leadCall"]["agent"]) {
+      //             if (record["leadCall"]["agent"]["id"]) {
+      //               record["leadCall"]["agent"]["id"] = await add_suffix(
+      //                 record["leadCall"]["agent"]["id"],
+      //                 record["instance_id"]
+      //               );
+      //             }
+      //           }
+
+      //           if (record["leadCall"]["agent"]) {
+      //             if (record["leadCall"]["agent"]["externalId"]) {
+      //               record["leadCall"]["agent"]["externalId"] =
+      //                 await add_suffix(
+      //                   record["leadCall"]["agent"]["externalId"],
+      //                   record["instance_id"]
+      //                 );
+      //             }
+      //           }
+      //         }
+
+      //         data_pool_object[record["leadCall"]["id"]] = record;
+      //       }
+      //     })
+      //   );
+
+      //   data_pool.push(...pushing_item);
+      // }
+
       shouldIterate = api_data["hasMore"];
 
       try {

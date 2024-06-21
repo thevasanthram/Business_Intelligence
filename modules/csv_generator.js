@@ -9,7 +9,15 @@ async function csv_generator(data_pool, flattenedSampleObj, csv_file_name) {
   const batchSize = 100; // Set the batch size as needed
   let index = 0;
 
-  const csv_folder_path = "./flat_tables";
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const formattedDate = `${year}_${month}_${day}`;
+
+  const csv_folder_path = `./flat_tables/${formattedDate}`;
 
   csv_file_name = csv_file_name.replace(/-/g, "_").replace("/", "_");
 
