@@ -2439,7 +2439,7 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  for (let api_count = 0; api_count < 1; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // table_list.length
     // Object.keys(data_lake).length
     // table_list.length
