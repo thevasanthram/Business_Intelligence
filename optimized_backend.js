@@ -70,7 +70,7 @@ modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 // modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
+  modifiedOnOrAfter: "2024-05-01T00:00:00.00Z", // 2023-12-25T00:00:00.00Z //modifiedOnOrAfterTime.toISOString()
   // modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
@@ -2289,6 +2289,7 @@ async function fetch_main_data(
                 let data_pool_object = {};
                 let data_pool = [];
                 let page_count = 0;
+                let continueFrom = params_header["modifiedOnOrAfter"];
                 let has_error_occured = false;
 
                 do {
@@ -2296,6 +2297,7 @@ async function fetch_main_data(
                     data_pool_object,
                     data_pool,
                     page_count,
+                    continueFrom,
                     has_error_occured,
                   } = await getAPIWholeData(
                     access_token,
@@ -2307,7 +2309,8 @@ async function fetch_main_data(
                     params_header,
                     data_pool_object,
                     data_pool,
-                    page_count
+                    page_count,
+                    continueFrom
                   ));
                 } while (has_error_occured);
 
@@ -2436,7 +2439,8 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
+  for (let api_count = 0; api_count < 1; api_count++) {
+    // table_list.length
     // Object.keys(data_lake).length
     // table_list.length
 
@@ -5370,7 +5374,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const batchSize = 100;
 
-        for (let i = 0; i < Object.keys(data_pool).length; i++) {
+        for (let i = 0; i < Object.keys(data_pool).length; i += batchSize) {
           await Promise.all(
             Object.keys(data_pool)
               .slice(i, i + batchSize)
@@ -6902,46 +6906,46 @@ async function orchestrate() {
   // Step 1: Call start_pipeline
   await start_pipeline();
 
-  do {
-    // finding the next batch time
-    // params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
+  // do {
+  //   // finding the next batch time
+  //   // params_header["modifiedOnOrAfter"] = params_header["modifiedBefore"];
 
-    const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
+  //   const next_batch_time = new Date(params_header["modifiedOnOrAfter"]);
 
-    next_batch_time.setDate(next_batch_time.getDate() + 2);
-    next_batch_time.setUTCHours(6, 0, 0, 0);
+  //   next_batch_time.setDate(next_batch_time.getDate() + 2);
+  //   next_batch_time.setUTCHours(6, 0, 0, 0);
 
-    console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
-    console.log("next batch: ", next_batch_time);
+  //   console.log("finished batch: ", params_header["modifiedOnOrAfter"]);
+  //   console.log("next batch: ", next_batch_time);
 
-    const now = new Date();
+  //   const now = new Date();
 
-    // Check if it's the next day
-    // now < next_batch_time
-    if (now < next_batch_time) {
-      // Schedule the next call after an day
-      const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
-      console.log("timer funtion entering", timeUntilNextBatch);
+  //   // Check if it's the next day
+  //   // now < next_batch_time
+  //   if (now < next_batch_time) {
+  //     // Schedule the next call after an day
+  //     const timeUntilNextBatch = next_batch_time - now; // Calculate milliseconds until the next day
+  //     console.log("timer funtion entering", timeUntilNextBatch);
 
-      await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
-    } else {
-      console.log("next batch initiated");
+  //     await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
+  //   } else {
+  //     console.log("next batch initiated");
 
-      next_batch_time.setDate(next_batch_time.getDate() - 1);
+  //     next_batch_time.setDate(next_batch_time.getDate() - 1);
 
-      next_batch_time.setUTCHours(6, 0, 0, 0);
+  //     next_batch_time.setUTCHours(6, 0, 0, 0);
 
-      // params_header["modifiedBefore"] = now.toISOString();
-      params_header["modifiedOnOrAfter"] = next_batch_time.toISOString();
-      console.log("params_header: ", params_header);
+  //     // params_header["modifiedBefore"] = now.toISOString();
+  //     params_header["modifiedOnOrAfter"] = next_batch_time.toISOString();
+  //     console.log("params_header: ", params_header);
 
-      // Step 1: Call start_pipeline
-      await start_pipeline();
-    }
+  //     // Step 1: Call start_pipeline
+  //     await start_pipeline();
+  //   }
 
-    should_auto_update = true;
-  } while (should_auto_update);
+  //   should_auto_update = true;
+  // } while (should_auto_update);
 }
-
 // starting point
+
 orchestrate();
