@@ -70,7 +70,7 @@ modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 // modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
 const params_header = {
-  modifiedOnOrAfter: "2024-06-20T00:00:00.00Z", // "2024-05-01T00:00:00.00Z" //modifiedOnOrAfterTime.toISOString()
+  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // "2024-05-01T00:00:00.00Z" //modifiedOnOrAfterTime.toISOString()
   // modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
@@ -6908,7 +6908,7 @@ async function flush_data_pool(is_initial_execute) {
 
 async function orchestrate() {
   // Step 1: Call start_pipeline
-  // await start_pipeline();
+  await start_pipeline();
 
   do {
     // finding the next batch time
