@@ -69,7 +69,7 @@ modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 
 // modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
-const params_header = {cs
+const params_header = {
   modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // "2024-06-23T06:00:00.00Z" //modifiedOnOrAfterTime.toISOString()
   // modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
@@ -2134,7 +2134,7 @@ const main_api_list = {
   cogs_labor: [
     {
       api_group: "payroll",
-      api_name: "gross-pay-items",
+      api_name: "export/gross-pay-items",
       table_name: "cogs_labor",
     },
     {
@@ -2265,7 +2265,7 @@ async function fetch_main_data(
                 if (
                   !data_lake[api_key][api_group_temp + "__" + api_name_temp]
                 ) {
-                  if (api_name_temp == "gross-pay-items") {
+                  if (api_name_temp == "export/gross-pay-items") {
                     data_lake[api_key][api_group_temp + "__" + api_name_temp] =
                       {
                         data_pool: [],
@@ -2292,6 +2292,17 @@ async function fetch_main_data(
                 let continueFrom = params_header["modifiedOnOrAfter"];
                 let has_error_occured = false;
 
+                const params_header_temp = JSON.parse(
+                  JSON.stringify(params_header)
+                );
+
+                if (
+                  api_name_temp == "export/inventory-bills" ||
+                  api_name_temp == "export/gross-pay-items"
+                ) {
+                  delete params_header_temp["modifiedOnOrAfter"];
+                }
+
                 do {
                   ({
                     data_pool_object,
@@ -2306,7 +2317,7 @@ async function fetch_main_data(
                     tenant_id,
                     api_group_temp,
                     api_name_temp,
-                    params_header,
+                    params_header_temp,
                     data_pool_object,
                     data_pool,
                     page_count,
@@ -2314,7 +2325,7 @@ async function fetch_main_data(
                   ));
                 } while (has_error_occured);
 
-                if (api_name_temp == "gross-pay-items") {
+                if (api_name_temp == "export/gross-pay-items") {
                   data_lake[api_key][api_group_temp + "__" + api_name_temp][
                     "data_pool"
                   ] = [
@@ -2439,8 +2450,7 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  for (let api_count = 0; api_count < table_list.length; api_count++) {
-    // table_list.length
+  for (let api_count = 0; api_count < 1; api_count++) {
     // Object.keys(data_lake).length
     // table_list.length
 
@@ -6539,7 +6549,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "cogs_labor": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const gross_pay_items_data_pool =
-          data_lake[table_name]["payroll__gross-pay-items"]["data_pool"];
+          data_lake[table_name]["payroll__export/gross-pay-items"]["data_pool"];
         const payrolls_data_pool =
           data_lake[table_name]["payroll__payrolls"]["data_pool"];
 
@@ -6558,6 +6568,9 @@ async function data_processor(data_lake, sql_request, table_list) {
         });
 
         const unique_payroll_ids = Array.from(new Set(payroll_ids));
+
+        // console.log("unique_payroll_ids; ", unique_payroll_ids);
+        console.log("unique_payroll_ids; ", unique_payroll_ids.length);
 
         // deleting all records of payroll ids
         const delete_payroll_rows = await sql_request.query(
@@ -6586,7 +6599,7 @@ async function data_processor(data_lake, sql_request, table_list) {
             payroll_instance_id = parseInt(payroll_instance_id);
 
             params_header_temp["payrollIds"] = String(payroll_id);
-            params_header_temp["modifiedOnOrAfter"] = "";
+            delete params_header_temp["modifiedOnOrAfter"];
             // params_header_temp["modifiedBefore"] = "";
 
             const instance_name =
@@ -6644,7 +6657,10 @@ async function data_processor(data_lake, sql_request, table_list) {
           })
         );
 
+        console.log("gross_pay_data: ", gross_pay_data.length);
+
         for (let i = 0; i < gross_pay_data.length; i += batchSize) {
+          console.log("i: ", i);
           await Promise.all(
             gross_pay_data.slice(i, i + batchSize).map(async (record) => {
               let job_details_id = record["instance_id"];

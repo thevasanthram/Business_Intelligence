@@ -2131,7 +2131,7 @@ const main_api_list = {
   cogs_labor: [
     {
       api_group: "payroll",
-      api_name: "gross-pay-items",
+      api_name: "export/gross-pay-items",
       table_name: "cogs_labor",
     },
     {
@@ -2278,7 +2278,7 @@ async function fetch_main_data(
                 if (
                   !data_lake[api_key][api_group_temp + "__" + api_name_temp]
                 ) {
-                  if (api_name_temp == "gross-pay-items") {
+                  if (api_name_temp == "export/gross-pay-items") {
                     data_lake[api_key][api_group_temp + "__" + api_name_temp] =
                       {
                         data_pool: [],
@@ -2320,7 +2320,7 @@ async function fetch_main_data(
                   ));
                 } while (has_error_occured);
 
-                if (api_name_temp == "gross-pay-items") {
+                if (api_name_temp == "export/gross-pay-items") {
                   data_lake[api_key][api_group_temp + "__" + api_name_temp][
                     "data_pool"
                   ] = [
@@ -8179,7 +8179,7 @@ async function data_processor(data_lake, sql_request, table_list) {
       case "cogs_labor": {
         const table_name = main_api_list[api_name][0]["table_name"];
         const gross_pay_items_data_pool =
-          data_lake[table_name]["payroll__gross-pay-items"]["data_pool"];
+          data_lake[table_name]["payroll__export/gross-pay-items"]["data_pool"];
 
         const header_data = hvac_tables[table_name]["columns"];
 

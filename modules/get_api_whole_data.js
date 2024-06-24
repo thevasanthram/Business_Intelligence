@@ -64,21 +64,7 @@ async function getAPIWholeData(
       Object.keys(params_header)
         .map((param_name) => {
           if (params_header[param_name] && params_header[param_name] !== "") {
-            if (
-              (param_name === "modifiedOnOrAfter" ||
-                param_name === "modifiedBefore") &&
-              api_name === "gross-pay-items"
-            ) {
-              // Handle special cases for modifiedOnOrAfter and modifiedBefore
-              if (param_name === "modifiedOnOrAfter") {
-                return `dateOnOrAfter=${params_header[param_name]}`;
-              } else {
-                return `dateOnOrBefore=${params_header[param_name]}`;
-              }
-            } else {
-              // Handle other cases
-              return `${param_name}=${params_header[param_name]}`;
-            }
+            return `${param_name}=${params_header[param_name]}`;
           }
           // Return undefined for cases where the condition is not met
           return undefined;
@@ -89,7 +75,10 @@ async function getAPIWholeData(
     do {
       let filtering_condition = "";
 
-      if (api_name != "export/inventory-bills") {
+      if (
+        api_name != "export/inventory-bills" &&
+        api_name != "export/gross-pay-items"
+      ) {
         filtering_condition = `${params_condition}&page=${page_count + 1}`;
       } else {
         // fetching inventory-bills records based on continueFrom property in response
@@ -854,7 +843,10 @@ async function getAPIWholeData(
         break;
       }
 
-      if (api_name != "export/inventory-bills") {
+      if (
+        api_name != "export/inventory-bills" &&
+        api_name != "export/gross-pay-items"
+      ) {
         page_count = page_count + 1;
       } else {
         continueFrom = api_data["continueFrom"] ? api_data["continueFrom"] : "";
