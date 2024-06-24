@@ -69,8 +69,8 @@ modifiedOnOrAfterTime.setDate(modifiedOnOrAfterTime.getDate() - 1);
 
 // modifiedOnOrAfterTime.setUTCHours(6, 0, 0, 0);
 
-const params_header = {
-  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // "2024-05-01T00:00:00.00Z" //modifiedOnOrAfterTime.toISOString()
+const params_header = {cs
+  modifiedOnOrAfter: modifiedOnOrAfterTime.toISOString(), // "2024-06-23T06:00:00.00Z" //modifiedOnOrAfterTime.toISOString()
   // modifiedBefore: modifiedBeforeTime.toISOString(), //createdBeforeTime.toISOString()
   includeTotal: true,
   pageSize: 2000,
