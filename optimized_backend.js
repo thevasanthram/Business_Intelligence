@@ -6570,7 +6570,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         const unique_payroll_ids = Array.from(new Set(payroll_ids));
 
         // console.log("unique_payroll_ids; ", unique_payroll_ids);
-        console.log("unique_payroll_ids; ", unique_payroll_ids.length);
+        // console.log("unique_payroll_ids; ", unique_payroll_ids.length);
 
         // deleting all records of payroll ids
         const delete_payroll_rows = await sql_request.query(
@@ -6660,7 +6660,7 @@ async function data_processor(data_lake, sql_request, table_list) {
         console.log("gross_pay_data: ", gross_pay_data.length);
 
         for (let i = 0; i < gross_pay_data.length; i += batchSize) {
-          console.log("i: ", i);
+          // console.log("i: ", i);
           await Promise.all(
             gross_pay_data.slice(i, i + batchSize).map(async (record) => {
               let job_details_id = record["instance_id"];
