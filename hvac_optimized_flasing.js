@@ -2278,17 +2278,21 @@ async function fetch_main_data(
                 if (
                   !data_lake[api_key][api_group_temp + "__" + api_name_temp]
                 ) {
-                  if (api_name_temp == "export/gross-pay-items") {
-                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
-                      {
-                        data_pool: [],
-                      };
-                  } else {
-                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
-                      {
-                        data_pool: {},
-                      };
-                  }
+                  // if (api_name_temp == "export/gross-pay-items") {
+                  //   data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                  //     {
+                  //       data_pool: [],
+                  //     };
+                  // } else {
+                  //   data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                  //     {
+                  //       data_pool: {},
+                  //     };
+                  // }
+
+                  data_lake[api_key][api_group_temp + "__" + api_name_temp] = {
+                    data_pool: {},
+                  };
                 }
 
                 // continuously fetching whole api data
@@ -2320,25 +2324,34 @@ async function fetch_main_data(
                   ));
                 } while (has_error_occured);
 
-                if (api_name_temp == "export/gross-pay-items") {
-                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                // if (api_name_temp == "export/gross-pay-items") {
+                //   data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                //     "data_pool"
+                //   ] = [
+                //     ...data_lake[api_key][
+                //       api_group_temp + "__" + api_name_temp
+                //     ]["data_pool"],
+                //     ...data_pool,
+                //   ];
+                // } else {
+                //   data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                //     "data_pool"
+                //   ] = {
+                //     ...data_lake[api_key][
+                //       api_group_temp + "__" + api_name_temp
+                //     ]["data_pool"],
+                //     ...data_pool_object,
+                //   }; //;
+                // }
+
+                data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                  "data_pool"
+                ] = {
+                  ...data_lake[api_key][api_group_temp + "__" + api_name_temp][
                     "data_pool"
-                  ] = [
-                    ...data_lake[api_key][
-                      api_group_temp + "__" + api_name_temp
-                    ]["data_pool"],
-                    ...data_pool,
-                  ];
-                } else {
-                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
-                    "data_pool"
-                  ] = {
-                    ...data_lake[api_key][
-                      api_group_temp + "__" + api_name_temp
-                    ]["data_pool"],
-                    ...data_pool_object,
-                  }; //;
-                }
+                  ],
+                  ...data_pool_object,
+                }; //;
               })
             );
           }
@@ -8270,6 +8283,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         if (initial_execute) {
           final_data_pool.push({
+            id: "1",
             paid_duration: 0,
             labor_cost: 0,
             activity: "default",
@@ -8291,6 +8305,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
+            id: "2",
             paid_duration: 0,
             labor_cost: 0,
             activity: "default",
@@ -8312,6 +8327,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
+            id: "3",
             paid_duration: 0,
             labor_cost: 0,
             activity: "default",
@@ -8333,6 +8349,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
+            id: "4",
             paid_duration: 0,
             labor_cost: 0,
             activity: "default",
@@ -8354,6 +8371,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
 
           final_data_pool.push({
+            id: "5",
             paid_duration: 0,
             labor_cost: 0,
             activity: "default",
@@ -8375,7 +8393,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        gross_pay_items_data_pool.map((record) => {
+        Object.keys(gross_pay_items_data_pool).map((record) => {
           let job_details_id = record["instance_id"];
           let actual_job_details_id = record["instance_id"];
           if (record["jobId"]) {
@@ -8460,6 +8478,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           }
 
           final_data_pool.push({
+            id: record["id"],
             paid_duration: record["paidDurationHours"]
               ? record["paidDurationHours"]
               : 0,

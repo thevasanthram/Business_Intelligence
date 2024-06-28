@@ -574,7 +574,7 @@ END;
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'cogs_labor')
 BEGIN
 CREATE TABLE cogs_labor (
-  id INT IDENTITY(1,1) PRIMARY KEY,
+  id NVARCHAR(20) PRIMARY KEY,
   paid_duration DECIMAL(18, 8) NULL,
   labor_cost DECIMAL(18, 8) NULL,
   activity NVARCHAR(MAX) NULL,

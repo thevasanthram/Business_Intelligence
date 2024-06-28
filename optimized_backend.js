@@ -2265,17 +2265,21 @@ async function fetch_main_data(
                 if (
                   !data_lake[api_key][api_group_temp + "__" + api_name_temp]
                 ) {
-                  if (api_name_temp == "export/gross-pay-items") {
-                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
-                      {
-                        data_pool: [],
-                      };
-                  } else {
-                    data_lake[api_key][api_group_temp + "__" + api_name_temp] =
-                      {
-                        data_pool: {},
-                      };
-                  }
+                  // if (api_name_temp == "export/gross-pay-items") {
+                  //   data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                  //     {
+                  //       data_pool: [],
+                  //     };
+                  // } else {
+                  //   data_lake[api_key][api_group_temp + "__" + api_name_temp] =
+                  //     {
+                  //       data_pool: {},
+                  //     };
+                  // }
+
+                  data_lake[api_key][api_group_temp + "__" + api_name_temp] = {
+                    data_pool: {},
+                  };
                 }
 
                 // signing a new access token in Service Titan's API
@@ -2325,25 +2329,34 @@ async function fetch_main_data(
                   ));
                 } while (has_error_occured);
 
-                if (api_name_temp == "export/gross-pay-items") {
-                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                // if (api_name_temp == "export/gross-pay-items") {
+                //   data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                //     "data_pool"
+                //   ] = [
+                //     ...data_lake[api_key][
+                //       api_group_temp + "__" + api_name_temp
+                //     ]["data_pool"],
+                //     ...data_pool,
+                //   ];
+                // } else {
+                //   data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                //     "data_pool"
+                //   ] = {
+                //     ...data_lake[api_key][
+                //       api_group_temp + "__" + api_name_temp
+                //     ]["data_pool"],
+                //     ...data_pool_object,
+                //   }; //;
+                // }
+
+                data_lake[api_key][api_group_temp + "__" + api_name_temp][
+                  "data_pool"
+                ] = {
+                  ...data_lake[api_key][api_group_temp + "__" + api_name_temp][
                     "data_pool"
-                  ] = [
-                    ...data_lake[api_key][
-                      api_group_temp + "__" + api_name_temp
-                    ]["data_pool"],
-                    ...data_pool,
-                  ];
-                } else {
-                  data_lake[api_key][api_group_temp + "__" + api_name_temp][
-                    "data_pool"
-                  ] = {
-                    ...data_lake[api_key][
-                      api_group_temp + "__" + api_name_temp
-                    ]["data_pool"],
-                    ...data_pool_object,
-                  }; //;
-                }
+                  ],
+                  ...data_pool_object,
+                }; //;
               })
             );
           }
@@ -6561,232 +6574,239 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const payroll_ids = [];
 
-        gross_pay_items_data_pool.map((record) => {
-          if (record["payrollId"]) {
-            payroll_ids.push(record["payrollId"]);
-          }
-        });
+        // gross_pay_items_data_pool.map((record) => {
+        //   if (record["payrollId"]) {
+        //     payroll_ids.push(record["payrollId"]);
+        //   }
+        // });
 
-        const unique_payroll_ids = Array.from(new Set(payroll_ids));
+        // const unique_payroll_ids = Array.from(new Set(payroll_ids));
 
         // console.log("unique_payroll_ids; ", unique_payroll_ids);
         // console.log("unique_payroll_ids; ", unique_payroll_ids.length);
 
         // deleting all records of payroll ids
-        const delete_payroll_rows = await sql_request.query(
-          `DELETE FROM cogs_labor WHERE payrollId IN ('${unique_payroll_ids.join(
-            `','`
-          )}');`
-        );
+        // const delete_payroll_rows = await sql_request.query(
+        //   `DELETE FROM cogs_labor WHERE payrollId IN ('${unique_payroll_ids.join(
+        //     `','`
+        //   )}');`
+        // );
 
         let final_data_pool = [];
 
-        let access_token_list = [];
+        // let access_token_list = [];
 
-        let gross_pay_data = [];
+        // let gross_pay_data = [];
 
-        await Promise.all(
-          unique_payroll_ids.map(async (current_payroll_id) => {
-            // fetch the particular payroll id's records from service titan
+        // await Promise.all(
+        //   unique_payroll_ids.map(async (current_payroll_id) => {
+        //     // fetch the particular payroll id's records from service titan
 
-            const params_header_temp = JSON.parse(
-              JSON.stringify(params_header)
-            );
+        //     const params_header_temp = JSON.parse(
+        //       JSON.stringify(params_header)
+        //     );
 
-            let [payroll_id, payroll_instance_id] =
-              current_payroll_id.split("_");
+        //     let [payroll_id, payroll_instance_id] =
+        //       current_payroll_id.split("_");
 
-            payroll_instance_id = parseInt(payroll_instance_id);
+        //     payroll_instance_id = parseInt(payroll_instance_id);
 
-            params_header_temp["payrollIds"] = String(payroll_id);
-            delete params_header_temp["modifiedOnOrAfter"];
-            // params_header_temp["modifiedBefore"] = "";
+        //     params_header_temp["payrollIds"] = String(payroll_id);
+        //     delete params_header_temp["modifiedOnOrAfter"];
+        //     // params_header_temp["modifiedBefore"] = "";
 
-            const instance_name =
-              instance_details[payroll_instance_id - 1]["instance_name"];
-            const tenant_id =
-              instance_details[payroll_instance_id - 1]["tenant_id"];
-            const app_key =
-              instance_details[payroll_instance_id - 1]["app_key"];
-            const client_id =
-              instance_details[payroll_instance_id - 1]["client_id"];
-            const client_secret =
-              instance_details[payroll_instance_id - 1]["client_secret"];
+        //     const instance_name =
+        //       instance_details[payroll_instance_id - 1]["instance_name"];
+        //     const tenant_id =
+        //       instance_details[payroll_instance_id - 1]["tenant_id"];
+        //     const app_key =
+        //       instance_details[payroll_instance_id - 1]["app_key"];
+        //     const client_id =
+        //       instance_details[payroll_instance_id - 1]["client_id"];
+        //     const client_secret =
+        //       instance_details[payroll_instance_id - 1]["client_secret"];
 
-            // console.log("payroll_instance_id: ", payroll_instance_id);
-            // console.log("instance_name: ", instance_name);
-            // console.log("tenant_id: ", tenant_id);
-            // console.log("app_key: ", app_key);
-            // console.log("client_id: ", client_id);
-            // console.log("client_secret: ", client_secret);
+        //     // console.log("payroll_instance_id: ", payroll_instance_id);
+        //     // console.log("instance_name: ", instance_name);
+        //     // console.log("tenant_id: ", tenant_id);
+        //     // console.log("app_key: ", app_key);
+        //     // console.log("client_id: ", client_id);
+        //     // console.log("client_secret: ", client_secret);
 
-            if (!access_token_list[payroll_instance_id - 1]) {
-              // signing a new access token in Service Titan's API
-              let access_token = "";
+        //     if (!access_token_list[payroll_instance_id - 1]) {
+        //       // signing a new access token in Service Titan's API
+        //       let access_token = "";
 
-              do {
-                access_token = await getAccessToken(client_id, client_secret);
-              } while (!access_token);
+        //       do {
+        //         access_token = await getAccessToken(client_id, client_secret);
+        //       } while (!access_token);
 
-              access_token_list[payroll_instance_id - 1] = access_token;
-            }
+        //       access_token_list[payroll_instance_id - 1] = access_token;
+        //     }
 
-            // continuously fetching whole api data
-            let data_pool_object = {};
-            let data_pool = [];
-            let page_count = 0;
-            let has_error_occured = false;
+        //     // continuously fetching whole api data
+        //     let data_pool_object = {};
+        //     let data_pool = [];
+        //     let page_count = 0;
+        //     let has_error_occured = false;
 
-            do {
-              ({ data_pool_object, data_pool, page_count, has_error_occured } =
-                await getAPIWholeData(
-                  access_token_list[payroll_instance_id - 1],
-                  app_key,
-                  instance_name,
-                  tenant_id,
-                  "payroll",
-                  "gross-pay-items",
-                  params_header_temp,
-                  data_pool_object,
-                  data_pool,
-                  page_count
-                ));
+        //     do {
+        //       ({ data_pool_object, data_pool, page_count, has_error_occured } =
+        //         await getAPIWholeData(
+        //           access_token_list[payroll_instance_id - 1],
+        //           app_key,
+        //           instance_name,
+        //           tenant_id,
+        //           "payroll",
+        //           "gross-pay-items",
+        //           params_header_temp,
+        //           data_pool_object,
+        //           data_pool,
+        //           page_count
+        //         ));
 
-              gross_pay_data = [...gross_pay_data, ...data_pool];
-            } while (has_error_occured);
-          })
-        );
+        //       gross_pay_data = [...gross_pay_data, ...data_pool];
+        //     } while (has_error_occured);
+        //   })
+        // );
 
-        console.log("gross_pay_data: ", gross_pay_data.length);
+        // console.log("gross_pay_data: ", gross_pay_data.length);
 
-        for (let i = 0; i < gross_pay_data.length; i += batchSize) {
+        for (
+          let i = 0;
+          i < Object.keys(gross_pay_items_data_pool).length;
+          i += batchSize
+        ) {
           // console.log("i: ", i);
           await Promise.all(
-            gross_pay_data.slice(i, i + batchSize).map(async (record) => {
-              let job_details_id = record["instance_id"];
-              let actual_job_details_id = record["instance_id"];
-              if (record["jobId"]) {
-                actual_job_details_id = record["jobId"];
-                // checking jobId availlable or not for mapping
-                const is_jobs_available = await sql_request.query(
-                  `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
-                );
+            Object.keys(gross_pay_items_data_pool)
+              .slice(i, i + batchSize)
+              .map(async (record) => {
+                let job_details_id = record["instance_id"];
+                let actual_job_details_id = record["instance_id"];
+                if (record["jobId"]) {
+                  actual_job_details_id = record["jobId"];
+                  // checking jobId availlable or not for mapping
+                  const is_jobs_available = await sql_request.query(
+                    `SELECT id FROM job_details WHERE id='${record["jobId"]}'`
+                  );
 
-                if (is_jobs_available["recordset"].length > 0) {
-                  job_details_id = record["jobId"];
+                  if (is_jobs_available["recordset"].length > 0) {
+                    job_details_id = record["jobId"];
+                  }
                 }
-              }
 
-              let invoice_id = record["instance_id"];
-              let actual_invoice_id = record["instance_id"];
-              if (record["invoiceId"]) {
-                actual_invoice_id = record["invoiceId"];
+                let invoice_id = record["instance_id"];
+                let actual_invoice_id = record["instance_id"];
+                if (record["invoiceId"]) {
+                  actual_invoice_id = record["invoiceId"];
 
-                // checking invoice availlable or not for mapping
-                const is_invoice_available = await sql_request.query(
-                  `SELECT id FROM invoice WHERE id='${record["invoiceId"]}'`
-                );
+                  // checking invoice availlable or not for mapping
+                  const is_invoice_available = await sql_request.query(
+                    `SELECT id FROM invoice WHERE id='${record["invoiceId"]}'`
+                  );
 
-                if (is_invoice_available["recordset"].length > 0) {
-                  invoice_id = record["invoiceId"];
+                  if (is_invoice_available["recordset"].length > 0) {
+                    invoice_id = record["invoiceId"];
+                  }
                 }
-              }
 
-              let project_id = record["instance_id"];
-              let actual_project_id = record["projectId"]
-                ? record["projectId"]
-                : record["instance_id"];
+                let project_id = record["instance_id"];
+                let actual_project_id = record["projectId"]
+                  ? record["projectId"]
+                  : record["instance_id"];
 
-              // checking projects availlable or not for mapping
-              if (record["projectId"]) {
-                const is_project_available = await sql_request.query(
-                  `SELECT id FROM projects WHERE id='${record["projectId"]}'`
-                );
+                // checking projects availlable or not for mapping
+                if (record["projectId"]) {
+                  const is_project_available = await sql_request.query(
+                    `SELECT id FROM projects WHERE id='${record["projectId"]}'`
+                  );
 
-                if (is_project_available["recordset"].length > 0) {
-                  project_id = record["projectId"];
+                  if (is_project_available["recordset"].length > 0) {
+                    project_id = record["projectId"];
+                  }
                 }
-              }
 
-              let technician_id = record["instance_id"];
-              let actual_technician_id = record["employeeId"]
-                ? record["employeeId"]
-                : record["instance_id"];
+                let technician_id = record["instance_id"];
+                let actual_technician_id = record["employeeId"]
+                  ? record["employeeId"]
+                  : record["instance_id"];
 
-              if (record["employeeId"]) {
-                // checking technician availlable or not for mapping
-                const is_technnician_available = await sql_request.query(
-                  `SELECT id FROM technician WHERE id='${record["employeeId"]}'`
-                );
+                if (record["employeeId"]) {
+                  // checking technician availlable or not for mapping
+                  const is_technnician_available = await sql_request.query(
+                    `SELECT id FROM technician WHERE id='${record["employeeId"]}'`
+                  );
 
-                if (is_technnician_available["recordset"].length > 0) {
-                  technician_id = record["employeeId"];
+                  if (is_technnician_available["recordset"].length > 0) {
+                    technician_id = record["employeeId"];
+                  }
                 }
-              }
 
-              let date = "2000-01-01T00:00:00.00Z";
+                let date = "2000-01-01T00:00:00.00Z";
 
-              if (record["date"]) {
-                if (
-                  new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  date = record["date"];
+                if (record["date"]) {
+                  if (
+                    new Date(record["date"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    date = record["date"];
+                  }
+                } else {
+                  date = "2001-01-01T00:00:00.00Z";
                 }
-              } else {
-                date = "2001-01-01T00:00:00.00Z";
-              }
 
-              let startedOn = "2000-01-01T00:00:00.00Z";
+                let startedOn = "2000-01-01T00:00:00.00Z";
 
-              if (record["startedOn"]) {
-                if (
-                  new Date(record["startedOn"]) >
-                  new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  startedOn = record["startedOn"];
+                if (record["startedOn"]) {
+                  if (
+                    new Date(record["startedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    startedOn = record["startedOn"];
+                  }
+                } else {
+                  startedOn = "2001-01-01T00:00:00.00Z";
                 }
-              } else {
-                startedOn = "2001-01-01T00:00:00.00Z";
-              }
 
-              let endedOn = "2000-01-01T00:00:00.00Z";
+                let endedOn = "2000-01-01T00:00:00.00Z";
 
-              if (record["endedOn"]) {
-                if (
-                  new Date(record["endedOn"]) >
-                  new Date("2000-01-01T00:00:00.00Z")
-                ) {
-                  endedOn = record["endedOn"];
+                if (record["endedOn"]) {
+                  if (
+                    new Date(record["endedOn"]) >
+                    new Date("2000-01-01T00:00:00.00Z")
+                  ) {
+                    endedOn = record["endedOn"];
+                  }
+                } else {
+                  endedOn = "2001-01-01T00:00:00.00Z";
                 }
-              } else {
-                endedOn = "2001-01-01T00:00:00.00Z";
-              }
 
-              final_data_pool.push({
-                paid_duration: record["paidDurationHours"]
-                  ? record["paidDurationHours"]
-                  : 0,
-                labor_cost: record["amount"] ? record["amount"] : 0,
-                activity: record["activity"] ? record["activity"] : "default",
-                paid_time_type: record["paidTimeType"]
-                  ? record["paidTimeType"]
-                  : "default",
-                date: date,
-                startedOn: startedOn,
-                endedOn: endedOn,
-                isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
-                job_details_id: job_details_id,
-                actual_job_details_id: actual_job_details_id,
-                invoice_id: invoice_id,
-                actual_invoice_id: actual_invoice_id,
-                project_id: project_id,
-                actual_project_id: actual_project_id,
-                payrollId: record["payrollId"],
-                acutal_payrollId: record["payrollId"],
-                technician_id: technician_id,
-                actual_technician_id: actual_technician_id,
-              });
-            })
+                final_data_pool.push({
+                  paid_duration: record["paidDurationHours"]
+                    ? record["paidDurationHours"]
+                    : 0,
+                  labor_cost: record["amount"] ? record["amount"] : 0,
+                  activity: record["activity"] ? record["activity"] : "default",
+                  paid_time_type: record["paidTimeType"]
+                    ? record["paidTimeType"]
+                    : "default",
+                  date: date,
+                  startedOn: startedOn,
+                  endedOn: endedOn,
+                  isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
+                  job_details_id: job_details_id,
+                  actual_job_details_id: actual_job_details_id,
+                  invoice_id: invoice_id,
+                  actual_invoice_id: actual_invoice_id,
+                  project_id: project_id,
+                  actual_project_id: actual_project_id,
+                  payrollId: record["payrollId"],
+                  acutal_payrollId: record["payrollId"],
+                  technician_id: technician_id,
+                  actual_technician_id: actual_technician_id,
+                });
+              })
           );
         }
 
