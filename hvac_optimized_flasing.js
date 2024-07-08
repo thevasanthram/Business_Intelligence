@@ -8197,12 +8197,10 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         const header_data = hvac_tables[table_name]["columns"];
 
-        console.log("cogs_labor: ", gross_pay_items_data_pool.length);
         console.log(
           "cogs_labor: ",
           Object.keys(gross_pay_items_data_pool).length
         );
-        console.log("cogs_labor: ", Object.keys(gross_pay_items_data_pool)[0]);
 
         // fetching payroll data from db
         // ----------------
@@ -8399,7 +8397,13 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
+        let date_collection = [];
+        let endedOn_collection = [];
+        let startedOn_collection = [];
+
+        console.log("started");
         Object.keys(gross_pay_items_data_pool).map((record_id) => {
+          console.log("record_id: ", record_id);
           const record = gross_pay_items_data_pool[record_id];
 
           let job_details_id = record["instance_id"];
@@ -8485,6 +8489,10 @@ async function data_processor(data_lake, sql_request, table_list) {
             endedOn = "2001-01-01T00:00:00.00Z";
           }
 
+          date_collection.push(date);
+          startedOn_collection.push(startedOn);
+          endedOn_collection.push(endedOn);
+
           final_data_pool.push({
             id: record["id"],
             paid_duration: record["paidDurationHours"]
@@ -8511,6 +8519,24 @@ async function data_processor(data_lake, sql_request, table_list) {
             actual_technician_id: actual_technician_id,
           });
         });
+
+        console.log("ended");
+
+        fs.writeFile(
+          "./date_collection.js",
+          JSON.stringify(date_collection),
+          () => console.log("done")
+        );
+        fs.writeFile(
+          "./startedOn_collection.js",
+          JSON.stringify(startedOn_collection),
+          () => console.log("done")
+        );
+        fs.writeFile(
+          "./endedOn_collection.js",
+          JSON.stringify(endedOn_collection),
+          () => console.log("done")
+        );
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
