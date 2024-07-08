@@ -8522,7 +8522,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("ended");
 
-        fs.writeFile(
+        await fs.writeFileSync(
           "./date_collection.js",
           JSON.stringify(date_collection),
           () => console.log("done")
@@ -8549,31 +8549,31 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         console.log("cogs_labor data: ", final_data_pool.length);
-        if (final_data_pool.length > 0) {
-          do {
-            hvac_tables_responses["cogs_labor"]["status"] =
-              await hvac_data_insertion(
-                sql_request,
-                final_data_pool,
-                header_data,
-                table_name,
-                "FLASHING"
-              );
-          } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
+        // if (final_data_pool.length > 0) {
+        //   do {
+        //     hvac_tables_responses["cogs_labor"]["status"] =
+        //       await hvac_data_insertion(
+        //         sql_request,
+        //         final_data_pool,
+        //         header_data,
+        //         table_name,
+        //         "FLASHING"
+        //       );
+        //   } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
 
-          // entry into auto_update table
-          try {
-            const auto_update_query = `UPDATE auto_update SET cogs_labor = '${hvac_tables_responses["cogs_labor"]["status"]}' WHERE id=${lastInsertedId}`;
+        //   // entry into auto_update table
+        //   try {
+        //     const auto_update_query = `UPDATE auto_update SET cogs_labor = '${hvac_tables_responses["cogs_labor"]["status"]}' WHERE id=${lastInsertedId}`;
 
-            await sql_request.query(auto_update_query);
+        //     await sql_request.query(auto_update_query);
 
-            console.log("Auto_Update log created ");
-          } catch (err) {
-            console.log("Error while inserting into auto_update", err);
-          }
-        }
+        //     console.log("Auto_Update log created ");
+        //   } catch (err) {
+        //     console.log("Error while inserting into auto_update", err);
+        //   }
+        // }
 
-        delete data_lake[api_name];
+        // delete data_lake[api_name];
 
         break;
       }
