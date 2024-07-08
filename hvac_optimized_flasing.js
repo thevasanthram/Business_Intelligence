@@ -8522,7 +8522,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
         console.log("ended");
 
-        await fs.writeFileSync(
+        fs.writeFile(
           "./date_collection.js",
           JSON.stringify(date_collection),
           () => console.log("done")
