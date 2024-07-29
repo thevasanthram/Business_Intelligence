@@ -8529,6 +8529,15 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         console.log("cogs_labor data: ", final_data_pool.length);
+
+        console.log(
+          "*************************************************CHECK MEM**********************************************************************"
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        console.log(
+          "***********************************************************************************************************************"
+        );
+
         if (final_data_pool.length > 0) {
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
