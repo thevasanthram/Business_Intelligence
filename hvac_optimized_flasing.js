@@ -1807,6 +1807,10 @@ const hvac_tables = {
   // },
   cogs_labor: {
     columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
       paid_duration: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
