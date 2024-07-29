@@ -1813,6 +1813,10 @@ const hvac_tables = {
   // },
   cogs_labor: {
     columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
       paid_duration: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -2356,7 +2360,7 @@ async function fetch_main_data(
                     "data_pool"
                   ],
                   ...data_pool_object,
-                }; //;
+                };
               })
             );
           }
@@ -6576,11 +6580,12 @@ async function data_processor(data_lake, sql_request, table_list) {
           i < Object.keys(gross_pay_items_data_pool).length;
           i += batchSize
         ) {
-          // console.log("i: ", i);
           await Promise.all(
             Object.keys(gross_pay_items_data_pool)
               .slice(i, i + batchSize)
-              .map(async (record) => {
+              .map(async (record_id) => {
+                const record = gross_pay_items_data_pool[record_id];
+
                 let job_details_id = record["instance_id"];
                 let actual_job_details_id = record["instance_id"];
                 if (record["jobId"]) {
@@ -6682,6 +6687,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 }
 
                 final_data_pool.push({
+                  id: record_id,
                   paid_duration: record["paidDurationHours"]
                     ? record["paidDurationHours"]
                     : 0,
