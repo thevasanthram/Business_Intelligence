@@ -79,1732 +79,1732 @@ let data_lake = {};
 let should_auto_update = false;
 
 const hvac_tables = {
-  // legal_entity: {
-  //   // manual entry
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     legal_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // us_cities: {
-  //   columns: {
-  //     id: {
-  //       data_type: "INT",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     latitude: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     longitude: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     county: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // business_unit: {
-  //   // settings business units
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     business_unit_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_official_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     trade_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     segment_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     revenue_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     legal_entity_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //   },
-  // },
-  // project_business_unit: {
-  //   // settings business units
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     business_unit_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_official_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     trade_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     segment_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     revenue_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     legal_entity_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     legal_entity_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // employees: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     role: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // campaigns: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     category_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     category_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_category_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     source: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     medium: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // bookings: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     source: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     start: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     bookingProviderId: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_street: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_unit: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_zip: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_country: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_campaign_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // customer_details: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     creation_date: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_street: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_unit: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_zip: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  //   // crm customers
-  // },
-  // location: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     street: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     unit: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     country: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_zip: {
-  //       data_type: "INT",
-  //       constraint: { nullable: false },
-  //     },
-  //     acutal_address_zip: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     latitude: {
-  //       data_type: "DECIMAL96",
-  //       constraint: { nullable: true },
-  //     },
-  //     longitude: {
-  //       data_type: "DECIMAL96",
-  //       constraint: { nullable: true },
-  //     },
-  //     taxzone: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     zone_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     full_address: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // payrolls: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     burdenRate: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     employeeId: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     employeeType: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // job_types: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     job_type_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // returns: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     purchaseOrderId: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     jobId: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     returnAmount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     taxAmount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // purchase_order: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     total: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     tax: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     date: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     requiredOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     sentOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     receivedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_invoice_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // sales_details: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     soldOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     soldBy: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     soldBy_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     subtotal: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     estimates_age: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //     estimates_sold_hours: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     budget_expense: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     budget_hours: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     status_value: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //     status_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     businessUnitName: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // projects: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     startDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     targetCompletionDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     actualCompletionDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     legal_entity_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //   },
-  // },
-  // projects_wip_data: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     billed_amount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     balance: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     contract_value: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     sold_contract_value: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     budget_expense: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     budget_hours: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     inventory_bill_amount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     po_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     po_returns: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     equipment_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     material_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     labor_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     labor_hours: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     burden: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     accounts_receivable: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     expense: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     income: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     current_liability: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     membership_liability: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     actual_location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     startDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     targetCompletionDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     actualCompletionDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     UTC_update_date: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // project_managers: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     manager_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_manager_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // call_details: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     instance_id: {
-  //       data_type: "INT",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     receivedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     duration: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     from: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     to: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     direction: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     call_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_customer_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     street_address: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     street: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     unit: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     country: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     zip: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     latitude: {
-  //       data_type: "DECIMAL96",
-  //       constraint: { nullable: true },
-  //     },
-  //     longitude: {
-  //       data_type: "DECIMAL96",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_import_id: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_category: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_source: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_medium: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_dnis: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_campaign_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     agent_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     agent_externalId: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     agent_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_official_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     type_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     type_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     type_modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // job_details: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     job_type_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_type_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_completion_time: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     campaign_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_campaign_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     created_by_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     lead_call_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_lead_call_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     booking_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_booking_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     sold_by_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // appointments: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     appointmentNumber: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     start: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     end: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     arrivalWindowStart: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     arrivalWindowEnd: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     status: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // vendor: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // inventory_bills: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     purchase_order_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_purchase_order_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     syncStatus: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     referenceNumber: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     vendorNumber: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     billDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     billAmount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     taxAmount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     shippingAmount: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     dueDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_number: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // technician: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     is_active: {
-  //       data_type: "TINYINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     team: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // sku_details: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     sku_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_type: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_unit_price: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_vendor_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // invoice: {
-  //   columns: {
-  //     id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { primary: true, nullable: false },
-  //     },
-  //     syncStatus: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     date: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     dueDate: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     subtotal: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     tax: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     total: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     balance: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     depositedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     createdOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     modifiedOn: {
-  //       data_type: "DATETIME2",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_type_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_type_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_business_unit_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_location_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_street: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_unit: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_city: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_state: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_country: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     address_zip: {
-  //       data_type: "INT",
-  //       constraint: { nullable: false },
-  //     },
-  //     acutal_address_zip: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_customer_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     customer_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // cogs_material: {
-  //   columns: {
-  //     quantity: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     total_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     price: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_total: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountid: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountname: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountnumber: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccounttype: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountdetailType: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // cogs_equipment: {
-  //   // invoice api -- items
-  //   columns: {
-  //     quantity: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     total_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     price: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_total: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountid: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountname: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountnumber: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccounttype: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountdetailType: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
-  // cogs_service: {
-  //   // invoice api -- items
-  //   columns: {
-  //     quantity: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     total_cost: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     price: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_name: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     sku_total: {
-  //       data_type: "DECIMAL",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountid: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountname: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountnumber: {
-  //       data_type: "BIGINT",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccounttype: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     generalLedgerAccountdetailType: {
-  //       data_type: "NVARCHAR",
-  //       constraint: { nullable: true },
-  //     },
-  //     job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_job_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_project_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //     invoice_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: false },
-  //     },
-  //     actual_sku_details_id: {
-  //       data_type: "NVARCHAR20",
-  //       constraint: { nullable: true },
-  //     },
-  //   },
-  // },
+  legal_entity: {
+    // manual entry
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      legal_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  us_cities: {
+    columns: {
+      id: {
+        data_type: "INT",
+        constraint: { primary: true, nullable: false },
+      },
+      latitude: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      county: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  business_unit: {
+    // settings business units
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      trade_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      segment_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      revenue_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+    },
+  },
+  project_business_unit: {
+    // settings business units
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      trade_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      segment_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      revenue_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      legal_entity_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  employees: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      role: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  campaigns: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      category_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      category_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_category_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      source: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      medium: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  bookings: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      source: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      bookingProviderId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      address_street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      campaign_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_campaign_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  customer_details: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      creation_date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      address_street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+    // crm customers
+  },
+  location: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      acutal_address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      latitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      taxzone: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      zone_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      full_address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  payrolls: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      burdenRate: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      employeeId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      employeeType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  job_types: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      job_type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  returns: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      purchaseOrderId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      jobId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      returnAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      taxAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  purchase_order: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      requiredOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      sentOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_invoice_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  sales_details: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      soldOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      soldBy: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      soldBy_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      estimates_age: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      estimates_sold_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      status_value: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      status_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      businessUnitName: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  projects: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      startDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      targetCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      actualCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      legal_entity_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+    },
+  },
+  projects_wip_data: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billed_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sold_contract_value: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      budget_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      inventory_bill_amount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      po_returns: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      equipment_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      material_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      labor_hours: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      burden: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      accounts_receivable: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      expense: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      income: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      current_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      membership_liability: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      startDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      targetCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      actualCompletionDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      UTC_update_date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  project_managers: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      manager_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_manager_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  call_details: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      instance_id: {
+        data_type: "INT",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      receivedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      duration: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      from: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      to: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      direction: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      call_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      is_customer_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      customer_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      street_address: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      latitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      longitude: {
+        data_type: "DECIMAL96",
+        constraint: { nullable: true },
+      },
+      customer_import_id: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      campaign_category: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_source: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_medium: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_dnis: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      campaign_createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      campaign_modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      is_campaign_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      agent_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      agent_externalId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      agent_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      business_unit_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      business_unit_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_official_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      type_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      type_modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  job_details: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      job_type_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_type_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_completion_time: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      campaign_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_campaign_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      created_by_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      lead_call_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_lead_call_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      booking_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_booking_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      sold_by_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  appointments: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      appointmentNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      start: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      end: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowStart: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      arrivalWindowEnd: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      status: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  vendor: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  inventory_bills: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      purchase_order_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_purchase_order_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      syncStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      referenceNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      vendorNumber: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      billDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      billAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      taxAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      shippingAmount: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      dueDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      job_number: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  technician: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      is_active: {
+        data_type: "TINYINT",
+        constraint: { nullable: true },
+      },
+      team: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  sku_details: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      sku_type: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      sku_unit_price: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_vendor_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  invoice: {
+    columns: {
+      id: {
+        data_type: "NVARCHAR20",
+        constraint: { primary: true, nullable: false },
+      },
+      syncStatus: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      date: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      dueDate: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      subtotal: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      tax: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      balance: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      depositedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      createdOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      modifiedOn: {
+        data_type: "DATETIME2",
+        constraint: { nullable: true },
+      },
+      invoice_type_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      invoice_type_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_business_unit_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_location_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      address_street: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_unit: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_city: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_state: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_country: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      address_zip: {
+        data_type: "INT",
+        constraint: { nullable: false },
+      },
+      acutal_address_zip: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      customer_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_customer_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      customer_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  cogs_material: {
+    columns: {
+      quantity: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      price: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      sku_total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountid: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountname: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountnumber: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccounttype: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountdetailType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  cogs_equipment: {
+    // invoice api -- items
+    columns: {
+      quantity: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      price: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      sku_total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountid: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountname: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountnumber: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccounttype: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountdetailType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
+  cogs_service: {
+    // invoice api -- items
+    columns: {
+      quantity: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      total_cost: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      price: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      sku_name: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      sku_total: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountid: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountname: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountnumber: {
+        data_type: "BIGINT",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccounttype: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      generalLedgerAccountdetailType: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_job_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_project_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+      invoice_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
+      actual_sku_details_id: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: true },
+      },
+    },
+  },
   cogs_labor: {
     columns: {
       id: {
@@ -1981,157 +1981,157 @@ let start_time = "";
 let end_time = "";
 
 const main_api_list = {
-  // legal_entity: [
-  //   {
-  //     table_name: "legal_entity",
-  //   },
-  // ],
-  // us_cities: [
-  //   {
-  //     table_name: "us_cities",
-  //   },
-  // ],
-  // business_unit: [
-  //   {
-  //     api_group: "settings",
-  //     api_name: "business-units",
-  //     table_name: "business_unit",
-  //   },
-  // ],
-  // employees: [
-  //   {
-  //     api_group: "settings",
-  //     api_name: "employees",
-  //     table_name: "employees",
-  //   },
-  // ],
-  // campaigns: [
-  //   {
-  //     api_group: "marketing",
-  //     api_name: "campaigns",
-  //     table_name: "campaigns",
-  //   },
-  // ],
-  // bookings: [
-  //   {
-  //     api_group: "crm",
-  //     api_name: "bookings",
-  //     table_name: "bookings",
-  //   },
-  // ],
-  // customer_details: [
-  //   {
-  //     api_group: "crm",
-  //     api_name: "customers",
-  //     table_name: "customer_details",
-  //   },
-  // ],
-  // location: [
-  //   {
-  //     api_group: "crm",
-  //     api_name: "locations",
-  //     table_name: "location",
-  //   },
-  // ],
-  // projects: [
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "projects",
-  //     table_name: "projects",
-  //   },
-  // ],
-  // call_details: [
-  //   {
-  //     api_group: "telecom",
-  //     api_name: "calls",
-  //     table_name: "call_details",
-  //   },
-  // ],
-  // job_details: [
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "jobs",
-  //     table_name: "job_details",
-  //   },
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "job-types",
-  //     table_name: "job_details",
-  //   },
-  // ],
-  // inventory_bills: [
-  //   {
-  //     api_group: "accounting",
-  //     api_name: "export/inventory-bills",
-  //     table_name: "inventory_bills",
-  //   },
-  // ],
-  // sales_details: [
-  //   {
-  //     api_group: "sales",
-  //     api_name: "estimates",
-  //     table_name: "sales_details",
-  //   },
-  // ],
-  // appointments: [
-  //   {
-  //     api_group: "jpm",
-  //     api_name: "appointments",
-  //     table_name: "appointments",
-  //   },
-  // ],
-  // vendor: [
-  //   {
-  //     api_group: "inventory",
-  //     api_name: "vendors",
-  //     table_name: "vendor",
-  //   },
-  // ],
-  // technician: [
-  //   {
-  //     api_group: "settings",
-  //     api_name: "technicians",
-  //     table_name: "technician",
-  //   },
-  // ],
-  // sku_details: [
-  //   {
-  //     api_group: "pricebook",
-  //     api_name: "materials",
-  //     table_name: "sku_details",
-  //   },
-  //   {
-  //     api_group: "pricebook",
-  //     api_name: "equipment",
-  //     table_name: "sku_details",
-  //   },
-  //   {
-  //     api_group: "pricebook",
-  //     api_name: "services",
-  //     table_name: "sku_details",
-  //   },
-  // ],
-  // invoice: [
-  //   {
-  //     api_group: "accounting",
-  //     api_name: "invoices",
-  //     table_name: "invoices",
-  //   },
-  // ],
-  // returns: [
-  //   {
-  //     api_group: "inventory",
-  //     api_name: "returns",
-  //     table_name: "returns",
-  //   },
-  // ],
-  // purchase_order: [
-  //   {
-  //     api_group: "inventory",
-  //     api_name: "purchase-orders",
-  //     table_name: "purchase_order",
-  //   },
-  // ],
+  legal_entity: [
+    {
+      table_name: "legal_entity",
+    },
+  ],
+  us_cities: [
+    {
+      table_name: "us_cities",
+    },
+  ],
+  business_unit: [
+    {
+      api_group: "settings",
+      api_name: "business-units",
+      table_name: "business_unit",
+    },
+  ],
+  employees: [
+    {
+      api_group: "settings",
+      api_name: "employees",
+      table_name: "employees",
+    },
+  ],
+  campaigns: [
+    {
+      api_group: "marketing",
+      api_name: "campaigns",
+      table_name: "campaigns",
+    },
+  ],
+  bookings: [
+    {
+      api_group: "crm",
+      api_name: "bookings",
+      table_name: "bookings",
+    },
+  ],
+  customer_details: [
+    {
+      api_group: "crm",
+      api_name: "customers",
+      table_name: "customer_details",
+    },
+  ],
+  location: [
+    {
+      api_group: "crm",
+      api_name: "locations",
+      table_name: "location",
+    },
+  ],
+  projects: [
+    {
+      api_group: "jpm",
+      api_name: "projects",
+      table_name: "projects",
+    },
+  ],
+  call_details: [
+    {
+      api_group: "telecom",
+      api_name: "calls",
+      table_name: "call_details",
+    },
+  ],
+  job_details: [
+    {
+      api_group: "jpm",
+      api_name: "jobs",
+      table_name: "job_details",
+    },
+    {
+      api_group: "jpm",
+      api_name: "job-types",
+      table_name: "job_details",
+    },
+  ],
+  inventory_bills: [
+    {
+      api_group: "accounting",
+      api_name: "export/inventory-bills",
+      table_name: "inventory_bills",
+    },
+  ],
+  sales_details: [
+    {
+      api_group: "sales",
+      api_name: "estimates",
+      table_name: "sales_details",
+    },
+  ],
+  appointments: [
+    {
+      api_group: "jpm",
+      api_name: "appointments",
+      table_name: "appointments",
+    },
+  ],
+  vendor: [
+    {
+      api_group: "inventory",
+      api_name: "vendors",
+      table_name: "vendor",
+    },
+  ],
+  technician: [
+    {
+      api_group: "settings",
+      api_name: "technicians",
+      table_name: "technician",
+    },
+  ],
+  sku_details: [
+    {
+      api_group: "pricebook",
+      api_name: "materials",
+      table_name: "sku_details",
+    },
+    {
+      api_group: "pricebook",
+      api_name: "equipment",
+      table_name: "sku_details",
+    },
+    {
+      api_group: "pricebook",
+      api_name: "services",
+      table_name: "sku_details",
+    },
+  ],
+  invoice: [
+    {
+      api_group: "accounting",
+      api_name: "invoices",
+      table_name: "invoices",
+    },
+  ],
+  returns: [
+    {
+      api_group: "inventory",
+      api_name: "returns",
+      table_name: "returns",
+    },
+  ],
+  purchase_order: [
+    {
+      api_group: "inventory",
+      api_name: "purchase-orders",
+      table_name: "purchase_order",
+    },
+  ],
   cogs_labor: [
     {
       api_group: "payroll",
@@ -2461,7 +2461,7 @@ async function azure_sql_operations(data_lake, table_list) {
 }
 
 async function data_processor(data_lake, sql_request, table_list) {
-  for (let api_count = 0; api_count < 1; api_count++) {
+  for (let api_count = 0; api_count < table_list.length; api_count++) {
     // table_list.length
     const api_name = table_list[api_count];
 
@@ -8525,14 +8525,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         // );
 
         console.log("cogs_labor data: ", final_data_pool.length);
-
-        console.log(
-          "*************************************************CHECK MEM**********************************************************************"
-        );
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        console.log(
-          "***********************************************************************************************************************"
-        );
 
         if (final_data_pool.length > 0) {
           do {
