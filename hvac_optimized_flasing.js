@@ -8537,6 +8537,11 @@ async function data_processor(data_lake, sql_request, table_list) {
           JSON.stringify(endedOn_collection),
           () => console.log("done")
         );
+        fs.writeFile(
+          "./final_data_pool.js",
+          JSON.stringify(final_data_pool),
+          () => console.log("done")
+        );
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
