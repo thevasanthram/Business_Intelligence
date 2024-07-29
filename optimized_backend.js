@@ -6726,8 +6726,7 @@ async function data_processor(data_lake, sql_request, table_list) {
                 sql_request,
                 final_data_pool,
                 header_data,
-                table_name,
-                "UPDATING"
+                table_name
               );
           } while (hvac_tables_responses["cogs_labor"]["status"] != "success");
         } else {
