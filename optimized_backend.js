@@ -6580,6 +6580,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           i < Object.keys(gross_pay_items_data_pool).length;
           i += batchSize
         ) {
+          console.log("range: ", i, i + batchSize);
           await Promise.all(
             Object.keys(gross_pay_items_data_pool)
               .slice(i, i + batchSize)
@@ -6721,7 +6722,7 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           do {
             hvac_tables_responses["cogs_labor"]["status"] =
-              await hvac_data_insertion(
+              await hvac_merge_insertion(
                 sql_request,
                 final_data_pool,
                 header_data,
