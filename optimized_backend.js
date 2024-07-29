@@ -6580,7 +6580,7 @@ async function data_processor(data_lake, sql_request, table_list) {
           i < Object.keys(gross_pay_items_data_pool).length;
           i += batchSize
         ) {
-          console.log("range: ", i, i + batchSize);
+          console.log("cogs_labor: ", i, "/", i + batchSize);
           await Promise.all(
             Object.keys(gross_pay_items_data_pool)
               .slice(i, i + batchSize)
