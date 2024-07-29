@@ -17,13 +17,13 @@ const us_cities_list = require("./modules/us_cities");
 
 // Service Titan's API parameters
 const instance_details = [
-  {
-    instance_name: "Expert Heating and Cooling Co LLC",
-    tenant_id: 1011756844,
-    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  },
+  // {
+  //   instance_name: "Expert Heating and Cooling Co LLC",
+  //   tenant_id: 1011756844,
+  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  // },
   {
     instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
     tenant_id: 1475606437,
@@ -31,27 +31,27 @@ const instance_details = [
     client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
     client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
   },
-  {
-    instance_name: "Family Heating & Cooling Co LLC",
-    tenant_id: 1056112968,
-    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  },
-  {
-    instance_name: "Swift Air Mechanicals LLC",
-    tenant_id: 2450322465,
-    app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
-    client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
-    client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
-  },
-  {
-    instance_name: "Jetstream Mechanicals LLC",
-    tenant_id: 2450309401,
-    app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
-    client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
-    client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
-  },
+  // {
+  //   instance_name: "Family Heating & Cooling Co LLC",
+  //   tenant_id: 1056112968,
+  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  // },
+  // {
+  //   instance_name: "Swift Air Mechanicals LLC",
+  //   tenant_id: 2450322465,
+  //   app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
+  //   client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
+  //   client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
+  // },
+  // {
+  //   instance_name: "Jetstream Mechanicals LLC",
+  //   tenant_id: 2450309401,
+  //   app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
+  //   client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
+  //   client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
+  // },
 ];
 
 let timezoneOffsetHours = 5; // 0 hours ahead of UTC
@@ -8284,6 +8284,11 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("jobs_data_pool: ", jobs_data_pool);
         // console.log("technician_data_pool: ", technician_data_pool);
         // console.log("header_data: ", header_data);
+
+        function formatDateString(dateString) {
+          const date = new Date(dateString);
+          return date.toISOString().slice(0, 23); // This will give you 'YYYY-MM-DDTHH:MM:SS.sss'
+        }
 
         if (initial_execute) {
           final_data_pool.push({
