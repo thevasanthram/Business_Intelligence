@@ -8401,126 +8401,118 @@ async function data_processor(data_lake, sql_request, table_list) {
           });
         }
 
-        let date_collection = [];
-        let endedOn_collection = [];
-        let startedOn_collection = [];
+        Object.keys(gross_pay_items_data_pool).map((record_id) => {
+          const record = gross_pay_items_data_pool[record_id];
 
-        console.log("started");
-        // Object.keys(gross_pay_items_data_pool).map((record_id) => {
-        //   // console.log("record_id: ", record_id);
-        //   const record = gross_pay_items_data_pool[record_id];
+          let job_details_id = record["instance_id"];
+          let actual_job_details_id = record["instance_id"];
+          if (record["jobId"]) {
+            actual_job_details_id = record["jobId"];
+            if (jobs_data_pool[record["jobId"]]) {
+              job_details_id = record["jobId"];
+            }
+          }
 
-        //   let job_details_id = record["instance_id"];
-        //   let actual_job_details_id = record["instance_id"];
-        //   if (record["jobId"]) {
-        //     actual_job_details_id = record["jobId"];
-        //     if (jobs_data_pool[record["jobId"]]) {
-        //       job_details_id = record["jobId"];
-        //     }
-        //   }
+          let invoice_id = record["instance_id"];
+          let actual_invoice_id = record["instance_id"];
+          if (record["invoiceId"]) {
+            actual_invoice_id = record["invoiceId"];
+            if (invoice_data_pool[record["invoiceId"]]) {
+              invoice_id = record["invoiceId"];
+            }
+          }
 
-        //   let invoice_id = record["instance_id"];
-        //   let actual_invoice_id = record["instance_id"];
-        //   if (record["invoiceId"]) {
-        //     actual_invoice_id = record["invoiceId"];
-        //     if (invoice_data_pool[record["invoiceId"]]) {
-        //       invoice_id = record["invoiceId"];
-        //     }
-        //   }
+          let project_id = record["instance_id"];
+          let actual_project_id = record["projectId"]
+            ? record["projectId"]
+            : record["instance_id"];
+          if (record["projectId"]) {
+            if (projects_data_pool[record["projectId"]]) {
+              project_id = record["projectId"];
+            }
+          }
 
-        //   let project_id = record["instance_id"];
-        //   let actual_project_id = record["projectId"]
-        //     ? record["projectId"]
-        //     : record["instance_id"];
-        //   if (record["projectId"]) {
-        //     if (projects_data_pool[record["projectId"]]) {
-        //       project_id = record["projectId"];
-        //     }
-        //   }
+          let payrollId = record["instance_id"];
+          let acutal_payrollId = record["payrollId"]
+            ? record["payrollId"]
+            : record["instance_id"];
+          if (record["payrollId"]) {
+            if (payrolls_data_pool[record["payrollId"]]) {
+              payrollId = record["payrollId"];
+            }
+          }
 
-        //   let payrollId = record["instance_id"];
-        //   let acutal_payrollId = record["payrollId"]
-        //     ? record["payrollId"]
-        //     : record["instance_id"];
-        //   if (record["payrollId"]) {
-        //     if (payrolls_data_pool[record["payrollId"]]) {
-        //       payrollId = record["payrollId"];
-        //     }
-        //   }
+          let technician_id = record["instance_id"];
+          let actual_technician_id = record["employeeId"]
+            ? record["employeeId"]
+            : record["instance_id"];
+          if (technician_data_pool[record["employeeId"]]) {
+            technician_id = record["employeeId"];
+          }
 
-        //   let technician_id = record["instance_id"];
-        //   let actual_technician_id = record["employeeId"]
-        //     ? record["employeeId"]
-        //     : record["instance_id"];
-        //   if (technician_data_pool[record["employeeId"]]) {
-        //     technician_id = record["employeeId"];
-        //   }
+          let date = "2000-01-01T00:00:00.00Z";
 
-        //   let date = "2000-01-01T00:00:00.00Z";
+          if (record["date"]) {
+            if (
+              new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              date = record["date"];
+            }
+          } else {
+            date = "2001-01-01T00:00:00.00Z";
+          }
 
-        //   if (record["date"]) {
-        //     if (
-        //       new Date(record["date"]) > new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       date = record["date"];
-        //     }
-        //   } else {
-        //     date = "2001-01-01T00:00:00.00Z";
-        //   }
+          let startedOn = "2000-01-01T00:00:00.00Z";
 
-        //   let startedOn = "2000-01-01T00:00:00.00Z";
+          if (record["startedOn"]) {
+            if (
+              new Date(record["startedOn"]) >
+              new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              startedOn = record["startedOn"];
+            }
+          } else {
+            startedOn = "2001-01-01T00:00:00.00Z";
+          }
 
-        //   if (record["startedOn"]) {
-        //     if (
-        //       new Date(record["startedOn"]) >
-        //       new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       startedOn = record["startedOn"];
-        //     }
-        //   } else {
-        //     startedOn = "2001-01-01T00:00:00.00Z";
-        //   }
+          let endedOn = "2000-01-01T00:00:00.00Z";
 
-        //   let endedOn = "2000-01-01T00:00:00.00Z";
+          if (record["endedOn"]) {
+            if (
+              new Date(record["endedOn"]) > new Date("2000-01-01T00:00:00.00Z")
+            ) {
+              endedOn = record["endedOn"];
+            }
+          } else {
+            endedOn = "2001-01-01T00:00:00.00Z";
+          }
 
-        //   if (record["endedOn"]) {
-        //     if (
-        //       new Date(record["endedOn"]) > new Date("2000-01-01T00:00:00.00Z")
-        //     ) {
-        //       endedOn = record["endedOn"];
-        //     }
-        //   } else {
-        //     endedOn = "2001-01-01T00:00:00.00Z";
-        //   }
-
-        //   final_data_pool.push({
-        //     id: record["id"],
-        //     paid_duration: record["paidDurationHours"]
-        //       ? record["paidDurationHours"]
-        //       : 0,
-        //     labor_cost: record["amount"] ? record["amount"] : 0,
-        //     activity: record["activity"] ? record["activity"] : "default",
-        //     paid_time_type: record["paidTimeType"]
-        //       ? record["paidTimeType"]
-        //       : "default",
-        //     date: date,
-        //     startedOn: startedOn,
-        //     endedOn: endedOn,
-        //     isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
-        //     job_details_id: job_details_id,
-        //     actual_job_details_id: actual_job_details_id,
-        //     invoice_id: invoice_id,
-        //     actual_invoice_id: actual_invoice_id,
-        //     project_id: project_id,
-        //     actual_project_id: actual_project_id,
-        //     payrollId: payrollId,
-        //     acutal_payrollId: acutal_payrollId,
-        //     technician_id: technician_id,
-        //     actual_technician_id: actual_technician_id,
-        //   });
-        // });
-
-        console.log("ended");
+          final_data_pool.push({
+            id: record["id"],
+            paid_duration: record["paidDurationHours"]
+              ? record["paidDurationHours"]
+              : 0,
+            labor_cost: record["amount"] ? record["amount"] : 0,
+            activity: record["activity"] ? record["activity"] : "default",
+            paid_time_type: record["paidTimeType"]
+              ? record["paidTimeType"]
+              : "default",
+            date: date,
+            startedOn: startedOn,
+            endedOn: endedOn,
+            isPrevailingWageJob: record["isPrevailingWageJob"] ? 1 : 0,
+            job_details_id: job_details_id,
+            actual_job_details_id: actual_job_details_id,
+            invoice_id: invoice_id,
+            actual_invoice_id: actual_invoice_id,
+            project_id: project_id,
+            actual_project_id: actual_project_id,
+            payrollId: payrollId,
+            acutal_payrollId: acutal_payrollId,
+            technician_id: technician_id,
+            actual_technician_id: actual_technician_id,
+          });
+        });
 
         // console.log("final_data_pool: ", final_data_pool);
         // console.log("header_data: ", header_data);
