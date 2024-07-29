@@ -8285,11 +8285,6 @@ async function data_processor(data_lake, sql_request, table_list) {
         // console.log("technician_data_pool: ", technician_data_pool);
         // console.log("header_data: ", header_data);
 
-        function formatDateString(dateString) {
-          const date = new Date(dateString);
-          return date.toISOString().slice(0, 23); // This will give you 'YYYY-MM-DDTHH:MM:SS.sss'
-        }
-
         if (initial_execute) {
           final_data_pool.push({
             id: "1",
@@ -8297,9 +8292,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            date: formatDateString("1999-01-01T00:00:00.00Z"),
-            startedOn: formatDateString("1999-01-01T00:00:00.00Z"),
-            endedOn: formatDateString("1999-01-01T00:00:00.00Z"),
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
             isPrevailingWageJob: 0,
             job_details_id: "1",
             actual_job_details_id: "1",
@@ -8319,9 +8314,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            date: formatDateString("1999-01-01T00:00:00.00Z"),
-            startedOn: formatDateString("1999-01-01T00:00:00.00Z"),
-            endedOn: formatDateString("1999-01-01T00:00:00.00Z"),
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
             isPrevailingWageJob: 0,
             job_details_id: "2",
             actual_job_details_id: "2",
@@ -8341,9 +8336,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            date: formatDateString("1999-01-01T00:00:00.00Z"),
-            startedOn: formatDateString("1999-01-01T00:00:00.00Z"),
-            endedOn: formatDateString("1999-01-01T00:00:00.00Z"),
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
             isPrevailingWageJob: 0,
             job_details_id: "3",
             actual_job_details_id: "3",
@@ -8363,9 +8358,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            date: formatDateString("1999-01-01T00:00:00.00Z"),
-            startedOn: formatDateString("1999-01-01T00:00:00.00Z"),
-            endedOn: formatDateString("1999-01-01T00:00:00.00Z"),
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
             isPrevailingWageJob: 0,
             job_details_id: "4",
             actual_job_details_id: "4",
@@ -8385,9 +8380,9 @@ async function data_processor(data_lake, sql_request, table_list) {
             labor_cost: 0,
             activity: "default",
             paid_time_type: "default",
-            date: formatDateString("1999-01-01T00:00:00.00Z"),
-            startedOn: formatDateString("1999-01-01T00:00:00.00Z"),
-            endedOn: formatDateString("1999-01-01T00:00:00.00Z"),
+            date: "1999-01-01T00:00:00.00Z",
+            startedOn: "1999-01-01T00:00:00.00Z",
+            endedOn: "1999-01-01T00:00:00.00Z",
             isPrevailingWageJob: 0,
             job_details_id: "5",
             actual_job_details_id: "5",
