@@ -8657,7 +8657,7 @@ async function flush_data_pool(is_initial_execute) {
 }
 
 async function orchestrate() {
-  // await flush_data_pool(!should_auto_update);
+  await flush_data_pool(!should_auto_update);
 
   // should_auto_update = true;
 
