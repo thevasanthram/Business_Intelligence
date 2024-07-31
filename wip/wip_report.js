@@ -267,7 +267,7 @@ async function wip_historical_report() {
     } else {
       await wip_report(current_date.toISOString().substring(0, 10));
 
-      if (current_date.toISOString().substring(0, 10) == "31-07-2024") {
+      if (current_date.toISOString().substring(0, 10) == "01-01-2020") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
