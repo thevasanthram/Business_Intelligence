@@ -7,38 +7,38 @@ const fs = require("fs");
 const data_lake = {};
 
 const instance_details = [
-  // {
-  //   instance_name: "Expert Heating and Cooling Co LLC",
-  //   tenant_id: 1011756844,
-  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-  //   wip_report_id: 87933193,
-  // },
-  // {
-  //   instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
-  //   tenant_id: 1475606437,
-  //   app_key: "ak1.w9fgjo8psqbyi84vocpvzxp8y",
-  //   client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
-  //   client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
-  //   wip_report_id: 85353848,
-  // },
-  // {
-  //   instance_name: "Family Heating & Cooling Co LLC",
-  //   tenant_id: 1056112968,
-  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-  //   wip_report_id: 75359909,
-  // },
-  // {
-  //   instance_name: "Swift Air Mechanical LLC",
-  //   tenant_id: 2450322465,
-  //   app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
-  //   client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
-  //   client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
-  //   wip_report_id: 58999783,
-  // },
+  {
+    instance_name: "Expert Heating and Cooling Co LLC",
+    tenant_id: 1011756844,
+    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+    wip_report_id: 87933193,
+  },
+  {
+    instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+    tenant_id: 1475606437,
+    app_key: "ak1.w9fgjo8psqbyi84vocpvzxp8y",
+    client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
+    client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
+    wip_report_id: 85353848,
+  },
+  {
+    instance_name: "Family Heating & Cooling Co LLC",
+    tenant_id: 1056112968,
+    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+    wip_report_id: 75359909,
+  },
+  {
+    instance_name: "Swift Air Mechanical LLC",
+    tenant_id: 2450322465,
+    app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
+    client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
+    client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
+    wip_report_id: 58999783,
+  },
   {
     instance_name: "Jetstream Mechanicals LLC",
     tenant_id: 2450309401,
@@ -240,7 +240,7 @@ async function wip_report(as_of_date) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date("2022-01-01");
+  const current_date = new Date();
 
   await wip_report(current_date.toISOString().substring(0, 10));
 
