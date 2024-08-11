@@ -142,6 +142,14 @@ const wip_header = {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },
+      InvoiceTotalRevenue: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      BalanceToFinish: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
       OverBilling: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
@@ -268,6 +276,14 @@ const wip_header = {
         constraint: { nullable: true },
       },
       TotalRevenue: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      InvoiceTotalRevenue: {
+        data_type: "DECIMAL",
+        constraint: { nullable: true },
+      },
+      BalanceToFinish: {
         data_type: "DECIMAL",
         constraint: { nullable: true },
       },

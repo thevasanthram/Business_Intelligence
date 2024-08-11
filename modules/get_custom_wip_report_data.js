@@ -59,6 +59,8 @@ async function get_custom_wip_report_data(
     PercentCompleteCost: "",
     EarnedRevenue: "",
     TotalRevenue: "",
+    InvoiceTotalRevenue: "",
+    BalanceToFinish: "",
     OverBilling: "",
     UnderBilling: "",
     OriginalEstimateTemplate: "",
