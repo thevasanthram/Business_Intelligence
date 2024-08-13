@@ -78,6 +78,10 @@ const wip_header = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      CustomerName: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
       ProjectStatus: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -212,6 +216,10 @@ const wip_header = {
         constraint: { nullable: false },
       },
       ProjectName: {
+        data_type: "NVARCHAR",
+        constraint: { nullable: true },
+      },
+      CustomerName: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },

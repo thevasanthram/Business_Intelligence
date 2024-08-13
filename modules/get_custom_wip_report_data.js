@@ -43,6 +43,7 @@ async function get_custom_wip_report_data(
     ProjectId: "",
     ProjectNumber: "",
     ProjectName: "",
+    CustomerName: "",
     ProjectStatus: "",
     ProjectContractStartDate: "",
     ActualCompletionDate: "",
@@ -206,6 +207,7 @@ async function get_custom_wip_report_data(
 
             delete formatted_record["ProjectStartDate"];
           }
+
           if (instance_id == 1 || instance_id == 4) {
             // EXP and SFT
             formatted_record["EstimatedMargin"] =
