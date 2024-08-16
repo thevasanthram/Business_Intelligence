@@ -34,7 +34,8 @@ async function get_custom_wip_report_data(
   wip_report_id,
   as_of_date,
   data_pool,
-  page_count
+  page_count,
+  wip_table_name
 ) {
   let has_error_occured = false;
 
@@ -108,6 +109,11 @@ async function get_custom_wip_report_data(
           name: "TransactionAsOfDate",
           value: as_of_date,
         },
+        {
+          name: "ProjectFilter",
+          value: wip_table_name == "wip_completed_projects" ? "5" : "0",
+        },
+
         {
           name: "InvoiceCostStatus",
           value: "2",
