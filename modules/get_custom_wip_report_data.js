@@ -111,7 +111,7 @@ async function get_custom_wip_report_data(
         },
         {
           name: "ProjectFilter",
-          value: wip_table_name == "wip_completed_projects" ? "5" : "0",
+          value: wip_table_name == "wip_completed_projects" ? "5" : "0", 
         },
 
         {
