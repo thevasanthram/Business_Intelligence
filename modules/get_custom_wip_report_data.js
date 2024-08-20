@@ -110,11 +110,6 @@ async function get_custom_wip_report_data(
           value: as_of_date,
         },
         {
-          name: "ProjectFilter",
-          value: wip_table_name == "wip_completed_projects" ? "5" : "0", 
-        },
-
-        {
           name: "InvoiceCostStatus",
           value: "2",
         },
@@ -143,6 +138,13 @@ async function get_custom_wip_report_data(
           value: "B",
         },
       ];
+
+      if (wip_table_name == "wip_completed_projects") {
+        parameters.push({
+          name: "ProjectFilter",
+          value: "5",
+        });
+      }
 
       const request = await fetch(api_url, {
         method: "POST",
