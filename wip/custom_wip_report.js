@@ -475,17 +475,17 @@ async function wip_historical_report() {
   const current_date = new Date("2022-01-01");
   // const current_date = new Date();
 
-  // await wip_report(
-  //   current_date.toISOString().substring(0, 10),
-  //   "active_project_id",
-  //   "wip_active_projects"
-  // );
-
   await wip_report(
     current_date.toISOString().substring(0, 10),
-    "completed_projects_id",
-    "wip_completed_projects"
+    "active_project_id",
+    "wip_active_projects"
   );
+
+  // await wip_report(
+  //   current_date.toISOString().substring(0, 10),
+  //   "completed_projects_id",
+  //   "wip_completed_projects"
+  // );
 
   current_date.setDate(current_date.getDate() + 1);
 
@@ -508,17 +508,17 @@ async function wip_historical_report() {
 
       await new Promise((resolve) => setTimeout(resolve, timeUntilNextBatch));
     } else {
-      // await wip_report(
-      //   current_date.toISOString().substring(0, 10),
-      //   "active_project_id",
-      //   "wip_active_projects"
-      // );
-
       await wip_report(
         current_date.toISOString().substring(0, 10),
-        "completed_projects_id",
-        "wip_completed_projects"
+        "active_project_id",
+        "wip_active_projects"
       );
+
+      // await wip_report(
+      //   current_date.toISOString().substring(0, 10),
+      //   "completed_projects_id",
+      //   "wip_completed_projects"
+      // );
 
       if (current_date.toISOString().substring(0, 10) == "01-01-2020") {
         iterator = false;
