@@ -167,7 +167,8 @@ async function sql_duplicate() {
       main_sql_request,
       wip_result.recordsets[0],
       wip_header.columns,
-      "wip_report"
+      "wip_active_projects",
+      "FLASHING"
     );
 
     // console.log("Feedback from data insertion:", feedback);
