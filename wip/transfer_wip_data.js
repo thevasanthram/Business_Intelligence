@@ -171,7 +171,7 @@ async function sql_duplicate() {
       "FLASHING"
     );
 
-    // console.log("Feedback from data insertion:", feedback);
+    console.log("Feedback from data insertion:", feedback);
   } else {
     console.error("No data fetched from hvac_data_pool.");
   }
