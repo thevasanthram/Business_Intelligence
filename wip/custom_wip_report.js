@@ -448,6 +448,8 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
     Object.keys(data_lake).map(async (instance_name) => {
       const data_pool = data_lake[instance_name];
 
+      // console.log("data_pool: ", data_pool);
+
       // fs.writeFile(
       //   `./${instance_name}_wip_report.js`,
       //   JSON.stringify(data_pool),
@@ -472,7 +474,7 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date("2024-08-20");
+  const current_date = new Date("2024-08-01");
   // const current_date = new Date();
 
   await wip_report(
@@ -481,11 +483,11 @@ async function wip_historical_report() {
     "wip_active_projects"
   );
 
-  await wip_report(
-    current_date.toISOString().substring(0, 10),
-    "completed_projects_id",
-    "wip_completed_projects"
-  );
+  // await wip_report(
+  //   current_date.toISOString().substring(0, 10),
+  //   "completed_projects_id",
+  //   "wip_completed_projects"
+  // );
 
   current_date.setDate(current_date.getDate() + 1);
 
@@ -514,13 +516,13 @@ async function wip_historical_report() {
         "wip_active_projects"
       );
 
-      await wip_report(
-        current_date.toISOString().substring(0, 10),
-        "completed_projects_id",
-        "wip_completed_projects"
-      );
+      // await wip_report(
+      //   current_date.toISOString().substring(0, 10),
+      //   "completed_projects_id",
+      //   "wip_completed_projects"
+      // );
 
-      if (current_date.toISOString().substring(0, 10) == "01-01-2020") {
+      if (current_date.toISOString().substring(0, 10) == "31-08-2024") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
