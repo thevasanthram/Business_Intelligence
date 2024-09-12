@@ -144,6 +144,11 @@ async function get_custom_wip_report_data(
           name: "ProjectFilter",
           value: "5",
         });
+      } else {
+        parameters.push({
+          name: "ProjectFilter",
+          value: ["0", "1", "2", "3", "4", "5", "6", "7"],
+        });
       }
 
       const request = await fetch(api_url, {
