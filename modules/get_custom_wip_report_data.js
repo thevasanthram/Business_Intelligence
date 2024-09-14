@@ -269,7 +269,7 @@ async function get_custom_wip_report_data(
       const pushing_item = [];
 
       // console.log("response: ", response);
-      console.log(instance_name, "fields: ", fields);
+      // console.log(instance_name, "fields: ", fields);
 
       const updatedData = await Promise.all(
         data.map(async (record, index) => {
