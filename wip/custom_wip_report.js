@@ -78,6 +78,10 @@ const wip_header = {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
       },
+      CustomerId: {
+        data_type: "NVARCHAR20",
+        constraint: { nullable: false },
+      },
       CustomerName: {
         data_type: "NVARCHAR",
         constraint: { nullable: true },
@@ -448,7 +452,8 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
     Object.keys(data_lake).map(async (instance_name) => {
       const data_pool = data_lake[instance_name];
 
-      // console.log("data_pool: ", data_pool);
+      // console.log("instance_name: ", instance_name);
+      // console.log("data_pool: ", data_pool[0]);
 
       // fs.writeFile(
       //   `./${instance_name}_wip_report.js`,
@@ -474,7 +479,7 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  const current_date = new Date();
+  const current_date = new Date("2022-01-01");
   // const current_date = new Date();
 
   await wip_report(
@@ -522,7 +527,7 @@ async function wip_historical_report() {
         "wip_completed_projects"
       );
 
-      if (current_date.toISOString().substring(0, 10) == "31-08-2022") {
+      if (current_date.toISOString().substring(0, 10) == "31-08-2019") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
