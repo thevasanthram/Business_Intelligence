@@ -39,11 +39,12 @@ async function get_custom_wip_report_data(
 ) {
   let has_error_occured = false;
 
-  const wip_header_data = {
+  let wip_header_data = {
     Instance_id: "",
     ProjectId: "",
     ProjectNumber: "",
     ProjectName: "",
+    CustomerId: "",
     CustomerName: "",
     ProjectStatus: "",
     ProjectContractStartDate: "",
@@ -75,6 +76,83 @@ async function get_custom_wip_report_data(
     PermitNumber: "",
     UTC_update_date: "",
   };
+
+  if (wip_table_name == "wip_active_projects") {
+    wip_header_data = {
+      Instance_id: "",
+      ProjectId: "",
+      ProjectNumber: "",
+      ProjectName: "",
+      CustomerId: "",
+      CustomerName: "",
+      ProjectStatus: "",
+      ProjectContractStartDate: "",
+      ActualCompletionDate: "",
+      ContractValue: "",
+      ChangeOrderValue: "",
+      Retainage: "",
+      TDRetainage: "",
+      CostAdjustment: "",
+      TotalEstimatedCost: "",
+      EstimatedMargin: "",
+      EstimatedMarginPercentage: "",
+      TotalCost: "",
+      CostToComplete: "",
+      PercentCompleteCost: "",
+      EarnedRevenue: "",
+      TotalRevenue: "",
+      InvoiceTotalRevenue: "",
+      BalanceToFinish: "",
+      OverBilling: "",
+      UnderBilling: "",
+      OriginalEstimateTemplate: "",
+      ActualLaborQty: "",
+      LastInvoiceInvoicedOn: "",
+      TDOriginalEstimatedMargin: "",
+      TDOriginalEstimatedMarginPercentage: "",
+      ProjectBusinessUnit: "",
+      TDInvoiceAndActualLaborCostPlusBurdenCost: "",
+      PermitNumber: "",
+      UTC_update_date: "",
+    };
+  } else {
+    wip_header_data = {
+      Instance_id: "",
+      ProjectId: "",
+      ProjectNumber: "",
+      ProjectName: "",
+      CustomerName: "",
+      ProjectStatus: "",
+      ProjectContractStartDate: "",
+      ActualCompletionDate: "",
+      ContractValue: "",
+      ChangeOrderValue: "",
+      Retainage: "",
+      TDRetainage: "",
+      CostAdjustment: "",
+      TotalEstimatedCost: "",
+      EstimatedMargin: "",
+      EstimatedMarginPercentage: "",
+      TotalCost: "",
+      CostToComplete: "",
+      PercentCompleteCost: "",
+      EarnedRevenue: "",
+      TotalRevenue: "",
+      InvoiceTotalRevenue: "",
+      BalanceToFinish: "",
+      OverBilling: "",
+      UnderBilling: "",
+      OriginalEstimateTemplate: "",
+      ActualLaborQty: "",
+      LastInvoiceInvoicedOn: "",
+      TDOriginalEstimatedMargin: "",
+      TDOriginalEstimatedMarginPercentage: "",
+      ProjectBusinessUnit: "",
+      TDInvoiceAndActualLaborCostPlusBurdenCost: "",
+      PermitNumber: "",
+      UTC_update_date: "",
+    };
+  }
 
   const instance_list = [
     "Expert Heating and Cooling Co LLC",
@@ -151,6 +229,8 @@ async function get_custom_wip_report_data(
         });
       }
 
+      // console.log("parameters: ", parameters);
+
       const request = await fetch(api_url, {
         method: "POST",
         headers: {
@@ -189,6 +269,7 @@ async function get_custom_wip_report_data(
       const pushing_item = [];
 
       // console.log("response: ", response);
+      console.log(instance_name, "fields: ", fields);
 
       const updatedData = await Promise.all(
         data.map(async (record, index) => {
@@ -210,6 +291,13 @@ async function get_custom_wip_report_data(
           if (formatted_record["ProjectNumber"]) {
             formatted_record["ProjectNumber"] = await add_suffix(
               formatted_record["ProjectNumber"],
+              instance_id
+            );
+          }
+
+          if (formatted_record["CustomerId"]) {
+            formatted_record["CustomerId"] = await add_suffix(
+              formatted_record["CustomerId"],
               instance_id
             );
           }

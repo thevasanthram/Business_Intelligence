@@ -723,6 +723,7 @@ CREATE TABLE wip_active_projects(
   ProjectId NVARCHAR(20) NOT NULL,
   ProjectNumber NVARCHAR(20) NOT NULL,
   ProjectName NVARCHAR(MAX) NULL,
+  CustomerId NVARCHAR(20) NOT NULL,
   CustomerName NVARCHAR(MAX) NULL,
   ProjectStatus NVARCHAR(MAX) NULL,
   ProjectContractStartDate DATETIME2 NULL,
