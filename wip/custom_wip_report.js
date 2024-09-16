@@ -479,8 +479,8 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
 
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
-  // 2022-10-09
-  const current_date = new Date("2024-01-01");
+  // 2022-10-10
+  const current_date = new Date("2022-10-09");
   // const current_date = new Date();
 
   await wip_report(
@@ -529,7 +529,7 @@ async function wip_historical_report() {
       // );
 
       console.log("current_date.toISOString(): ", current_date.toISOString());
-      if (current_date.toISOString().substring(0, 10) == "2024-04-30") {
+      if (current_date.toISOString().substring(0, 10) == "2023-12-31") {
         iterator = false;
       } else {
         current_date.setDate(current_date.getDate() + 1);
