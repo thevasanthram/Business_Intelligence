@@ -480,7 +480,7 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
 async function wip_historical_report() {
   //   const to_dateString = to_date.toISOString().substring(0, 10);
   // 2022-10-09
-  const current_date = new Date("2024-06-01");
+  const current_date = new Date("2024-05-01");
   // const current_date = new Date();
 
   await wip_report(
