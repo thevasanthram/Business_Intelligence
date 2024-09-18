@@ -2719,42 +2719,43 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           // record["id"] = Number(number_in_string.slice(0, -3));
 
-          let trade_type = "DEF";
-          let segment_type = "DEF";
-          let revenue_type = "DEF";
-          let business = "DEF";
-          let business_unit_official_name = "DEF";
-          let business_unit_name = "DEF";
+          // incase of null -> OTHR
+
+          let trade_type = "OTHR";
+          let segment_type = "OTHR";
+          let revenue_type = "OTHR";
+          let business = "OTHR";
+          let business_unit_official_name = "OTHR";
+          let business_unit_name = "OTHR";
 
           if (kpi_data[record["id"]]) {
             trade_type = kpi_data[record["id"]]["Trade"]
               ? kpi_data[record["id"]]["Trade"]
-              : "DEF";
+              : "OTHR";
             segment_type = kpi_data[record["id"]]["Segment"]
               ? kpi_data[record["id"]]["Segment"]
-              : "DEF";
+              : "OTHR";
             revenue_type = kpi_data[record["id"]]["Type"]
               ? kpi_data[record["id"]]["Type"]
-              : "DEF";
+              : "OTHR";
             // business = kpi_data[record["id"]]["Business"]
             //   ? kpi_data[record["id"]]["Business"]
-            //   : "DEF";
+            //   : "OTHR";
             business_unit_official_name = kpi_data[record["id"]]["Name"]
               ? kpi_data[record["id"]]["Name"]
-              : "DEF";
+              : "OTHR";
             business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
               ? kpi_data[record["id"]]["Invoice Business Unit"]
-              : "DEF";
-            let legal_entity_group = kpi_data[record["id"]]["Business"]
-              ? kpi_data[record["id"]]["Business"]
-              : "DEF";
+              : "OTHR";
 
-            // if (legal_entity_group != "DEF") {
-            //   legal_entity_id = instance_code[legal_entity_group];
-            // } else {
-            //   legal_entity_id = record["instance_id"];
-            // }
-
+            business = instance_code[record["instance_id"]];
+          } else {
+            business_unit_official_name = record["id"]["Name"]
+              ? record["id"]["Name"]
+              : "OTHR";
+            business_unit_name = record["id"]["Invoice Business Unit"]
+              ? record["id"]["Invoice Business Unit"]
+              : "OTHR";
             business = instance_code[record["instance_id"]];
           }
 
