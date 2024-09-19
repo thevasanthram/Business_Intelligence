@@ -2721,41 +2721,35 @@ async function data_processor(data_lake, sql_request, table_list) {
 
           // incase of null -> OTHR
 
-          let trade_type = "OTHR";
-          let segment_type = "OTHR";
-          let revenue_type = "OTHR";
-          let business = "OTHR";
-          let business_unit_official_name = "OTHR";
-          let business_unit_name = "OTHR";
+          let trade_type = "OTHER";
+          let segment_type = "OTHER";
+          let revenue_type = "OTHER";
+          let business = "OTHER";
+          let business_unit_official_name = "OTHER";
+          let business_unit_name = "OTHER";
 
           if (kpi_data[record["id"]]) {
             trade_type = kpi_data[record["id"]]["Trade"]
               ? kpi_data[record["id"]]["Trade"]
-              : "OTHR";
+              : "OTHER";
             segment_type = kpi_data[record["id"]]["Segment"]
               ? kpi_data[record["id"]]["Segment"]
-              : "OTHR";
+              : "OTHER";
             revenue_type = kpi_data[record["id"]]["Type"]
               ? kpi_data[record["id"]]["Type"]
-              : "OTHR";
-            // business = kpi_data[record["id"]]["Business"]
-            //   ? kpi_data[record["id"]]["Business"]
-            //   : "OTHR";
+              : "OTHER";
             business_unit_official_name = kpi_data[record["id"]]["Name"]
               ? kpi_data[record["id"]]["Name"]
-              : "OTHR";
+              : "OTHER";
             business_unit_name = kpi_data[record["id"]]["Invoice Business Unit"]
               ? kpi_data[record["id"]]["Invoice Business Unit"]
-              : "OTHR";
-
+              : "OTHER";
             business = instance_code[record["instance_id"]];
           } else {
-            business_unit_official_name = record["id"]["Name"]
-              ? record["id"]["Name"]
-              : "OTHR";
-            business_unit_name = record["id"]["Invoice Business Unit"]
-              ? record["id"]["Invoice Business Unit"]
-              : "OTHR";
+            business_unit_official_name = record["officialName"]
+              ? record["officialName"]
+              : "OTHER";
+            business_unit_name = record["name"] ? record["name"] : "OTHER";
             business = instance_code[record["instance_id"]];
           }
 
