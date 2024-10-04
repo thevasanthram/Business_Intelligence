@@ -59,6 +59,14 @@ const instance_details = [
   },
 ];
 
+const instance_list = [
+  "Expert Heating and Cooling Co LLC",
+  "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+  "Family Heating & Cooling Co LLC",
+  "Swift Air Mechanical LLC",
+  "Jetstream Mechanicals LLC",
+];
+
 const wip_header = {
   wip_active_projects: {
     columns: {
@@ -461,18 +469,26 @@ async function wip_report(as_of_date, column_name, wip_table_name) {
       //   () => console.log("done")
       // );
 
-      do {
-        wip_response[wip_table_name][instance_name]["status"] =
-          await hvac_data_insertion(
-            sql_request,
-            data_pool,
-            header_data,
-            wip_table_name,
-            "UPDATING"
-          );
-      } while (
-        wip_response[wip_table_name][instance_name]["status"] != "success"
-      );
+      const is_data_exists = `SELECT DISTINCT UTC_update_date FROM wip_active_projects WHERE UTC_update_date LIKE '${as_of_date}%' AND Instance_id = ${String(
+        instance_list.indexOf(instance_name) + 1
+      )}`;
+
+      const is_data_exists_response = await sql_request.query(is_data_exists);
+
+      if (!is_data_exists_response.recordset.length) {
+        do {
+          wip_response[wip_table_name][instance_name]["status"] =
+            await hvac_data_insertion(
+              sql_request,
+              data_pool,
+              header_data,
+              wip_table_name,
+              "UPDATING"
+            );
+        } while (
+          wip_response[wip_table_name][instance_name]["status"] != "success"
+        );
+      }
     })
   );
 }
