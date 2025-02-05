@@ -17,6 +17,8 @@ async function add_suffix(id, instance_id) {
     suffix = "_04";
   } else if (instance_id == 5) {
     suffix = "_05";
+  } else if (instance_id == 6) {
+    suffix = "_06";
   }
 
   // Append suffix to id
@@ -160,12 +162,20 @@ async function get_custom_wip_report_data(
     "Family Heating & Cooling Co LLC",
     "Swift Air Mechanical LLC",
     "Jetstream Mechanicals LLC",
+    "All Star Plumbing and Heating",
   ];
+
+  let report_category = "operations";
+  let instance_id = String(instance_list.indexOf(instance_name) + 1);
+
+  if (instance_id == 6) {
+    report_category = "accounting";
+  }
 
   try {
     let shouldIterate = false;
     do {
-      const api_endpoint = `https://api.servicetitan.io/reporting/v2/tenant/${tenant_id}/report-category/operations/reports/${wip_report_id}/data`;
+      const api_endpoint = `https://api.servicetitan.io/reporting/v2/tenant/${tenant_id}/report-category/${report_category}/reports/${wip_report_id}/data`;
 
       const api_url =
         api_endpoint + `?page=${page_count + 1}&includeTotal=true`;
@@ -270,6 +280,7 @@ async function get_custom_wip_report_data(
 
       // console.log("response: ", response);
       // console.log(instance_name, "fields: ", fields);
+      // console.log("sample: ", data[0]);
 
       const updatedData = await Promise.all(
         data.map(async (record, index) => {
@@ -295,11 +306,17 @@ async function get_custom_wip_report_data(
             );
           }
 
+          if (instance_id == 6) {
+            formatted_record["ProjectId"] = formatted_record["ProjectNumber"];
+          }
+
           if (formatted_record["CustomerId"]) {
             formatted_record["CustomerId"] = await add_suffix(
               formatted_record["CustomerId"],
               instance_id
             );
+          } else {
+            formatted_record["CustomerId"] = instance_id;
           }
 
           if (formatted_record["ProjectStartDate"]) {

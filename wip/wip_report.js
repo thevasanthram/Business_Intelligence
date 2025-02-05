@@ -47,6 +47,23 @@ const instance_details = [
     client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
     wip_report_id: 180419843,
   },
+  {
+    instance_name: "All Star Plumbing and Heating",
+    tenant_id: 3586728484,
+    app_key: "ak1.1chwmlgkcdmmtx8voain2x95w",
+    client_id: "cid.3moaukr4ztqov5abxuulbrxst",
+    client_secret: "cs1.6u48l7qv7tbria2n5masyg3g5s6ropsm09ewj9317h8x3g6md7",
+    wip_report_id: 14726308,
+  },
+];
+
+const instance_list = [
+  "Expert Heating and Cooling Co LLC",
+  "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+  "Family Heating & Cooling Co LLC",
+  "Swift Air Mechanical LLC",
+  "Jetstream Mechanicals LLC",
+  "All Star Plumbing and Heating",
 ];
 
 const wip_header = {
@@ -150,6 +167,9 @@ const wip_response = {
   "Jetstream Mechanicals LLC": {
     status: "failure",
   },
+  "All Star Plumbing and Heating": {
+    status: "failure",
+  },
 };
 
 async function wip_report(as_of_date) {
@@ -225,15 +245,23 @@ async function wip_report(as_of_date) {
       //   () => console.log("done")
       // );
 
-      do {
-        wip_response[instance_name]["status"] = await hvac_data_insertion(
-          sql_request,
-          data_pool,
-          header_data,
-          "wip_report",
-          "UPDATING"
-        );
-      } while (wip_response[instance_name]["status"] != "success");
+      const is_data_exists = `SELECT DISTINCT UTC_update_date FROM wip_report WHERE UTC_update_date LIKE '${as_of_date}%' AND Instance_id = ${String(
+        instance_list.indexOf(instance_name) + 1
+      )}`;
+
+      const is_data_exists_response = await sql_request.query(is_data_exists);
+
+      if (!is_data_exists_response.recordset.length) {
+        do {
+          wip_response[instance_name]["status"] = await hvac_data_insertion(
+            sql_request,
+            data_pool,
+            header_data,
+            "wip_report",
+            "UPDATING"
+          );
+        } while (wip_response[instance_name]["status"] != "success");
+      }
     })
   );
 }

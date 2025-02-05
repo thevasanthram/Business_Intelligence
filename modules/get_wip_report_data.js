@@ -16,6 +16,8 @@ async function add_suffix(id, instance_id) {
     suffix = "_04";
   } else if (instance_id == 5) {
     suffix = "_05";
+  } else if (instance_id == 6) {
+    suffix = "_06";
   }
 
   // Append suffix to id
@@ -66,6 +68,7 @@ async function get_wip_report_data(
     "Family Heating & Cooling Co LLC",
     "Swift Air Mechanical LLC",
     "Jetstream Mechanicals LLC",
+    "All Star Plumbing and Heating",
   ];
 
   try {

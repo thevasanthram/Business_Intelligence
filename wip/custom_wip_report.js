@@ -7,55 +7,65 @@ const fs = require("fs");
 const data_lake = {};
 
 const instance_details = [
+  // {
+  //   instance_name: "Expert Heating and Cooling Co LLC",
+  //   tenant_id: 1011756844,
+  //   app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
+  //   client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
+  //   client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
+  //   wip_report_id: 87933193,
+  //   active_project_id: 91683578,
+  //   completed_projects_id: 91678548,
+  // },
+  // {
+  //   instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
+  //   tenant_id: 1475606437,
+  //   app_key: "ak1.w9fgjo8psqbyi84vocpvzxp8y",
+  //   client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
+  //   client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
+  //   wip_report_id: 85353848,
+  //   active_project_id: 94758741,
+  //   completed_projects_id: 94755857,
+  // },
+  // {
+  //   instance_name: "Family Heating & Cooling Co LLC",
+  //   tenant_id: 1056112968,
+  //   app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
+  //   client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
+  //   client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
+  //   wip_report_id: 75359909,
+  //   active_project_id: 79737287,
+  //   completed_projects_id: 79746676,
+  // },
+  // {
+  //   instance_name: "Swift Air Mechanical LLC",
+  //   tenant_id: 2450322465,
+  //   app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
+  //   client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
+  //   client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
+  //   wip_report_id: 58999783,
+  //   active_project_id: 72752883,
+  //   completed_projects_id: 72763695,
+  // },
+  // {
+  //   instance_name: "Jetstream Mechanicals LLC",
+  //   tenant_id: 2450309401,
+  //   app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
+  //   client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
+  //   client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
+  //   wip_report_id: 180419843,
+  //   active_project_id: 258292875,
+  //   completed_projects_id: 258288362,
+  // },
   {
-    instance_name: "Expert Heating and Cooling Co LLC",
-    tenant_id: 1011756844,
-    app_key: "ak1.ztsdww9rvuk0sjortd94dmxwx",
-    client_id: "cid.jk53hfwwcq6a1zgtbh96byil4",
-    client_secret: "cs1.2hdc1yd19hpxzmdeg5rfuc6i3smpxy9iei0yhq1p7qp8mwyjda",
-    wip_report_id: 87933193,
-    active_project_id: 91683578,
-    completed_projects_id: 91678548,
-  },
-  {
-    instance_name: "PARKER-ARNTZ PLUMBING AND HEATING, INC.",
-    tenant_id: 1475606437,
-    app_key: "ak1.w9fgjo8psqbyi84vocpvzxp8y",
-    client_id: "cid.r82bhd4u7htjv56h7sqjk0jya",
-    client_secret: "cs1.4q3yjgyhjb9yaeietpsoozzc8u2qgw80j8ze43ovz1308e7zz7",
-    wip_report_id: 85353848,
-    active_project_id: 94758741,
-    completed_projects_id: 94755857,
-  },
-  {
-    instance_name: "Family Heating & Cooling Co LLC",
-    tenant_id: 1056112968,
-    app_key: "ak1.h0wqje4yshdqvn1fso4we8cnu",
-    client_id: "cid.qlr4t6egndd4mbvq3vu5tef11",
-    client_secret: "cs1.v9jhueeo6kgcjx5in1r8716hpnmuh6pbxiddgsv5d3y0822jay",
-    wip_report_id: 75359909,
-    active_project_id: 79737287,
-    completed_projects_id: 79746676,
-  },
-  {
-    instance_name: "Swift Air Mechanical LLC",
-    tenant_id: 2450322465,
-    app_key: "ak1.bquspwfwag2gqtls6lgi0dl1b",
-    client_id: "cid.ls3q3h7dmtoaiu3o5y5oddgca",
-    client_secret: "cs1.75f7fqxtilh4xj5vkym3fda1aaz9kmpv701w91kaej9w2r2rxp",
-    wip_report_id: 58999783,
-    active_project_id: 72752883,
-    completed_projects_id: 72763695,
-  },
-  {
-    instance_name: "Jetstream Mechanicals LLC",
-    tenant_id: 2450309401,
-    app_key: "ak1.u9fb0767d46nh1mid81ow3pgz",
-    client_id: "cid.my53hbp127i8vzxpn4o4h54ho",
-    client_secret: "cs1.3t0bo8k8b8xgrnbdyf9j4cj8zeq2upq2z72x9h4wkmf1w692jc",
-    wip_report_id: 180419843,
-    active_project_id: 258292875,
-    completed_projects_id: 258288362,
+    instance_name: "All Star Plumbing and Heating",
+    tenant_id: 3586728484,
+    app_key: "ak1.1chwmlgkcdmmtx8voain2x95w",
+    client_id: "cid.3moaukr4ztqov5abxuulbrxst",
+    client_secret: "cs1.6u48l7qv7tbria2n5masyg3g5s6ropsm09ewj9317h8x3g6md7",
+    wip_report_id: 14726308,
+    active_project_id: 14730298,
+    // completed_projects_id: 258288362,
   },
 ];
 
@@ -65,6 +75,7 @@ const instance_list = [
   "Family Heating & Cooling Co LLC",
   "Swift Air Mechanical LLC",
   "Jetstream Mechanicals LLC",
+  "All Star Plumbing and Heating",
 ];
 
 const wip_header = {
@@ -372,6 +383,9 @@ const wip_response = {
     "Jetstream Mechanicals LLC": {
       status: "failure",
     },
+    "All Star Plumbing and Heating": {
+      status: "failure",
+    },
   },
   wip_completed_projects: {
     "Expert Heating and Cooling Co LLC": {
@@ -387,6 +401,9 @@ const wip_response = {
       status: "failure",
     },
     "Jetstream Mechanicals LLC": {
+      status: "failure",
+    },
+    "All Star Plumbing and Heating": {
       status: "failure",
     },
   },
